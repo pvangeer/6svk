@@ -23,6 +23,7 @@ from enum import Enum
 
 
 class TimeFrame(Enum):
+    NotRelevant = "niet relevant"
     Now = "nu"
     NearFuture = "boeggolf"
     Future = "toekomst"

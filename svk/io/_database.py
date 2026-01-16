@@ -23,7 +23,7 @@ from svk.data import ResearchQuestion, Priority, ResearchLine, TimeFrame
 from openpyxl import load_workbook
 
 
-class DataBase(list[ResearchQuestion]):
+class Database(list[ResearchQuestion]):
 
     def __init__(self, file_path: str):
         if not self._check_file_path(file_path):
@@ -42,24 +42,24 @@ class DataBase(list[ResearchQuestion]):
             try:
                 self.append(
                     ResearchQuestion(
-                        question=DataBase._get_str(row[3]),
-                        storm_surge_barrier=DataBase._get_str(row[0]).split(","),
-                        action_holder=DataBase._get_str_optional(row[13]),
-                        costs_estimate=DataBase._get_int_optional(row[14]),
-                        lead_time=DataBase._get_int_optional(row[15]),
-                        prio_budget=DataBase._get_priority(row[6]),
-                        prio_functions=DataBase._get_priority(row[5]),
-                        prio_operation=DataBase._get_priority(row[7]),
-                        prio_water_safety=DataBase._get_priority(row[4]),
-                        referece_number=[int(n) for n in DataBase._get_str(row[2]).split(",")],
-                        reference_code=DataBase._get_str(row[1]).split(","),
-                        research_line_primary=ResearchLine.get_research_line(DataBase._get_int(row[9])),
+                        question=Database._get_str(row[3]),
+                        storm_surge_barrier=Database._get_str(row[0]).split(","),
+                        action_holder=Database._get_str_optional(row[13]),
+                        costs_estimate=Database._get_int_optional(row[14]),
+                        lead_time=Database._get_int_optional(row[15]),
+                        prio_budget=Database._get_priority(row[6]),
+                        prio_functions=Database._get_priority(row[5]),
+                        prio_operation=Database._get_priority(row[7]),
+                        prio_water_safety=Database._get_priority(row[4]),
+                        reference_number=Database._get_int(row[2]),
+                        reference_codes=Database._get_str(row[1]).replace(";", ",").split(","),
+                        research_line_primary=ResearchLine.get_research_line(Database._get_int(row[9])),
                         research_line_secondary=(
-                            ResearchLine.get_research_line(DataBase._get_int(row[10]))
-                            if DataBase._get_int_optional(row[10]) is not None
+                            ResearchLine.get_research_line(Database._get_int(row[10]))
+                            if Database._get_int_optional(row[10]) is not None
                             else None
                         ),
-                        time_frame=DataBase._get_time_frame(row[8]),
+                        time_frame=Database._get_time_frame(row[8]),
                     )
                 )
             except:
@@ -116,6 +116,8 @@ class DataBase(list[ResearchQuestion]):
             return TimeFrame.Unknown
 
         match int(value):
+            case 0:
+                return TimeFrame.NotRelevant
             case 1:
                 return TimeFrame.Now
             case 2:

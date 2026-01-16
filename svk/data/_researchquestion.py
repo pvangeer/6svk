@@ -29,8 +29,8 @@ from svk.data._researchline import ResearchLine
 class ResearchQuestion(BaseModel):
     question: str
     storm_surge_barrier: list[str]
-    reference_code: list[str]
-    referece_number: list[int]
+    reference_codes: list[str]
+    reference_number: int
 
     prio_water_safety: Priority
     prio_functions: Priority
@@ -38,10 +38,10 @@ class ResearchQuestion(BaseModel):
     prio_operation: Priority
 
     time_frame: TimeFrame
-    lead_time: float | None
+    lead_time: float | None = None
 
     research_line_primary: ResearchLine
-    research_line_secondary: ResearchLine | None
+    research_line_secondary: ResearchLine | None = None
 
-    action_holder: str | None
-    costs_estimate: float | None
+    action_holder: str | None = None
+    costs_estimate: float | None = None
