@@ -36,7 +36,7 @@ class Header(BaseModel):
             case TimeFrame.Now:
                 return ""
             case TimeFrame.NearFuture:
-                return "(2033 - 2040))"
+                return "(2033 - 2040)"
             case TimeFrame.Future:
                 return "(>2040)"
             case TimeFrame.NotRelevant:
@@ -49,7 +49,7 @@ class Header(BaseModel):
     def draw(self, dwg: Drawing, x: int, y: int):
         draw_color = color_toward_grey(self.color, grey_fraction=self.time_frame.grey_fraction)
         dwg.add(chevron(dwg, x=x, y=y, width=self.width, height=self.height, id=self.title, color=draw_color))
-        y_column_header_text = y + self.height / 2 + self.font_size / 2
+        y_column_header_text = y + self.height / 2
         dwg.add(
             dwg.text(
                 self.title,

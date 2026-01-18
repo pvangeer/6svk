@@ -7,21 +7,56 @@ from svk.visualization.helpers._drawwrappedtext import wrapped_text, wrapped_lin
 from svk.visualization.helpers._greyfraction import color_toward_grey
 
 
+def draw_priority_arrow(dwg, x: float, y: float, width: float, height: float = 5, stroke_color="black"):
+    stroke_width = 3
+    line1 = dwg.line(
+        start=(x, y + height / 2),
+        end=(x + width / 2, y - height / 2),
+        stroke=stroke_color,
+        stroke_width=stroke_width,
+        stroke_linecap="round",
+    )
+    line2 = dwg.line(
+        start=(x + width / 2, y - height / 2),
+        end=(x + width, y + height / 2),
+        stroke=stroke_color,
+        stroke_width=stroke_width,
+        stroke_linecap="round",
+    )
+    dwg.add(line1)
+    dwg.add(line2)
+    pass
+
+
 class Question(BaseModel):
     research_question: ResearchQuestion
     max_width: int = 570  # TODO: Progress or derive
     font_size: int = 12
     text_margin: int = 5
-    priority_width: int = 25
+    priority_width: int = 15
     height: int = Field(default_factory=int)
+    _lines: list[str] = []
 
     @model_validator(mode="after")
     def compute_height(self):
-        (w, h) = measure_text(self.research_question.question, self.font_size)
-        n_lines = math.ceil(w / (self.max_width - 2 * self.text_margin - self._get_priority_box_width))
-        self.height = math.ceil(h * n_lines * 1.2 + self.text_margin * 2.0)
+        self._lines = wrapped_lines(
+            self.research_question.question,
+            max_width=self.max_width - self.text_margin - self.priority_box_width,
+            font_size=self.font_size,
+        )
+
+        self.height = math.ceil(self.font_size * len(self._lines) * 1.2 + self.text_margin * 2.0)
 
         return self
+
+    @property
+    def combined_priority(self) -> int:
+        return (
+            self.research_question.prio_budget.id
+            + self.research_question.prio_functions.id
+            + self.research_question.prio_operation.id
+            + self.research_question.prio_water_safety.id
+        )
 
     @property
     def color(self):
@@ -48,14 +83,30 @@ class Question(BaseModel):
                 stroke=question_color,
             )
         )
-        lines = wrapped_lines(
-            self.research_question.question, max_width=width - 2 * self.text_margin - self._get_priority_box_width, font_size=self.font_size
-        )
+
+        y_middle = y + self.height / 2
+        if self.combined_priority < 6:
+            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle, width=self.priority_width)
+        elif self.combined_priority < 12:
+            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle - 2.5, width=self.priority_width)
+            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle + 2.5, width=self.priority_width)
+        else:
+            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle + 5, width=self.priority_width)
+            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle, width=self.priority_width)
+            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle - 5, width=self.priority_width)
+
+        if len(self._lines) < 1:
+            self._lines = wrapped_lines(
+                self.research_question.question,
+                max_width=width - 2 * self.text_margin - self.priority_box_width,
+                font_size=self.font_size,
+            )
+
         dwg.add(
             wrapped_text(
                 dwg,
-                lines=lines,
-                insert=(x + self.text_margin + 2 * self.text_margin + self.priority_width, y + self.text_margin),
+                lines=self._lines,
+                insert=(x + self.priority_box_width, y + self.text_margin),
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
             )
@@ -64,5 +115,5 @@ class Question(BaseModel):
         pass
 
     @property
-    def _get_priority_box_width(self) -> int:
+    def priority_box_width(self) -> int:
         return self.priority_width + self.text_margin + self.text_margin

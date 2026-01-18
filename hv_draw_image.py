@@ -12,8 +12,8 @@ for q in hv_questions:
     time_groups[q.time_frame].append(q)
 
 
-def get_priority(question: ResearchQuestion) -> int:
-    return question.prio_budget.id + question.prio_functions.id + question.prio_operation.id + question.prio_water_safety.id
+def get_priority(question: Question) -> int:
+    return question.combined_priority
 
 
 def add_column(fig: Figure, time_groups, time_frame: TimeFrame):
@@ -31,7 +31,7 @@ def add_column(fig: Figure, time_groups, time_frame: TimeFrame):
                 Group(
                     time_frame=time_frame,
                     research_line=group,
-                    questions=[Question(research_question=q) for q in sorted(now_questions_groups[group], key=get_priority)],
+                    questions=sorted([Question(research_question=q) for q in now_questions_groups[group]], key=get_priority, reverse=True),
                 )
             )
 

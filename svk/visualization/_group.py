@@ -67,7 +67,7 @@ class Group(BaseModel):
         dwg.add(
             dwg.text(
                 self.research_line.title,
-                insert=(x + self.arrow_depth + self.header_margin, y + self.header_margin + self.font_size),
+                insert=(x + self.arrow_depth + self.header_margin, y + self.header_height / 2),
                 font_size=self.font_size,
                 font_family="Arial",
                 font_weight="bold",
