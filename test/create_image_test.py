@@ -1,6 +1,6 @@
 from svgwrite import Drawing
 from svk.visualization import add_time_headers, add_group
-from svk.visualization.helpers import color_toward_grey, wrapped_text, measure_text
+from svk.visualization.helpers import color_toward_grey, wrapped_text, measure_text, wrapped_lines
 from svk.io import svg_to_pdf
 import math
 
@@ -33,7 +33,7 @@ def test_create_image():
         y=y_group1,
         width=group_width,
         height=600,
-        color=color_toward_grey(orange[0], orange[1], orange[2], grey_fraction=0),
+        color=color_toward_grey(orange, grey_fraction=0),
         header="Test groep",
         arrow_depth=arrow_depth,
         group_header_height=group_header_height,
@@ -50,7 +50,8 @@ def test_create_image():
     height = h * n_lines * 1.2 + text_margin * 2
 
     dwg.add(dwg.rect(insert=(x, y), size=(width, height), stroke_width=0.5, fill="white", stroke="black"))
-    dwg.add(wrapped_text(dwg, text, (x + text_margin, y + paper_margin / 2 + text_margin), max_width=width - paper_margin))
+    lines = wrapped_lines(text=text, max_width=width - paper_margin)
+    dwg.add(wrapped_text(dwg, lines=lines, insert=(x + text_margin, y + paper_margin / 2 + text_margin)))
 
     add_group(
         dwg,
@@ -59,7 +60,7 @@ def test_create_image():
         y=2 * paper_margin + column_header_height,
         width=round(column_width - arrow_depth),
         height=600,
-        color=color_toward_grey(orange[0], orange[1], orange[2], grey_fraction=0.5),
+        color=color_toward_grey(orange, grey_fraction=0.5),
         header="Test groep",
         arrow_depth=arrow_depth,
     )
@@ -71,7 +72,7 @@ def test_create_image():
         y=2 * paper_margin + column_header_height,
         width=round(column_width - arrow_depth),
         height=600,
-        color=color_toward_grey(orange[0], orange[1], orange[2], grey_fraction=0.8),
+        color=color_toward_grey(orange, grey_fraction=0.8),
         header="Test groep",
         arrow_depth=arrow_depth,
     )

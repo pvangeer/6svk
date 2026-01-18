@@ -1,6 +1,4 @@
-from svk.visualization.helpers import wrapped_text
-
-
+# TODO: Remove
 def add_group(
     dwg,
     id: str,
@@ -45,12 +43,12 @@ def add_group(
     dwg.add(polygon)
 
     dwg.add(
-        wrapped_text(
-            dwg,
+        dwg.text(
             header,
             insert=(x + arrow_depth + header_margin, y + header_margin + header_font_size),
-            max_width=width,
             font_size=header_font_size,
             font_weight="bold",
+            text_anchor="start",
+            dominant_baseline="middle",
         )
     )

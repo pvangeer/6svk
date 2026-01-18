@@ -6,9 +6,10 @@ from svk.io import svg_to_pdf
 def generate_research_question(question, time_frame, research_line: ResearchLine):
     generate_research_question.counter += 1
     return ResearchQuestion(
+        id=f"T{str(generate_research_question.counter)}",
         question=question,
         storm_surge_barrier=["HV"],
-        reference_codes=[f"T{str(generate_research_question.counter)}"],
+        reference_ids=[],
         reference_number=generate_research_question.counter,
         prio_water_safety=Priority.Low,
         prio_budget=Priority.High,
@@ -24,7 +25,7 @@ generate_research_question.counter = 0
 
 def test_create_image():
     fig = Figure()
-    adaptation_now = Group(time_frame=TimeFrame.Now, research_line=ResearchLines.Adaptation.value, base_color=(237, 113, 39))
+    adaptation_now = Group(time_frame=TimeFrame.Now, research_line=ResearchLines.Adaptation.value)
     adaptation_now.questions.append(
         Question(
             research_question=generate_research_question(
@@ -50,7 +51,7 @@ def test_create_image():
     )
     fig.columns[0].groups.append(adaptation_now)
 
-    cyber_near = Group(time_frame=TimeFrame.NearFuture, research_line=ResearchLines.Cyber.value, base_color=(237, 113, 39))
+    cyber_near = Group(time_frame=TimeFrame.NearFuture, research_line=ResearchLines.Cyber.value)
     cyber_near.questions.append(
         Question(
             research_question=generate_research_question(
@@ -76,7 +77,7 @@ def test_create_image():
     )
     fig.columns[1].groups.append(cyber_near)
 
-    adaptation_near = Group(time_frame=TimeFrame.NearFuture, research_line=ResearchLines.Cyber.value, base_color=(237, 113, 39))
+    adaptation_near = Group(time_frame=TimeFrame.NearFuture, research_line=ResearchLines.Cyber.value)
     adaptation_near.questions.append(
         Question(
             research_question=generate_research_question(

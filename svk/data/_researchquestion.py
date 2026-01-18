@@ -27,10 +27,11 @@ from svk.data._researchline import ResearchLine
 
 
 class ResearchQuestion(BaseModel):
+    id: str
     question: str
     storm_surge_barrier: list[str]
-    reference_codes: list[str]
-    reference_number: int
+    reference_ids: list[str]
+    reference_number: int | None = None
 
     prio_water_safety: Priority
     prio_functions: Priority

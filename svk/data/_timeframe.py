@@ -23,8 +23,12 @@ from enum import Enum
 
 
 class TimeFrame(Enum):
-    NotRelevant = "niet relevant"
-    Now = "nu"
-    NearFuture = "boeggolf"
-    Future = "toekomst"
-    Unknown = "onbekend"
+    NotRelevant = ("niet relevant", 1)
+    Now = ("nu", 0.0)
+    NearFuture = ("boeggolf", 0.5)
+    Future = ("toekomst", 0.8)
+    Unknown = ("onbekend", 0)
+
+    def __init__(self, description: str, grey_fraction: float):
+        self.description = description
+        self.grey_fraction = grey_fraction

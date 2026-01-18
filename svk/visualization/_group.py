@@ -1,15 +1,14 @@
-from svk.data import ResearchLine, ResearchQuestion
-from svk.visualization._timeframeaware import TimeFrameAware
+from pydantic import BaseModel
+from svk.data import ResearchLine, TimeFrame
 from svk.visualization._question import Question
 from svk.visualization.helpers._greyfraction import color_toward_grey
-from svk.visualization.helpers._drawwrappedtext import wrapped_text
 import uuid
 
 
-class Group(TimeFrameAware):
+class Group(BaseModel):
+    time_frame: TimeFrame
     research_line: ResearchLine
     questions: list[Question] = []
-    base_color: tuple[int, int, int]
 
     header_height: int = 30
     header_margin: int = 10
@@ -19,7 +18,10 @@ class Group(TimeFrameAware):
 
     @property
     def color(self):
-        return color_toward_grey(self.base_color[0], self.base_color[1], self.base_color[2], self.grey_fraction())
+        return color_toward_grey(
+            self.research_line.base_color,
+            self.time_frame.grey_fraction,
+        )
 
     def get_height(self) -> int:
         return self.header_height + sum([question.height + self.question_margin for question in self.questions]) + self.question_margin
@@ -63,12 +65,13 @@ class Group(TimeFrameAware):
         dwg.add(polygon)
 
         dwg.add(
-            wrapped_text(
-                dwg,
+            dwg.text(
                 self.research_line.title,
                 insert=(x + self.arrow_depth + self.header_margin, y + self.header_margin + self.font_size),
-                max_width=width,
                 font_size=self.font_size,
+                font_family="Arial",
                 font_weight="bold",
+                text_anchor="start",
+                dominant_baseline="middle",
             )
         )

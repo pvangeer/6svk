@@ -4,36 +4,44 @@ from svgwrite import Drawing
 from svgwrite.elementfactory import ElementBuilder
 
 
+def wrapped_lines(
+    text: str,
+    max_width: float,
+    font_size: int = 12,
+) -> list[str]:
+    words = text.split()
+    lines = []
+    line = ""
+    for word in words:
+        test_line = line + word + " "
+        (w, _) = measure_text(test_line, font_size)
+        if w > max_width:
+            lines.append(line)
+            line = word + " "
+        else:
+            line = test_line
+    if line:
+        lines.append(line)
+
+    return lines
+
+
 def wrapped_text(
     dwg: Drawing,
-    text,
-    insert,
-    max_width,
-    line_height=1.2,
+    lines: list[str],
+    insert: tuple[float, float],
+    line_height: float = 1.2,
     font_size: int = 12,
     font_family: str = "Arial",
     font_weight: str = "normal",
-    horizontal_alignment: str = "start",
+    text_anchor: str = "start",
     dominant_baseline: str = "middle",
 ) -> ElementBuilder:
     text_elem = dwg.text("", insert=insert, dominant_baseline=dominant_baseline)
 
-    words = text.split()
-    line = ""
     y = insert[1]
 
-    for word in words:
-        test_line = line + word + " "
-        (w, h) = measure_text(test_line, font_size)
-        if w > max_width:
-            tspan = dwg.tspan(line, x=[insert[0]], y=[y], font_size=font_size, font_family=font_family, font_weight=font_weight)
-            text_elem.add(tspan)
-            line = word + " "
-            y += font_size * line_height
-        else:
-            line = test_line
-
-    if line:
+    for line in lines:
         text_elem.add(
             dwg.tspan(
                 line,
@@ -42,8 +50,9 @@ def wrapped_text(
                 font_size=font_size,
                 font_family=font_family,
                 font_weight=font_weight,
-                text_anchor=horizontal_alignment,
+                text_anchor=text_anchor,
             )
         )
+        y += font_size * line_height
 
     return text_elem

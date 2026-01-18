@@ -28,3 +28,9 @@ print(sys.path)
 def test_database_creation():
     d = Database("C:/src/6svk/examples/Example-RP.xlsx")
     d.read()
+
+
+def test_database_creation_full_database():
+    d = Database("C:/src/6svk/examples/Example-HV.xlsx")
+    d.read()
+    print(len(d))

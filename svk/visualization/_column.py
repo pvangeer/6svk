@@ -2,10 +2,10 @@ from svgwrite import Drawing
 from svk.data import TimeFrame
 from svk.visualization._header import Header
 from svk.visualization._group import Group
-from svk.visualization._timeframeaware import TimeFrameAware
+from pydantic import BaseModel
 
 
-class Column(TimeFrameAware):
+class Column(BaseModel):
     time_frame: TimeFrame
     groups: list[Group] = []
     column_width: int = 650
@@ -22,19 +22,7 @@ class Column(TimeFrameAware):
         return self.header.height + sum([group.get_height() + self.group_margin for group in self.groups])
 
     def grey_fraction(self) -> float:
-        match self.time_frame:
-            case TimeFrame.Now:
-                return 0
-            case TimeFrame.NearFuture:
-                return 0.5
-            case TimeFrame.Future:
-                return 0.8
-            case TimeFrame.NotRelevant:
-                return 1
-            case TimeFrame.Unknown:
-                return 0.0
-            case _:
-                raise ValueError("Unknown time frame")
+        return self.time_frame.grey_fraction
 
     def draw(self, dwg: Drawing, x: int, y: int):
         self.header.draw(dwg, x, y)

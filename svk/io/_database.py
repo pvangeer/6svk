@@ -42,24 +42,25 @@ class Database(list[ResearchQuestion]):
             try:
                 self.append(
                     ResearchQuestion(
-                        question=Database._get_str(row[3]),
+                        question=Database._get_str(row[5]),
                         storm_surge_barrier=Database._get_str(row[0]).split(","),
-                        action_holder=Database._get_str_optional(row[13]),
-                        costs_estimate=Database._get_int_optional(row[14]),
-                        lead_time=Database._get_int_optional(row[15]),
-                        prio_budget=Database._get_priority(row[6]),
-                        prio_functions=Database._get_priority(row[5]),
-                        prio_operation=Database._get_priority(row[7]),
-                        prio_water_safety=Database._get_priority(row[4]),
-                        reference_number=Database._get_int(row[2]),
-                        reference_codes=Database._get_str(row[1]).replace(";", ",").split(","),
-                        research_line_primary=ResearchLine.get_research_line(Database._get_int(row[9])),
+                        action_holder=Database._get_str_optional(row[15]),
+                        costs_estimate=Database._get_int_optional(row[16]),
+                        lead_time=Database._get_int_optional(row[17]),
+                        prio_budget=Database._get_priority(row[8]),
+                        prio_functions=Database._get_priority(row[7]),
+                        prio_operation=Database._get_priority(row[9]),
+                        prio_water_safety=Database._get_priority(row[6]),
+                        id=Database._get_str(row[1]),
+                        reference_number=Database._get_int_optional(row[3]),
+                        reference_ids=Database._get_str(row[2]).replace(";", ",").split(",") if not Database._empty(row[2]) else [],
+                        research_line_primary=ResearchLine.get_research_line(Database._get_research_line_int(row[11])),
                         research_line_secondary=(
-                            ResearchLine.get_research_line(Database._get_int(row[10]))
-                            if Database._get_int_optional(row[10]) is not None
+                            ResearchLine.get_research_line(Database._get_research_line_int(row[12]))
+                            if Database._get_str_optional(row[12]) is not None
                             else None
                         ),
-                        time_frame=Database._get_time_frame(row[8]),
+                        time_frame=Database._get_time_frame(row[10]),
                     )
                 )
             except:
@@ -94,6 +95,17 @@ class Database(list[ResearchQuestion]):
             return None
 
         return int(value)
+
+    @staticmethod
+    def _get_research_line_int(value) -> int:
+        if not isinstance(value, str) or value is None:
+            raise ValueError("Read cell is of incorrect type.")
+
+        return int(str(value).split(".")[0])
+
+    @staticmethod
+    def _empty(value) -> bool:
+        return value == None
 
     @staticmethod
     def _get_priority(value) -> Priority:
