@@ -50,12 +50,18 @@ class Question(BaseModel):
         return self
 
     @property
-    def combined_priority(self) -> int:
+    def high_priority(self) -> bool:
         return (
-            self.research_question.prio_budget.id
-            + self.research_question.prio_functions.id
-            + self.research_question.prio_operation.id
-            + self.research_question.prio_water_safety.id
+            self.research_question.prio_bando.id == 3
+            or self.research_question.prio_water_safety.id == 3
+            or self.research_question.prio_operation.id == 3
+            or (
+                self.research_question.prio_bando.id
+                + self.research_question.prio_operation.id
+                + self.research_question.prio_water_safety.id
+                + self.research_question.prio_functions.id
+            )
+            > 8
         )
 
     @property
@@ -85,15 +91,15 @@ class Question(BaseModel):
         )
 
         y_middle = y + self.height / 2
-        if self.combined_priority < 6:
+        if not self.high_priority:
             draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle, width=self.priority_width)
-        elif self.combined_priority < 12:
+        else:
             draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle - 2.5, width=self.priority_width)
             draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle + 2.5, width=self.priority_width)
-        else:
-            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle + 5, width=self.priority_width)
-            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle, width=self.priority_width)
-            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle - 5, width=self.priority_width)
+        # else:
+        #     draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle + 5, width=self.priority_width)
+        #     draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle, width=self.priority_width)
+        #     draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle - 5, width=self.priority_width)
 
         if len(self._lines) < 1:
             self._lines = wrapped_lines(

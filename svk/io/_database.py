@@ -47,7 +47,7 @@ class Database(list[ResearchQuestion]):
                         action_holder=Database._get_str_optional(row[15]),
                         costs_estimate=Database._get_int_optional(row[16]),
                         lead_time=Database._get_int_optional(row[17]),
-                        prio_budget=Database._get_priority(row[8]),
+                        prio_bando=Database._get_priority(row[8]),
                         prio_functions=Database._get_priority(row[7]),
                         prio_operation=Database._get_priority(row[9]),
                         prio_water_safety=Database._get_priority(row[6]),

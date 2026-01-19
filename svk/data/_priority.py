@@ -23,10 +23,10 @@ from enum import Enum
 
 
 class Priority(Enum):
-    High = (1, "hoog")
+    High = (3, "hoog")
     Medium = (2, "middel")
-    Low = (3, "laag")
-    Unknown = (4, "onbekend")
+    Low = (1, "laag")
+    Unknown = (0, "onbekend")
 
     def __init__(self, id: int, description: str):
         self.description = description

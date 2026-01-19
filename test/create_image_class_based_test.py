@@ -12,7 +12,7 @@ def generate_research_question(question, time_frame, research_line: ResearchLine
         reference_ids=[],
         reference_number=generate_research_question.counter,
         prio_water_safety=Priority.Low,
-        prio_budget=Priority.High,
+        prio_bando=Priority.High,
         prio_functions=Priority.Medium,
         prio_operation=Priority.High,
         time_frame=time_frame,

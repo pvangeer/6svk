@@ -35,7 +35,7 @@ class ResearchQuestion(BaseModel):
 
     prio_water_safety: Priority
     prio_functions: Priority
-    prio_budget: Priority
+    prio_bando: Priority
     prio_operation: Priority
 
     time_frame: TimeFrame

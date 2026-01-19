@@ -13,7 +13,7 @@ for q in hv_questions:
 
 
 def get_priority(question: Question) -> int:
-    return question.combined_priority
+    return 1 if question.high_priority else 0
 
 
 def add_column(fig: Figure, time_groups, time_frame: TimeFrame):
