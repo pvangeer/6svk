@@ -26,7 +26,7 @@ class TimeFrame(Enum):
     NotRelevant = ("niet relevant", 1)
     Now = ("nu", 0.0)
     NearFuture = ("boeggolf", 0.5)
-    Future = ("toekomst", 0.8)
+    Future = ("toekomst", 0.7)
     Unknown = ("onbekend", 0)
 
     def __init__(self, description: str, grey_fraction: float):

@@ -15,8 +15,21 @@ class Figure(BaseModel):
     disclamer_font_size: int = 8
 
     def draw(self) -> Drawing:
+        y_start_group_1 = self.columns[0].header.height + 2 * self.paper_margin
+        y_start_group_2 = y_start_group_1 + max(
+            sum([g.get_height() + c.group_margin for g in c.groups if g.research_line.color_group == 1]) for c in self.columns
+        )
+        y_start_group_3 = y_start_group_2 + max(
+            sum([g.get_height() + c.group_margin for g in c.groups if g.research_line.color_group == 2]) for c in self.columns
+        )
+        for column in self.columns:
+            column.y_group_1 = y_start_group_1
+            column.y_group_2 = y_start_group_2
+            column.y_group_3 = y_start_group_3
+
         column_widths = [column.get_width() for column in self.columns]
         column_heights = [column.get_height() for column in self.columns]
+
         paper_height = self.paper_margin * 3 + max(column_heights) + 1.2 * self.disclamer_font_size
         dwg = Drawing(size=(f"{self.paper_margin * 2 + sum(column_widths)}px", f"{paper_height}px"), debug=False)
 
