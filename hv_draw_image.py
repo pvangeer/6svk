@@ -26,7 +26,6 @@ def add_column(fig: Figure, time_groups, time_frame: TimeFrame):
             now_questions_groups[q.research_line_primary].append(q)
 
         for group in sorted(now_questions_groups.keys(), key=lambda g: g.number):
-            # TODO: Also style questions better.
             column.groups.append(
                 Group(
                     time_frame=time_frame,

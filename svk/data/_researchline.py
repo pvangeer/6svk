@@ -66,7 +66,7 @@ class ResearchLines(Enum):
     ConstructiveAspects = ResearchLine(number=1, title="Constructieve aspecten", base_color=orange)
     OperatingSystem = ResearchLine(number=2, title="Besturingssystemen / IA", base_color=orange)
     Facilities = ResearchLine(number=3, title="Voorzieningen en gebouwen", base_color=orange)
-    Maintenance = ResearchLine(number=4, title="Onderhoud (operationele aspecten)", base_color=orange)
+    Maintenance = ResearchLine(number=4, title="Onderhoud en operatie", base_color=orange)
     Cyber = ResearchLine(number=5, title="Cyber & security", base_color=light_green)
     Hydrodynamics = ResearchLine(number=6, title="Hydrodynamische effecten en belastingen", base_color=light_green)
     ProbabilityOfFailyre = ResearchLine(number=7, title="Faalkans", base_color=light_green)

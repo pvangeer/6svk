@@ -7,18 +7,47 @@ from svgwrite import Drawing
 
 
 class Figure(BaseModel):
+    disclaimer: str = (
+        "Dit is een eerste concept van de onderzoeksagenda stormvloedkeringen. Deze versie is ontstaan in samenwerking met de asset management teams van de keringen. De prioritering van de onderzoeksvragen moet nog gereviewd worden door o.a. de asset management teams en RWS WVL/GPO. De indeling in tijdsperiode is op dit moment in ontwikkeling. Voor vragen, neem contact op met Marit de Jong of Riva de Vries."
+    )
     columns: list[Column] = [Column(time_frame=TimeFrame.Now), Column(time_frame=TimeFrame.NearFuture), Column(time_frame=TimeFrame.Future)]
     paper_margin: int = 20
+    disclamer_font_size: int = 8
 
     def draw(self) -> Drawing:
         column_widths = [column.get_width() for column in self.columns]
         column_heights = [column.get_height() for column in self.columns]
-
-        dwg = Drawing(size=(f"{self.paper_margin * 2 + sum(column_widths)}px", f"{self.paper_margin * 2 + max(column_heights)}px"))
+        paper_height = self.paper_margin * 3 + max(column_heights) + 1.2 * self.disclamer_font_size
+        dwg = Drawing(size=(f"{self.paper_margin * 2 + sum(column_widths)}px", f"{paper_height}px"), debug=False)
 
         x_current = self.paper_margin
         for column in self.columns:
             column.draw(dwg, x_current, self.paper_margin)
             x_current = x_current + column.get_width()
 
+        parts = self.disclaimer.split("Riva de Vries")
+
+        disclaimer_text_element = dwg.text(
+            parts[0],
+            insert=(self.paper_margin, self.paper_margin * 2 + max(column_heights)),
+            dominant_baseline="hanging",
+            text_anchor="start",
+            font_size=self.disclamer_font_size,
+        )
+
+        link = dwg.a("mailto:riva.de.vries@rws.nl")
+
+        link.add(
+            dwg.tspan(
+                "Riva de Vries",
+                fill="blue",
+                text_decoration="underline",
+                cursor="pointer",
+            )
+        )
+
+        disclaimer_text_element.add(link)
+        disclaimer_text_element.add(dwg.tspan(parts[1], font_size=self.disclamer_font_size))
+
+        dwg.add(disclaimer_text_element)
         return dwg
