@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from svk.data import TimeFrame
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.helpers._drawchevron import chevron
+import uuid
 
 
 class Header(BaseModel):
@@ -20,7 +21,7 @@ class Header(BaseModel):
             case TimeFrame.Now:
                 return "Nu"
             case TimeFrame.NearFuture:
-                return "Boeggolf"
+                return "Nabije toekomst"
             case TimeFrame.Future:
                 return "Toekomst"
             case TimeFrame.NotRelevant:
@@ -48,7 +49,7 @@ class Header(BaseModel):
 
     def draw(self, dwg: Drawing, x: int, y: int):
         draw_color = color_toward_grey(self.color, grey_fraction=self.time_frame.grey_fraction)
-        dwg.add(chevron(dwg, x=x, y=y, width=self.width, height=self.height, id=self.title, color=draw_color))
+        dwg.add(chevron(dwg, x=x, y=y, width=self.width, height=self.height, id=str(uuid.uuid4()), color=draw_color))
         y_column_header_text = y + self.height / 2
         dwg.add(
             dwg.text(
