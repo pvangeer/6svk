@@ -18,9 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from .draw._timeheaders import add_time_headers
-from .draw._group import add_group
-
 from ._header import Header
 from ._group import Group
 from ._column import Column

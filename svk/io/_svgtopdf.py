@@ -13,10 +13,8 @@ def svg_to_pdf(svg_dwg: Drawing, pdf_path: str):
     pdf_path : str
         Path to the output PDF file.
     """
-    # Convert SVG to string
     svg_content = svg_dwg.tostring()
 
-    # Wrap the SVG in minimal HTML
     html = f"""
     <html>
       <body style="margin:0; padding:0;">
@@ -26,12 +24,11 @@ def svg_to_pdf(svg_dwg: Drawing, pdf_path: str):
     """
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()  # headless by default
+        browser = p.chromium.launch()
         page = browser.new_page()
 
         page.set_content(html)
 
-        # Save PDF, using the SVG's width/height if set
         width = str(svg_dwg.attribs.get("width")) if "width" in svg_dwg.attribs else "800px"
         height = str(svg_dwg.attribs.get("height")) if "height" in svg_dwg.attribs else "600px"
 
