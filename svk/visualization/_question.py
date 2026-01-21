@@ -87,26 +87,26 @@ class Question(BaseModel):
     @property
     def color(self):
         research_line = self.research_question.research_line_primary
-        return color_toward_grey(
-            research_line.base_color,
-            self.research_question.time_frame.grey_fraction,
+        return (
+            color_toward_grey(
+                research_line.base_color,
+                self.research_question.time_frame.grey_fraction,
+            )
+            if research_line is not None
+            else "rgb(120,120,120)"
         )
 
     def draw(self, dwg, x, y):
         width = self.max_width
-
-        question_color = color_toward_grey(
-            self.research_question.research_line_primary.base_color, self.research_question.time_frame.grey_fraction
-        )
 
         dwg.add(
             dwg.rect(
                 insert=(x, y),
                 size=(width, self.height),
                 stroke_width=0.5,
-                fill=question_color,
+                fill=self.color,
                 fill_opacity=0.3,
-                stroke=question_color,
+                stroke=self.color,
             )
         )
 
