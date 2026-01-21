@@ -19,15 +19,14 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from pydantic import BaseModel
-from svk.data import ResearchLine, TimeFrame
 from svk.visualization._question import Question
-from svk.visualization.helpers._greyfraction import color_toward_grey
 import uuid
 
 
 class Group(BaseModel):
-    time_frame: TimeFrame
-    research_line: ResearchLine
+    title: str
+    color: str
+    number: int
     questions: list[Question] = []
 
     header_height: int = 30
@@ -35,13 +34,6 @@ class Group(BaseModel):
     font_size: int = 14
     question_margin: int = 5
     arrow_depth: int = 20  # TODO: Progress
-
-    @property
-    def color(self):
-        return color_toward_grey(
-            self.research_line.base_color,
-            self.time_frame.grey_fraction,
-        )
 
     def get_height(self) -> int:
         return self.header_height + sum([question.height + self.question_margin for question in self.questions]) + self.question_margin
@@ -86,7 +78,7 @@ class Group(BaseModel):
 
         dwg.add(
             dwg.text(
-                self.research_line.title,
+                self.title,
                 insert=(x + self.arrow_depth + self.header_margin, y + self.header_height / 2),
                 font_size=self.font_size,
                 font_family="Arial",

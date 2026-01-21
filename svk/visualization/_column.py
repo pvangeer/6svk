@@ -19,14 +19,15 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from svk.data import TimeFrame
 from svk.visualization._header import Header
 from svk.visualization._group import Group
 from pydantic import BaseModel
 
 
 class Column(BaseModel):
-    time_frame: TimeFrame
+    header_title: str
+    header_sub_title: str
+    header_color: str
     groups: list[Group] = []
     column_width: int = 650
     group_margin: int = 20
@@ -36,25 +37,18 @@ class Column(BaseModel):
 
     @property
     def header(self) -> Header:
-        return Header(time_frame=self.time_frame)
+        return Header(title=self.header_title, sub_title=self.header_sub_title, color=self.header_color)
 
     def get_width(self):
         return self.column_width
 
     def get_height(self):
         if self.y_group_3 is not None:
-            return self.y_group_3 + sum(
-                [group.get_height() + self.group_margin for group in self.groups if group.research_line.color_group == 3]
-            )
+            return self.y_group_3 + sum([group.get_height() + self.group_margin for group in self.groups if group.number == 3])
         elif self.y_group_2 is not None:
-            return self.y_group_2 + sum(
-                [group.get_height() + self.group_margin for group in self.groups if group.research_line.color_group > 1]
-            )
+            return self.y_group_2 + sum([group.get_height() + self.group_margin for group in self.groups if group.number > 1])
         else:
             return self.header.height + sum([group.get_height() + self.group_margin for group in self.groups])
-
-    def grey_fraction(self) -> float:
-        return self.time_frame.grey_fraction
 
     def draw(self, dwg: Drawing, x: int, y: int):
         self.header.draw(dwg, x, y)
@@ -62,13 +56,9 @@ class Column(BaseModel):
         current_y = y + self.header.height + self.group_margin
         current_group_no = self.groups[0] if self.groups else 1
         for group in self.groups:
-            if current_group_no != group.research_line.color_group:
-                current_group_no = group.research_line.color_group
-                y_new = (
-                    self.y_group_1
-                    if group.research_line.color_group == 1
-                    else self.y_group_2 if group.research_line.color_group == 2 else self.y_group_3
-                )
+            if current_group_no != group.number:
+                current_group_no = group.number
+                y_new = self.y_group_1 if group.number == 1 else self.y_group_2 if group.number == 2 else self.y_group_3
                 if y_new is not None:
                     current_y = y_new
 

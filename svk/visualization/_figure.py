@@ -19,10 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from pydantic import BaseModel
-
-from svk.data import TimeFrame
 from svk.visualization._column import Column
-
 from svgwrite import Drawing
 
 
@@ -30,17 +27,18 @@ class Figure(BaseModel):
     disclaimer: str = (
         "Dit is een eerste concept van de onderzoeksagenda stormvloedkeringen. Deze versie is ontstaan in samenwerking met de asset management teams van de keringen. De prioritering van de onderzoeksvragen moet nog gereviewd worden door o.a. de asset management teams en RWS WVL/GPO. De indeling in tijdsperiode is op dit moment in ontwikkeling. Voor vragen, neem contact op met Marit de Jong of Riva de Vries."
     )
-    columns: list[Column] = [Column(time_frame=TimeFrame.Now), Column(time_frame=TimeFrame.NearFuture), Column(time_frame=TimeFrame.Future)]
+    columns: list[Column] = []
     paper_margin: int = 20
     disclamer_font_size: int = 8
 
     def draw(self) -> Drawing:
+        # TODO: Make number of groups configurable (provide list for example)
         y_start_group_1 = self.columns[0].header.height + 2 * self.paper_margin
         y_start_group_2 = y_start_group_1 + max(
-            sum([g.get_height() + c.group_margin for g in c.groups if g.research_line.color_group == 1]) for c in self.columns
+            sum([g.get_height() + c.group_margin for g in c.groups if g.number == 1]) for c in self.columns
         )
         y_start_group_3 = y_start_group_2 + max(
-            sum([g.get_height() + c.group_margin for g in c.groups if g.research_line.color_group == 2]) for c in self.columns
+            sum([g.get_height() + c.group_margin for g in c.groups if g.number == 2]) for c in self.columns
         )
         for column in self.columns:
             column.y_group_1 = y_start_group_1

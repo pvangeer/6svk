@@ -20,56 +20,22 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from svgwrite import Drawing
 from pydantic import BaseModel
-from svk.data import TimeFrame
-from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.helpers._drawchevron import chevron
 import uuid
 
 
 class Header(BaseModel):
-    time_frame: TimeFrame
+    title: str
+    sub_title: str
     height: int = 80
     width: int = 650
     arrow_depth: int = 20
     text_margin: int = 10
     font_size: int = 18
-    color: tuple[int, int, int] = (18, 103, 221)
-
-    @property
-    def title(self) -> str:
-        match self.time_frame:
-            case TimeFrame.Now:
-                return "Nu"
-            case TimeFrame.NearFuture:
-                return "Nabije toekomst"
-            case TimeFrame.Future:
-                return "Toekomst"
-            case TimeFrame.NotRelevant:
-                return "Niet relevant"
-            case TimeFrame.Unknown:
-                return "Onbekend"
-            case _:
-                raise ValueError("Unknown time frame")
-
-    @property
-    def sub_title(self) -> str:
-        match self.time_frame:
-            case TimeFrame.Now:
-                return ""
-            case TimeFrame.NearFuture:
-                return "(2033 - 2040)"
-            case TimeFrame.Future:
-                return "(>2040)"
-            case TimeFrame.NotRelevant:
-                return "(-)"
-            case TimeFrame.Unknown:
-                return "(?)"
-            case _:
-                raise ValueError("Unknown time frame")
+    color: str
 
     def draw(self, dwg: Drawing, x: int, y: int):
-        draw_color = color_toward_grey(self.color, grey_fraction=self.time_frame.grey_fraction)
-        dwg.add(chevron(dwg, x=x, y=y, width=self.width, height=self.height, id=str(uuid.uuid4()), color=draw_color))
+        dwg.add(chevron(dwg, x=x, y=y, width=self.width, height=self.height, id=str(uuid.uuid4()), color=self.color))
         y_column_header_text = y + self.height / 2
         dwg.add(
             dwg.text(
