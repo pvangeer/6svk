@@ -36,4 +36,4 @@ def test_svgtopdf_produces_figure():
     svg_to_pdf(dwg, pt)
     assert os.path.isfile(pt)
 
-    # os.remove(pt)
+    os.remove(pt)

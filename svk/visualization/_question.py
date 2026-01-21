@@ -72,14 +72,14 @@ class Question(BaseModel):
     @property
     def high_priority(self) -> bool:
         return (
-            self.research_question.prio_bando.id == 3
+            self.research_question.prio_management_maintenance.id == 3
             or self.research_question.prio_water_safety.id == 3
             or self.research_question.prio_operation.id == 3
             or (
-                self.research_question.prio_bando.id
+                self.research_question.prio_management_maintenance.id
                 + self.research_question.prio_operation.id
                 + self.research_question.prio_water_safety.id
-                + self.research_question.prio_functions.id
+                + self.research_question.prio_other_functions.id
             )
             > 8
         )

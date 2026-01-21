@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from svk.data._timeframe import TimeFrame
 from svk.data._priority import Priority
@@ -29,20 +29,27 @@ from svk.data._researchline import ResearchLine
 class ResearchQuestion(BaseModel):
     id: str
     question: str
+    explanation: str | None = None
     storm_surge_barrier: list[str]
     reference_ids: list[str]
-    reference_number: int | None = None
+    reference_question: int | None = None
 
     prio_water_safety: Priority
-    prio_functions: Priority
-    prio_bando: Priority
+    prio_other_functions: Priority
+    prio_management_maintenance: Priority
     prio_operation: Priority
 
     time_frame: TimeFrame
     lead_time: float | None = None
 
-    research_line_primary: ResearchLine
+    research_line_primary: ResearchLine | None
     research_line_secondary: ResearchLine | None = None
 
     action_holder: str | None = None
     costs_estimate: float | None = None
+
+    @model_validator(mode="after")
+    def check_research_line(cls, model):
+        if model.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and model.research_line_primary is None:
+            raise ValueError("Research line can only be unknown in case the time frame is either not relevant or unknown.")
+        return model

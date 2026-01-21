@@ -6,6 +6,8 @@ from collections import defaultdict
 
 hv_questions = Database("C:/src/6svk/examples/Example-HV.xlsx")
 hv_questions.read()
+for e in hv_questions.errors:
+    print(f"{e.cell_reference}: {str(e)}")
 
 time_groups = defaultdict(list[ResearchQuestion])
 for q in hv_questions:
