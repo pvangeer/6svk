@@ -25,27 +25,7 @@ from svk.data import ResearchQuestion
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._drawwrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
-
-
-def draw_priority_arrow(dwg, x: float, y: float, width: float, height: float = 5, stroke_color="black"):
-    stroke_width = 3
-    line1 = dwg.line(
-        start=(x, y + height / 2),
-        end=(x + width / 2, y - height / 2),
-        stroke=stroke_color,
-        stroke_width=stroke_width,
-        stroke_linecap="round",
-    )
-    line2 = dwg.line(
-        start=(x + width / 2, y - height / 2),
-        end=(x + width, y + height / 2),
-        stroke=stroke_color,
-        stroke_width=stroke_width,
-        stroke_linecap="round",
-    )
-    dwg.add(line1)
-    dwg.add(line2)
-    pass
+from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
 
 
 class Question(BaseModel):
@@ -54,6 +34,7 @@ class Question(BaseModel):
     font_size: int = 12
     text_margin: int = 5
     priority_width: int = 15
+    svk_icon_width: int = 24
     height: int = Field(default_factory=int)
     _lines: list[str] = []
 
@@ -61,6 +42,7 @@ class Question(BaseModel):
     def compute_height(self):
         self._lines = wrapped_lines(
             self.research_question.question,
+            # max_width=self.max_width - 2 * self.text_margin - self.priority_box_width - self.svk_icon_width,
             max_width=self.max_width - self.text_margin - self.priority_box_width,
             font_size=self.font_size,
         )
@@ -116,15 +98,11 @@ class Question(BaseModel):
         else:
             draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle - 2.5, width=self.priority_width)
             draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle + 2.5, width=self.priority_width)
-        # else:
-        #     draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle + 5, width=self.priority_width)
-        #     draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle, width=self.priority_width)
-        #     draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle - 5, width=self.priority_width)
 
         if len(self._lines) < 1:
             self._lines = wrapped_lines(
                 self.research_question.question,
-                max_width=width - 2 * self.text_margin - self.priority_box_width,
+                max_width=width - 2 * self.text_margin - self.priority_box_width - self.svk_icon_width,
                 font_size=self.font_size,
             )
 
