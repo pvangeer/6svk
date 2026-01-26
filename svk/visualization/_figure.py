@@ -20,6 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from pydantic import BaseModel
 from svk.visualization._column import Column
+from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
 from svgwrite import Drawing
 
 
@@ -56,29 +57,14 @@ class Figure(BaseModel):
             column.draw(dwg, x_current, self.paper_margin)
             x_current = x_current + column.get_width()
 
-        parts = self.disclaimer.split("Riva de Vries")
-
-        disclaimer_text_element = dwg.text(
-            parts[0],
+        draw_disclaimer(
+            dwg=dwg,
+            disclaimer_text=self.disclaimer,
             insert=(self.paper_margin, self.paper_margin * 2 + max(column_heights)),
             dominant_baseline="hanging",
             text_anchor="start",
             font_size=self.disclamer_font_size,
+            links=[("Riva de Vries", "mailto:riva.de.vries@rws.nl"), ("Marit de Jong", "mailto:marit.de.jong@rws.nl")],
         )
 
-        link = dwg.a("mailto:riva.de.vries@rws.nl")
-
-        link.add(
-            dwg.tspan(
-                "Riva de Vries",
-                fill="blue",
-                text_decoration="underline",
-                cursor="pointer",
-            )
-        )
-
-        disclaimer_text_element.add(link)
-        disclaimer_text_element.add(dwg.tspan(parts[1], font_size=self.disclamer_font_size))
-
-        dwg.add(disclaimer_text_element)
         return dwg
