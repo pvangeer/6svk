@@ -21,10 +21,20 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from pydantic import BaseModel
 from svk.visualization._column import Column
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
+from svk.visualization.helpers.icons._icons import BarrierIcons
+from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 from svgwrite import Drawing
+import uuid
+import os
+import base64
+from PIL import Image
 
 
 class Figure(BaseModel):
+    barrier_icon: BarrierIcons | None = None
+    title: str
+    title_height: int = 80
+    title_font_size: int = 64
     disclaimer: str = (
         "Dit is een eerste concept van de onderzoeksagenda stormvloedkeringen. Deze versie is ontstaan in samenwerking met de asset management teams van de keringen. De prioritering van de onderzoeksvragen moet nog gereviewd worden door o.a. de asset management teams en RWS WVL/GPO. De indeling in tijdsperiode is op dit moment in ontwikkeling. Voor vragen, neem contact op met Marit de Jong of Riva de Vries."
     )
@@ -34,7 +44,7 @@ class Figure(BaseModel):
 
     def draw(self) -> Drawing:
         # TODO: Make number of groups configurable (provide list for example)
-        y_start_group_1 = self.columns[0].header.height + 2 * self.paper_margin
+        y_start_group_1 = self.columns[0].header.height + 3 * self.paper_margin + self.title_height
         y_start_group_2 = y_start_group_1 + max(
             sum([g.get_height() + c.group_margin for g in c.groups if g.number == 1]) for c in self.columns
         )
@@ -49,18 +59,52 @@ class Figure(BaseModel):
         column_widths = [column.get_width() for column in self.columns]
         column_heights = [column.get_height() for column in self.columns]
 
-        paper_height = self.paper_margin * 3 + max(column_heights) + 1.2 * self.disclamer_font_size
-        dwg = Drawing(size=(f"{self.paper_margin * 2 + sum(column_widths)}px", f"{paper_height}px"), debug=False)
+        paper_height = self.title_height + self.paper_margin * 4 + max(column_heights) + 1.2 * self.disclamer_font_size
+        paper_width = self.paper_margin * 2 + sum(column_widths)
+        dwg = Drawing(size=(f"{paper_width}px", f"{paper_height}px"), debug=False)
+
+        if self.barrier_icon is not None:
+            icon_size = self.title_height
+            dwg.add(
+                dwg.rect(
+                    insert=(self.paper_margin, self.paper_margin),
+                    size=(icon_size, icon_size),
+                    rx=0,
+                    ry=0,
+                    fill="none",
+                    # fill='lightblue',     # fill color
+                    stroke="black",  # border color
+                    stroke_width=1,
+                )
+            )
+            draw_scaled_icon(
+                dwg=dwg,
+                icon=self.barrier_icon,
+                insert=(self.paper_margin + 3, self.paper_margin + 3),
+                size=(icon_size - 6, icon_size - 6),
+            )
+
+        dwg.add(
+            dwg.text(
+                self.title,
+                insert=(2 * self.paper_margin + self.title_height, self.paper_margin + self.title_height / 2),
+                font_size=self.title_font_size,
+                font_family="Arial",
+                font_weight="bold",
+                text_anchor="start",
+                dominant_baseline="middle",
+            )
+        )
 
         x_current = self.paper_margin
         for column in self.columns:
-            column.draw(dwg, x_current, self.paper_margin)
+            column.draw(dwg, x_current, self.title_height + 2 * self.paper_margin)
             x_current = x_current + column.get_width()
 
         draw_disclaimer(
             dwg=dwg,
             disclaimer_text=self.disclaimer,
-            insert=(self.paper_margin, self.paper_margin * 2 + max(column_heights)),
+            insert=(self.paper_margin, self.paper_margin * 3 + max(column_heights) + self.title_height),
             dominant_baseline="hanging",
             text_anchor="start",
             font_size=self.disclamer_font_size,

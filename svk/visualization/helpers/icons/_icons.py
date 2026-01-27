@@ -3,6 +3,9 @@ from pathlib import Path
 
 
 class BarrierIcons(Enum):
-    __icon_base_path = Path(__file__).resolve().parent
-    MaeslantBarrier = str(__icon_base_path / "MaeslantKering.svg")
-    HartelBarrier = str(__icon_base_path / "MaeslantKering.svg")
+    MaeslantBarrier = 1
+    HartelBarrier = 2
+    Ramspol = 3
+    HollandseIJsselBarrier = 4
+    EasternScheldBarrier = 5
+    HaringvlietBarrier = 6

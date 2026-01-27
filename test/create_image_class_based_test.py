@@ -24,8 +24,8 @@ generate_research_question.counter = 0
 
 
 def test_create_image():
-    fig = Figure()
-    adaptation_now = Group(time_frame=TimeFrame.Now, research_line=ResearchLines.Adaptation.value)
+    fig = Figure(title="Test-image")
+    adaptation_now = Group(title="test", color="black", number=1)
     adaptation_now.questions.append(
         Question(
             research_question=generate_research_question(
@@ -51,7 +51,11 @@ def test_create_image():
     )
     fig.columns[0].groups.append(adaptation_now)
 
-    cyber_near = Group(time_frame=TimeFrame.NearFuture, research_line=ResearchLines.Cyber.value)
+    cyber_near = Group(
+        title="test",
+        color="blue",
+        number=2,
+    )
     cyber_near.questions.append(
         Question(
             research_question=generate_research_question(
@@ -77,7 +81,11 @@ def test_create_image():
     )
     fig.columns[1].groups.append(cyber_near)
 
-    adaptation_near = Group(time_frame=TimeFrame.NearFuture, research_line=ResearchLines.Cyber.value)
+    adaptation_near = Group(
+        title="test",
+        color="blue",
+        number=2,
+    )
     adaptation_near.questions.append(
         Question(
             research_question=generate_research_question(

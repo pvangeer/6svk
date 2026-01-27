@@ -40,33 +40,31 @@
      id="layer1">
     <path
        style="fill:#7a7a7a;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round"
-       d="M 32.719705,119.49805 C 142.37679,26.445768 215.95329,38.323024 259.62374,39.121386 v 88.200944 c -68.85629,51.38753 -147.47737,63.81212 -228.32663,69.7072 z"
-       id="path1"
-       sodipodi:nodetypes="ccccc" />
+       d="M 44.405365,174.76525 196.62312,119.63966 196.97877,71.271404 42.982775,124.61875 Z"
+       id="path1-1" />
     <path
        style="fill:none;stroke:#000000;stroke-width:20.065;stroke-linecap:round;stroke-linejoin:round"
-       d="M 30.154808,260.33504 V 119.49805"
+       d="M 40.062225,216.37618 V 75.539194"
+       id="path3-1"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:20.065;stroke-linecap:round;stroke-linejoin:round"
+       d="M 196.3172,174.10619 V 33.269194"
+       id="path3-0-5"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#7a7a7a;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round"
+       d="m 101.35995,235.79526 152.21776,-55.12559 0.35565,-48.36826 -153.996003,53.34735 z"
+       id="path1" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:20.065;stroke-linecap:round;stroke-linejoin:round"
+       d="M 97.016813,277.40619 V 136.5692"
        id="path3"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:20.065;stroke-linecap:round;stroke-linejoin:round"
-       d="M 258.25088,182.1445 V 41.307507"
+       d="M 253.27179,235.1362 V 94.299203"
        id="path3-0"
        sodipodi:nodetypes="cc" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:20.065;stroke-linecap:round;stroke-linejoin:round"
-       d="m 32.008407,123.76584 c 0,0 75.339703,-3.11429 131.590113,-22.05024 77.1771,-25.980644 93.89133,-57.615128 93.89133,-57.615128"
-       id="path4"
-       sodipodi:nodetypes="csc" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:20.065;stroke-linecap:round;stroke-linejoin:round"
-       d="m 30.585812,118.78675 c 0,0 37.239771,-41.162762 108.828578,-62.594213 70.33467,-21.056 117.36416,-15.648555 117.36416,-15.648555"
-       id="path5"
-       sodipodi:nodetypes="csc" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:20.065;stroke-linecap:round;stroke-linejoin:round"
-       d="m 30.588689,194.58625 c 0,0 75.695341,-2.75864 131.945751,-21.69459 77.1771,-25.98065 95.47911,-47.86534 95.47911,-47.86534"
-       id="path4-6"
-       sodipodi:nodetypes="csc" />
   </g>
 </svg>

@@ -6,6 +6,7 @@ from svk.visualization._column import Column
 from svk.visualization._group import Group
 from svk.visualization._question import Question
 from svk.visualization.helpers._greyfraction import color_toward_grey
+from svk.visualization.helpers.icons._icons import BarrierIcons
 from collections import defaultdict
 from typing import DefaultDict
 
@@ -77,13 +78,15 @@ def add_column(fig: Figure, time_groups, time_frame: TimeFrame):
         fig.columns.append(column)
 
 
-def create_image_from_database(database: list[ResearchQuestion], output_file_path: str):
+def create_image_from_database(
+    title: str, database: list[ResearchQuestion], output_file_path: str, barrier_icon: BarrierIcons | None = None
+):
     time_groups = defaultdict(list[ResearchQuestion])
 
     for q in database:
         time_groups[q.time_frame].append(q)
 
-    fig = Figure(columns=[])
+    fig = Figure(title=title, barrier_icon=barrier_icon, columns=[])
     add_column(fig=fig, time_groups=time_groups, time_frame=TimeFrame.Now)
     add_column(fig=fig, time_groups=time_groups, time_frame=TimeFrame.NearFuture)
     add_column(fig=fig, time_groups=time_groups, time_frame=TimeFrame.Future)
