@@ -20,19 +20,15 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from pydantic import BaseModel
 from svk.visualization._column import Column
+from svk.data import StormSurgeBarrier
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
-from svk.visualization.helpers.icons._icons import BarrierIcons
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 from svk.visualization.helpers._draw_callout import draw_callout
 from svgwrite import Drawing
-import uuid
-import os
-import base64
-from PIL import Image
 
 
 class Figure(BaseModel):
-    barrier_icon: BarrierIcons
+    storm_surge_barrier: StormSurgeBarrier
     title: str
     title_height: int = 80
     title_font_size: int = 64
@@ -72,7 +68,7 @@ class Figure(BaseModel):
         draw_callout(dwg, self.paper_margin, self.paper_margin, icon_width, icon_size, "#000000")
         draw_scaled_icon(
             dwg=dwg,
-            icon=self.barrier_icon,
+            storm_surge_barrier=self.storm_surge_barrier,
             insert=(self.paper_margin + self.arrow_depth + 2, self.paper_margin + 2),
             size=(icon_size - 4, icon_size - 4),
         )

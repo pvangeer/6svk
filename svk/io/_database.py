@@ -1,5 +1,5 @@
 """
-Copyright (C) Stichting Deltares 2024. All rights reserved.
+Copyright (C) Stichting Deltares 2026. All rights reserved.
 
 This file is part of the dikernel-python toolbox.
 
@@ -88,7 +88,7 @@ class Database(list[ResearchQuestion]):
                         id=Database._get_str(row, self.i_id),
                         question=Database._get_str(row, self.i_question),
                         explanation=Database._get_str_optional(row, self.i_explanation),
-                        storm_surge_barrier=Database._get_str(row, self.i_barrier).split(","),
+                        storm_surge_barrier=Database._get_str(row, self.i_barrier).split(","),  # TODO: Convert to StormSurgeBarrier
                         research_line_primary=Database._get_research_line_optional(row, self.i_primary_research_line),
                         research_line_secondary=Database._get_research_line_optional(row, self.i_secundary_research_line),
                         time_frame=Database._get_time_frame(row, self.i_time_frame),

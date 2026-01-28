@@ -1,5 +1,5 @@
 """
-Copyright (C) Stichting Deltares 2024. All rights reserved.
+Copyright (C) Stichting Deltares 2026. All rights reserved.
 
 This file is part of the dikernel-python toolbox.
 
@@ -17,5 +17,3 @@ program; if not, see <https://www.gnu.org/licenses/>.
 All names, logos, and references to "Deltares" are registered trademarks of Stichting
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
-
-from ._icons import BarrierIcons

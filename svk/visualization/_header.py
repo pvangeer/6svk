@@ -21,7 +21,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from svgwrite import Drawing
 from pydantic import BaseModel
 from svk.visualization.helpers._drawchevron import draw_half_chevron
-import uuid
 
 
 class Header(BaseModel):

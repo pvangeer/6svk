@@ -1,5 +1,5 @@
 """
-Copyright (C) Stichting Deltares 2024. All rights reserved.
+Copyright (C) Stichting Deltares 2026. All rights reserved.
 
 This file is part of the dikernel-python toolbox.
 
@@ -23,5 +23,4 @@ from ._group import Group
 from ._column import Column
 from ._figure import Figure
 from ._question import Question
-from .helpers.icons._icons import BarrierIcons
 from ._create_image_from_database import create_image_from_database

@@ -22,7 +22,6 @@ from pydantic import BaseModel, model_validator, Field
 import math
 
 from svk.data import ResearchQuestion
-from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._drawwrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow

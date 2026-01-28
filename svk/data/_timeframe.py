@@ -1,5 +1,5 @@
 """
-Copyright (C) Stichting Deltares 2023-2024. All rights reserved.
+Copyright (C) Stichting Deltares 2026. All rights reserved.
 
 This file is part of the dikernel-python toolbox.
 
@@ -18,7 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from __future__ import annotations
 from enum import Enum
 
 

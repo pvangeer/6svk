@@ -1,5 +1,5 @@
 """
-Copyright (C) Stichting Deltares 2024. All rights reserved.
+Copyright (C) Stichting Deltares 2026. All rights reserved.
 
 This file is part of the dikernel-python toolbox.
 
@@ -22,3 +22,4 @@ from ._researchquestion import ResearchQuestion
 from ._researchline import ResearchLine, ResearchLines
 from ._timeframe import TimeFrame
 from ._priority import Priority
+from ._stormsurgebarrier import StormSurgeBarrier

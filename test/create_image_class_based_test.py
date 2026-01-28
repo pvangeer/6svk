@@ -1,5 +1,25 @@
-from svk.visualization import Figure, Group, Question, BarrierIcons, Column
-from svk.data import TimeFrame, ResearchLines, ResearchQuestion, Priority, TimeFrame, ResearchLine
+"""
+Copyright (C) Stichting Deltares 2026. All rights reserved.
+
+This file is part of the dikernel-python toolbox.
+
+This program is free software; you can redistribute it and/or modify it under the terms of
+the GNU Lesser General Public License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this
+program; if not, see <https://www.gnu.org/licenses/>.
+
+All names, logos, and references to "Deltares" are registered trademarks of Stichting
+Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
+"""
+
+from svk.visualization import Figure, Group, Question, Column
+from svk.data import TimeFrame, ResearchLines, ResearchQuestion, Priority, TimeFrame, ResearchLine, StormSurgeBarrier
 from svk.io import svg_to_pdf
 
 
@@ -24,7 +44,7 @@ generate_research_question.counter = 0
 
 
 def test_create_image():
-    fig = Figure(title="Test-image", barrier_icon=BarrierIcons.All)
+    fig = Figure(title="Test-image", storm_surge_barrier=StormSurgeBarrier.All)
     adaptation_now = Group(title="test", color="black", number=1)
     adaptation_now.questions.append(
         Question(

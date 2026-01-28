@@ -1,5 +1,5 @@
 """
-Copyright (C) Stichting Deltares 2024. All rights reserved.
+Copyright (C) Stichting Deltares 2026. All rights reserved.
 
 This file is part of the dikernel-python toolbox.
 

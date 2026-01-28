@@ -1,12 +1,31 @@
+"""
+Copyright (C) Stichting Deltares 2026. All rights reserved.
+
+This file is part of the dikernel-python toolbox.
+
+This program is free software; you can redistribute it and/or modify it under the terms of
+the GNU Lesser General Public License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this
+program; if not, see <https://www.gnu.org/licenses/>.
+
+All names, logos, and references to "Deltares" are registered trademarks of Stichting
+Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
+"""
+
 from svk.data import ResearchQuestion
 from svk.io import svg_to_pdf
-from svk.data import TimeFrame, ResearchQuestion, ResearchLine
+from svk.data import TimeFrame, ResearchQuestion, ResearchLine, StormSurgeBarrier
 from svk.visualization._figure import Figure
 from svk.visualization._column import Column
 from svk.visualization._group import Group
 from svk.visualization._question import Question
 from svk.visualization.helpers._greyfraction import color_toward_grey
-from svk.visualization.helpers.icons._icons import BarrierIcons
 from collections import defaultdict
 from typing import DefaultDict
 
@@ -78,13 +97,13 @@ def add_column(fig: Figure, time_groups, time_frame: TimeFrame):
         fig.columns.append(column)
 
 
-def create_image_from_database(title: str, database: list[ResearchQuestion], output_file_path: str, barrier_icon: BarrierIcons):
+def create_image_from_database(title: str, database: list[ResearchQuestion], output_file_path: str, barrier_icon: StormSurgeBarrier):
     time_groups = defaultdict(list[ResearchQuestion])
 
     for q in database:
         time_groups[q.time_frame].append(q)
 
-    fig = Figure(title=title, barrier_icon=barrier_icon, columns=[])
+    fig = Figure(title=title, storm_surge_barrier=barrier_icon, columns=[])
     add_column(fig=fig, time_groups=time_groups, time_frame=TimeFrame.Now)
     add_column(fig=fig, time_groups=time_groups, time_frame=TimeFrame.NearFuture)
     add_column(fig=fig, time_groups=time_groups, time_frame=TimeFrame.Future)
