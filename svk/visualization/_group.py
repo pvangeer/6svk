@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from pydantic import BaseModel
 from svk.visualization._question import Question
-import uuid
+from svk.visualization.helpers._draw_callout import draw_callout
 
 
 class Group(BaseModel):
@@ -48,33 +48,7 @@ class Group(BaseModel):
             pass
 
     def draw_header(self, dwg, x, y, width):
-        gradient_id = f"gradient_group_header_{str(uuid.uuid4())}"
-        header_size = 30
-        group_height = self.get_height()
-        x_scale = width / header_size
-        radial_grad = dwg.radialGradient(
-            center=((x + 20) / x_scale, y),  # center in relative coords
-            r=header_size,  # radius relative to box
-            gradientUnits="userSpaceOnUse",
-            id=gradient_id,
-        )
-        radial_grad.add_stop_color(0, self.color)  # center
-        radial_grad.add_stop_color(1, "white")  # edge
-
-        radial_grad["gradientTransform"] = f"scale({x_scale},1)"
-
-        dwg.defs.add(radial_grad)
-
-        points = [
-            (x, y),
-            (x + width, y),
-            (x + width, y + group_height),
-            (x + self.arrow_depth, y + group_height),
-            (x + self.arrow_depth, y + self.header_height),
-        ]
-
-        polygon = dwg.polygon(points=points, stroke=self.color, fill=f"url(#{gradient_id})", stroke_width=0.5, id=str(uuid.uuid4()))
-        dwg.add(polygon)
+        draw_callout(dwg, x, y, width, self.get_height(), self.color)
 
         dwg.add(
             dwg.text(

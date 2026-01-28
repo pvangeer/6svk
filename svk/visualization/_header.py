@@ -20,14 +20,14 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from svgwrite import Drawing
 from pydantic import BaseModel
-from svk.visualization.helpers._drawchevron import chevron
+from svk.visualization.helpers._drawchevron import draw_half_chevron
 import uuid
 
 
 class Header(BaseModel):
     title: str
     sub_title: str
-    height: int = 80
+    height: int = 60
     width: int = 650
     arrow_depth: int = 20
     text_margin: int = 10
@@ -35,7 +35,7 @@ class Header(BaseModel):
     color: str
 
     def draw(self, dwg: Drawing, x: int, y: int):
-        dwg.add(chevron(dwg, x=x, y=y, width=self.width, height=self.height, id=str(uuid.uuid4()), color=self.color))
+        dwg.add(draw_half_chevron(dwg, x=x, y=y, width=self.width, height=self.height, color=self.color))
         y_column_header_text = y + self.height / 2
         dwg.add(
             dwg.text(

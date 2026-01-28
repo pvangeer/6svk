@@ -23,6 +23,7 @@ from svk.visualization._column import Column
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
 from svk.visualization.helpers.icons._icons import BarrierIcons
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
+from svk.visualization.helpers._draw_callout import draw_callout
 from svgwrite import Drawing
 import uuid
 import os
@@ -41,6 +42,7 @@ class Figure(BaseModel):
     columns: list[Column] = []
     paper_margin: int = 20
     disclamer_font_size: int = 8
+    arrow_depth: float = 20
 
     def draw(self) -> Drawing:
         # TODO: Make number of groups configurable (provide list for example)
@@ -61,33 +63,25 @@ class Figure(BaseModel):
 
         paper_height = self.title_height + self.paper_margin * 4 + max(column_heights) + 1.2 * self.disclamer_font_size
         paper_width = self.paper_margin * 2 + sum(column_widths)
+
         dwg = Drawing(size=(f"{paper_width}px", f"{paper_height}px"), debug=False)
 
+        icon_width = 0
         if self.barrier_icon is not None:
             icon_size = self.title_height
-            dwg.add(
-                dwg.rect(
-                    insert=(self.paper_margin, self.paper_margin),
-                    size=(icon_size, icon_size),
-                    rx=0,
-                    ry=0,
-                    fill="none",
-                    # fill='lightblue',     # fill color
-                    stroke="black",  # border color
-                    stroke_width=1,
-                )
-            )
+            icon_width = icon_size + self.arrow_depth
+            draw_callout(dwg, self.paper_margin, self.paper_margin, icon_width, icon_size, "#000000")
             draw_scaled_icon(
                 dwg=dwg,
                 icon=self.barrier_icon,
-                insert=(self.paper_margin + 3, self.paper_margin + 3),
-                size=(icon_size - 6, icon_size - 6),
+                insert=(self.paper_margin + self.arrow_depth + 2, self.paper_margin + 2),
+                size=(icon_size - 4, icon_size - 4),
             )
 
         dwg.add(
             dwg.text(
                 self.title,
-                insert=(2 * self.paper_margin + self.title_height, self.paper_margin + self.title_height / 2),
+                insert=(2 * self.paper_margin + icon_width, self.paper_margin + self.title_height / 2),
                 font_size=self.title_font_size,
                 font_family="Arial",
                 font_weight="bold",

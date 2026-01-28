@@ -22,29 +22,27 @@ from svgwrite import Drawing
 from uuid import uuid4
 
 
-def draw_half_chevron(
+def draw_callout(
     dwg: Drawing,
-    x: int,
-    y: int,
-    width: int,
-    height: int,
-    arrow_depth: int = 20,
-    color: str = "blue",
+    x: float,
+    y: float,
+    width: float,
+    height: float,
+    color: str,
     stroke_width: float = 0.5,
-    header_size: int = 30,
-    add_to_dwg: bool = True,
+    arrow_height: float = 30.0,
+    arrow_depth: float = 20,
 ):
-    x_scale = width / header_size
-    gradient_id = f"gradient_{str(uuid4())}"
-
+    gradient_id = f"gradient_group_header_{str(uuid4())}"
+    x_scale = width / arrow_height
     radial_grad = dwg.radialGradient(
-        center=((x + 20) / x_scale, y),
-        r=header_size,
+        center=((x + 20) / x_scale, y),  # center in relative coords
+        r=arrow_height,  # radius relative to box
         gradientUnits="userSpaceOnUse",
         id=gradient_id,
     )
-    radial_grad.add_stop_color(0, color)
-    radial_grad.add_stop_color(1, "white")
+    radial_grad.add_stop_color(0, color)  # center
+    radial_grad.add_stop_color(1, "white")  # edge
 
     radial_grad["gradientTransform"] = f"scale({x_scale},1)"
 
@@ -52,15 +50,11 @@ def draw_half_chevron(
 
     points = [
         (x, y),
-        (x + width - arrow_depth, y),
-        (x + width, y + height / 2),
-        (x + width - arrow_depth, y + height),
+        (x + width, y),
+        (x + width, y + height),
         (x + arrow_depth, y + height),
-        (x + arrow_depth, y + height / 2),
+        (x + arrow_depth, y + arrow_height),
     ]
-    polygon = dwg.polygon(points=points, stroke=color, fill=f"url(#{gradient_id})", stroke_width=stroke_width, id=id)
 
-    if add_to_dwg:
-        dwg.add(polygon)
-
-    return polygon
+    polygon = dwg.polygon(points=points, stroke=color, fill=f"url(#{gradient_id})", stroke_width=stroke_width, id=str(uuid4()))
+    dwg.add(polygon)
