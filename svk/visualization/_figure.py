@@ -32,7 +32,7 @@ from PIL import Image
 
 
 class Figure(BaseModel):
-    barrier_icon: BarrierIcons | None = None
+    barrier_icon: BarrierIcons
     title: str
     title_height: int = 80
     title_font_size: int = 64
@@ -67,16 +67,15 @@ class Figure(BaseModel):
         dwg = Drawing(size=(f"{paper_width}px", f"{paper_height}px"), debug=False)
 
         icon_width = 0
-        if self.barrier_icon is not None:
-            icon_size = self.title_height
-            icon_width = icon_size + self.arrow_depth
-            draw_callout(dwg, self.paper_margin, self.paper_margin, icon_width, icon_size, "#000000")
-            draw_scaled_icon(
-                dwg=dwg,
-                icon=self.barrier_icon,
-                insert=(self.paper_margin + self.arrow_depth + 2, self.paper_margin + 2),
-                size=(icon_size - 4, icon_size - 4),
-            )
+        icon_size = self.title_height
+        icon_width = icon_size + self.arrow_depth
+        draw_callout(dwg, self.paper_margin, self.paper_margin, icon_width, icon_size, "#000000")
+        draw_scaled_icon(
+            dwg=dwg,
+            icon=self.barrier_icon,
+            insert=(self.paper_margin + self.arrow_depth + 2, self.paper_margin + 2),
+            size=(icon_size - 4, icon_size - 4),
+        )
 
         dwg.add(
             dwg.text(

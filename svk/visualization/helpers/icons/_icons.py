@@ -3,6 +3,7 @@ from pathlib import Path
 
 
 class BarrierIcons(Enum):
+    All = 0
     MaeslantBarrier = 1
     HartelBarrier = 2
     Ramspol = 3

@@ -1,4 +1,4 @@
-from svk.visualization import Figure, Group, Question
+from svk.visualization import Figure, Group, Question, BarrierIcons, Column
 from svk.data import TimeFrame, ResearchLines, ResearchQuestion, Priority, TimeFrame, ResearchLine
 from svk.io import svg_to_pdf
 
@@ -24,7 +24,7 @@ generate_research_question.counter = 0
 
 
 def test_create_image():
-    fig = Figure(title="Test-image")
+    fig = Figure(title="Test-image", barrier_icon=BarrierIcons.All)
     adaptation_now = Group(title="test", color="black", number=1)
     adaptation_now.questions.append(
         Question(
@@ -49,6 +49,7 @@ def test_create_image():
             )
         )
     )
+    fig.columns.append(Column(header_title="test", header_sub_title="sub 1", header_color="#07583753"))
     fig.columns[0].groups.append(adaptation_now)
 
     cyber_near = Group(
@@ -79,6 +80,7 @@ def test_create_image():
             )
         )
     )
+    fig.columns.append(Column(header_title="test", header_sub_title="sub 1", header_color="#478956"))
     fig.columns[1].groups.append(cyber_near)
 
     adaptation_near = Group(

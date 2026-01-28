@@ -42,8 +42,10 @@ class Group(BaseModel):
         self.draw_header(dwg, x, y, width)
         current_y = y + self.header_height + self.question_margin
         for question in self.questions:
-            question.max_width = width - self.arrow_depth - 20
-            question.draw(dwg, x + self.arrow_depth + 10, current_y)
+            question.max_width = width - self.arrow_depth - 20  # TODO: This equals 2*10. See toto below
+            question.draw(
+                dwg, x + self.arrow_depth + 10, current_y
+            )  # TODO: This 10 should be configurable and also applied at the bottom (not question_margin)
             current_y += question.text_margin + question.height
             pass
 

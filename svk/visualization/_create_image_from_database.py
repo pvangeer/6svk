@@ -78,9 +78,7 @@ def add_column(fig: Figure, time_groups, time_frame: TimeFrame):
         fig.columns.append(column)
 
 
-def create_image_from_database(
-    title: str, database: list[ResearchQuestion], output_file_path: str, barrier_icon: BarrierIcons | None = None
-):
+def create_image_from_database(title: str, database: list[ResearchQuestion], output_file_path: str, barrier_icon: BarrierIcons):
     time_groups = defaultdict(list[ResearchQuestion])
 
     for q in database:
