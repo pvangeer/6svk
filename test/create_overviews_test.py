@@ -36,7 +36,8 @@ def convert_database(database_path, storm_surge_barrier: StormSurgeBarrier, outp
     for e in questions.errors:
         print(f"{e.cell_reference}: {str(e)}")
 
-    target_file_path = f"{output_dir}/{now} - Kennisvragen {storm_surge_barrier.title}.pdf"
+    # target_file_path = f"{output_dir}/{now} - Kennisvragen {storm_surge_barrier.title}.pdf"
+    target_file_path = f"c:/Test/{now} - Kennisvragen {storm_surge_barrier.title}.pdf"
     print(f"create image: {target_file_path}")
     create_image_from_database(
         storm_surge_barrier.title,

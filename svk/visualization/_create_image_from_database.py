@@ -75,7 +75,6 @@ def add_column(fig: Figure, time_groups, time_frame: TimeFrame):
         header_title=get_column_title(time_frame),
         header_sub_title=get_sub_title(time_frame),
         header_color=get_header_color(time_frame),
-        groups=[],
     )
 
     filtered_questions = time_groups[time_frame]
@@ -85,13 +84,12 @@ def add_column(fig: Figure, time_groups, time_frame: TimeFrame):
             now_questions_groups[q.research_line_primary].append(q)
 
         for group in sorted(now_questions_groups.keys(), key=lambda g: g.number):
-            column.groups.append(
-                Group(
-                    title=group.title,
-                    color=color_toward_grey(group.base_color, time_frame.grey_fraction),
-                    number=group.color_group,
-                    questions=sorted([Question(research_question=q) for q in now_questions_groups[group]], key=get_priority, reverse=True),
-                )
+            fig.group_colors[group.color_group] = group.base_color
+            column.groups[group.color_group] = Group(
+                title=group.title,
+                color=color_toward_grey(group.base_color, time_frame.grey_fraction),
+                number=group.color_group,
+                questions=sorted([Question(research_question=q) for q in now_questions_groups[group]], key=get_priority, reverse=True),
             )
 
         fig.columns.append(column)
