@@ -24,11 +24,10 @@ import os
 
 def measure_text(text: str, font_size: int):
     """
-    Returns the predicted width and height of a given text in pixels.
+    Returns the predicted width and height of a given text in pixels, based on an arial font.
 
     Parameters:
         text (str): The text to measure.
-        font_path (str): Path to the .ttf font file (e.g., Arial.ttf).
         font_size (int): Font size in pixels.
 
     Returns:

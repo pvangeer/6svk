@@ -25,13 +25,38 @@ from pathlib import Path
 
 
 class DatabaseReadError(Exception):
+    """
+    This class (Exception) can be raised by the research question database when it tries to read a database. It contains the row and column of the Excel file that could not be read as well as the message indicating why it cannot be read.
+    """
+
     def __init__(self, message: str, i_row: int | None = None, i_column: int | None = None):
         super().__init__(message)
         self.i_row = i_row
+        """The index of the row that could not be read/translated (zero based)."""
         self.i_column = i_column
+        """The index of the column that could not be read/translated (zero based)."""
+
+    @staticmethod
+    def __number_to_letter(n: int) -> str:
+        """
+        Helper function that translates a column index (one based) to column name in Excel.
+
+        :param n: The column index (one based, like in Excel)
+        :type n: int
+        :return: The Excel column name.
+        :rtype: str
+        """
+        return chr(ord("A") + n - 1)
 
     @property
     def cell_reference(self) -> str:
+        """
+        Returns the cell reference of the Excel cell that could not be read.
+
+        :param self: The DatabaseReadError
+        :return: The cell that lead to the read error.
+        :rtype: str
+        """
         reference = ""
         if self.i_column is not None:
             reference = self.__number_to_letter(self.i_column + 1)
@@ -41,43 +66,84 @@ class DatabaseReadError(Exception):
 
         return reference
 
-    def __number_to_letter(self, n: int):
-        return chr(ord("A") + n - 1)
-
 
 class Database(list[ResearchQuestion]):
+    """
+    Class that wraps a list[ResearchQuestion] to allow additional logic to read an convert a database file stored in Excel.
+    """
+
     i_barrier = 0
+    """Hard coded column number for the barrier"""
     i_id = 1
+    """Hard coded column number for the question id"""
     i_reference_ids = 2
+    """Hard coded column number for the references to other questions"""
     i_reference_question = 3
+    """Hard coded column number for the reference number to the 160 questions list"""
     i_keywords = 4
+    """Hard coded column number for the keywords"""
     i_question = 5
+    """Hard coded column number for the question"""
     i_explanation = 6
+    """Hard coded column number for the question explanation"""
     i_prio_water_safety = 7
+    """Hard coded column number for the priority (water safety)"""
     i_prio_other_functions = 8
+    """Hard coded column number for the priority (other functions)"""
     i_prio_management_maintenance = 9
+    """Hard coded column number for the priority (management and maintenance)"""
     i_prio_operation = 10
+    """Hard coded column number for the priority (operation)"""
     i_time_frame = 11
+    """Hard coded column number for the time frame"""
     i_primary_research_line = 12
+    """Hard coded column number for the primary research line"""
     i_secundary_research_line = 13
+    """Hard coded column number for the secundary research line"""
     i_research_line_explanation = 14
+    """Hard coded column number for the research line explanation"""
     i_status = 15
+    """Hard coded column number for the status"""
     i_action_holder = 16
+    """Hard coded column number for the action holder"""
     i_costs = 17
+    """Hard coded column number for the costs"""
     i_lead_time = 18
+    """Hard coded column number for the lead time"""
 
     def __init__(self, file_path: str):
         self.errors: list[DatabaseReadError] = []
+        """A list of errors that can be filled during import/reading the database file."""
+
         if not self._check_file_path(file_path):
             raise ValueError("Excel file could not be found.")
 
         self.file_path: str = file_path
+        """The file path of the Excel database file."""
 
     def _check_file_path(self, file_path: str) -> bool:
+        """
+        Check existance of the Excel file indicated as the database.
+
+        :param self: The Database object
+        :param file_path: file path that needs to be checked
+        :type file_path: str
+        :return: True in case the file exists, False if it doesn't exist or is not an Excel file.
+        :rtype: bool
+        """
         p = Path(file_path)
         return p.exists() and p.is_file() and p.suffix.lower() in {".xls", ".xlsx", ".xlsm", ".xlsb"}
 
-    def read(self, sheet_name: str = "Database", first_data_row: int = 3) -> bool:
+    def read(self, sheet_name: str = "Database", first_data_row: int = 3):
+        """
+        Reads the database file.
+
+        :param self: The Database object.
+        :param sheet_name: The name of the Sheet that contains the database ("Database" by default)
+        :type sheet_name: str
+        :param first_data_row: The row number (1 based) of the first database record.
+        :type first_data_row: int
+        """
         wb = load_workbook(self.file_path)
         sheet = wb[sheet_name]
 
@@ -111,7 +177,6 @@ class Database(list[ResearchQuestion]):
                 e.i_row = i_row + first_data_row - 1
                 self.errors.append(e)
                 continue
-        return True
 
     @staticmethod
     def _get_str(row: tuple, i_column: int) -> str:

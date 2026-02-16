@@ -22,6 +22,19 @@ from enum import Enum
 
 
 class StormSurgeBarrier(Enum):
+    """
+    Enum that represents one of the six storm surge barriers (or all of them together):
+    - All ("6SVK")
+    - MaeslantBarrier ("Maeslantkering")
+    - HartelBarrier ("Hartelkering")
+    - Ramspol ("Ramspol")
+    - HollandseIJsselBarrier ("Hollandsche IJssel Kering")
+    - EasternScheldBarrier ("Oosterscheldekering")
+    - HaringvlietBarrier ("Haringvlietsluizen")
+
+    After initiation, the "title" property will containg the Dutch title of the storm surge barrier.
+    """
+
     All = "6SVK"
     MaeslantBarrier = "Maeslantkering"
     HartelBarrier = "Hartelkering"
@@ -32,3 +45,4 @@ class StormSurgeBarrier(Enum):
 
     def __init__(self, title: str):
         self.title: str = title
+        """The name of the storm surge barrier in Dutch."""

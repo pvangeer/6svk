@@ -23,6 +23,16 @@ from enum import Enum
 
 
 class Priority(Enum):
+    """
+    The priority of a research question is an enum with a limited amount of possible values:
+    0 - Unknown (onbekend)
+    1 - Low (laag)
+    2 - Medium (middel)
+    3 - High (hoog)
+
+    Above Description and id (number) are available through the properties "description" and "id" after initiation of the enum value.
+    """
+
     High = (3, "hoog")
     Medium = (2, "middel")
     Low = (1, "laag")
@@ -30,4 +40,6 @@ class Priority(Enum):
 
     def __init__(self, id: int, description: str):
         self.description = description
+        """The description of the priority value."""
         self.id = id
+        """An int indicating the priority ranging from 0 - 3 (high number means high priority)."""

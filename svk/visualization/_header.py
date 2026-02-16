@@ -21,26 +21,50 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from svgwrite import Drawing
 from pydantic import BaseModel
 from svk.visualization.helpers._drawchevron import draw_half_chevron
+from svk.visualization._layout_configuration import LayoutConfiguration
 
 
 class Header(BaseModel):
-    title: str
-    sub_title: str
-    height: int = 60
-    width: int = 650
-    arrow_depth: int = 20
-    text_margin: int = 10
-    font_size: int = 18
-    color: str
+    """
+    Represents a column Header
+    """
 
-    def draw(self, dwg: Drawing, x: int, y: int):
-        dwg.add(draw_half_chevron(dwg, x=x, y=y, width=self.width, height=self.height, color=self.color))
-        y_column_header_text = y + self.height / 2
+    layout_configuration: LayoutConfiguration = LayoutConfiguration()
+    """The layout configuration shared across all elements of a figure."""
+    title: str
+    """The title of the header"""
+    sub_title: str
+    """the subtitle of the header"""
+    color: str
+    """The color of the header"""
+
+    def draw(self, dwg: Drawing, x: float, y: float):
+        """
+        Draws the header
+
+        :param dwg: The svgwrite.Drawing object used to draw the header
+        :type dwg: Drawing
+        :param x: The x-position of the left upper corner of the header
+        :type x: float
+        :param y: The y-position of the left upper corner of the header
+        :type y: float
+        """
+        dwg.add(
+            draw_half_chevron(
+                dwg,
+                x=x,
+                y=y,
+                width=self.layout_configuration.header_width,
+                height=self.layout_configuration.column_header_height,
+                color=self.color,
+            )
+        )
+        y_column_header_text = y + self.layout_configuration.column_header_height / 2
         dwg.add(
             dwg.text(
                 self.title,
-                insert=(x + self.arrow_depth + self.text_margin, y_column_header_text),
-                font_size=self.font_size,
+                insert=(x + self.layout_configuration.arrow_depth + self.layout_configuration.element_margin, y_column_header_text),
+                font_size=self.layout_configuration.column_header_font_size,
                 font_family="Arial",
                 font_weight="bold",
                 text_anchor="start",
@@ -51,11 +75,11 @@ class Header(BaseModel):
             dwg.add(
                 dwg.text(
                     self.sub_title,
-                    insert=(x + self.width - self.arrow_depth, y_column_header_text),
+                    insert=(x + self.layout_configuration.header_width - self.layout_configuration.arrow_depth, y_column_header_text),
                     font_family="Arial",
                     text_anchor="end",
                     dominant_baseline="middle",
-                    font_size=self.font_size,
+                    font_size=self.layout_configuration.column_header_font_size,
                     font_weight="normal",
                 )
             )

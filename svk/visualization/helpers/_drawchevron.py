@@ -24,16 +24,40 @@ from uuid import uuid4
 
 def draw_half_chevron(
     dwg: Drawing,
-    x: int,
-    y: int,
-    width: int,
-    height: int,
-    arrow_depth: int = 20,
+    x: float,
+    y: float,
+    width: float,
+    height: float,
+    arrow_depth: float = 20,
     color: str = "blue",
     stroke_width: float = 0.5,
-    header_size: int = 30,
+    header_size: float = 30,
     add_to_dwg: bool = True,
 ):
+    """
+    Draws a chevron inside an svgwrite.Drawing object.
+
+    :param dwg: The svgwrite.Drawing object to add it to
+    :type dwg: Drawing
+    :param x: x-position of the left upper corner of the chevron
+    :type x: float
+    :param y: y-position of the left upper corner of the chevron
+    :type y: float
+    :param width: Width of the chevron
+    :type width: float
+    :param height: Height of the chevron
+    :type height: float
+    :param arrow_depth: Arrow depth of the chevron
+    :type arrow_depth: float
+    :param color: line color to be used (also used for shading)
+    :type color: str
+    :param stroke_width: Stroke width
+    :type stroke_width: float
+    :param header_size: Header size (used to determin the height of the shading effect)
+    :type header_size: float
+    :param add_to_dwg: Bool indicating whether the chevrond directly needs to be added to the svgwrite.Drawing object or not. The method also returns the created svg polygon element (such that the user can add it later).
+    :type add_to_dwg: bool
+    """
     x_scale = width / header_size
     gradient_id = f"gradient_{str(uuid4())}"
 

@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from svk.visualization import Figure, Group, Question, Column
 from svk.data import TimeFrame, ResearchLines, ResearchQuestion, Priority, TimeFrame, ResearchLine, StormSurgeBarrier
-from svk.io import svg_to_pdf
+from svk.io import svg_to_pdf_chrome
 
 
 def generate_research_question(question, time_frame, research_line: ResearchLine):
@@ -45,7 +45,7 @@ generate_research_question.counter = 0
 
 def test_create_image():
     fig = Figure(title="Test-image", storm_surge_barrier=StormSurgeBarrier.All)
-    adaptation_now = Group(title="test", color="black", number=1)
+    adaptation_now = Group(title="test", color="black")
     adaptation_now.questions.append(
         Question(
             research_question=generate_research_question(
@@ -70,12 +70,11 @@ def test_create_image():
         )
     )
     fig.columns.append(Column(header_title="test", header_sub_title="sub 1", header_color="#07583753"))
-    fig.columns[0].groups.append(adaptation_now)
+    fig.columns[0].groups[1] = adaptation_now
 
     cyber_near = Group(
         title="test",
         color="blue",
-        number=2,
     )
     cyber_near.questions.append(
         Question(
@@ -101,12 +100,11 @@ def test_create_image():
         )
     )
     fig.columns.append(Column(header_title="test", header_sub_title="sub 1", header_color="#478956"))
-    fig.columns[1].groups.append(cyber_near)
+    fig.columns[1].groups[2] = cyber_near
 
     adaptation_near = Group(
         title="test",
         color="blue",
-        number=2,
     )
     adaptation_near.questions.append(
         Question(
@@ -131,8 +129,8 @@ def test_create_image():
             )
         )
     )
-    fig.columns[1].groups.append(adaptation_near)
+    fig.columns[1].groups[1] = adaptation_near
     dwg = fig.draw()
 
     pt = "C:/test/Kennisagenda_auto.pdf"
-    svg_to_pdf(dwg, pt)
+    svg_to_pdf_chrome(dwg, pt)

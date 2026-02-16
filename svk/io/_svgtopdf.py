@@ -20,9 +20,25 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from playwright.sync_api import sync_playwright
 from svgwrite import Drawing
+import os
 
 
-def svg_to_pdf(svg_dwg: Drawing, pdf_path: str):
+def svg_to_pdf(dwg: Drawing, output_dir: str, file_name: str):
+    import subprocess
+
+    if not os.path.exists(output_dir):
+        raise FileExistsError(f"The specified output directory does not exist: {output_dir}")
+
+    name, extension = os.path.splitext(os.path.basename(file_name))
+    svg_image_path = os.path.join(output_dir, name + ".svg")
+    pdf_image_path = os.path.join(output_dir, name + ".pdf")
+
+    dwg.saveas(svg_image_path)
+    inkscape_path = "C:/Program Files/Inkscape/bin/inkscape.exe"
+    subprocess.run([inkscape_path, svg_image_path, "--export-type=pdf", f"--export-filename={pdf_image_path}"])
+
+
+def svg_to_pdf_chrome(svg_dwg: Drawing, pdf_path: str):
     """
     Save an svgwrite.Drawing object to PDF with all effects and links preserved.
 

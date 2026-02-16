@@ -19,7 +19,19 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 
-def color_toward_grey(color: tuple[int, int, int], grey_fraction=0.5, grey: tuple[int, int, int] = (210, 190, 210)) -> str:
+def color_toward_grey(color: tuple[int, int, int], grey_fraction: float = 0.5, grey: tuple[int, int, int] = (210, 190, 210)) -> str:
+    """
+    Creates an rgb-string of a color towards another (grey) color.
+
+    :param color: The initial color
+    :type color: tuple[int, int, int]
+    :param grey_fraction: The fraction (percentage) of the second color that should be part of the resulting color
+    :type grey_fraction: float
+    :param grey: The second (grey) color
+    :type grey: tuple[int, int, int]
+    :return: String representation of the resulting color
+    :rtype: str
+    """
     r, g, b = color
     r2, g2, b2 = grey
     r_x = round(r + (r2 - r) * grey_fraction)

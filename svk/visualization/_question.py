@@ -25,16 +25,21 @@ from svk.data import ResearchQuestion
 from svk.visualization.helpers._drawwrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
+from svk.visualization._layout_configuration import LayoutConfiguration
 
 
+# TODO: Create base model that includes layout_configuration, height and draw. This will
 class Question(BaseModel):
+    """
+    Represents a question element (as part of  a group, column and the figure)
+    """
+
+    layout_configuration: LayoutConfiguration = LayoutConfiguration()
+    """The layout configuration shared across all elements of a figure."""
     research_question: ResearchQuestion
-    max_width: int = 570  # TODO: Progress or derive
-    font_size: int = 12
-    text_margin: int = 5
-    priority_width: int = 15
-    svk_icon_width: int = 24
-    height: int = Field(default_factory=int)
+    """The research question"""
+    height: float = Field(default_factory=int)
+
     _lines: list[str] = []
 
     @model_validator(mode="after")
@@ -42,11 +47,11 @@ class Question(BaseModel):
         self._lines = wrapped_lines(
             self.research_question.question,
             # max_width=self.max_width - 2 * self.text_margin - self.priority_box_width - self.svk_icon_width,
-            max_width=self.max_width - self.text_margin - self.priority_box_width,
-            font_size=self.font_size,
+            max_width=self.layout_configuration.question_max_width - self.layout_configuration.line_margin - self._priority_box_width,
+            font_size=self.layout_configuration.font_size,
         )
 
-        self.height = math.ceil(self.font_size * len(self._lines) * 1.2 + self.text_margin * 2.0)
+        self.height = self.layout_configuration.font_size * len(self._lines) * 1.2 + self.layout_configuration.line_margin * 2.0
 
         return self
 
@@ -66,7 +71,7 @@ class Question(BaseModel):
         )
 
     @property
-    def color(self):
+    def _color(self):
         research_line = self.research_question.research_line_primary
         return (
             color_toward_grey(
@@ -77,46 +82,55 @@ class Question(BaseModel):
             else "rgb(120,120,120)"
         )
 
+    @property
+    def _priority_box_width(self) -> float:
+        return self.layout_configuration.priority_width + self.layout_configuration.line_margin + self.layout_configuration.line_margin
+
     def draw(self, dwg, x, y):
-        width = self.max_width
+        width = self.layout_configuration.question_max_width
 
         dwg.add(
             dwg.rect(
                 insert=(x, y),
                 size=(width, self.height),
                 stroke_width=0.5,
-                fill=self.color,
+                fill=self._color,
                 fill_opacity=0.3,
-                stroke=self.color,
+                stroke=self._color,
             )
         )
 
         y_middle = y + self.height / 2
         if not self.high_priority:
-            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle, width=self.priority_width)
+            draw_priority_arrow(
+                dwg, x=x + self.layout_configuration.line_margin, y=y_middle, width=self.layout_configuration.priority_width
+            )
         else:
-            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle - 2.5, width=self.priority_width)
-            draw_priority_arrow(dwg, x=x + self.text_margin, y=y_middle + 2.5, width=self.priority_width)
+            draw_priority_arrow(
+                dwg, x=x + self.layout_configuration.line_margin, y=y_middle - 2.5, width=self.layout_configuration.priority_width
+            )
+            draw_priority_arrow(
+                dwg, x=x + self.layout_configuration.line_margin, y=y_middle + 2.5, width=self.layout_configuration.priority_width
+            )
 
         if len(self._lines) < 1:
             self._lines = wrapped_lines(
                 self.research_question.question,
-                max_width=width - 2 * self.text_margin - self.priority_box_width - self.svk_icon_width,
-                font_size=self.font_size,
+                max_width=width
+                - 2 * self.layout_configuration.line_margin
+                - self._priority_box_width
+                - self.layout_configuration.svk_icon_width,
+                font_size=self.layout_configuration.font_size,
             )
 
         dwg.add(
             wrapped_text(
                 dwg,
                 lines=self._lines,
-                insert=(x + self.priority_box_width, y + self.text_margin),
+                insert=(x + self._priority_box_width, y + self.layout_configuration.line_margin),
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
             )
         )
 
         pass
-
-    @property
-    def priority_box_width(self) -> int:
-        return self.priority_width + self.text_margin + self.text_margin

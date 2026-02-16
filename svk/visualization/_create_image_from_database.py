@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svk.data import ResearchQuestion
-from svk.io import svg_to_pdf
+from svk.io import svg_to_pdf, svg_to_pdf_chrome
 from svk.data import TimeFrame, ResearchQuestion, ResearchLine, StormSurgeBarrier
 from svk.visualization._figure import Figure
 from svk.visualization._column import Column
@@ -84,18 +84,19 @@ def add_column(fig: Figure, time_groups, time_frame: TimeFrame):
             now_questions_groups[q.research_line_primary].append(q)
 
         for group in sorted(now_questions_groups.keys(), key=lambda g: g.number):
-            fig.group_colors[group.color_group] = group.base_color
+            fig.layout_configuration.group_colors[group.color_group] = group.base_color
             column.groups[group.color_group] = Group(
                 title=group.title,
                 color=color_toward_grey(group.base_color, time_frame.grey_fraction),
-                number=group.color_group,
                 questions=sorted([Question(research_question=q) for q in now_questions_groups[group]], key=get_priority, reverse=True),
             )
 
         fig.columns.append(column)
 
 
-def create_image_from_database(title: str, database: list[ResearchQuestion], output_file_path: str, barrier_icon: StormSurgeBarrier):
+def create_image_from_database(
+    title: str, database: list[ResearchQuestion], output_dir: str, file_name: str, barrier_icon: StormSurgeBarrier
+):
     time_groups = defaultdict(list[ResearchQuestion])
 
     for q in database:
@@ -106,4 +107,5 @@ def create_image_from_database(title: str, database: list[ResearchQuestion], out
     add_column(fig=fig, time_groups=time_groups, time_frame=TimeFrame.NearFuture)
     add_column(fig=fig, time_groups=time_groups, time_frame=TimeFrame.Future)
     dwg = fig.draw()
-    svg_to_pdf(dwg, output_file_path)
+    svg_to_pdf(dwg, output_dir, file_name)
+    svg_to_pdf_chrome(dwg, output_dir + file_name + "-chrome.pdf")

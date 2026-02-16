@@ -29,6 +29,18 @@ def wrapped_lines(
     max_width: float,
     font_size: int = 12,
 ) -> list[str]:
+    """
+    Method that splits a string into lines that will not exceed a specified width. This method assumes the use of arial font.
+
+    :param text: The text that should be split into lines
+    :type text: str
+    :param max_width: the maximum width of the lines once printed as svg text elements
+    :type max_width: float
+    :param font_size: the desired font size for the printed text
+    :type font_size: int
+    :return: A list of lines that don't exceed the specified maximum width
+    :rtype: list[str]
+    """
     words = text.split()
     lines = []
     line = ""
@@ -57,6 +69,31 @@ def wrapped_text(
     text_anchor: str = "start",
     dominant_baseline: str = "middle",
 ) -> ElementBuilder:
+    """
+    Creates an svg text element with lines for each text line in lines.
+
+    :param dwg: The svgwrite.Drawing object to add the lines to
+    :type dwg: Drawing
+    :param lines: a list of lines that need to be printed (see also 'wrapped_lines')
+    :type lines: list[str]
+    :param insert: The insert (x,y) of the text
+    :type insert: tuple[float, float]
+    :param line_height: The line height of the text
+    :type line_height: float
+    :param font_size: The desired font size
+    :type font_size: int
+    :param font_family: The font family (if different from Arial, possibly the lines won't fit the maximum width)
+    :type font_family: str
+    :param font_weight: The font weight
+    :type font_weight: str
+    :param text_anchor: The text anchor
+    :type text_anchor: str
+    :param dominant_baseline: The dominant baseline
+    :type dominant_baseline: str
+    :return: An element builder object (svg text) to add to the svgwrite.Drawing
+    :rtype: ElementBuilder
+    """
+
     text_elem = dwg.text("", insert=insert, dominant_baseline=dominant_baseline)
 
     y = insert[1]

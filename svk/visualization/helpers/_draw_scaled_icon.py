@@ -1,3 +1,23 @@
+"""
+Copyright (C) Stichting Deltares 2026. All rights reserved.
+
+This file is part of the dikernel-python toolbox.
+
+This program is free software; you can redistribute it and/or modify it under the terms of
+the GNU Lesser General Public License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this
+program; if not, see <https://www.gnu.org/licenses/>.
+
+All names, logos, and references to "Deltares" are registered trademarks of Stichting
+Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
+"""
+
 from svgwrite import Drawing
 from svk.data import StormSurgeBarrier
 from uuid import uuid4
@@ -8,17 +28,40 @@ accent_fill = "#a7a7a7"
 
 
 class SvgObject(ABC, BaseModel):
+    """
+    This is an abstract base class for drawing svg icons.
+    """
+
     @abstractmethod
     def create(self, dwg: Drawing):
+        """
+        Create the svg object
+
+        :param dwg: The svgwrite.Drawing object that should be used to create the svg object.
+        :type dwg: Drawing
+        """
         pass
 
 
 class Symbol(SvgObject):
+    """
+    This object can be used to add an svg symbol to the svgwrite.Drawing.
+    """
+
     width: float = 300
+    """Width of the symbol"""
     height: float = 300
+    """Height of the symbol"""
     objects: list[SvgObject] = []
+    """A list of svg objects that form the symbol"""
 
     def create(self, dwg: Drawing):
+        """
+        Creates the symbol
+
+        :param dwg: The svgwrite.Drawing that should be used to create the symbol.
+        :type dwg: Drawing
+        """
         icon_symbol = dwg.symbol(id=f"icon_{ uuid4()}", viewBox=f"0 0 {self.width} {self.height}")
         for svg_object in self.objects:
             icon_symbol.add(svg_object.create(dwg))
@@ -26,20 +69,47 @@ class Symbol(SvgObject):
         return icon_symbol
 
     def add_to_dwg(self, dwg: Drawing, insert: tuple[float, float], size: tuple[float, float]) -> None:
+        """
+        Add the symbol to the defs of a dwg and use it at the specified location.
+
+        :param dwg: The svgwrite.Drawing object
+        :type dwg: Drawing
+        :param insert: The location of the top left of the symbol
+        :type insert: tuple[float, float]
+        :param size: the target size of the symbol
+        :type size: tuple[float, float]
+        """
+        # TODO: Adding the symbol to the defs is only needed once. Don't add every time we add the same symbol to the image.
         icon_symbol = self.create(dwg)
         dwg.defs.add(icon_symbol)
         dwg.add(dwg.use(icon_symbol, insert=insert, size=size))
 
 
 class Path(SvgObject):
+    """
+    An svg Path object (used to draw symbols/icons)
+    """
+
     d: str
+    """The path definition (definition of strokes)"""
     fill: str = "none"
+    """The fill color to be used"""
     transform: str | None = None
+    """Any transformation to be applied."""
     stroke_linecap: str = "round"
+    """Stroke linecap to be used"""
     stroke_linejoin: str = "round"
+    """Stroke linejoin to be used"""
     stroke_width: float = 20.0
+    """Stroke width"""
 
     def create(self, dwg: Drawing):
+        """
+        Creates an svg Path element that can be added to a symbol or directly added to an svgwrite.Drawing.
+
+        :param dwg: The svgwrite.Drawing object to add this Path to.
+        :type dwg: Drawing
+        """
         if self.transform is None:
             return dwg.path(
                 d=self.d,
@@ -62,17 +132,36 @@ class Path(SvgObject):
 
 
 class Rect(SvgObject):
+    """
+    An svg Rect object (used to draw symbols/icons)
+    """
+
     x: float
+    """x-position of the Rect"""
     y: float
+    """y-position of the Rect"""
     width: float
+    """Width of the Rect"""
     height: float
+    """Height of the Rect"""
     stroke: str = "#000000"
+    """Stroke color to be used"""
     stroke_width: float = 20
+    """Stroke width to be used"""
     strok_linejoin: str = "round"
+    """Stroke linejoin to be used"""
     stroke_linecap: str = "round"
+    """Stroke linecap to be used"""
     fill: str = "#000000"
+    """Fill color to be used"""
 
     def create(self, dwg: Drawing):
+        """
+        Creates an svg Rect element that can be added to a symbol or directly added to an svgwrite.Drawing.
+
+        :param dwg: The svgwrite.Drawing object to add this Path to.
+        :type dwg: Drawing
+        """
         return dwg.rect(
             insert=(self.x, self.y),
             size=(self.width, self.height),
@@ -84,9 +173,22 @@ class Rect(SvgObject):
         )
 
 
+# TODO: This should be a separate module? This requires knowledge of the StormSurgeBarrier enum.
 def draw_scaled_icon(
     dwg: Drawing, storm_surge_barrier: StormSurgeBarrier, insert: tuple[float, float], size: tuple[float, float] = (24, 24)
 ):
+    """
+    This method adds and uses a symbol to represent a StormSurgeBarrier in an svgwrite.Drawing.
+
+    :param dwg: The svgwrite.Drawing object to add the icon to.
+    :type dwg: Drawing
+    :param storm_surge_barrier: The storm surge barrier type to add an icon for.
+    :type storm_surge_barrier: StormSurgeBarrier
+    :param insert: The insert (x-position, y-position) of the left upper corner of the icon.
+    :type insert: tuple[float, float]
+    :param size: The size (width and height) of the desired icon
+    :type size: tuple[float, float]
+    """
     ico = Symbol()
     match storm_surge_barrier:
         case StormSurgeBarrier.MaeslantBarrier:

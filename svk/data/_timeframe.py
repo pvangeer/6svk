@@ -22,12 +22,27 @@ from enum import Enum
 
 
 class TimeFrame(Enum):
+    """
+    The time frame of a research question. The time frame is expressed as one of the following values:
+    - NotRelevant (niet relevant)
+    - Now (nu)
+    - NearFuture (nabije toekomst)
+    - Future (toekomst)
+    - Unknown (onbekend)
+
+    After initiation, the enum class has two properties that express:
+    [description] - The Dutch description of the time frame.
+    [grey_fraction] - The grey fraction associated to the specified time frame (a percentage expressed as a float between 0 and 1 that is used when generating colors during visualization)
+    """
+
     NotRelevant = ("niet relevant", 1)
     Now = ("nu", 0.0)
-    NearFuture = ("boeggolf", 0.5)
+    NearFuture = ("nabije toekomst", 0.5)
     Future = ("toekomst", 0.7)
     Unknown = ("onbekend", 0)
 
     def __init__(self, description: str, grey_fraction: float):
-        self.description = description
-        self.grey_fraction = grey_fraction
+        self.description: str = description
+        """The Dutch description of the time frame."""
+        self.grey_fraction: float = grey_fraction
+        """The grey fraction for this time frame (a percentage expressed as a float between 0 and 1)"""

@@ -19,4 +19,4 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from ._database import Database
-from ._svgtopdf import svg_to_pdf
+from ._svgtopdf import svg_to_pdf, svg_to_pdf_chrome

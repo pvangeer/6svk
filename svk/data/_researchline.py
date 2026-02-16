@@ -29,14 +29,27 @@ dark_green = (25, 107, 36)
 
 
 class ResearchLine(BaseModel):
+    """
+    Data class representing a research line.
+    """
+
     number: int
+    """An integer associated to the particular research line."""
     title: str
+    """The title of the research line."""
     color_group: int
+    """The color group that is associated to the research line. This allows grouping of questions in different research lines visually by means of the same background color."""
 
     model_config = ConfigDict(frozen=True)
 
     @property
     def base_color(self) -> tuple[int, int, int]:
+        """
+        Returns the R, G and B values of the color associated to the color group of the research line. R,G and B are integers ranging from 0 - 256.
+
+        :return: R,G,B of the associated color.
+        :rtype: tuple[int, int, int]
+        """
         match self.color_group:
             case 1:
                 return orange
@@ -46,8 +59,17 @@ class ResearchLine(BaseModel):
                 return dark_green
         raise ValueError("Unknown color group.")
 
+    # TODO: This maybe should not be part of the ResearchLine class but stand on its own (in the same namespace as ResearchLines.)
     @staticmethod
     def get_research_line(number: int) -> ResearchLine:
+        """
+        This method returns a research line object associated to a particular research line number.
+
+        :param number: The number associated to the desired research line.
+        :type number: int
+        :return: The associated research line.
+        :rtype: ResearchLine
+        """
         match number:
             case 1:
                 return ResearchLines.ConstructiveAspects.value
@@ -74,6 +96,10 @@ class ResearchLine(BaseModel):
 
 
 class ResearchLines(Enum):
+    """
+    This enum exposes default research line objects used in the SVK-project.
+    """
+
     ConstructiveAspects = ResearchLine(number=1, title="Constructieve aspecten", color_group=1)
     OperatingSystem = ResearchLine(number=2, title="Besturingssystemen / IA", color_group=1)
     Facilities = ResearchLine(number=3, title="Voorzieningen en gebouwen", color_group=1)

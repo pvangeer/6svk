@@ -25,64 +25,86 @@ from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 from svk.visualization.helpers._draw_callout import draw_callout
 from svk.visualization.helpers._greyfraction import color_toward_grey
+from svk.visualization._layout_configuration import LayoutConfiguration
 from svgwrite import Drawing
 from uuid import uuid4
 
 
 class Figure(BaseModel):
+    """
+    The main figure object of the "kennisagenda"
+    """
+
+    layout_configuration: LayoutConfiguration = LayoutConfiguration()
+    """The layour configuration shared across all figures' items"""
     storm_surge_barrier: StormSurgeBarrier
+    """The storm surge barrier associated to this figure (used for including an icon in the header)"""
     title: str
-    title_height: int = 80
-    title_font_size: int = 64
+    """The title of the figure"""
     disclaimer: str = (
         "Dit is een eerste concept van de onderzoeksagenda stormvloedkeringen. Deze versie is ontstaan in samenwerking met de asset management teams van de keringen. De prioritering van de onderzoeksvragen moet nog gereviewd worden door o.a. de asset management teams en RWS WVL/GPO. De indeling in tijdsperiode is op dit moment in ontwikkeling. Voor vragen, neem contact op met Marit de Jong of Riva de Vries."
     )
+    """A disclaimer text (printed at the bottom)"""
     columns: list[Column] = []
-    group_colors: dict[int, tuple[int, int, int]] = {}
-    paper_margin: int = 20
-    disclamer_font_size: int = 8
-    arrow_depth: float = 20
-    group_margin: float = 10
+    """The columns included in this figure (that all hold groups and questions)"""
 
     def draw(self) -> Drawing:
         groups = {}
         sorted_group_numbers = {key for col in self.columns for key in col.groups}
-        y_current = self.columns[0].header.height + 3 * self.paper_margin + self.title_height
+        y_current = (
+            self.layout_configuration.column_header_height
+            + 3 * self.layout_configuration.paper_margin
+            + self.layout_configuration.figure_title_height
+        )
         for number in sorted_group_numbers:
-            group_height = max(c.groups[number].get_height() + c.group_margin if number in c.groups else 0.0 for c in self.columns)
+            group_height = max(
+                c.groups[number].get_height() + 2 * self.layout_configuration.element_margin if number in c.groups else 0.0
+                for c in self.columns
+            )
             for column in self.columns:
-                column.y_groups[number] = y_current
+                column.y_color_groups[number] = y_current
             groups[number] = (
                 y_current,
-                group_height - self.group_margin,
-            )  # TODO: 10 = Half the group margin, stored inside Column. Maybe make these parameters static?
-            y_current = y_current + group_height + self.group_margin
+                group_height - self.layout_configuration.element_margin,
+            )
+            y_current = y_current + group_height + self.layout_configuration.element_margin
 
-        y_column_start = self.title_height + 2 * self.paper_margin
-        column_widths = [column.get_width() for column in self.columns]
+        y_column_start = self.layout_configuration.figure_title_height + 2 * self.layout_configuration.paper_margin
+        column_widths = [self.layout_configuration.column_width for column in self.columns]
         column_heights = [column.get_height(y_column_start) for column in self.columns]
 
-        paper_height = self.title_height + self.paper_margin * 4 + max(column_heights) + 1.2 * self.disclamer_font_size
-        paper_width = self.paper_margin * 2 + sum(column_widths)
+        paper_height = (
+            self.layout_configuration.figure_title_height
+            + self.layout_configuration.paper_margin * 4
+            + max(column_heights)
+            + 1.2 * self.layout_configuration.disclamer_font_size
+        )
+        paper_width = self.layout_configuration.paper_margin * 2 + sum(column_widths)
 
         dwg = Drawing(size=(f"{paper_width}px", f"{paper_height}px"), debug=False)
 
         icon_width = 0
-        icon_size = self.title_height
-        icon_width = icon_size + self.arrow_depth
-        draw_callout(dwg, self.paper_margin, self.paper_margin, icon_width, icon_size, "#000000")
+        icon_size = self.layout_configuration.figure_title_height
+        icon_width = icon_size + self.layout_configuration.arrow_depth
+        draw_callout(dwg, self.layout_configuration.paper_margin, self.layout_configuration.paper_margin, icon_width, icon_size, "#000000")
         draw_scaled_icon(
             dwg=dwg,
             storm_surge_barrier=self.storm_surge_barrier,
-            insert=(self.paper_margin + self.arrow_depth + 2, self.paper_margin + 2),
+            insert=(
+                self.layout_configuration.paper_margin + self.layout_configuration.arrow_depth + 2,
+                self.layout_configuration.paper_margin + 2,
+            ),
             size=(icon_size - 4, icon_size - 4),
         )
 
         dwg.add(
             dwg.text(
                 self.title,
-                insert=(2 * self.paper_margin + icon_width, self.paper_margin + self.title_height / 2),
-                font_size=self.title_font_size,
+                insert=(
+                    2 * self.layout_configuration.paper_margin + icon_width,
+                    self.layout_configuration.paper_margin + self.layout_configuration.figure_title_height / 2,
+                ),
+                font_size=self.layout_configuration.figure_title_font_size,
                 font_family="Arial",
                 font_weight="bold",
                 text_anchor="start",
@@ -91,11 +113,11 @@ class Figure(BaseModel):
         )
 
         for number in groups.keys():
-            x_group = self.paper_margin
+            x_group = self.layout_configuration.paper_margin
             y_group = groups[number][0]
-            group_width = paper_width - 2 * self.paper_margin
+            group_width = paper_width - 2 * self.layout_configuration.paper_margin
             group_height = groups[number][1]
-            group_color = self.group_colors[number] if number in self.group_colors else None
+            group_color = self.layout_configuration.group_colors[number] if number in self.layout_configuration.group_colors else None
             if group_color is None:
                 continue
 
@@ -153,18 +175,21 @@ class Figure(BaseModel):
                 )
             )
 
-        x_current = self.paper_margin
+        x_current = self.layout_configuration.paper_margin
         for column in self.columns:
             column.draw(dwg, x_current, y_column_start)
-            x_current = x_current + column.get_width()
+            x_current = x_current + self.layout_configuration.column_width
 
         draw_disclaimer(
             dwg=dwg,
             disclaimer_text=self.disclaimer,
-            insert=(self.paper_margin, self.paper_margin * 3 + max(column_heights) + self.title_height),
+            insert=(
+                self.layout_configuration.paper_margin,
+                self.layout_configuration.paper_margin * 3 + max(column_heights) + self.layout_configuration.figure_title_height,
+            ),
             dominant_baseline="hanging",
             text_anchor="start",
-            font_size=self.disclamer_font_size,
+            font_size=self.layout_configuration.disclamer_font_size,
             links=[("Riva de Vries", "mailto:riva.de.vries@rws.nl"), ("Marit de Jong", "mailto:marit.de.jong@rws.nl")],
         )
 

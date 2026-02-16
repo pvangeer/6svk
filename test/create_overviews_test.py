@@ -38,11 +38,14 @@ def convert_database(database_path, storm_surge_barrier: StormSurgeBarrier, outp
 
     # target_file_path = f"{output_dir}/{now} - Kennisvragen {storm_surge_barrier.title}.pdf"
     target_file_path = f"c:/Test/{now} - Kennisvragen {storm_surge_barrier.title}.pdf"
+    output_dir = f"c:/Test/"
+    file_name = f"{now} - Kennisvragen {storm_surge_barrier.title}"
     print(f"create image: {target_file_path}")
     create_image_from_database(
         storm_surge_barrier.title,
         questions,
-        target_file_path,
+        output_dir,
+        file_name,
         barrier_icon=storm_surge_barrier,
     )
 

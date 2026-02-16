@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from svk.io import svg_to_pdf
+from svk.io import svg_to_pdf_chrome
 from svk.visualization.helpers import draw_half_chevron
 import os
 
@@ -33,7 +33,7 @@ def test_svgtopdf_produces_figure():
     if os.path.isfile(pt):
         os.remove(pt)
 
-    svg_to_pdf(dwg, pt)
+    svg_to_pdf_chrome(dwg, pt)
     assert os.path.isfile(pt)
 
     os.remove(pt)
