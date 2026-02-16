@@ -58,6 +58,7 @@ def draw_disclaimer(
         dominant_baseline=dominant_baseline,
         text_anchor=text_anchor,
         font_size=font_size,
+        **{"xml:space": "preserve"},
     )
 
     for part in parts[1:]:
