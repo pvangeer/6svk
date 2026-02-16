@@ -71,11 +71,12 @@ class Group(BaseModel):
 
         current_y = y + self.layout_configuration.group_header_height + self.layout_configuration.line_margin
         for question in self.questions:
-            # TODO: This is equal for all questions. Don't calculate here. Just derive
-            question.layout_configuration.question_max_width = (
-                width - self.layout_configuration.arrow_depth - 2 * self.layout_configuration.element_margin
+            question.draw(
+                dwg,
+                x + self.layout_configuration.arrow_depth + self.layout_configuration.element_margin,
+                current_y,
+                width - self.layout_configuration.arrow_depth - 2 * self.layout_configuration.element_margin,
             )
-            question.draw(dwg, x + self.layout_configuration.arrow_depth + self.layout_configuration.element_margin, current_y)
             current_y += self.layout_configuration.line_margin + question.height
             pass
 

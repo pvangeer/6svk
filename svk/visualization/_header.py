@@ -54,7 +54,7 @@ class Header(BaseModel):
                 dwg,
                 x=x,
                 y=y,
-                width=self.layout_configuration.header_width,
+                width=self.layout_configuration.column_width,
                 height=self.layout_configuration.column_header_height,
                 color=self.color,
             )
@@ -75,7 +75,7 @@ class Header(BaseModel):
             dwg.add(
                 dwg.text(
                     self.sub_title,
-                    insert=(x + self.layout_configuration.header_width - self.layout_configuration.arrow_depth, y_column_header_text),
+                    insert=(x + self.layout_configuration.column_width - self.layout_configuration.arrow_depth, y_column_header_text),
                     font_family="Arial",
                     text_anchor="end",
                     dominant_baseline="middle",

@@ -1,11 +1,29 @@
-from pydantic import BaseModel
+"""
+Copyright (C) Stichting Deltares 2026. All rights reserved.
 
-# TODO: Optimize etc.
+This file is part of the dikernel-python toolbox.
+
+This program is free software; you can redistribute it and/or modify it under the terms of
+the GNU Lesser General Public License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this
+program; if not, see <https://www.gnu.org/licenses/>.
+
+All names, logos, and references to "Deltares" are registered trademarks of Stichting
+Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
+"""
+
+from pydantic import BaseModel
 
 
 class LayoutConfiguration(BaseModel):
     # Margins
-    paper_margin: float = 20
+    paper_margin: float = 20.0
     element_margin: float = 10.0
     line_margin: float = 5.0
 
@@ -17,17 +35,14 @@ class LayoutConfiguration(BaseModel):
     disclamer_font_size: int = 8
 
     # Sizes
-    arrow_depth: float = 20
-    figure_title_height: int = 80
-    column_header_height: int = 60
-    group_header_height: int = 30
+    figure_title_height: float = 80
+    column_header_height: float = 60
+    group_header_height: float = 30
 
-    question_max_width: float = 570  # TODO: Progress or derive
-    column_width: int = 650
-    header_width: int = 650
-    priority_box_width: float = 15.0
+    column_width: float = 650.0
+    question_priority_box_width: float = 15.0
     question_id_box_width: float = 40.0
-    svk_icon_size: int = 24
+    arrow_depth: float = 20
 
     # From Figure
     group_colors: dict[int, tuple[int, int, int]] = {}

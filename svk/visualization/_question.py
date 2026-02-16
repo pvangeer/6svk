@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from pydantic import BaseModel, model_validator, Field
-import math
+from svgwrite import Drawing
 
 from svk.data import ResearchQuestion
 from svk.visualization.helpers._drawwrappedtext import wrapped_text, wrapped_lines
@@ -96,11 +96,13 @@ class Question(BaseModel):
 
     @property
     def _priority_box_width(self) -> float:
-        return self.layout_configuration.priority_box_width + self.layout_configuration.line_margin + self.layout_configuration.line_margin
+        return (
+            self.layout_configuration.question_priority_box_width
+            + self.layout_configuration.line_margin
+            + self.layout_configuration.line_margin
+        )
 
-    def draw(self, dwg, x, y):
-        width = self.layout_configuration.question_max_width
-
+    def draw(self, dwg: Drawing, x: float, y: float, width: float):
         dwg.add(
             dwg.rect(
                 insert=(x, y),
@@ -115,14 +117,20 @@ class Question(BaseModel):
         y_middle = y + self.height / 2
         if not self.high_priority:
             draw_priority_arrow(
-                dwg, x=x + self.layout_configuration.line_margin, y=y_middle, width=self.layout_configuration.priority_box_width
+                dwg, x=x + self.layout_configuration.line_margin, y=y_middle, width=self.layout_configuration.question_priority_box_width
             )
         else:
             draw_priority_arrow(
-                dwg, x=x + self.layout_configuration.line_margin, y=y_middle - 2.5, width=self.layout_configuration.priority_box_width
+                dwg,
+                x=x + self.layout_configuration.line_margin,
+                y=y_middle - 2.5,
+                width=self.layout_configuration.question_priority_box_width,
             )
             draw_priority_arrow(
-                dwg, x=x + self.layout_configuration.line_margin, y=y_middle + 2.5, width=self.layout_configuration.priority_box_width
+                dwg,
+                x=x + self.layout_configuration.line_margin,
+                y=y_middle + 2.5,
+                width=self.layout_configuration.question_priority_box_width,
             )
 
         if len(self._lines) < 1:
