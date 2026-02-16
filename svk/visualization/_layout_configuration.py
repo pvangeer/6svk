@@ -25,8 +25,9 @@ class LayoutConfiguration(BaseModel):
     question_max_width: float = 570  # TODO: Progress or derive
     column_width: int = 650
     header_width: int = 650
-    priority_width: int = 15
-    svk_icon_width: int = 24
+    priority_box_width: float = 15.0
+    question_id_box_width: float = 40.0
+    svk_icon_size: int = 24
 
     # From Figure
     group_colors: dict[int, tuple[int, int, int]] = {}

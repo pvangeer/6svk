@@ -42,15 +42,21 @@ class Question(BaseModel):
 
     _lines: list[str] = []
 
-    @model_validator(mode="after")
-    def compute_height(self):
+    def construct_lines(self):
         self._lines = wrapped_lines(
             self.research_question.question,
-            # max_width=self.max_width - 2 * self.text_margin - self.priority_box_width - self.svk_icon_width,
-            max_width=self.layout_configuration.question_max_width - self.layout_configuration.line_margin - self._priority_box_width,
+            max_width=self.layout_configuration.column_width
+            - self.layout_configuration.arrow_depth
+            - 2 * self.layout_configuration.element_margin
+            - 2 * self.layout_configuration.line_margin
+            - self._id_box_width
+            - self._priority_box_width,
             font_size=self.layout_configuration.font_size,
         )
 
+    @model_validator(mode="after")
+    def compute_height(self):
+        self.construct_lines()
         self.height = self.layout_configuration.font_size * len(self._lines) * 1.2 + self.layout_configuration.line_margin * 2.0
 
         return self
@@ -83,8 +89,14 @@ class Question(BaseModel):
         )
 
     @property
+    def _id_box_width(self) -> float:
+        return (
+            self.layout_configuration.question_id_box_width + self.layout_configuration.line_margin + self.layout_configuration.line_margin
+        )
+
+    @property
     def _priority_box_width(self) -> float:
-        return self.layout_configuration.priority_width + self.layout_configuration.line_margin + self.layout_configuration.line_margin
+        return self.layout_configuration.priority_box_width + self.layout_configuration.line_margin + self.layout_configuration.line_margin
 
     def draw(self, dwg, x, y):
         width = self.layout_configuration.question_max_width
@@ -103,31 +115,38 @@ class Question(BaseModel):
         y_middle = y + self.height / 2
         if not self.high_priority:
             draw_priority_arrow(
-                dwg, x=x + self.layout_configuration.line_margin, y=y_middle, width=self.layout_configuration.priority_width
+                dwg, x=x + self.layout_configuration.line_margin, y=y_middle, width=self.layout_configuration.priority_box_width
             )
         else:
             draw_priority_arrow(
-                dwg, x=x + self.layout_configuration.line_margin, y=y_middle - 2.5, width=self.layout_configuration.priority_width
+                dwg, x=x + self.layout_configuration.line_margin, y=y_middle - 2.5, width=self.layout_configuration.priority_box_width
             )
             draw_priority_arrow(
-                dwg, x=x + self.layout_configuration.line_margin, y=y_middle + 2.5, width=self.layout_configuration.priority_width
+                dwg, x=x + self.layout_configuration.line_margin, y=y_middle + 2.5, width=self.layout_configuration.priority_box_width
             )
 
         if len(self._lines) < 1:
-            self._lines = wrapped_lines(
-                self.research_question.question,
-                max_width=width
-                - 2 * self.layout_configuration.line_margin
-                - self._priority_box_width
-                - self.layout_configuration.svk_icon_width,
-                font_size=self.layout_configuration.font_size,
-            )
+            self.construct_lines()
 
+        # TODO: Make this a link
+        dwg.add(
+            dwg.text(
+                self.research_question.id,
+                insert=(
+                    x + self._priority_box_width,
+                    y + self.height / 2,
+                ),
+                text_anchor="start",
+                font_family="Arial",
+                dominant_baseline="middle",
+                font_size=10,
+            )
+        )
         dwg.add(
             wrapped_text(
                 dwg,
                 lines=self._lines,
-                insert=(x + self._priority_box_width, y + self.layout_configuration.line_margin),
+                insert=(x + self._priority_box_width + self._id_box_width, y + self.layout_configuration.line_margin),
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
             )
