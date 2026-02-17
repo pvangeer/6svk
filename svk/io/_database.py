@@ -166,7 +166,11 @@ class Database(list[ResearchQuestion]):
                         lead_time=Database._get_int_optional(row, self.i_lead_time),
                         costs_estimate=Database._get_int_optional(row, self.i_costs),
                         reference_ids=(
-                            Database._get_str(row, self.i_reference_ids).replace(";", ",").split(",")
+                            [
+                                entry.strip()
+                                for entry in Database._get_str(row, self.i_reference_ids).replace(";", ",").split(",")
+                                if entry.strip()
+                            ]
                             if not Database._empty(row, self.i_reference_ids)
                             else []
                         ),

@@ -114,13 +114,25 @@ def test_create_overview_rp():
     questions = Database(database_path)
     questions.read()
 
-    convert_database_to_overview(
+    file_overview = convert_database_to_overview(
         config=config,
         links_manager=links_manager,
         questions=questions,
         storm_surge_barrier=StormSurgeBarrier.Ramspol,
         output_dir=rp_dir,
     )
+    file_details = convert_database_to_details(
+        config=config,
+        links_manager=links_manager,
+        questions=questions,
+        storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier,
+        output_dir=rp_dir,
+    )
+    output_file = "C:/Test/Kennisvragen RP - all.pdf"
+    final_output_file = "C:/Test/Kennisvragen RP - all with links.pdf"
+    merge_pdf_files([file_overview, file_details], output_file)
+
+    add_links(input_pdf_file=output_file, output_file=final_output_file, links_manager=links_manager)
 
 
 def test_create_overview_hijk():
@@ -134,10 +146,22 @@ def test_create_overview_hijk():
     questions = Database(database_path)
     questions.read()
 
-    convert_database_to_overview(
+    file_overview = convert_database_to_overview(
         config=config,
         links_manager=links_manager,
         questions=questions,
         storm_surge_barrier=StormSurgeBarrier.HollandseIJsselBarrier,
         output_dir=hijk_dir,
     )
+    file_details = convert_database_to_details(
+        config=config,
+        links_manager=links_manager,
+        questions=questions,
+        storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier,
+        output_dir=hijk_dir,
+    )
+    output_file = "C:/Test/Kennisvragen HIJK - all.pdf"
+    final_output_file = "C:/Test/Kennisvragen HIJK - all with links.pdf"
+    merge_pdf_files([file_overview, file_details], output_file)
+
+    add_links(input_pdf_file=output_file, output_file=final_output_file, links_manager=links_manager)
