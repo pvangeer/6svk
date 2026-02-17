@@ -72,3 +72,12 @@ class ResearchQuestion(BaseModel):
         if model.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and model.research_line_primary is None:
             raise ValueError("Research line can only be unknown in case the time frame is either not relevant or unknown.")
         return model
+
+    @property
+    def has_priority(self) -> bool:
+        return (
+            self.prio_management_maintenance.id == 3
+            or self.prio_water_safety.id == 3
+            or self.prio_operation.id == 3
+            or (self.prio_management_maintenance.id + self.prio_operation.id + self.prio_water_safety.id + self.prio_other_functions.id) > 8
+        )

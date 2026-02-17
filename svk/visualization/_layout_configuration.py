@@ -44,6 +44,7 @@ class LayoutConfiguration(BaseModel):
     page_width: float = 1990.0
     column_width: float = 650.0
     question_priority_box_width: float = 15.0
+    # TODO: Calculate the required width based on all questions first, then determin other widths/heights.
     question_id_box_width: float = 40.0
     arrow_depth: float = 20
 

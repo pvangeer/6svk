@@ -60,21 +60,6 @@ class Question(VisualElement):
         return self
 
     @property
-    def high_priority(self) -> bool:
-        return (
-            self.research_question.prio_management_maintenance.id == 3
-            or self.research_question.prio_water_safety.id == 3
-            or self.research_question.prio_operation.id == 3
-            or (
-                self.research_question.prio_management_maintenance.id
-                + self.research_question.prio_operation.id
-                + self.research_question.prio_water_safety.id
-                + self.research_question.prio_other_functions.id
-            )
-            > 8
-        )
-
-    @property
     def _color(self):
         research_line = self.research_question.research_line_primary
         return (
@@ -113,7 +98,7 @@ class Question(VisualElement):
         )
 
         y_middle = y + self.height / 2
-        if not self.high_priority:
+        if not self.research_question.has_priority:
             draw_priority_arrow(
                 dwg, x=x + self.layout_configuration.line_margin, y=y_middle, width=self.layout_configuration.question_priority_box_width
             )

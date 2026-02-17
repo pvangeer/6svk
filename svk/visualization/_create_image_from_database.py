@@ -31,21 +31,8 @@ from collections import defaultdict
 from typing import DefaultDict
 
 
-# TODO: This now doubles a Question property. Should be implemented differently (part of ResearchQuestion?)
 def get_priority(question: ResearchQuestion) -> int:
-    has_priority = (
-        question.prio_management_maintenance.id == 3
-        or question.prio_water_safety.id == 3
-        or question.prio_operation.id == 3
-        or (
-            question.prio_management_maintenance.id
-            + question.prio_operation.id
-            + question.prio_water_safety.id
-            + question.prio_other_functions.id
-        )
-        > 8
-    )
-    return 1 if has_priority else 0
+    return 1 if question.has_priority else 0
 
 
 def get_column_title(time_frame: TimeFrame) -> str:
