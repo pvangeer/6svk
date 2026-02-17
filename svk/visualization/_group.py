@@ -18,20 +18,17 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from pydantic import BaseModel
 from svgwrite import Drawing
 from svk.visualization._question import Question
 from svk.visualization.helpers._draw_callout import draw_callout
-from svk.visualization._layout_configuration import LayoutConfiguration
+from svk.visualization._visual_element import VisualElement
 
 
-class Group(BaseModel):
+class Group(VisualElement):
     """
     A group of items (as part of a column)
     """
 
-    layout_configuration: LayoutConfiguration = LayoutConfiguration()
-    """The layour configuration shared across all figures' items"""
     title: str
     """The title of the group"""
     color: str

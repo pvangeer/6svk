@@ -18,30 +18,29 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.io import Database
-from svk.visualization import create_image_from_database
-from svk.data import StormSurgeBarrier
 from datetime import datetime
+
+from svk.io import Database
+from svk.visualization import create_image_from_database, LayoutConfiguration, DetailsPage, QuestionDetails
+from svk.data import StormSurgeBarrier
+from svk.io import svg_to_pdf, merge_pdf_files, add_links
+import os
 
 base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK"
 
 
-def convert_database(database_path, storm_surge_barrier: StormSurgeBarrier, output_dir: str):
+def convert_database_to_overview(config: LayoutConfiguration, questions: Database, storm_surge_barrier: StormSurgeBarrier, output_dir: str):
     now = datetime.now().strftime("%Y-%m-%d")
-
-    print(f"Read questions from database: {database_path }")
-    questions = Database(database_path)
-    questions.read()
 
     for e in questions.errors:
         print(f"{e.cell_reference}: {str(e)}")
 
-    # target_file_path = f"{output_dir}/{now} - Kennisvragen {storm_surge_barrier.title}.pdf"
-    target_file_path = f"c:/Test/{now} - Kennisvragen {storm_surge_barrier.title}.pdf"
     output_dir = f"c:/Test/"
     file_name = f"{now} - Kennisvragen {storm_surge_barrier.title}"
+    target_file_path = os.path.join(output_dir, file_name + ".pdf")
     print(f"create image: {target_file_path}")
-    create_image_from_database(
+    return create_image_from_database(
+        config,
         storm_surge_barrier.title,
         questions,
         output_dir,
@@ -50,19 +49,66 @@ def convert_database(database_path, storm_surge_barrier: StormSurgeBarrier, outp
     )
 
 
+def convert_database_to_details(config: LayoutConfiguration, questions: Database, storm_surge_barrier: StormSurgeBarrier, output_dir: str):
+    dwg_details_page = DetailsPage(layout_configuration=config)
+    for question in sorted(questions, key=lambda q: q.id):
+        dwg_details_page.questions.append(QuestionDetails(layout_configuration=config, research_question=question))
+
+    now = datetime.now().strftime("%Y-%m-%d")
+    # target_file_path = f"{output_dir}/{now} - Kennisvragen {storm_surge_barrier.title}.pdf"
+    target_file_path = f"c:/Test/{now} - Kennisvragen {storm_surge_barrier.title} - details.pdf"
+    output_dir = f"c:/Test/"
+    file_name = f"{now} - Kennisvragen {storm_surge_barrier.title} - details"
+    print(f"create image: {target_file_path}")
+
+    return svg_to_pdf(dwg=dwg_details_page.draw(), output_dir=output_dir, file_name=file_name)
+
+
 def test_create_overview_hv():
     hv_dir = base_dir + "/03 HV/01 Uitwerking"
-    convert_database(
-        database_path=hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx",
+    database_path = hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
+
+    config = LayoutConfiguration()
+    print(f"Read questions from database: {database_path }")
+    questions = Database(database_path)
+    questions.read()
+
+    file_overview = convert_database_to_overview(
+        config,
+        questions,
         storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier,
         output_dir=hv_dir,
+    )
+
+    file_details = convert_database_to_details(
+        config, questions, storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier, output_dir=hv_dir
+    )
+    output_file = "C:/Test/Kennisvragen HV - all.pdf"
+    final_output_file = "C:/Test/Kennisvragen HV - all with links.pdf"
+    merge_pdf_files([file_overview, file_details], output_file)
+
+    add_links(
+        input_pdf_file=output_file,
+        output_file=final_output_file,
+        links=config.links,
+        link_targets=config.link_targets,
+        svg_sizes=config.page_sizes,
     )
 
 
 def test_create_overview_rp():
     rp_dir = base_dir + "/07 RP/01 Uitwerking"
-    convert_database(
-        database_path=rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx",
+    database_path = rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx"
+
+    config = LayoutConfiguration()
+
+    print(f"Read questions from database: {database_path }")
+    questions = Database(database_path)
+    questions.read()
+
+    convert_database_to_overview(
+        config,
+        questions,
         storm_surge_barrier=StormSurgeBarrier.Ramspol,
         output_dir=rp_dir,
     )
@@ -70,8 +116,17 @@ def test_create_overview_rp():
 
 def test_create_overview_hijk():
     hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
-    convert_database(
-        database_path=hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx",
+    database_path = hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx"
+
+    config = LayoutConfiguration()
+
+    print(f"Read questions from database: {database_path }")
+    questions = Database(database_path)
+    questions.read()
+
+    convert_database_to_overview(
+        config,
+        questions,
         storm_surge_barrier=StormSurgeBarrier.HollandseIJsselBarrier,
         output_dir=hijk_dir,
     )

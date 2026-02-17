@@ -19,21 +19,18 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from pydantic import BaseModel
 from svk.visualization.helpers._drawchevron import draw_half_chevron
-from svk.visualization._layout_configuration import LayoutConfiguration
+from svk.visualization._visual_element import VisualElement
 
 
-class Header(BaseModel):
+class Header(VisualElement):
     """
     Represents a column Header
     """
 
-    layout_configuration: LayoutConfiguration = LayoutConfiguration()
-    """The layout configuration shared across all elements of a figure."""
     title: str
     """The title of the header"""
-    sub_title: str
+    subtitle: str
     """the subtitle of the header"""
     color: str
     """The color of the header"""
@@ -71,10 +68,10 @@ class Header(BaseModel):
                 dominant_baseline="middle",
             )
         )
-        if self.sub_title != "":
+        if self.subtitle != "":
             dwg.add(
                 dwg.text(
-                    self.sub_title,
+                    self.subtitle,
                     insert=(x + self.layout_configuration.column_width - self.layout_configuration.arrow_depth, y_column_header_text),
                     font_family="Arial",
                     text_anchor="end",

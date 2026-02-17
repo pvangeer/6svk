@@ -18,25 +18,22 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from pydantic import BaseModel
 from svk.visualization._column import Column
 from svk.data import StormSurgeBarrier
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 from svk.visualization.helpers._draw_callout import draw_callout
 from svk.visualization.helpers._greyfraction import color_toward_grey
-from svk.visualization._layout_configuration import LayoutConfiguration
+from svk.visualization._visual_element import VisualElement
 from svgwrite import Drawing
 from uuid import uuid4
 
 
-class Figure(BaseModel):
+class Figure(VisualElement):
     """
     The main figure object of the "kennisagenda"
     """
 
-    layout_configuration: LayoutConfiguration = LayoutConfiguration()
-    """The layour configuration shared across all figures' items"""
     storm_surge_barrier: StormSurgeBarrier
     """The storm surge barrier associated to this figure (used for including an icon in the header)"""
     title: str
@@ -70,7 +67,6 @@ class Figure(BaseModel):
             y_current = y_current + group_height + self.layout_configuration.element_margin
 
         y_column_start = self.layout_configuration.figure_title_height + 2 * self.layout_configuration.paper_margin
-        column_widths = [self.layout_configuration.column_width for column in self.columns]
         column_heights = [column.get_height(y_column_start) for column in self.columns]
 
         paper_height = (
@@ -79,9 +75,9 @@ class Figure(BaseModel):
             + max(column_heights)
             + 1.2 * self.layout_configuration.disclamer_font_size
         )
-        paper_width = self.layout_configuration.paper_margin * 2 + sum(column_widths)
 
-        dwg = Drawing(size=(f"{paper_width}px", f"{paper_height}px"), debug=False)
+        dwg = Drawing(size=(f"{self.layout_configuration.page_width}px", f"{paper_height}px"), debug=False)
+        self.layout_configuration.page_sizes[0] = (self.layout_configuration.page_width, paper_height)
 
         icon_width = 0
         icon_size = self.layout_configuration.figure_title_height
@@ -115,7 +111,7 @@ class Figure(BaseModel):
         for number in groups.keys():
             x_group = self.layout_configuration.paper_margin
             y_group = groups[number][0]
-            group_width = paper_width - 2 * self.layout_configuration.paper_margin
+            group_width = self.layout_configuration.page_width - 2 * self.layout_configuration.paper_margin
             group_height = groups[number][1]
             group_color = self.layout_configuration.group_colors[number] if number in self.layout_configuration.group_colors else None
             if group_color is None:

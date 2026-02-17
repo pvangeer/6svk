@@ -39,11 +39,26 @@ class LayoutConfiguration(BaseModel):
     column_header_height: float = 60
     group_header_height: float = 30
 
+    # TODO: This equals the number of columns * column_width + 2 * paper_margin. Whould be a derived property? Or should column width be derived?
+    page_width: float = 1990.0
     column_width: float = 650.0
     question_priority_box_width: float = 15.0
     question_id_box_width: float = 40.0
     arrow_depth: float = 20
 
-    # From Figure
     group_colors: dict[int, tuple[int, int, int]] = {}
     """A dictionary with group colors."""
+
+    # TODO: Should this be part of another class? It is not really layout configuration.
+    links: dict[str, list[tuple[int, float, float, float, float]]] = {}
+    link_targets: dict[str, tuple[int, float, float]] = {}
+    page_sizes: dict[int, tuple[float, float]] = {}
+
+    def register_link(self, link_target: str, page_number: int, x: float, y: float, width: float, height: float):
+        if not link_target in self.links.keys():
+            self.links[link_target] = []
+
+        self.links[link_target].append((page_number, x, y, width, height))
+
+    def register_link_target(self, link_target: str, page_number: int, x: float, y: float):
+        self.link_targets[link_target] = (page_number, x, y)

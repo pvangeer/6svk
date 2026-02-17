@@ -21,20 +21,18 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from svgwrite import Drawing
 from svk.visualization._header import Header
 from svk.visualization._group import Group
-from svk.visualization._layout_configuration import LayoutConfiguration
-from pydantic import BaseModel
+from svk.visualization._header import Header
+from svk.visualization._visual_element import VisualElement
 
 
-class Column(BaseModel):
+class Column(VisualElement):
     """
     Class that represents a Column.
     """
 
-    layout_configuration: LayoutConfiguration = LayoutConfiguration()
-    """The layout configuration that is shared across the figures objects."""
     header_title: str
     """Header/title of the column"""
-    header_sub_title: str
+    header_subtitle: str
     """Subtitle of the columns header."""
     header_color: str
     """Color of the column (used as shading and as stroke color)"""
@@ -48,7 +46,9 @@ class Column(BaseModel):
         """
         The header object of the header of this column
         """
-        return Header(title=self.header_title, sub_title=self.header_sub_title, color=self.header_color)
+        return Header(
+            layout_configuration=self.layout_configuration, title=self.header_title, subtitle=self.header_subtitle, color=self.header_color
+        )
 
     def get_height(self, paper_header_height: float = 0):
         """

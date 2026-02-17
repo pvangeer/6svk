@@ -18,24 +18,22 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from pydantic import BaseModel, model_validator, Field
+from pydantic import model_validator, Field
 from svgwrite import Drawing
 
 from svk.data import ResearchQuestion
 from svk.visualization.helpers._drawwrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
-from svk.visualization._layout_configuration import LayoutConfiguration
+from svk.visualization._visual_element import VisualElement
+from svk.visualization.helpers._measuretext import measure_text
 
 
-# TODO: Create base model that includes layout_configuration, height and draw. This will
-class Question(BaseModel):
+class Question(VisualElement):
     """
     Represents a question element (as part of  a group, column and the figure)
     """
 
-    layout_configuration: LayoutConfiguration = LayoutConfiguration()
-    """The layout configuration shared across all elements of a figure."""
     research_question: ResearchQuestion
     """The research question"""
     height: float = Field(default_factory=int)
@@ -136,7 +134,16 @@ class Question(BaseModel):
         if len(self._lines) < 1:
             self.construct_lines()
 
-        # TODO: Make this a link
+        text_w, _ = measure_text(text=self.research_question.id, font_size=10)
+        self.layout_configuration.register_link(
+            link_target=self.research_question.id,
+            page_number=0,
+            x=x + self._priority_box_width,
+            y=y + self.height / 2 - 6.0,
+            width=text_w,
+            height=12.0,
+        )
+
         dwg.add(
             dwg.text(
                 self.research_question.id,
@@ -150,6 +157,7 @@ class Question(BaseModel):
                 font_size=10,
             )
         )
+
         dwg.add(
             wrapped_text(
                 dwg,

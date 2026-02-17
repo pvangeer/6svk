@@ -23,7 +23,7 @@ from svgwrite import Drawing
 import os
 
 
-def svg_to_pdf(dwg: Drawing, output_dir: str, file_name: str):
+def svg_to_pdf(dwg: Drawing, output_dir: str, file_name: str) -> str:
     import subprocess
 
     if not os.path.exists(output_dir):
@@ -36,6 +36,8 @@ def svg_to_pdf(dwg: Drawing, output_dir: str, file_name: str):
     dwg.saveas(svg_image_path)
     inkscape_path = "C:/Program Files/Inkscape/bin/inkscape.exe"
     subprocess.run([inkscape_path, svg_image_path, "--export-type=pdf", f"--export-filename={pdf_image_path}"])
+
+    return pdf_image_path
 
 
 def svg_to_pdf_chrome(svg_dwg: Drawing, pdf_path: str):
