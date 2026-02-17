@@ -49,9 +49,7 @@ class Group(VisualElement):
             + 2 * self.layout_configuration.line_margin
         )
 
-    def draw(
-        self, dwg: Drawing, x: float, y: float, width: float
-    ):  # TODO: Should we pass width here, or should that be part of the layout_configuration?
+    def draw(self, dwg: Drawing, x: float, y: float):
         """
         Draws the group and its questions
 
@@ -64,6 +62,8 @@ class Group(VisualElement):
         :param width: The width of the group
         :type width: float
         """
+
+        width = self.layout_configuration.column_width - self.layout_configuration.arrow_depth
         self.draw_header(dwg, x, y, width)
 
         current_y = y + self.layout_configuration.group_header_height + self.layout_configuration.line_margin

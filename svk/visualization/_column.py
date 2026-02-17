@@ -94,6 +94,6 @@ class Column(VisualElement):
                 current_y = self.y_color_groups[i_group]
 
             group.layout_configuration.arrow_depth = self.layout_configuration.arrow_depth
-            group.draw(dwg, x, current_y, round(self.layout_configuration.column_width - self.layout_configuration.arrow_depth))
+            group.draw(dwg, x, current_y)
 
             current_y += group.get_height() + 2 * self.layout_configuration.element_margin
