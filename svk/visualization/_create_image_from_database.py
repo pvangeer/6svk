@@ -27,6 +27,7 @@ from svk.visualization._group import Group
 from svk.visualization._question import Question
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.helpers._greyfraction import color_toward_grey
+from svk.visualization.helpers._measuretext import measure_text
 from collections import defaultdict
 from typing import DefaultDict
 
@@ -115,6 +116,8 @@ def create_image_from_database(
 
     for q in database:
         time_groups[q.time_frame].append(q)
+
+    config.question_id_box_width = max([measure_text(q.id, config.font_size)[0] for q in database]) + config.line_margin
 
     fig = Figure(layout_configuration=config, links_manager=links_manager, title=title, storm_surge_barrier=barrier_icon)
     add_column(config, links_manager=links_manager, fig=fig, time_groups=time_groups, time_frame=TimeFrame.Now)

@@ -46,7 +46,7 @@ class Question(VisualElement):
             max_width=self.layout_configuration.column_width
             - self.layout_configuration.arrow_depth
             - 2 * self.layout_configuration.element_margin
-            - 2 * self.layout_configuration.line_margin
+            - 3 * self.layout_configuration.line_margin
             - self._id_box_width
             - self._priority_box_width,
             font_size=self.layout_configuration.font_size,
@@ -73,9 +73,7 @@ class Question(VisualElement):
 
     @property
     def _id_box_width(self) -> float:
-        return (
-            self.layout_configuration.question_id_box_width + self.layout_configuration.line_margin + self.layout_configuration.line_margin
-        )
+        return self.layout_configuration.question_id_box_width
 
     @property
     def _priority_box_width(self) -> float:
@@ -116,10 +114,9 @@ class Question(VisualElement):
                 width=self.layout_configuration.question_priority_box_width,
             )
 
-        if len(self._lines) < 1:
-            self.construct_lines()
+        self.draw_vertical_separator(dwg, x + self._priority_box_width, y, self.height, self._color)
 
-        text_w, _ = measure_text(text=self.research_question.id, font_size=10)
+        text_w, _ = measure_text(text=self.research_question.id, font_size=self.layout_configuration.font_size)
         self.links_manager.register_link(
             link_target=self.research_question.id,
             page_number=0,
@@ -133,21 +130,29 @@ class Question(VisualElement):
             dwg.text(
                 self.research_question.id,
                 insert=(
-                    x + self._priority_box_width,
+                    x + self._priority_box_width + self._id_box_width / 2.0,
                     y + self.height / 2,
                 ),
-                text_anchor="start",
+                text_anchor="middle",
                 font_family="Arial",
                 dominant_baseline="middle",
-                font_size=10,
+                font_size=self.layout_configuration.font_size,
             )
         )
+
+        self.draw_vertical_separator(dwg, x + self._priority_box_width + self._id_box_width, y, self.height, self._color)
+
+        if len(self._lines) < 1:
+            self.construct_lines()
 
         dwg.add(
             wrapped_text(
                 dwg,
                 lines=self._lines,
-                insert=(x + self._priority_box_width + self._id_box_width, y + self.layout_configuration.line_margin),
+                insert=(
+                    x + self._priority_box_width + self._id_box_width + self.layout_configuration.line_margin,
+                    y + self.layout_configuration.line_margin,
+                ),
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
             )

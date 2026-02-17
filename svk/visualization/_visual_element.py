@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from svk.io import LinksManager
 from svk.visualization._layout_configuration import LayoutConfiguration
+from svgwrite import Drawing
 
 
 class VisualElement(BaseModel):
@@ -8,3 +9,13 @@ class VisualElement(BaseModel):
     """The layout configuration shared across all elements of a figure."""
 
     links_manager: LinksManager
+
+    def draw_vertical_separator(self, dwg: Drawing, x: float, y: float, element_height: float, color: str):
+        dwg.add(
+            dwg.line(
+                start=(x, y + self.layout_configuration.line_margin),
+                end=(x, y + element_height - self.layout_configuration.line_margin),
+                stroke_width=0.5,
+                stroke=color,
+            )
+        )
