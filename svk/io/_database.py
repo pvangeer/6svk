@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.data import ResearchQuestion, Priority, ResearchLine, TimeFrame, get_research_line
+from svk.data import ResearchQuestion, Priority, ResearchLine, TimeFrame, get_research_line, StormSurgeBarrier
 
 from openpyxl import load_workbook
 from pathlib import Path
@@ -154,7 +154,7 @@ class Database(list[ResearchQuestion]):
                         id=Database._get_str(row, self.i_id),
                         question=Database._get_str(row, self.i_question),
                         explanation=Database._get_str_optional(row, self.i_explanation),
-                        storm_surge_barrier=Database._get_str(row, self.i_barrier).split(","),  # TODO: Convert to StormSurgeBarrier
+                        storm_surge_barriers=Database._get_storm_surge_barriers(row, self.i_barrier),
                         research_line_primary=Database._get_research_line_optional(row, self.i_primary_research_line),
                         research_line_secondary=Database._get_research_line_optional(row, self.i_secundary_research_line),
                         time_frame=Database._get_time_frame(row, self.i_time_frame),
@@ -256,3 +256,29 @@ class Database(list[ResearchQuestion]):
                 return TimeFrame.Future
             case _:
                 return TimeFrame.Unknown
+
+    @staticmethod
+    def _get_storm_surge_barriers(row: tuple, i_column: int) -> list[StormSurgeBarrier]:
+        barrier_strings = Database._get_str(row, i_column).split(",")
+        barriers = []
+        for b in barrier_strings:
+            match b:
+                case "HV":
+                    barriers.append(StormSurgeBarrier.HaringvlietBarrier)
+                case "HIJK":
+                    barriers.append(StormSurgeBarrier.HollandseIJsselBarrier)
+                case "6SVK":
+                    barriers.append(StormSurgeBarrier.All)
+                case "OSK":
+                    barriers.append(StormSurgeBarrier.EasternScheldBarrier)
+                case "MLK":
+                    barriers.append(StormSurgeBarrier.MaeslantBarrier)
+                case "HK":
+                    barriers.append(StormSurgeBarrier.HartelBarrier)
+                case "RP":
+                    barriers.append(StormSurgeBarrier.Ramspol)
+                case _:
+                    raise DatabaseReadError(
+                        "Cannot read storm surge barrier. Should be on of ['6SVK','HV','HIJK','HK','MLK','OSK','RP'].", i_column=i_column
+                    )
+        return barriers

@@ -28,7 +28,7 @@ def generate_research_question(question, time_frame, research_line: ResearchLine
     return ResearchQuestion(
         id=f"T{str(generate_research_question.counter)}",
         question=question,
-        storm_surge_barrier=["HV"],
+        storm_surge_barriers=[StormSurgeBarrier.HaringvlietBarrier],
         reference_ids=[],
         reference_question=generate_research_question.counter,
         prio_water_safety=Priority.Low,

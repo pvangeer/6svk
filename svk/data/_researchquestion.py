@@ -23,6 +23,7 @@ from pydantic import BaseModel, model_validator
 from svk.data._timeframe import TimeFrame
 from svk.data._priority import Priority
 from svk.data._researchline import ResearchLine
+from svk.data._stormsurgebarrier import StormSurgeBarrier
 
 
 class ResearchQuestion(BaseModel):
@@ -36,7 +37,7 @@ class ResearchQuestion(BaseModel):
     """The research question."""
     explanation: str | None = None
     """Further explanation of the research question."""
-    storm_surge_barrier: list[str]  # TODO: Make this a list of StormSurgeBarrier objects
+    storm_surge_barriers: list[StormSurgeBarrier]
     """A list of storm surge barriers this question is related to."""
     reference_ids: list[str]
     """A list of id's of other research questions this question is related to."""
