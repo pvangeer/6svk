@@ -135,7 +135,7 @@ class Question(VisualElement):
             self.construct_lines()
 
         text_w, _ = measure_text(text=self.research_question.id, font_size=10)
-        self.layout_configuration.register_link(
+        self.links_manager.register_link(
             link_target=self.research_question.id,
             page_number=0,
             x=x + self._priority_box_width,

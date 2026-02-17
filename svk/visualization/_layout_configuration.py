@@ -19,6 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from pydantic import BaseModel
+from svk.io import LinksManager
 
 
 class LayoutConfiguration(BaseModel):
@@ -49,16 +50,4 @@ class LayoutConfiguration(BaseModel):
     group_colors: dict[int, tuple[int, int, int]] = {}
     """A dictionary with group colors."""
 
-    # TODO: Should this be part of another class? It is not really layout configuration.
-    links: dict[str, list[tuple[int, float, float, float, float]]] = {}
-    link_targets: dict[str, tuple[int, float, float]] = {}
-    page_sizes: dict[int, tuple[float, float]] = {}
-
-    def register_link(self, link_target: str, page_number: int, x: float, y: float, width: float, height: float):
-        if not link_target in self.links.keys():
-            self.links[link_target] = []
-
-        self.links[link_target].append((page_number, x, y, width, height))
-
-    def register_link_target(self, link_target: str, page_number: int, x: float, y: float):
-        self.link_targets[link_target] = (page_number, x, y)
+    links: LinksManager = LinksManager()

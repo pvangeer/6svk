@@ -47,7 +47,11 @@ class Column(VisualElement):
         The header object of the header of this column
         """
         return Header(
-            layout_configuration=self.layout_configuration, title=self.header_title, subtitle=self.header_subtitle, color=self.header_color
+            layout_configuration=self.layout_configuration,
+            links_manager=self.links_manager,
+            title=self.header_title,
+            subtitle=self.header_subtitle,
+            color=self.header_color,
         )
 
     def get_height(self, paper_header_height: float = 0):

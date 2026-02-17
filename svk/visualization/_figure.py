@@ -77,7 +77,7 @@ class Figure(VisualElement):
         )
 
         dwg = Drawing(size=(f"{self.layout_configuration.page_width}px", f"{paper_height}px"), debug=False)
-        self.layout_configuration.page_sizes[0] = (self.layout_configuration.page_width, paper_height)
+        self.links_manager.register_page(0, self.layout_configuration.page_width, paper_height)
 
         icon_width = 0
         icon_size = self.layout_configuration.figure_title_height
