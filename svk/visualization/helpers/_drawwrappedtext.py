@@ -68,6 +68,7 @@ def wrapped_text(
     font_weight: str = "normal",
     text_anchor: str = "start",
     dominant_baseline: str = "middle",
+    font_style: str = "normal",
 ) -> ElementBuilder:
     """
     Creates an svg text element with lines for each text line in lines.
@@ -84,6 +85,8 @@ def wrapped_text(
     :type font_size: int
     :param font_family: The font family (if different from Arial, possibly the lines won't fit the maximum width)
     :type font_family: str
+    :param font_style: The font style
+    :type font_style: str
     :param font_weight: The font weight
     :type font_weight: str
     :param text_anchor: The text anchor
@@ -108,6 +111,7 @@ def wrapped_text(
                 font_family=font_family,
                 font_weight=font_weight,
                 text_anchor=text_anchor,
+                font_style=font_style,
             )
         )
         y += font_size * line_height

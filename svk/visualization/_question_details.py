@@ -1,5 +1,5 @@
 from pydantic import Field, model_validator
-from svk.data import ResearchQuestion
+from svk.data import ResearchQuestion, Priority
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._drawwrappedtext import wrapped_text, wrapped_lines
@@ -17,7 +17,7 @@ class QuestionDetails(VisualElement):
     w_relation_field: float = Field(default_factory=float)
     w_priority_field_fixed: float = Field(default_factory=float)
     w_priority_field: float = Field(default_factory=float)
-    h_second_line: float = Field(default_factory=float)
+    h_first_line: float = Field(default_factory=float)
     priority_explained_lines: list[str] = Field(default_factory=list[str])
     w_question_field: float = Field(default_factory=float)
     question_lines: list[str] = Field(default_factory=list[str])
@@ -36,33 +36,36 @@ class QuestionDetails(VisualElement):
 
     @model_validator(mode="after")
     def compute_dimensions(self):
-        self.w_code_field = (
-            max(
-                self.layout_configuration.question_priority_box_width,
-                self.layout_configuration.question_id_box_width,
-            )
-            + 2 * self.layout_configuration.element_margin
+        self.w_code_field = max(
+            self.layout_configuration.question_priority_box_width + self.layout_configuration.line_margin * 2,
+            self.layout_configuration.question_id_box_width,
         )
 
-        self.h_second_line = (
-            self.layout_configuration.element_margin + self.layout_configuration.font_size + self.layout_configuration.element_margin
+        self.h_first_line = (
+            self.layout_configuration.line_margin + self.layout_configuration.font_size + self.layout_configuration.line_margin
         )
-        h_code_field = self.h_second_line + self.layout_configuration.question_priority_box_width + self.layout_configuration.element_margin
+        h_code_field = self.h_first_line + self.layout_configuration.question_priority_box_width + self.layout_configuration.element_margin
         self.w_relation_field = self.layout_configuration.question_id_box_width + self.layout_configuration.element_margin
         h_relation_field = (
-            self.h_second_line
+            self.h_first_line
             + len(self.research_question.reference_ids) * self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.element_margin
+            + self.layout_configuration.line_margin
         )
         self.w_priority_field_fixed = 50
-        h_priority_fixed_field = self.h_second_line + 4 * self.layout_configuration.font_size * 1.2 + self.layout_configuration.line_margin
-        w_remaining = self.layout_configuration.page_width - self.w_code_field - self.w_priority_field_fixed - self.w_relation_field
+        h_priority_fixed_field = self.h_first_line + 4 * self.layout_configuration.font_size * 1.2 + self.layout_configuration.line_margin
+        w_remaining = (
+            self.layout_configuration.page_width
+            - self.layout_configuration.paper_margin * 2.0
+            - self.w_code_field
+            - self.w_priority_field_fixed
+            - self.w_relation_field
+        )
         self.w_priority_field = w_remaining * 0.4
         self.priority_explained_lines = []
         h_priority_field = (
-            self.h_second_line
+            self.h_first_line
             + len(self.priority_explained_lines) * self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.element_margin
+            + self.layout_configuration.line_margin
         )
 
         self.w_question_field = w_remaining * 0.6
@@ -72,16 +75,16 @@ class QuestionDetails(VisualElement):
             self.layout_configuration.font_size,
         )
         self.question_explained_lines = wrapped_lines(
-            str(self.research_question.explanation) if not None else "",
+            "-" if self.research_question.explanation is None else str(self.research_question.explanation),
             self.w_question_field - 2 * self.layout_configuration.line_margin,
             self.layout_configuration.font_size,
         )
         h_question_field = (
-            self.layout_configuration.element_margin
+            self.layout_configuration.line_margin
             + len(self.question_lines) * self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.element_margin
+            + self.layout_configuration.line_margin
             + len(self.question_explained_lines) * self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.element_margin
+            + self.layout_configuration.line_margin
         )
 
         self.height = max(h_code_field, h_priority_field, h_priority_fixed_field, h_question_field, h_relation_field)
@@ -115,52 +118,60 @@ class QuestionDetails(VisualElement):
         dwg.add(
             dwg.text(
                 self.research_question.id,
-                insert=(x + self.layout_configuration.element_margin, y + self.layout_configuration.element_margin),
+                insert=(x + self.w_code_field / 2.0, y + self.layout_configuration.line_margin),
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",
                 font_weight="normal",
-                text_anchor="start",
+                text_anchor="middle",
                 dominant_baseline="text-before-edge",
             )
         )
 
-        prio_height = (
-            self.height
-            - self.layout_configuration.element_margin
-            - self.layout_configuration.line_margin
-            - self.layout_configuration.font_size * 1.2
+        prio_symbol_height = self.height - self.h_first_line
+
+        dwg.add(
+            dwg.line(
+                start=(x + self.layout_configuration.line_margin, y + self.h_first_line),
+                end=(x + self.w_code_field - self.layout_configuration.line_margin, y + self.h_first_line),
+                stroke_width=0.5,
+                stroke=self._color,
+            )
         )
+
         y_middle = (
             y
-            + self.layout_configuration.element_margin
+            + self.layout_configuration.line_margin
             + self.layout_configuration.line_margin
             + self.layout_configuration.font_size * 1.2
-            + prio_height / 2.0
+            + prio_symbol_height / 2.0
         )
-        x_prio_left = x + self.w_code_field / 2 - self.layout_configuration.question_priority_box_width / 2
+        x_id_left = x + self.w_code_field / 2 - self.layout_configuration.question_priority_box_width / 2
         if not self.research_question.has_priority:
-            draw_priority_arrow(dwg, x=x_prio_left, y=y_middle, width=self.layout_configuration.question_priority_box_width)
+            draw_priority_arrow(dwg, x=x_id_left, y=y_middle, width=self.layout_configuration.question_priority_box_width)
         else:
             draw_priority_arrow(
                 dwg,
-                x=x_prio_left,
+                x=x_id_left,
                 y=y_middle - 2.5,
                 width=self.layout_configuration.question_priority_box_width,
             )
             draw_priority_arrow(
                 dwg,
-                x=x_prio_left,
+                x=x_id_left,
                 y=y_middle + 2.5,
                 width=self.layout_configuration.question_priority_box_width,
             )
+
+        self.draw_vertical_separator(dwg, x + self.w_code_field, y, self.height, self._color)
 
         dwg.add(
             wrapped_text(
                 dwg,
                 self.question_lines,
-                insert=(x + self.w_code_field, y + self.layout_configuration.element_margin),
+                insert=(x + self.w_code_field + self.layout_configuration.line_margin, y + self.layout_configuration.line_margin),
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",
+                font_style="italic",
                 font_weight="normal",
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
@@ -172,11 +183,11 @@ class QuestionDetails(VisualElement):
                 dwg,
                 self.question_explained_lines,
                 insert=(
-                    x + self.w_code_field,
+                    x + self.w_code_field + self.layout_configuration.line_margin,
                     y
-                    + self.layout_configuration.element_margin
+                    + self.layout_configuration.line_margin
                     + len(self.question_lines) * self.layout_configuration.font_size * 1.2
-                    + self.layout_configuration.element_margin,
+                    + self.layout_configuration.line_margin,
                 ),
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",
@@ -185,3 +196,156 @@ class QuestionDetails(VisualElement):
                 dominant_baseline="text-before-edge",
             )
         )
+
+        self.draw_vertical_separator(dwg, x + self.w_code_field + self.w_question_field, y, self.height, self._color)
+
+        x_priority = x + self.w_code_field + self.w_question_field
+        dwg.add(
+            dwg.text(
+                "Prioriteit",
+                insert=(
+                    x_priority + self.layout_configuration.line_margin,
+                    y + self.layout_configuration.line_margin,
+                ),
+                font_size=self.layout_configuration.font_size,
+                font_family="Arial",
+                font_weight="normal",
+                text_anchor="start",
+                dominant_baseline="text-before-edge",
+            )
+        )
+
+        dwg.add(
+            dwg.line(
+                start=(x_priority + self.layout_configuration.line_margin, y + self.h_first_line),
+                end=(
+                    x_priority + self.w_priority_field + self.w_priority_field_fixed - self.layout_configuration.line_margin,
+                    y + self.h_first_line,
+                ),
+                stroke_width=0.5,
+                stroke=self._color,
+            )
+        )
+
+        prios = [
+            ("Waterveiligheid:", self.research_question.prio_water_safety),
+            ("Ander functies:", self.research_question.prio_other_functions),
+            ("Operatie:", self.research_question.prio_operation),
+            ("B&O:", self.research_question.prio_management_maintenance),
+        ]
+
+        y_prio_current = y + self.h_first_line + self.layout_configuration.line_margin
+        x_prio_label = x_priority + self.layout_configuration.line_margin
+        x_prio_first = (
+            x_prio_label + measure_text("Waterveiligheid:", self.layout_configuration.font_size)[0] + self.layout_configuration.line_margin
+        )
+        for prio in prios:
+            dwg.add(
+                dwg.text(
+                    prio[0],
+                    insert=(
+                        x_prio_label,
+                        y_prio_current,
+                    ),
+                    font_size=self.layout_configuration.font_size,
+                    font_family="Arial",
+                    font_weight="normal",
+                    text_anchor="start",
+                    dominant_baseline="text-before-edge",
+                )
+            )
+            self.draw_priority_dots(dwg, x_prio_first, y_prio_current, prio[1])
+            y_prio_current += self.layout_configuration.font_size * 1.2
+
+        x_related_start = x + self.w_code_field + self.w_question_field + self.w_priority_field_fixed + self.w_priority_field
+        self.draw_vertical_separator(
+            dwg,
+            x_related_start,
+            y,
+            self.height,
+            self._color,
+        )
+
+        dwg.add(
+            dwg.text(
+                "Gerelateerd",
+                insert=(
+                    x_related_start + self.layout_configuration.line_margin,
+                    y + self.layout_configuration.line_margin,
+                ),
+                font_size=self.layout_configuration.font_size,
+                font_family="Arial",
+                font_weight="normal",
+                text_anchor="start",
+                dominant_baseline="text-before-edge",
+            )
+        )
+
+        dwg.add(
+            dwg.line(
+                start=(x_related_start + self.layout_configuration.line_margin, y + self.h_first_line),
+                end=(
+                    x_related_start + self.w_relation_field - self.layout_configuration.line_margin,
+                    y + self.h_first_line,
+                ),
+                stroke_width=0.5,
+                stroke=self._color,
+            )
+        )
+
+        x_related = x_related_start + self.layout_configuration.line_margin
+        y_related_current = y + self.h_first_line + self.layout_configuration.line_margin
+        for related in self.research_question.reference_ids:
+            dwg.add(
+                dwg.text(
+                    related,
+                    insert=(
+                        x_related,
+                        y_related_current,
+                    ),
+                    font_size=self.layout_configuration.font_size,
+                    font_family="Arial",
+                    font_weight="normal",
+                    text_anchor="start",
+                    dominant_baseline="text-before-edge",
+                )
+            )
+            self.links_manager.register_link(
+                related,
+                1,
+                x_related,
+                y_related_current,
+                measure_text(related, self.layout_configuration.font_size)[0],
+                self.layout_configuration.font_size,
+            )
+            y_related_current += self.layout_configuration.font_size * 1.2
+
+    def draw_priority_dots(self, dwg: Drawing, x: float, y_current: float, prio: Priority):
+        dotsize = 5
+        y_center = y_current + self.layout_configuration.font_size - dotsize * 1.5
+        x_prio_first = x + dotsize / 2.0
+        x_prio_second = x_prio_first + dotsize * 2.5
+        x_prio_third = x_prio_second + dotsize * 2.5
+
+        match prio:
+            case Priority.High:
+                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotsize, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=dotsize, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_third, y_center), r=dotsize, fill="black"))
+            case Priority.Medium:
+                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotsize, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=dotsize, fill="black"))
+            case Priority.Low:
+                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotsize, fill="black"))
+            case Priority.Unknown:
+                dwg.add(
+                    dwg.text(
+                        "?",
+                        insert=(x, y_current),
+                        font_size=self.layout_configuration.font_size,
+                        font_family="Arial",
+                        font_weight="normal",
+                        text_anchor="start",
+                        dominant_baseline="text-before-edge",
+                    )
+                )

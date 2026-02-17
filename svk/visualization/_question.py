@@ -117,20 +117,21 @@ class Question(VisualElement):
         self.draw_vertical_separator(dwg, x + self._priority_box_width, y, self.height, self._color)
 
         text_w, _ = measure_text(text=self.research_question.id, font_size=self.layout_configuration.font_size)
+        x_id_middle = x + self._priority_box_width + self._id_box_width / 2.0
         self.links_manager.register_link(
             link_target=self.research_question.id,
             page_number=0,
-            x=x + self._priority_box_width,
-            y=y + self.height / 2 - 6.0,
+            x=x_id_middle - text_w / 2.0,
+            y=y + self.height / 2.0 - self.layout_configuration.font_size / 2,
             width=text_w,
-            height=12.0,
+            height=self.layout_configuration.font_size,
         )
 
         dwg.add(
             dwg.text(
                 self.research_question.id,
                 insert=(
-                    x + self._priority_box_width + self._id_box_width / 2.0,
+                    x_id_middle,
                     y + self.height / 2,
                 ),
                 text_anchor="middle",
