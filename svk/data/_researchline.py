@@ -1,7 +1,7 @@
 """
 Copyright (C) Stichting Deltares 2026. All rights reserved.
 
-This file is part of the dikernel-python toolbox.
+This file is part of the 6svk toolbox.
 
 This program is free software; you can redistribute it and/or modify it under the terms of
 the GNU Lesser General Public License as published by the Free Software Foundation; either
@@ -18,9 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from __future__ import annotations
 from pydantic import BaseModel, ConfigDict
-
 from enum import Enum
 
 orange = (233, 113, 50)
@@ -59,40 +57,39 @@ class ResearchLine(BaseModel):
                 return dark_green
         raise ValueError("Unknown color group.")
 
-    # TODO: This maybe should not be part of the ResearchLine class but stand on its own (in the same namespace as ResearchLines.)
-    @staticmethod
-    def get_research_line(number: int) -> ResearchLine:
-        """
-        This method returns a research line object associated to a particular research line number.
 
-        :param number: The number associated to the desired research line.
-        :type number: int
-        :return: The associated research line.
-        :rtype: ResearchLine
-        """
-        match number:
-            case 1:
-                return ResearchLines.ConstructiveAspects.value
-            case 2:
-                return ResearchLines.OperatingSystem.value
-            case 3:
-                return ResearchLines.Facilities.value
-            case 4:
-                return ResearchLines.Maintenance.value
-            case 5:
-                return ResearchLines.Cyber.value
-            case 6:
-                return ResearchLines.Hydrodynamics.value
-            case 7:
-                return ResearchLines.ProbabilityOfFailyre.value
-            case 8:
-                return ResearchLines.Adaptation.value
-            case 9:
-                return ResearchLines.Organizational.value
-            case 10:
-                return ResearchLines.Lifespan.value
-            case _:
-                raise ValueError("Unknown research line")
+def get_research_line(number: int) -> ResearchLine:
+    """
+    This method returns a research line object associated to a particular research line number.
+
+    :param number: The number associated to the desired research line.
+    :type number: int
+    :return: The associated research line.
+    :rtype: ResearchLine
+    """
+    match number:
+        case 1:
+            return ResearchLines.ConstructiveAspects.value
+        case 2:
+            return ResearchLines.OperatingSystem.value
+        case 3:
+            return ResearchLines.Facilities.value
+        case 4:
+            return ResearchLines.Maintenance.value
+        case 5:
+            return ResearchLines.Cyber.value
+        case 6:
+            return ResearchLines.Hydrodynamics.value
+        case 7:
+            return ResearchLines.ProbabilityOfFailyre.value
+        case 8:
+            return ResearchLines.Adaptation.value
+        case 9:
+            return ResearchLines.Organizational.value
+        case 10:
+            return ResearchLines.Lifespan.value
+        case _:
+            raise ValueError("Unknown research line")
 
 
 class ResearchLines(Enum):

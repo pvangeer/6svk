@@ -1,7 +1,7 @@
 """
 Copyright (C) Stichting Deltares 2026. All rights reserved.
 
-This file is part of the dikernel-python toolbox.
+This file is part of the 6svk toolbox.
 
 This program is free software; you can redistribute it and/or modify it under the terms of
 the GNU Lesser General Public License as published by the Free Software Foundation; either
@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from ._researchquestion import ResearchQuestion
-from ._researchline import ResearchLine, ResearchLines
+from ._researchline import ResearchLine, ResearchLines, get_research_line
 from ._timeframe import TimeFrame
 from ._priority import Priority
 from ._stormsurgebarrier import StormSurgeBarrier
