@@ -19,7 +19,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from pydantic import BaseModel
-from svk.io import LinksManager
 
 
 class LayoutConfiguration(BaseModel):
@@ -41,13 +40,12 @@ class LayoutConfiguration(BaseModel):
     group_header_height: float = 30
 
     # TODO: This equals the number of columns * column_width + 2 * paper_margin. Whould be a derived property? Or should column width be derived?
-    page_width: float = 1990.0
+    overview_page_width: float = 1990.0
+    details_page_width: float = 1500.0
     column_width: float = 650.0
     question_priority_box_width: float = 15.0
     question_id_box_width: float = 40.0
     arrow_depth: float = 20
 
-    group_colors: dict[int, tuple[int, int, int]] = {}
+    cluster_colors: dict[int, tuple[int, int, int]] = {}
     """A dictionary with group colors."""
-
-    links: LinksManager = LinksManager()

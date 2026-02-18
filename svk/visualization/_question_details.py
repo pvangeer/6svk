@@ -27,7 +27,7 @@ class QuestionDetails(VisualElement):
 
         self._lines = wrapped_lines(
             self.research_question.question,
-            max_width=self.layout_configuration.page_width
+            max_width=self.layout_configuration.details_page_width
             - self.layout_configuration.paper_margin * 2
             - self.layout_configuration.question_id_box_width
             - 2 * self.layout_configuration.line_margin,
@@ -54,7 +54,7 @@ class QuestionDetails(VisualElement):
         self.w_priority_field_fixed = 50
         h_priority_fixed_field = self.h_first_line + 4 * self.layout_configuration.font_size * 1.2 + self.layout_configuration.line_margin
         w_remaining = (
-            self.layout_configuration.page_width
+            self.layout_configuration.details_page_width
             - self.layout_configuration.paper_margin * 2.0
             - self.w_code_field
             - self.w_priority_field_fixed
@@ -310,7 +310,7 @@ class QuestionDetails(VisualElement):
                     dominant_baseline="text-before-edge",
                 )
             )
-            self.links_manager.register_link(
+            self.links_register.register_link(
                 related,
                 1,
                 x_related,

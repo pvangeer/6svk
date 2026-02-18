@@ -35,7 +35,7 @@ class ResearchLine(BaseModel):
     """An integer associated to the particular research line."""
     title: str
     """The title of the research line."""
-    color_group: int
+    cluster: int
     """The color group that is associated to the research line. This allows grouping of questions in different research lines visually by means of the same background color."""
 
     model_config = ConfigDict(frozen=True)
@@ -48,7 +48,7 @@ class ResearchLine(BaseModel):
         :return: R,G,B of the associated color.
         :rtype: tuple[int, int, int]
         """
-        match self.color_group:
+        match self.cluster:
             case 1:
                 return orange
             case 2:
@@ -97,13 +97,13 @@ class ResearchLines(Enum):
     This enum exposes default research line objects used in the SVK-project.
     """
 
-    ConstructiveAspects = ResearchLine(number=1, title="Constructieve aspecten", color_group=1)
-    OperatingSystem = ResearchLine(number=2, title="Besturingssystemen / IA", color_group=1)
-    Facilities = ResearchLine(number=3, title="Voorzieningen en gebouwen", color_group=1)
-    Maintenance = ResearchLine(number=4, title="Onderhoud en operatie", color_group=1)
-    Cyber = ResearchLine(number=5, title="Cyber & security", color_group=2)
-    Hydrodynamics = ResearchLine(number=6, title="Hydrodynamische effecten en belastingen", color_group=2)
-    ProbabilityOfFailyre = ResearchLine(number=7, title="Faalkans", color_group=2)
-    Adaptation = ResearchLine(number=8, title="Adaptatie stormvloedkeringen", color_group=2)
-    Organizational = ResearchLine(number=9, title="Organisatorische aspecten", color_group=3)
-    Lifespan = ResearchLine(number=10, title="Restlevensduur huidige objecten", color_group=3)
+    ConstructiveAspects = ResearchLine(number=1, title="Constructieve aspecten", cluster=1)
+    OperatingSystem = ResearchLine(number=2, title="Besturingssystemen / IA", cluster=1)
+    Facilities = ResearchLine(number=3, title="Voorzieningen en gebouwen", cluster=1)
+    Maintenance = ResearchLine(number=4, title="Onderhoud en operatie", cluster=1)
+    Cyber = ResearchLine(number=5, title="Cyber & security", cluster=2)
+    Hydrodynamics = ResearchLine(number=6, title="Hydrodynamische effecten en belastingen", cluster=2)
+    ProbabilityOfFailyre = ResearchLine(number=7, title="Faalkans", cluster=2)
+    Adaptation = ResearchLine(number=8, title="Adaptatie stormvloedkeringen", cluster=2)
+    Organizational = ResearchLine(number=9, title="Organisatorische aspecten", cluster=3)
+    Lifespan = ResearchLine(number=10, title="Restlevensduur huidige objecten", cluster=3)

@@ -20,9 +20,9 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from datetime import datetime
 
-from svk.io import Database, LinksManager
-from svk.visualization import create_image_from_database, LayoutConfiguration, DetailsPage, QuestionDetails
-from svk.data import StormSurgeBarrier
+from svk.io import Database
+from svk.visualization import create_overview_page_from_questions, LayoutConfiguration, DetailsPage, QuestionDetails, KnowledgeCalendar
+from svk.data import StormSurgeBarrier, LinksRegister
 from svk.io import svg_to_pdf, merge_pdf_files, add_links
 import os
 
@@ -30,7 +30,7 @@ base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen S
 
 
 def convert_database_to_overview(
-    config: LayoutConfiguration, links_manager: LinksManager, questions: Database, storm_surge_barrier: StormSurgeBarrier, output_dir: str
+    config: LayoutConfiguration, links_manager: LinksRegister, questions: Database, storm_surge_barrier: StormSurgeBarrier, output_dir: str
 ):
     now = datetime.now().strftime("%Y-%m-%d")
 
@@ -41,24 +41,24 @@ def convert_database_to_overview(
     file_name = f"{now} - Kennisvragen {storm_surge_barrier.title}"
     target_file_path = os.path.join(output_dir, file_name + ".pdf")
     print(f"create image: {target_file_path}")
-    return create_image_from_database(
+    return create_overview_page_from_questions(
         config,
         links_manager,
         storm_surge_barrier.title,
         questions,
         output_dir,
         file_name,
-        barrier_icon=storm_surge_barrier,
+        storm_surge_barrier=storm_surge_barrier,
     )
 
 
 def convert_database_to_details(
-    config: LayoutConfiguration, links_manager: LinksManager, questions: Database, storm_surge_barrier: StormSurgeBarrier, output_dir: str
+    config: LayoutConfiguration, links_manager: LinksRegister, questions: Database, storm_surge_barrier: StormSurgeBarrier, output_dir: str
 ):
-    dwg_details_page = DetailsPage(layout_configuration=config, links_manager=links_manager)
+    dwg_details_page = DetailsPage(page_number=1, layout_configuration=config, links_register=links_manager)
     for question in sorted(questions, key=lambda q: q.id):
         dwg_details_page.questions.append(
-            QuestionDetails(layout_configuration=config, links_manager=links_manager, research_question=question)
+            QuestionDetails(layout_configuration=config, links_register=links_manager, research_question=question)
         )
 
     now = datetime.now().strftime("%Y-%m-%d")
@@ -71,12 +71,30 @@ def convert_database_to_details(
     return svg_to_pdf(dwg=dwg_details_page.draw(), output_dir=output_dir, file_name=file_name)
 
 
+def test_create_hv():
+    hv_dir = base_dir + "/03 HV/01 Uitwerking"
+    database_path = hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
+    output_dir = "C:/Test/"
+    output_file = "Kennisagenda HV"
+
+    questions = Database(database_path)
+    questions.read()
+    calendar = KnowledgeCalendar(
+        output_dir=output_dir,
+        output_file=output_file,
+        questions=questions,
+        storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier,
+    )
+
+    calendar.build()
+
+
 def test_create_overview_hv():
     hv_dir = base_dir + "/03 HV/01 Uitwerking"
     database_path = hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
 
     config = LayoutConfiguration()
-    links_manager = LinksManager()
+    links_manager = LinksRegister()
     print(f"Read questions from database: {database_path }")
     questions = Database(database_path)
     questions.read()
@@ -108,7 +126,7 @@ def test_create_overview_rp():
     database_path = rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx"
 
     config = LayoutConfiguration()
-    links_manager = LinksManager()
+    links_manager = LinksRegister()
 
     print(f"Read questions from database: {database_path }")
     questions = Database(database_path)
@@ -140,7 +158,7 @@ def test_create_overview_hijk():
     database_path = hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx"
 
     config = LayoutConfiguration()
-    links_manager = LinksManager()
+    links_manager = LinksRegister()
 
     print(f"Read questions from database: {database_path }")
     questions = Database(database_path)

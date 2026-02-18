@@ -36,6 +36,7 @@ class OverviewPage(VisualElement):
 
     storm_surge_barrier: StormSurgeBarrier
     """The storm surge barrier associated to this overview page (used for including an icon in the header)"""
+    page_number: int
     title: str
     """The title of the overview page"""
     disclaimer: str = (
@@ -59,7 +60,7 @@ class OverviewPage(VisualElement):
                 for c in self.columns
             )
             for column in self.columns:
-                column.y_color_groups[number] = y_current
+                column.y_clusters[number] = y_current
             groups[number] = (
                 y_current,
                 group_height - self.layout_configuration.element_margin,
@@ -76,8 +77,8 @@ class OverviewPage(VisualElement):
             + 1.2 * self.layout_configuration.disclamer_font_size
         )
 
-        dwg = Drawing(size=(f"{self.layout_configuration.page_width}px", f"{paper_height}px"), debug=False)
-        self.links_manager.register_page(0, self.layout_configuration.page_width, paper_height)
+        dwg = Drawing(size=(f"{self.layout_configuration.overview_page_width}px", f"{paper_height}px"), debug=False)
+        self.links_register.register_page(self.page_number, self.layout_configuration.overview_page_width, paper_height)
 
         icon_width = 0
         icon_size = self.layout_configuration.page_title_height
@@ -111,9 +112,9 @@ class OverviewPage(VisualElement):
         for number in groups.keys():
             x_group = self.layout_configuration.paper_margin
             y_group = groups[number][0]
-            group_width = self.layout_configuration.page_width - 2 * self.layout_configuration.paper_margin
+            group_width = self.layout_configuration.overview_page_width - 2 * self.layout_configuration.paper_margin
             group_height = groups[number][1]
-            group_color = self.layout_configuration.group_colors[number] if number in self.layout_configuration.group_colors else None
+            group_color = self.layout_configuration.cluster_colors[number] if number in self.layout_configuration.cluster_colors else None
             if group_color is None:
                 continue
 

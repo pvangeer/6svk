@@ -23,3 +23,4 @@ from ._researchline import ResearchLine, ResearchLines, get_research_line
 from ._timeframe import TimeFrame
 from ._priority import Priority
 from ._stormsurgebarrier import StormSurgeBarrier
+from ._linksregister import LinksRegister

@@ -1,24 +1,6 @@
 from PyPDF2 import PdfMerger
-from pydantic import BaseModel
+from svk.data import LinksRegister
 import fitz
-
-
-class LinksManager(BaseModel):
-    links: dict[str, list[tuple[int, float, float, float, float]]] = {}
-    link_targets: dict[str, tuple[int, float, float]] = {}
-    page_sizes: dict[int, tuple[float, float]] = {}
-
-    def register_link(self, link_target: str, page_number: int, x: float, y: float, width: float, height: float):
-        if not link_target in self.links.keys():
-            self.links[link_target] = []
-
-        self.links[link_target].append((page_number, x, y, width, height))
-
-    def register_link_target(self, link_target: str, page_number: int, x: float, y: float):
-        self.link_targets[link_target] = (page_number, x, y)
-
-    def register_page(self, page_number: int, width: float, height: float):
-        self.page_sizes[page_number] = (width, height)
 
 
 def merge_pdf_files(input_files: list[str], output_file: str):
@@ -37,7 +19,7 @@ def _scale_coordinates(x: float, y: float, svg_width: float, svg_height: float, 
     return x_pdf, y_pdf
 
 
-def add_links(input_pdf_file: str, output_file: str, links_manager: LinksManager):
+def add_links(input_pdf_file: str, output_file: str, links_manager: LinksRegister):
     doc = fitz.open(input_pdf_file)
     links = links_manager.links
     link_targets = links_manager.link_targets

@@ -23,7 +23,8 @@ from ._group import Group
 from ._column import Column
 from ._overview_page import OverviewPage
 from ._question import Question
-from ._create_image_from_database import create_image_from_database
+from ._create_image_from_database import create_overview_page_from_questions
 from ._details_page import DetailsPage
 from ._question_details import QuestionDetails
 from ._layout_configuration import LayoutConfiguration
+from ._knowledge_calendar import KnowledgeCalendar

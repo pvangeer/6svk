@@ -118,7 +118,7 @@ class Question(VisualElement):
 
         text_w, _ = measure_text(text=self.research_question.id, font_size=self.layout_configuration.font_size)
         x_id_middle = x + self._priority_box_width + self._id_box_width / 2.0
-        self.links_manager.register_link(
+        self.links_register.register_link(
             link_target=self.research_question.id,
             page_number=0,
             x=x_id_middle - text_w / 2.0,

@@ -38,7 +38,7 @@ class Column(VisualElement):
     """Color of the column (used as shading and as stroke color)"""
     groups: dict[int, Group] = {}
     """The groups that are part of this column"""
-    y_color_groups: dict[int, float] = {}
+    y_clusters: dict[int, float] = {}
     """Predefined start height of the various groups in the columns."""
 
     @property
@@ -48,7 +48,7 @@ class Column(VisualElement):
         """
         return Header(
             layout_configuration=self.layout_configuration,
-            links_manager=self.links_manager,
+            links_register=self.links_register,
             title=self.header_title,
             subtitle=self.header_subtitle,
             color=self.header_color,
@@ -58,17 +58,17 @@ class Column(VisualElement):
         """
         Calculates the height of the column
 
-        :param paper_header_height: Height of the paper header (needed in case y_color_groups is used.)
+        :param paper_header_height: Height of the paper header (needed in case y_cluster is used.)
         :type paper_header_height: float
         """
-        if not self.y_color_groups:
+        if not self.y_clusters:
             return self.layout_configuration.column_header_height + sum(
                 [group.get_height() + 2 * self.layout_configuration.element_margin for group in self.groups.values()]
             )
 
         max_group = max(self.groups.keys())
         return (
-            self.y_color_groups[max_group]
+            self.y_clusters[max_group]
             + self.groups[max_group].get_height()
             + 2 * self.layout_configuration.element_margin
             - paper_header_height
@@ -90,8 +90,8 @@ class Column(VisualElement):
         current_y = y + self.layout_configuration.column_header_height + 2 * self.layout_configuration.element_margin
         for i_group in sorted(self.groups.keys()):
             group = self.groups[i_group]
-            if i_group in self.y_color_groups:
-                current_y = self.y_color_groups[i_group]
+            if i_group in self.y_clusters:
+                current_y = self.y_clusters[i_group]
 
             group.layout_configuration.arrow_depth = self.layout_configuration.arrow_depth
             group.draw(dwg, x, current_y)
