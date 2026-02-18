@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.visualization import LayoutConfiguration, Figure, Question, Group, Column
+from svk.visualization import LayoutConfiguration, OverviewPage, Question, Group, Column
 from svk.data import TimeFrame, ResearchLines, ResearchQuestion, Priority, TimeFrame, ResearchLine, StormSurgeBarrier
 from svk.io import svg_to_pdf_chrome, LinksManager
 
@@ -47,7 +47,9 @@ def test_create_image():
     config = LayoutConfiguration()
     links_manager = LinksManager()
 
-    fig = Figure(layout_configuration=config, links_manager=links_manager, title="Test-image", storm_surge_barrier=StormSurgeBarrier.All)
+    fig = OverviewPage(
+        layout_configuration=config, links_manager=links_manager, title="Test-image", storm_surge_barrier=StormSurgeBarrier.All
+    )
     adaptation_now = Group(layout_configuration=config, links_manager=links_manager, title="test", color="black")
     adaptation_now.questions.append(
         Question(

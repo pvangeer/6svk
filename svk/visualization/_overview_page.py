@@ -29,21 +29,21 @@ from svgwrite import Drawing
 from uuid import uuid4
 
 
-class Figure(VisualElement):
+class OverviewPage(VisualElement):
     """
-    The main figure object of the "kennisagenda"
+    The overview page of the "kennisagenda"
     """
 
     storm_surge_barrier: StormSurgeBarrier
-    """The storm surge barrier associated to this figure (used for including an icon in the header)"""
+    """The storm surge barrier associated to this overview page (used for including an icon in the header)"""
     title: str
-    """The title of the figure"""
+    """The title of the overview page"""
     disclaimer: str = (
         "Dit is een eerste concept van de onderzoeksagenda stormvloedkeringen. Deze versie is ontstaan in samenwerking met de asset management teams van de keringen. De prioritering van de onderzoeksvragen moet nog gereviewd worden door o.a. de asset management teams en RWS WVL/GPO. De indeling in tijdsperiode is op dit moment in ontwikkeling. Voor vragen, neem contact op met Marit de Jong of Riva de Vries."
     )
     """A disclaimer text (printed at the bottom)"""
     columns: list[Column] = []
-    """The columns included in this figure (that all hold groups and questions)"""
+    """The columns included in this overview page (that all hold groups and questions)"""
 
     def draw(self) -> Drawing:
         groups = {}
@@ -51,7 +51,7 @@ class Figure(VisualElement):
         y_current = (
             self.layout_configuration.column_header_height
             + 3 * self.layout_configuration.paper_margin
-            + self.layout_configuration.figure_title_height
+            + self.layout_configuration.page_title_height
         )
         for number in sorted_group_numbers:
             group_height = max(
@@ -66,11 +66,11 @@ class Figure(VisualElement):
             )
             y_current = y_current + group_height + self.layout_configuration.element_margin
 
-        y_column_start = self.layout_configuration.figure_title_height + 2 * self.layout_configuration.paper_margin
+        y_column_start = self.layout_configuration.page_title_height + 2 * self.layout_configuration.paper_margin
         column_heights = [column.get_height(y_column_start) for column in self.columns]
 
         paper_height = (
-            self.layout_configuration.figure_title_height
+            self.layout_configuration.page_title_height
             + self.layout_configuration.paper_margin * 4
             + max(column_heights)
             + 1.2 * self.layout_configuration.disclamer_font_size
@@ -80,7 +80,7 @@ class Figure(VisualElement):
         self.links_manager.register_page(0, self.layout_configuration.page_width, paper_height)
 
         icon_width = 0
-        icon_size = self.layout_configuration.figure_title_height
+        icon_size = self.layout_configuration.page_title_height
         icon_width = icon_size + self.layout_configuration.arrow_depth
         draw_callout(dwg, self.layout_configuration.paper_margin, self.layout_configuration.paper_margin, icon_width, icon_size, "#000000")
         draw_scaled_icon(
@@ -98,9 +98,9 @@ class Figure(VisualElement):
                 self.title,
                 insert=(
                     2 * self.layout_configuration.paper_margin + icon_width,
-                    self.layout_configuration.paper_margin + self.layout_configuration.figure_title_height / 2,
+                    self.layout_configuration.paper_margin + self.layout_configuration.page_title_height / 2,
                 ),
-                font_size=self.layout_configuration.figure_title_font_size,
+                font_size=self.layout_configuration.page_title_font_size,
                 font_family="Arial",
                 font_weight="bold",
                 text_anchor="start",
@@ -181,7 +181,7 @@ class Figure(VisualElement):
             disclaimer_text=self.disclaimer,
             insert=(
                 self.layout_configuration.paper_margin,
-                self.layout_configuration.paper_margin * 3 + max(column_heights) + self.layout_configuration.figure_title_height,
+                self.layout_configuration.paper_margin * 3 + max(column_heights) + self.layout_configuration.page_title_height,
             ),
             dominant_baseline="hanging",
             text_anchor="start",

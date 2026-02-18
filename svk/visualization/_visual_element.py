@@ -6,7 +6,7 @@ from svgwrite import Drawing
 
 class VisualElement(BaseModel):
     layout_configuration: LayoutConfiguration
-    """The layout configuration shared across all elements of a figure."""
+    """The layout configuration shared across all elements of a document."""
 
     links_manager: LinksManager
 

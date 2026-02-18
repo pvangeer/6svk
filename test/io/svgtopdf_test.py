@@ -24,7 +24,7 @@ from svk.visualization.helpers import draw_half_chevron
 import os
 
 
-def test_svgtopdf_produces_figure():
+def test_svgtopdf_produces_overview_page():
     dwg = Drawing(size=("1240px", "800px"))
     dwg.add(draw_half_chevron(dwg, x=20, y=20, width=400, height=80))
     dwg.add(draw_half_chevron(dwg, x=420, y=20, width=400, height=80))

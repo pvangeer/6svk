@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from ._header import Header
 from ._group import Group
 from ._column import Column
-from ._figure import Figure
+from ._overview_page import OverviewPage
 from ._question import Question
 from ._create_image_from_database import create_image_from_database
 from ._details_page import DetailsPage

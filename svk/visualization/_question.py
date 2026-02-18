@@ -31,7 +31,7 @@ from svk.visualization.helpers._measuretext import measure_text
 
 class Question(VisualElement):
     """
-    Represents a question element (as part of  a group, column and the figure)
+    Represents a question element (as part of  a group, column and the overview page)
     """
 
     research_question: ResearchQuestion

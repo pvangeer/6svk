@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from svk.data import ResearchQuestion
 from svk.io import svg_to_pdf, svg_to_pdf_chrome, LinksManager
 from svk.data import TimeFrame, ResearchQuestion, ResearchLine, StormSurgeBarrier
-from svk.visualization._figure import Figure
+from svk.visualization._overview_page import OverviewPage
 from svk.visualization._column import Column
 from svk.visualization._group import Group
 from svk.visualization._question import Question
@@ -52,7 +52,7 @@ def get_column_title(time_frame: TimeFrame) -> str:
             raise ValueError("Unknown time frame")
 
 
-def get_sub_title(time_frame: TimeFrame) -> str:
+def get_subtitle(time_frame: TimeFrame) -> str:
     match time_frame:
         case TimeFrame.Now:
             return ""
@@ -72,12 +72,12 @@ def get_header_color(time_frame: TimeFrame) -> str:
     return color_toward_grey((18, 103, 221), grey_fraction=time_frame.grey_fraction)
 
 
-def add_column(config: LayoutConfiguration, links_manager: LinksManager, fig: Figure, time_groups, time_frame: TimeFrame):
+def add_column(config: LayoutConfiguration, links_manager: LinksManager, fig: OverviewPage, time_groups, time_frame: TimeFrame):
     column = Column(
         layout_configuration=config,
         links_manager=links_manager,
         header_title=get_column_title(time_frame),
-        header_subtitle=get_sub_title(time_frame),
+        header_subtitle=get_subtitle(time_frame),
         header_color=get_header_color(time_frame),
     )
 
@@ -119,7 +119,7 @@ def create_image_from_database(
 
     config.question_id_box_width = max([measure_text(q.id, config.font_size)[0] for q in database]) + config.line_margin
 
-    fig = Figure(layout_configuration=config, links_manager=links_manager, title=title, storm_surge_barrier=barrier_icon)
+    fig = OverviewPage(layout_configuration=config, links_manager=links_manager, title=title, storm_surge_barrier=barrier_icon)
     add_column(config, links_manager=links_manager, fig=fig, time_groups=time_groups, time_frame=TimeFrame.Now)
     add_column(config, links_manager=links_manager, fig=fig, time_groups=time_groups, time_frame=TimeFrame.NearFuture)
     add_column(config, links_manager=links_manager, fig=fig, time_groups=time_groups, time_frame=TimeFrame.Future)
