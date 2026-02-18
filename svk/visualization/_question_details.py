@@ -1,3 +1,23 @@
+"""
+Copyright (C) Stichting Deltares 2026. All rights reserved.
+
+This file is part of the 6svk toolbox.
+
+This program is free software; you can redistribute it and/or modify it under the terms of
+the GNU Lesser General Public License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this
+program; if not, see <https://www.gnu.org/licenses/>.
+
+All names, logos, and references to "Deltares" are registered trademarks of Stichting
+Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
+"""
+
 from pydantic import Field, model_validator
 from svk.data import ResearchQuestion, Priority
 from svgwrite import Drawing
@@ -23,6 +43,9 @@ class QuestionDetails(VisualElement):
     question_lines: list[str] = Field(default_factory=list[str])
     question_explained_lines: list[str] = Field(default_factory=list[str])
 
+    related_title: str = "Gerelateerd"
+    priority_title: str = "Prioriteit"
+
     def construct_lines(self):
 
         self._lines = wrapped_lines(
@@ -45,7 +68,10 @@ class QuestionDetails(VisualElement):
             self.layout_configuration.line_margin + self.layout_configuration.font_size + self.layout_configuration.line_margin
         )
         h_code_field = self.h_first_line + self.layout_configuration.question_priority_box_width + self.layout_configuration.element_margin
-        self.w_relation_field = self.layout_configuration.question_id_box_width + self.layout_configuration.element_margin
+        self.w_relation_field = max(
+            measure_text(self.related_title, self.layout_configuration.font_size)[0] + 2 * self.layout_configuration.line_margin,
+            self.layout_configuration.question_id_box_width + 2 * self.layout_configuration.line_margin,
+        )
         h_relation_field = (
             self.h_first_line
             + len(self.research_question.reference_ids) * self.layout_configuration.font_size * 1.2
@@ -202,7 +228,7 @@ class QuestionDetails(VisualElement):
         x_priority = x + self.w_code_field + self.w_question_field
         dwg.add(
             dwg.text(
-                "Prioriteit",
+                self.priority_title,
                 insert=(
                     x_priority + self.layout_configuration.line_margin,
                     y + self.layout_configuration.line_margin,
@@ -268,7 +294,7 @@ class QuestionDetails(VisualElement):
 
         dwg.add(
             dwg.text(
-                "Gerelateerd",
+                self.related_title,
                 insert=(
                     x_related_start + self.layout_configuration.line_margin,
                     y + self.layout_configuration.line_margin,
@@ -321,22 +347,22 @@ class QuestionDetails(VisualElement):
             y_related_current += self.layout_configuration.font_size * 1.2
 
     def draw_priority_dots(self, dwg: Drawing, x: float, y_current: float, prio: Priority):
-        dotsize = 5
-        y_center = y_current + self.layout_configuration.font_size - dotsize * 1.5
-        x_prio_first = x + dotsize / 2.0
-        x_prio_second = x_prio_first + dotsize * 2.5
-        x_prio_third = x_prio_second + dotsize * 2.5
+        dotradius = 5
+        y_center = y_current + self.layout_configuration.font_size - dotradius
+        x_prio_first = x + dotradius
+        x_prio_second = x_prio_first + dotradius * 2.5
+        x_prio_third = x_prio_second + dotradius * 2.5
 
         match prio:
             case Priority.High:
-                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotsize, fill="black"))
-                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=dotsize, fill="black"))
-                dwg.add(dwg.circle(center=(x_prio_third, y_center), r=dotsize, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotradius, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=dotradius, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_third, y_center), r=dotradius, fill="black"))
             case Priority.Medium:
-                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotsize, fill="black"))
-                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=dotsize, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotradius, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=dotradius, fill="black"))
             case Priority.Low:
-                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotsize, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotradius, fill="black"))
             case Priority.Unknown:
                 dwg.add(
                     dwg.text(

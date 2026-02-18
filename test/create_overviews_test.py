@@ -21,61 +21,17 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from datetime import datetime
 
 from svk.io import Database
-from svk.visualization import create_overview_page_from_questions, LayoutConfiguration, DetailsPage, QuestionDetails, KnowledgeCalendar
-from svk.data import StormSurgeBarrier, LinksRegister
-from svk.io import svg_to_pdf, merge_pdf_files, add_links
-import os
+from svk.visualization import KnowledgeCalendar
+from svk.data import StormSurgeBarrier
 
 base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK"
-
-
-def convert_database_to_overview(
-    config: LayoutConfiguration, links_manager: LinksRegister, questions: Database, storm_surge_barrier: StormSurgeBarrier, output_dir: str
-):
-    now = datetime.now().strftime("%Y-%m-%d")
-
-    for e in questions.errors:
-        print(f"{e.cell_reference}: {str(e)}")
-
-    output_dir = f"c:/Test/"
-    file_name = f"{now} - Kennisvragen {storm_surge_barrier.title}"
-    target_file_path = os.path.join(output_dir, file_name + ".pdf")
-    print(f"create image: {target_file_path}")
-    return create_overview_page_from_questions(
-        config,
-        links_manager,
-        storm_surge_barrier.title,
-        questions,
-        output_dir,
-        file_name,
-        storm_surge_barrier=storm_surge_barrier,
-    )
-
-
-def convert_database_to_details(
-    config: LayoutConfiguration, links_manager: LinksRegister, questions: Database, storm_surge_barrier: StormSurgeBarrier, output_dir: str
-):
-    dwg_details_page = DetailsPage(page_number=1, layout_configuration=config, links_register=links_manager)
-    for question in sorted(questions, key=lambda q: q.id):
-        dwg_details_page.questions.append(
-            QuestionDetails(layout_configuration=config, links_register=links_manager, research_question=question)
-        )
-
-    now = datetime.now().strftime("%Y-%m-%d")
-    # target_file_path = f"{output_dir}/{now} - Kennisvragen {storm_surge_barrier.title}.pdf"
-    target_file_path = f"c:/Test/{now} - Kennisvragen {storm_surge_barrier.title} - details.pdf"
-    output_dir = f"c:/Test/"
-    file_name = f"{now} - Kennisvragen {storm_surge_barrier.title} - details"
-    print(f"create image: {target_file_path}")
-
-    return svg_to_pdf(dwg=dwg_details_page.draw(), output_dir=output_dir, file_name=file_name)
 
 
 def test_create_hv():
     hv_dir = base_dir + "/03 HV/01 Uitwerking"
     database_path = hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
-    output_dir = "C:/Test/"
-    output_file = "Kennisagenda HV"
+    output_dir = "C:/Test/"  # hv_dir
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {StormSurgeBarrier.HaringvlietBarrier.title}"
 
     questions = Database(database_path)
     questions.read()
@@ -89,97 +45,37 @@ def test_create_hv():
     calendar.build()
 
 
-def test_create_overview_hv():
-    hv_dir = base_dir + "/03 HV/01 Uitwerking"
-    database_path = hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
-
-    config = LayoutConfiguration()
-    links_manager = LinksRegister()
-    print(f"Read questions from database: {database_path }")
-    questions = Database(database_path)
-    questions.read()
-
-    file_overview = convert_database_to_overview(
-        config,
-        links_manager,
-        questions,
-        storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier,
-        output_dir=hv_dir,
-    )
-
-    file_details = convert_database_to_details(
-        config=config,
-        links_manager=links_manager,
-        questions=questions,
-        storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier,
-        output_dir=hv_dir,
-    )
-    output_file = "C:/Test/Kennisvragen HV - all.pdf"
-    final_output_file = "C:/Test/Kennisvragen HV - all with links.pdf"
-    merge_pdf_files([file_overview, file_details], output_file)
-
-    add_links(input_pdf_file=output_file, output_file=final_output_file, links_manager=links_manager)
-
-
-def test_create_overview_rp():
+def test_create_rp():
     rp_dir = base_dir + "/07 RP/01 Uitwerking"
     database_path = rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx"
+    output_dir = "C:/Test/"  # rp_dir
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {StormSurgeBarrier.Ramspol.title}"
 
-    config = LayoutConfiguration()
-    links_manager = LinksRegister()
-
-    print(f"Read questions from database: {database_path }")
     questions = Database(database_path)
     questions.read()
-
-    file_overview = convert_database_to_overview(
-        config=config,
-        links_manager=links_manager,
-        questions=questions,
-        storm_surge_barrier=StormSurgeBarrier.Ramspol,
-        output_dir=rp_dir,
-    )
-    file_details = convert_database_to_details(
-        config=config,
-        links_manager=links_manager,
+    calendar = KnowledgeCalendar(
+        output_dir=output_dir,
+        output_file=output_file,
         questions=questions,
         storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier,
-        output_dir=rp_dir,
     )
-    output_file = "C:/Test/Kennisvragen RP - all.pdf"
-    final_output_file = "C:/Test/Kennisvragen RP - all with links.pdf"
-    merge_pdf_files([file_overview, file_details], output_file)
 
-    add_links(input_pdf_file=output_file, output_file=final_output_file, links_manager=links_manager)
+    calendar.build()
 
 
-def test_create_overview_hijk():
+def test_create_hijk():
     hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
     database_path = hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx"
+    output_dir = "C:/Test/"  # rp_dir
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {StormSurgeBarrier.HollandseIJsselBarrier.title}"
 
-    config = LayoutConfiguration()
-    links_manager = LinksRegister()
-
-    print(f"Read questions from database: {database_path }")
     questions = Database(database_path)
     questions.read()
-
-    file_overview = convert_database_to_overview(
-        config=config,
-        links_manager=links_manager,
-        questions=questions,
-        storm_surge_barrier=StormSurgeBarrier.HollandseIJsselBarrier,
-        output_dir=hijk_dir,
-    )
-    file_details = convert_database_to_details(
-        config=config,
-        links_manager=links_manager,
+    calendar = KnowledgeCalendar(
+        output_dir=output_dir,
+        output_file=output_file,
         questions=questions,
         storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier,
-        output_dir=hijk_dir,
     )
-    output_file = "C:/Test/Kennisvragen HIJK - all.pdf"
-    final_output_file = "C:/Test/Kennisvragen HIJK - all with links.pdf"
-    merge_pdf_files([file_overview, file_details], output_file)
 
-    add_links(input_pdf_file=output_file, output_file=final_output_file, links_manager=links_manager)
+    calendar.build()
