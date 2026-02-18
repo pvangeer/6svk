@@ -18,7 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from pydantic import BaseModel, ConfigDict
 from enum import Enum
 
 orange = (233, 113, 50)
@@ -26,19 +25,26 @@ light_green = (142, 178, 30)
 dark_green = (25, 107, 36)
 
 
-class ResearchLine(BaseModel):
+class ResearchLine(Enum):
     """
-    Data class representing a research line.
+    This enum exposes default research line objects used in the SVK-project.
     """
 
-    number: int
-    """An integer associated to the particular research line."""
-    title: str
-    """The title of the research line."""
-    cluster: int
-    """The color group that is associated to the research line. This allows grouping of questions in different research lines visually by means of the same background color."""
+    ConstructiveAspects = (1, "Constructieve aspecten", 1)
+    OperatingSystem = (2, "Besturingssystemen / IA", 1)
+    Facilities = (3, "Voorzieningen en gebouwen", 1)
+    Maintenance = (4, "Onderhoud en operatie", 1)
+    Cyber = (5, "Cyber & security", 2)
+    Hydrodynamics = (6, "Hydrodynamische effecten en belastingen", 2)
+    ProbabilityOfFailyre = (7, "Faalkans", 2)
+    Adaptation = (8, "Adaptatie stormvloedkeringen", 2)
+    Organizational = (9, "Organisatorische aspecten", 3)
+    Lifespan = (10, "Restlevensduur huidige objecten", 3)
 
-    model_config = ConfigDict(frozen=True)
+    def __init__(self, number: int, title: str, cluster: int):
+        self.number = number
+        self.title = title
+        self.cluster = cluster
 
     @property
     def base_color(self) -> tuple[int, int, int]:
@@ -69,41 +75,24 @@ def get_research_line(number: int) -> ResearchLine:
     """
     match number:
         case 1:
-            return ResearchLines.ConstructiveAspects.value
+            return ResearchLine.ConstructiveAspects
         case 2:
-            return ResearchLines.OperatingSystem.value
+            return ResearchLine.OperatingSystem
         case 3:
-            return ResearchLines.Facilities.value
+            return ResearchLine.Facilities
         case 4:
-            return ResearchLines.Maintenance.value
+            return ResearchLine.Maintenance
         case 5:
-            return ResearchLines.Cyber.value
+            return ResearchLine.Cyber
         case 6:
-            return ResearchLines.Hydrodynamics.value
+            return ResearchLine.Hydrodynamics
         case 7:
-            return ResearchLines.ProbabilityOfFailyre.value
+            return ResearchLine.ProbabilityOfFailyre
         case 8:
-            return ResearchLines.Adaptation.value
+            return ResearchLine.Adaptation
         case 9:
-            return ResearchLines.Organizational.value
+            return ResearchLine.Organizational
         case 10:
-            return ResearchLines.Lifespan.value
+            return ResearchLine.Lifespan
         case _:
             raise ValueError("Unknown research line")
-
-
-class ResearchLines(Enum):
-    """
-    This enum exposes default research line objects used in the SVK-project.
-    """
-
-    ConstructiveAspects = ResearchLine(number=1, title="Constructieve aspecten", cluster=1)
-    OperatingSystem = ResearchLine(number=2, title="Besturingssystemen / IA", cluster=1)
-    Facilities = ResearchLine(number=3, title="Voorzieningen en gebouwen", cluster=1)
-    Maintenance = ResearchLine(number=4, title="Onderhoud en operatie", cluster=1)
-    Cyber = ResearchLine(number=5, title="Cyber & security", cluster=2)
-    Hydrodynamics = ResearchLine(number=6, title="Hydrodynamische effecten en belastingen", cluster=2)
-    ProbabilityOfFailyre = ResearchLine(number=7, title="Faalkans", cluster=2)
-    Adaptation = ResearchLine(number=8, title="Adaptatie stormvloedkeringen", cluster=2)
-    Organizational = ResearchLine(number=9, title="Organisatorische aspecten", cluster=3)
-    Lifespan = ResearchLine(number=10, title="Restlevensduur huidige objecten", cluster=3)

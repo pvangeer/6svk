@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from ._researchquestion import ResearchQuestion
-from ._researchline import ResearchLine, ResearchLines, get_research_line
+from ._researchline import ResearchLine, get_research_line
 from ._timeframe import TimeFrame
 from ._priority import Priority
 from ._stormsurgebarrier import StormSurgeBarrier
