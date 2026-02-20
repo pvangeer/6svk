@@ -32,7 +32,6 @@ class KnowledgeCalendar(BaseModel):
 
         # build detailed pages
 
-        # TODO: Group questions and create multiple pages (with difference titles)
         grouped_questions: defaultdict[ResearchLine, list[ResearchQuestion]] = defaultdict(list[ResearchQuestion])
         non_grouped: list[ResearchQuestion] = []
         for question in self.questions:
@@ -43,9 +42,11 @@ class KnowledgeCalendar(BaseModel):
 
         details_pages: dict[ResearchLine, DetailsPage] = {}
         page_number = 1
-        for research_line in grouped_questions:
+        for research_line in sorted(grouped_questions, key=lambda r_l: r_l.number):
             details_pages[research_line] = self.create_details_page_from_questions(
-                page_number=page_number, title="Kennisvragen", questions=grouped_questions[research_line]
+                page_number=page_number,
+                title=str(research_line.number) + ". " + research_line.title,
+                questions=grouped_questions[research_line],
             )
             page_number += 1
 
@@ -106,7 +107,7 @@ class KnowledgeCalendar(BaseModel):
     ) -> DetailsPage:
         # TODO: Pass page title and implement. Use this to split large lists of questions and group them by research line in a separate page.
         dwg_details_page = DetailsPage(
-            page_number=page_number, layout_configuration=self.layout_configuration, links_register=self.links_register
+            page_number=page_number, title=title, layout_configuration=self.layout_configuration, links_register=self.links_register
         )
         for question in sorted(questions, key=lambda q: q.id):
             dwg_details_page.questions.append(
