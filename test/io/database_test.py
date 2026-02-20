@@ -18,13 +18,18 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.io import Database
+from svk.io import KnowledgeAgendaDatabase
 import sys
+import pytest
 
 print(sys.path)
 
 
-def test_database_creation_full_database():
-    d = Database("C:/src/6svk/examples/Example-HV.xlsx")
+def test_database_creation_full_database_ssb_delta():
+    d = KnowledgeAgendaDatabase("C:/src/6svk/test/test-data/example-SSB-delta.xlsx")
     d.read()
-    print(len(d))
+    if len(d) < 20:
+        print("length = " + str(len(d)))
+        for e in d.errors:
+            print(e)
+        pytest.fail("Database not read correctly")

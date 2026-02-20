@@ -1,27 +1,14 @@
-"""
-Copyright (C) Stichting Deltares 2026. All rights reserved.
+from svk.data import (
+    Priority,
+    ResearchLine,
+    TimeFrame,
+    get_research_line,
+    StormSurgeBarrier,
+)
 
-This file is part of the 6svk toolbox.
-
-This program is free software; you can redistribute it and/or modify it under the terms of
-the GNU Lesser General Public License as published by the Free Software Foundation; either
-version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License along with this
-program; if not, see <https://www.gnu.org/licenses/>.
-
-All names, logos, and references to "Deltares" are registered trademarks of Stichting
-Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
-"""
-
-from svk.data import ResearchQuestion, Priority, ResearchLine, TimeFrame, get_research_line, StormSurgeBarrier
-
-from openpyxl import load_workbook
 from pathlib import Path
+from abc import ABC, abstractmethod
+from openpyxl import load_workbook
 
 
 class DatabaseReadError(Exception):
@@ -67,50 +54,7 @@ class DatabaseReadError(Exception):
         return reference
 
 
-class Database(list[ResearchQuestion]):
-    """
-    Class that wraps a list[ResearchQuestion] to allow additional logic to read an convert a database file stored in Excel.
-    """
-
-    i_barrier = 0
-    """Hard coded column number for the barrier"""
-    i_id = 1
-    """Hard coded column number for the question id"""
-    i_reference_ids = 2
-    """Hard coded column number for the references to other questions"""
-    i_reference_question = 3
-    """Hard coded column number for the reference number to the 160 questions list"""
-    i_keywords = 4
-    """Hard coded column number for the keywords"""
-    i_question = 5
-    """Hard coded column number for the question"""
-    i_explanation = 6
-    """Hard coded column number for the question explanation"""
-    i_prio_water_safety = 7
-    """Hard coded column number for the priority (water safety)"""
-    i_prio_other_functions = 8
-    """Hard coded column number for the priority (other functions)"""
-    i_prio_management_maintenance = 9
-    """Hard coded column number for the priority (management and maintenance)"""
-    i_prio_operation = 10
-    """Hard coded column number for the priority (operation)"""
-    i_time_frame = 11
-    """Hard coded column number for the time frame"""
-    i_primary_research_line = 12
-    """Hard coded column number for the primary research line"""
-    i_secundary_research_line = 13
-    """Hard coded column number for the secundary research line"""
-    i_research_line_explanation = 14
-    """Hard coded column number for the research line explanation"""
-    i_status = 15
-    """Hard coded column number for the status"""
-    i_action_holder = 16
-    """Hard coded column number for the action holder"""
-    i_costs = 17
-    """Hard coded column number for the costs"""
-    i_lead_time = 18
-    """Hard coded column number for the lead time"""
-
+class ExcelDatabase(ABC):
     def __init__(self, file_path: str):
         self.errors: list[DatabaseReadError] = []
         """A list of errors that can be filled during import/reading the database file."""
@@ -149,46 +93,19 @@ class Database(list[ResearchQuestion]):
 
         for i_row, row in enumerate(sheet.iter_rows(min_row=first_data_row, max_row=None, values_only=True)):
             try:
-                self.append(
-                    ResearchQuestion(
-                        id=Database._get_str(row, self.i_id),
-                        question=Database._get_str(row, self.i_question),
-                        explanation=Database._get_str_optional(row, self.i_explanation),
-                        storm_surge_barriers=Database._get_storm_surge_barriers(row, self.i_barrier),
-                        research_line_primary=Database._get_research_line_optional(row, self.i_primary_research_line),
-                        research_line_secondary=Database._get_research_line_optional(row, self.i_secundary_research_line),
-                        time_frame=Database._get_time_frame(row, self.i_time_frame),
-                        prio_management_maintenance=Database._get_priority(row, self.i_prio_management_maintenance),
-                        prio_other_functions=Database._get_priority(row, self.i_prio_other_functions),
-                        prio_operation=Database._get_priority(row, self.i_prio_operation),
-                        prio_water_safety=Database._get_priority(row, self.i_prio_water_safety),
-                        action_holder=Database._get_str_optional(row, self.i_action_holder),
-                        lead_time=Database._get_int_optional(row, self.i_lead_time),
-                        costs_estimate=Database._get_int_optional(row, self.i_costs),
-                        reference_ids=(
-                            [
-                                entry.strip()
-                                for entry in Database._get_str(row, self.i_reference_ids).replace(";", ",").split(",")
-                                if entry.strip()
-                            ]
-                            if not Database._empty(row, self.i_reference_ids)
-                            else []
-                        ),
-                        reference_question=Database._get_int_optional(row, self.i_reference_question),
-                    )
-                )
+                self.read_and_append_row(row)
             except DatabaseReadError as e:
                 e.i_row = i_row + first_data_row - 1
                 self.errors.append(e)
                 continue
 
-    @staticmethod
-    def _get_str(row: tuple, i_column: int) -> str:
-        value = row[i_column]
-        if not isinstance(value, str):
-            raise DatabaseReadError("Read cell is of incorrect type.", i_column=i_column)
+    @abstractmethod
+    def read_and_append_row(self, row):
+        pass
 
-        return str(value)
+    @staticmethod
+    def _get_as_str(row: tuple, i_column: int) -> str:
+        return str(row[i_column])
 
     @staticmethod
     def _get_str_optional(row: tuple, i_column: int) -> str | None:
@@ -263,7 +180,7 @@ class Database(list[ResearchQuestion]):
 
     @staticmethod
     def _get_storm_surge_barriers(row: tuple, i_column: int) -> list[StormSurgeBarrier]:
-        barrier_strings = Database._get_str(row, i_column).split(",")
+        barrier_strings = ExcelDatabase._get_as_str(row, i_column).split(",")
         barriers = []
         for b in barrier_strings:
             match b:
@@ -271,11 +188,11 @@ class Database(list[ResearchQuestion]):
                     barriers.append(StormSurgeBarrier.HaringvlietBarrier)
                 case "HIJK":
                     barriers.append(StormSurgeBarrier.HollandseIJsselBarrier)
-                case "6SVK":
+                case "6SVK" | "6SSB":
                     barriers.append(StormSurgeBarrier.All)
-                case "OSK":
+                case "OSK" | "ESB":
                     barriers.append(StormSurgeBarrier.EasternScheldBarrier)
-                case "MLK":
+                case "MLK" | "MLB":
                     barriers.append(StormSurgeBarrier.MaeslantBarrier)
                 case "HK":
                     barriers.append(StormSurgeBarrier.HartelBarrier)

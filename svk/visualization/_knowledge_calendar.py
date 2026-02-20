@@ -31,7 +31,6 @@ class KnowledgeCalendar(BaseModel):
         overview = self.create_overview_page_from_questions(page_number=0, title=self.storm_surge_barrier.title, questions=self.questions)
 
         # build detailed pages
-
         grouped_questions: defaultdict[ResearchLine, list[ResearchQuestion]] = defaultdict(list[ResearchQuestion])
         non_grouped: list[ResearchQuestion] = []
         for question in self.questions:
@@ -74,7 +73,7 @@ class KnowledgeCalendar(BaseModel):
         no_links_output_file = os.path.join(self.output_dir, self.output_file + " - no links.pdf")
         merge_pdf_files([overview_file_path] + detailed_pages_files, no_links_output_file)
 
-        # implement links
+        # create links
         output_file_final = os.path.join(self.output_dir, self.output_file + ".pdf")
         add_links(no_links_output_file, output_file_final, self.links_register)
         return output_file_final
@@ -112,7 +111,6 @@ class KnowledgeCalendar(BaseModel):
         title: str,
         questions: list[ResearchQuestion],
     ) -> DetailsPage:
-        # TODO: Pass page title and implement. Use this to split large lists of questions and group them by research line in a separate page.
         dwg_details_page = DetailsPage(
             page_number=page_number, title=title, layout_configuration=self.layout_configuration, links_register=self.links_register
         )

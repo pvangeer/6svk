@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from datetime import datetime
 
-from svk.io import Database
+from svk.io import KnowledgeAgendaDatabase
 from svk.visualization import KnowledgeCalendar
 from svk.data import StormSurgeBarrier
 
@@ -33,7 +33,7 @@ def test_create_hv():
     output_dir = "C:/Test/"  # hv_dir
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {StormSurgeBarrier.HaringvlietBarrier.title}"
 
-    questions = Database(database_path)
+    questions = KnowledgeAgendaDatabase(database_path)
     questions.read()
     calendar = KnowledgeCalendar(
         output_dir=output_dir,
@@ -51,13 +51,13 @@ def test_create_rp():
     output_dir = "C:/Test/"  # rp_dir
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {StormSurgeBarrier.Ramspol.title}"
 
-    questions = Database(database_path)
+    questions = KnowledgeAgendaDatabase(database_path)
     questions.read()
     calendar = KnowledgeCalendar(
         output_dir=output_dir,
         output_file=output_file,
         questions=questions,
-        storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier,
+        storm_surge_barrier=StormSurgeBarrier.Ramspol,
     )
 
     calendar.build()
@@ -69,13 +69,13 @@ def test_create_hijk():
     output_dir = "C:/Test/"  # rp_dir
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {StormSurgeBarrier.HollandseIJsselBarrier.title}"
 
-    questions = Database(database_path)
+    questions = KnowledgeAgendaDatabase(database_path)
     questions.read()
     calendar = KnowledgeCalendar(
         output_dir=output_dir,
         output_file=output_file,
         questions=questions,
-        storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier,
+        storm_surge_barrier=StormSurgeBarrier.HollandseIJsselBarrier,
     )
 
     calendar.build()

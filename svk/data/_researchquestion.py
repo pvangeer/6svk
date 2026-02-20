@@ -24,6 +24,7 @@ from svk.data._timeframe import TimeFrame
 from svk.data._priority import Priority
 from svk.data._researchline import ResearchLine
 from svk.data._stormsurgebarrier import StormSurgeBarrier
+from svk.data._impactcategory import ImpactCategory
 
 
 class ResearchQuestion(BaseModel):
@@ -82,3 +83,7 @@ class ResearchQuestion(BaseModel):
             or self.prio_operation.id == 3
             or (self.prio_management_maintenance.id + self.prio_operation.id + self.prio_water_safety.id + self.prio_other_functions.id) > 8
         )
+
+
+class ImpactPathwayResearchQuestion(ResearchQuestion):
+    impact_category: ImpactCategory

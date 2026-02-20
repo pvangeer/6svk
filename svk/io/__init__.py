@@ -18,6 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from ._database import Database
+from ._knowledgeagendadatabase import KnowledgeAgendaDatabase
+from ._impactpathwaydatabase import ImpactPathwayDatabase
 from ._svgtopdf import svg_to_pdf, svg_to_pdf_chrome
 from ._pdf import merge_pdf_files, add_links

@@ -18,9 +18,10 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from ._researchquestion import ResearchQuestion
+from ._researchquestion import ResearchQuestion, ImpactPathwayResearchQuestion
 from ._researchline import ResearchLine, get_research_line
 from ._timeframe import TimeFrame
 from ._priority import Priority
 from ._stormsurgebarrier import StormSurgeBarrier
 from ._linksregister import LinksRegister
+from ._impactcategory import ImpactCategory
