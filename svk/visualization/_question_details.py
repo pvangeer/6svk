@@ -129,7 +129,7 @@ class QuestionDetails(VisualElement):
             else "rgb(120,120,120)"
         )
 
-    def draw(self, dwg: Drawing, x: float, y: float, width: float):
+    def draw(self, dwg: Drawing, x: float, y: float, width: float, page_number: int):
         dwg.add(
             dwg.rect(
                 insert=(x, y),
@@ -337,12 +337,12 @@ class QuestionDetails(VisualElement):
                 )
             )
             self.links_register.register_link(
-                related,
-                1,
-                x_related,
-                y_related_current,
-                measure_text(related, self.layout_configuration.font_size)[0],
-                self.layout_configuration.font_size,
+                link_target=related,
+                page_number=page_number,
+                x=x_related,
+                y=y_related_current,
+                width=measure_text(related, self.layout_configuration.font_size)[0],
+                height=self.layout_configuration.font_size,
             )
             y_related_current += self.layout_configuration.font_size * 1.2
 

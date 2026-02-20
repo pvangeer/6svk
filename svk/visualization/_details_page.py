@@ -24,10 +24,11 @@ class DetailsPage(VisualElement):
                 link_target=question.research_question.id, page_number=self.page_number, x=self.layout_configuration.paper_margin, y=y
             )
             question.draw(
-                dwg,
-                self.layout_configuration.paper_margin,
-                y,
-                self.layout_configuration.details_page_width - 2 * self.layout_configuration.paper_margin,
+                dwg=dwg,
+                x=self.layout_configuration.paper_margin,
+                y=y,
+                width=self.layout_configuration.details_page_width - 2 * self.layout_configuration.paper_margin,
+                page_number=self.page_number,
             )
             y += question.height + self.layout_configuration.element_margin
 

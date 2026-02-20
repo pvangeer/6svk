@@ -31,16 +31,40 @@ class KnowledgeCalendar(BaseModel):
         overview = self.create_overview_page_from_questions(page_number=0, title=self.storm_surge_barrier.title, questions=self.questions)
 
         # build detailed pages
+
         # TODO: Group questions and create multiple pages (with difference titles)
-        details = self.create_details_page_from_questions(page_number=1, title="Kennisvragen", questions=self.questions)
+        grouped_questions: defaultdict[ResearchLine, list[ResearchQuestion]] = defaultdict(list[ResearchQuestion])
+        non_grouped: list[ResearchQuestion] = []
+        for question in self.questions:
+            if question.research_line_primary is None:
+                non_grouped.append(question)
+            else:
+                grouped_questions[question.research_line_primary].append(question)
+
+        details_pages: dict[ResearchLine, DetailsPage] = {}
+        page_number = 1
+        for research_line in grouped_questions:
+            details_pages[research_line] = self.create_details_page_from_questions(
+                page_number=page_number, title="Kennisvragen", questions=grouped_questions[research_line]
+            )
+            page_number += 1
 
         # convert all to pdf
         overview_file_path = os.path.join(self.output_dir, self.output_file + " - overview.pdf")
-        details_file_path = os.path.join(self.output_dir, self.output_file + " - details.pdf")
+        details_file_path_base = os.path.join(self.output_dir, self.output_file + " - details - ")
         svg_to_pdf_chrome(svg_dwg=overview.draw(), pdf_path=overview_file_path)
-        svg_to_pdf_chrome(svg_dwg=details.draw(), pdf_path=details_file_path)
+        detailed_pages_files: list[str] = []
+        for r_l in details_pages:
+            details_file_name = details_file_path_base + r_l.name + ".pdf"
+            detailed_pages_files.append(details_file_name)
+            svg_to_pdf_chrome(svg_dwg=details_pages[r_l].draw(), pdf_path=details_file_name)
+        if len(non_grouped) > 0:
+            uncategorized_file_name = details_file_path_base + "no-research-line.pdf"
+            detailed_pages_files.append(uncategorized_file_name)
+            svg_to_pdf_chrome(svg_dwg=details_pages[r_l].draw(), pdf_path=uncategorized_file_name)
+
         no_links_output_file = os.path.join(self.output_dir, self.output_file + " - no links.pdf")
-        merge_pdf_files([overview_file_path, details_file_path], no_links_output_file)
+        merge_pdf_files([overview_file_path] + detailed_pages_files, no_links_output_file)
 
         # implement links
         output_file_final = os.path.join(self.output_dir, self.output_file + ".pdf")
@@ -80,6 +104,7 @@ class KnowledgeCalendar(BaseModel):
         title: str,
         questions: list[ResearchQuestion],
     ) -> DetailsPage:
+        # TODO: Pass page title and implement. Use this to split large lists of questions and group them by research line in a separate page.
         dwg_details_page = DetailsPage(
             page_number=page_number, layout_configuration=self.layout_configuration, links_register=self.links_register
         )
