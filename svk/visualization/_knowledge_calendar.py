@@ -50,6 +50,13 @@ class KnowledgeCalendar(BaseModel):
             )
             page_number += 1
 
+        if len(non_grouped) > 0:
+            uncategorized_page = self.create_details_page_from_questions(
+                page_number=page_number,
+                title="Zonder onderzoekslijn",
+                questions=non_grouped,
+            )
+
         # convert all to pdf
         overview_file_path = os.path.join(self.output_dir, self.output_file + " - overview.pdf")
         details_file_path_base = os.path.join(self.output_dir, self.output_file + " - details - ")
@@ -62,7 +69,7 @@ class KnowledgeCalendar(BaseModel):
         if len(non_grouped) > 0:
             uncategorized_file_name = details_file_path_base + "no-research-line.pdf"
             detailed_pages_files.append(uncategorized_file_name)
-            svg_to_pdf_chrome(svg_dwg=details_pages[r_l].draw(), pdf_path=uncategorized_file_name)
+            svg_to_pdf_chrome(svg_dwg=uncategorized_page.draw(), pdf_path=uncategorized_file_name)
 
         no_links_output_file = os.path.join(self.output_dir, self.output_file + " - no links.pdf")
         merge_pdf_files([overview_file_path] + detailed_pages_files, no_links_output_file)

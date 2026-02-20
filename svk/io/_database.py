@@ -144,7 +144,7 @@ class Database(list[ResearchQuestion]):
         :param first_data_row: The row number (1 based) of the first database record.
         :type first_data_row: int
         """
-        wb = load_workbook(self.file_path)
+        wb = load_workbook(self.file_path, data_only=True)
         sheet = wb[sheet_name]
 
         for i_row, row in enumerate(sheet.iter_rows(min_row=first_data_row, max_row=None, values_only=True)):
