@@ -23,6 +23,7 @@ from ._overview_page import OverviewPage
 from ._details_page import DetailsPage
 from ._layout_configuration import LayoutConfiguration
 from ._column import Column
+from ._cluster import Cluster
 from ._header import Header
 from ._group import Group
 from ._question import Question

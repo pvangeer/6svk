@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.visualization import LayoutConfiguration, OverviewPage, Question, Group, Column
+from svk.visualization import LayoutConfiguration, OverviewPage, Question, Group, Column, Cluster
 from svk.data import TimeFrame, ResearchLine, ResearchQuestion, Priority, TimeFrame, StormSurgeBarrier, LinksRegister
 from svk.io import svg_to_pdf_chrome
 
@@ -45,20 +45,23 @@ generate_research_question.counter = 0
 
 def test_create_image():
     config = LayoutConfiguration()
-    links_manager = LinksRegister()
+    links_register = LinksRegister()
 
     fig = OverviewPage(
         page_number=0,
         layout_configuration=config,
-        links_register=links_manager,
+        links_register=links_register,
         title="Test-image",
         storm_surge_barrier=StormSurgeBarrier.All,
     )
-    adaptation_now = Group(layout_configuration=config, links_register=links_manager, title="test", color="black")
+    cluster = Cluster(layout_configuration=config, links_register=links_register, id=1, color=(132, 243, 124))
+    fig.clusters.append(cluster)
+
+    adaptation_now = Group(layout_configuration=config, links_register=links_register, title="test", color="black")
     adaptation_now.questions.append(
         Question(
             layout_configuration=config,
-            links_register=links_manager,
+            links_register=links_register,
             research_question=generate_research_question(
                 question="This is my first question", time_frame=TimeFrame.Now, research_line=ResearchLine.Adaptation.value
             ),
@@ -67,7 +70,7 @@ def test_create_image():
     adaptation_now.questions.append(
         Question(
             layout_configuration=config,
-            links_register=links_manager,
+            links_register=links_register,
             research_question=generate_research_question(
                 question="This is my second question", time_frame=TimeFrame.Now, research_line=ResearchLine.Adaptation.value
             ),
@@ -76,7 +79,7 @@ def test_create_image():
     adaptation_now.questions.append(
         Question(
             layout_configuration=config,
-            links_register=links_manager,
+            links_register=links_register,
             research_question=generate_research_question(
                 question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
                 time_frame=TimeFrame.Now,
@@ -84,27 +87,28 @@ def test_create_image():
             ),
         )
     )
-    fig.columns.append(
-        Column(
-            layout_configuration=config,
-            links_register=links_manager,
-            header_title="test",
-            header_subtitle="sub 1",
-            header_color="#07583753",
-        )
+    column = Column(
+        layout_configuration=config,
+        links_register=links_register,
+        header_title="test",
+        header_subtitle="sub 1",
+        header_color="#07583753",
+        number=0,
     )
-    fig.columns[0].groups[1] = adaptation_now
+
+    fig.columns.append(column)
+    cluster.groups[0].append(adaptation_now)
 
     cyber_near = Group(
         layout_configuration=config,
-        links_register=links_manager,
+        links_register=links_register,
         title="test",
         color="blue",
     )
     cyber_near.questions.append(
         Question(
             layout_configuration=config,
-            links_register=links_manager,
+            links_register=links_register,
             research_question=generate_research_question(
                 question="This is my first question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Cyber.value
             ),
@@ -113,7 +117,7 @@ def test_create_image():
     cyber_near.questions.append(
         Question(
             layout_configuration=config,
-            links_register=links_manager,
+            links_register=links_register,
             research_question=generate_research_question(
                 question="This is my second question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Cyber.value
             ),
@@ -122,7 +126,7 @@ def test_create_image():
     cyber_near.questions.append(
         Question(
             layout_configuration=config,
-            links_register=links_manager,
+            links_register=links_register,
             research_question=generate_research_question(
                 question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
                 time_frame=TimeFrame.NearFuture,
@@ -130,23 +134,28 @@ def test_create_image():
             ),
         )
     )
-    fig.columns.append(
-        Column(
-            layout_configuration=config, links_register=links_manager, header_title="test", header_subtitle="sub 1", header_color="#478956"
-        )
+    column2 = Column(
+        layout_configuration=config,
+        links_register=links_register,
+        header_title="test",
+        header_subtitle="sub 1",
+        header_color="#478956",
+        number=1,
     )
-    fig.columns[1].groups[2] = cyber_near
+
+    fig.columns.append(column2)
+    cluster.groups[1].append(cyber_near)
 
     adaptation_near = Group(
         layout_configuration=config,
-        links_register=links_manager,
+        links_register=links_register,
         title="test",
         color="blue",
     )
     adaptation_near.questions.append(
         Question(
             layout_configuration=config,
-            links_register=links_manager,
+            links_register=links_register,
             research_question=generate_research_question(
                 question="This is my first question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Adaptation.value
             ),
@@ -155,7 +164,7 @@ def test_create_image():
     adaptation_near.questions.append(
         Question(
             layout_configuration=config,
-            links_register=links_manager,
+            links_register=links_register,
             research_question=generate_research_question(
                 question="This is my second question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Adaptation.value
             ),
@@ -164,7 +173,7 @@ def test_create_image():
     adaptation_near.questions.append(
         Question(
             layout_configuration=config,
-            links_register=links_manager,
+            links_register=links_register,
             research_question=generate_research_question(
                 question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
                 time_frame=TimeFrame.NearFuture,
@@ -172,7 +181,7 @@ def test_create_image():
             ),
         )
     )
-    fig.columns[1].groups[1] = adaptation_near
+    cluster.groups[1].append(adaptation_near)
     dwg = fig.draw()
 
     pt = "C:/test/Kennisagenda_auto.pdf"

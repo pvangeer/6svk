@@ -12,8 +12,8 @@ class DetailsPage(VisualElement):
         paper_height = (
             self.layout_configuration.paper_margin
             + self.layout_configuration.page_title_height
-            + self.layout_configuration.element_margin
-            + sum([q.height + self.layout_configuration.element_margin for q in self.questions])
+            + self.layout_configuration.intermediate_margin
+            + sum([q.height + self.layout_configuration.intermediate_margin for q in self.questions])
             + self.layout_configuration.paper_margin
         )
 
@@ -38,7 +38,9 @@ class DetailsPage(VisualElement):
         )
 
         y_current = (
-            self.layout_configuration.paper_margin + self.layout_configuration.page_title_height + self.layout_configuration.element_margin
+            self.layout_configuration.paper_margin
+            + self.layout_configuration.page_title_height
+            + self.layout_configuration.intermediate_margin
         )
         for question in self.questions:
             self.links_register.register_link_target(
@@ -54,6 +56,6 @@ class DetailsPage(VisualElement):
                 width=self.layout_configuration.details_page_width - 2 * self.layout_configuration.paper_margin,
                 page_number=self.page_number,
             )
-            y_current += question.height + self.layout_configuration.element_margin
+            y_current += question.height + self.layout_configuration.intermediate_margin
 
         return dwg

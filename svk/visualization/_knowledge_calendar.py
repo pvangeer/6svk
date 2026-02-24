@@ -8,13 +8,14 @@ from svk.io import svg_to_pdf_chrome, merge_pdf_files, add_links
 
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._greyfraction import color_toward_grey
-
+from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization._overview_page import OverviewPage
 from svk.visualization._details_page import DetailsPage
 from svk.visualization._question_details import QuestionDetails
 from svk.visualization._column import Column
 from svk.visualization._group import Group
+from svk.visualization._cluster import Cluster
 from svk.visualization._question import Question
 
 
@@ -25,6 +26,7 @@ class KnowledgeCalendar(BaseModel):
     questions: list[ResearchQuestion]
     output_dir: str
     output_file: str
+    _clusters: dict[int, Cluster] = {}
 
     def build(self):
         # build overview page
@@ -90,7 +92,7 @@ class KnowledgeCalendar(BaseModel):
             time_groups[q.time_frame].append(q)
 
         self.layout_configuration.question_id_box_width = (
-            max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in questions]) + self.layout_configuration.line_margin
+            max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in questions]) + self.layout_configuration.small_margin
         )
 
         fig = OverviewPage(
@@ -100,9 +102,10 @@ class KnowledgeCalendar(BaseModel):
             links_register=self.links_register,
             storm_surge_barrier=self.storm_surge_barrier,
         )
-        self.add_column(fig=fig, time_groups=time_groups, time_frame=TimeFrame.Now)
-        self.add_column(fig=fig, time_groups=time_groups, time_frame=TimeFrame.NearFuture)
-        self.add_column(fig=fig, time_groups=time_groups, time_frame=TimeFrame.Future)
+        self.add_column(fig=fig, questions=time_groups[TimeFrame.Now], time_frame=TimeFrame.Now, number=0)
+        self.add_column(fig=fig, questions=time_groups[TimeFrame.NearFuture], time_frame=TimeFrame.NearFuture, number=1)
+        self.add_column(fig=fig, questions=time_groups[TimeFrame.Future], time_frame=TimeFrame.Future, number=2)
+        fig.clusters = list(self._clusters.values())
         return fig
 
     def create_details_page_from_questions(
@@ -123,71 +126,44 @@ class KnowledgeCalendar(BaseModel):
 
         return dwg_details_page
 
-    @staticmethod
-    def get_priority(question: ResearchQuestion) -> int:
-        return 1 if question.has_priority else 0
-
-    @staticmethod
-    def get_column_title(time_frame: TimeFrame) -> str:
-        match time_frame:
-            case TimeFrame.Now:
-                return "Nu"
-            case TimeFrame.NearFuture:
-                return "Nabije toekomst"
-            case TimeFrame.Future:
-                return "Toekomst"
-            case TimeFrame.NotRelevant:
-                return "Niet relevant"
-            case TimeFrame.Unknown:
-                return "Onbekend"
-            case _:
-                raise ValueError("Unknown time frame")
-
-    @staticmethod
-    def get_subtitle(time_frame: TimeFrame) -> str:
-        match time_frame:
-            case TimeFrame.Now:
-                return ""
-            case TimeFrame.NearFuture:
-                return "(2033 - 2040)"
-            case TimeFrame.Future:
-                return "(>2040)"
-            case TimeFrame.NotRelevant:
-                return "(-)"
-            case TimeFrame.Unknown:
-                return "(?)"
-            case _:
-                raise ValueError("Unknown time frame")
-
-    @staticmethod
-    def get_header_color(time_frame: TimeFrame) -> str:
-        return color_toward_grey((18, 103, 221), grey_fraction=time_frame.grey_fraction)
-
-    def add_column(self, fig: OverviewPage, time_groups, time_frame: TimeFrame):
+    def add_column(self, fig: OverviewPage, questions: list[ResearchQuestion], time_frame: TimeFrame, number: int):
         column = Column(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
-            header_title=KnowledgeCalendar.get_column_title(time_frame),
-            header_subtitle=KnowledgeCalendar.get_subtitle(time_frame),
-            header_color=KnowledgeCalendar.get_header_color(time_frame),
+            header_title=helper.get_column_title(time_frame),
+            header_subtitle=helper.get_subtitle(time_frame),
+            header_color=helper.get_header_color(time_frame),
+            number=number,
         )
 
-        filtered_questions = time_groups[time_frame]
-        if len(filtered_questions) > 0:
+        if len(questions) > 0:
             now_questions_groups: DefaultDict[ResearchLine, list[ResearchQuestion]] = defaultdict(list)
-            for q in filtered_questions:
+            for q in questions:
+                if q.research_line_primary is None:
+                    # TODO: This should not occur here.
+                    continue
                 now_questions_groups[q.research_line_primary].append(q)
 
-            for group in sorted(now_questions_groups.keys(), key=lambda g: g.number):
-                fig.layout_configuration.cluster_colors[group.cluster] = group.base_color
-                column.groups[group.cluster] = Group(
+            for research_line in sorted(now_questions_groups.keys(), key=lambda g: g.number):
+                if research_line.cluster not in self._clusters:
+                    cluster = Cluster(
+                        layout_configuration=self.layout_configuration,
+                        links_register=self.links_register,
+                        color=research_line.base_color,
+                    )
+                    self._clusters[research_line.cluster] = cluster
+                else:
+                    cluster = self._clusters[research_line.cluster]
+
+                new_group = Group(
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
-                    title=group.title,
-                    color=color_toward_grey(group.base_color, time_frame.grey_fraction),
+                    title=research_line.title,
+                    color=color_toward_grey(research_line.base_color, time_frame.grey_fraction),
                 )
-                for question in sorted(now_questions_groups[group], key=KnowledgeCalendar.get_priority, reverse=True):
-                    column.groups[group.cluster].questions.append(
+                cluster.groups[column.number].append(new_group)
+                for question in sorted(now_questions_groups[research_line], key=helper.get_priority, reverse=True):
+                    new_group.questions.append(
                         Question(
                             layout_configuration=self.layout_configuration, links_register=self.links_register, research_question=question
                         )

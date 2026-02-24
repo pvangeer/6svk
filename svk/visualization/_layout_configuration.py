@@ -24,8 +24,9 @@ from pydantic import BaseModel
 class LayoutConfiguration(BaseModel):
     # Margins
     paper_margin: float = 20.0
-    element_margin: float = 10.0
-    line_margin: float = 5.0
+    large_margin: float = 20.0
+    intermediate_margin: float = 10.0
+    small_margin: float = 5.0
 
     # Font sizes
     page_title_font_size: int = 64

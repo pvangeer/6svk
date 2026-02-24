@@ -33,6 +33,7 @@ class Group(VisualElement):
     """The title of the group"""
     color: str
     """The color of the group"""
+
     questions: list[Question] = []
     """The questions in this group"""
 
@@ -45,8 +46,9 @@ class Group(VisualElement):
         """
         return (
             self.layout_configuration.group_header_height
-            + sum([question.height + self.layout_configuration.line_margin for question in self.questions])
-            + 2 * self.layout_configuration.line_margin
+            + sum([question.height for question in self.questions])
+            + self.layout_configuration.small_margin * len(self.questions)
+            + self.layout_configuration.intermediate_margin
         )
 
     def draw(self, dwg: Drawing, x: float, y: float):
@@ -66,15 +68,15 @@ class Group(VisualElement):
         width = self.layout_configuration.column_width - self.layout_configuration.arrow_depth
         self.draw_header(dwg, x, y, width)
 
-        current_y = y + self.layout_configuration.group_header_height + self.layout_configuration.line_margin
+        current_y = y + self.layout_configuration.group_header_height + self.layout_configuration.small_margin
         for question in self.questions:
             question.draw(
                 dwg,
-                x + self.layout_configuration.arrow_depth + self.layout_configuration.element_margin,
+                x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin,
                 current_y,
-                width - self.layout_configuration.arrow_depth - 2 * self.layout_configuration.element_margin,
+                width - self.layout_configuration.arrow_depth - 2 * self.layout_configuration.intermediate_margin,
             )
-            current_y += self.layout_configuration.line_margin + question.height
+            current_y += self.layout_configuration.small_margin + question.height
             pass
 
     def draw_header(self, dwg: Drawing, x: float, y: float, width: float):
@@ -96,7 +98,7 @@ class Group(VisualElement):
             dwg.text(
                 self.title,
                 insert=(
-                    x + self.layout_configuration.arrow_depth + self.layout_configuration.element_margin,
+                    x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin,
                     y + self.layout_configuration.group_header_height / 2,
                 ),
                 font_size=self.layout_configuration.group_title_font_size,

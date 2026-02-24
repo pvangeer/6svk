@@ -35,6 +35,9 @@ class Header(VisualElement):
     color: str
     """The color of the header"""
 
+    def get_height(self) -> float:
+        return self.layout_configuration.column_header_height
+
     def draw(self, dwg: Drawing, x: float, y: float):
         """
         Draws the header
@@ -60,7 +63,7 @@ class Header(VisualElement):
         dwg.add(
             dwg.text(
                 self.title,
-                insert=(x + self.layout_configuration.arrow_depth + self.layout_configuration.element_margin, y_column_header_text),
+                insert=(x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin, y_column_header_text),
                 font_size=self.layout_configuration.column_header_font_size,
                 font_family="Arial",
                 font_weight="bold",

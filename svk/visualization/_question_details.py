@@ -53,32 +53,34 @@ class QuestionDetails(VisualElement):
             max_width=self.layout_configuration.details_page_width
             - self.layout_configuration.paper_margin * 2
             - self.layout_configuration.question_id_box_width
-            - 2 * self.layout_configuration.line_margin,
+            - 2 * self.layout_configuration.small_margin,
             font_size=self.layout_configuration.font_size,
         )
 
     @model_validator(mode="after")
     def compute_dimensions(self):
         self.w_code_field = max(
-            self.layout_configuration.question_priority_box_width + self.layout_configuration.line_margin * 2,
+            self.layout_configuration.question_priority_box_width + self.layout_configuration.small_margin * 2,
             self.layout_configuration.question_id_box_width,
         )
 
         self.h_first_line = (
-            self.layout_configuration.line_margin + self.layout_configuration.font_size + self.layout_configuration.line_margin
+            self.layout_configuration.small_margin + self.layout_configuration.font_size + self.layout_configuration.small_margin
         )
-        h_code_field = self.h_first_line + self.layout_configuration.question_priority_box_width + self.layout_configuration.element_margin
+        h_code_field = (
+            self.h_first_line + self.layout_configuration.question_priority_box_width + self.layout_configuration.intermediate_margin
+        )
         self.w_relation_field = max(
-            measure_text(self.related_title, self.layout_configuration.font_size)[0] + 2 * self.layout_configuration.line_margin,
-            self.layout_configuration.question_id_box_width + 2 * self.layout_configuration.line_margin,
+            measure_text(self.related_title, self.layout_configuration.font_size)[0] + 2 * self.layout_configuration.small_margin,
+            self.layout_configuration.question_id_box_width + 2 * self.layout_configuration.small_margin,
         )
         h_relation_field = (
             self.h_first_line
             + len(self.research_question.reference_ids) * self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.line_margin
+            + self.layout_configuration.small_margin
         )
         self.w_priority_field_fixed = 50
-        h_priority_fixed_field = self.h_first_line + 4 * self.layout_configuration.font_size * 1.2 + self.layout_configuration.line_margin
+        h_priority_fixed_field = self.h_first_line + 4 * self.layout_configuration.font_size * 1.2 + self.layout_configuration.small_margin
         w_remaining = (
             self.layout_configuration.details_page_width
             - self.layout_configuration.paper_margin * 2.0
@@ -91,26 +93,26 @@ class QuestionDetails(VisualElement):
         h_priority_field = (
             self.h_first_line
             + len(self.priority_explained_lines) * self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.line_margin
+            + self.layout_configuration.small_margin
         )
 
         self.w_question_field = w_remaining * 0.6
         self.question_lines = wrapped_lines(
             self.research_question.question,
-            self.w_question_field - 2 * self.layout_configuration.line_margin,
+            self.w_question_field - 2 * self.layout_configuration.small_margin,
             self.layout_configuration.font_size,
         )
         self.question_explained_lines = wrapped_lines(
             "-" if self.research_question.explanation is None else str(self.research_question.explanation),
-            self.w_question_field - 2 * self.layout_configuration.line_margin,
+            self.w_question_field - 2 * self.layout_configuration.small_margin,
             self.layout_configuration.font_size,
         )
         h_question_field = (
-            self.layout_configuration.line_margin
+            self.layout_configuration.small_margin
             + len(self.question_lines) * self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.line_margin
+            + self.layout_configuration.small_margin
             + len(self.question_explained_lines) * self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.line_margin
+            + self.layout_configuration.small_margin
         )
 
         self.height = max(h_code_field, h_priority_field, h_priority_fixed_field, h_question_field, h_relation_field)
@@ -144,7 +146,7 @@ class QuestionDetails(VisualElement):
         dwg.add(
             dwg.text(
                 self.research_question.id,
-                insert=(x + self.w_code_field / 2.0, y + self.layout_configuration.line_margin),
+                insert=(x + self.w_code_field / 2.0, y + self.layout_configuration.small_margin),
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",
                 font_weight="normal",
@@ -157,8 +159,8 @@ class QuestionDetails(VisualElement):
 
         dwg.add(
             dwg.line(
-                start=(x + self.layout_configuration.line_margin, y + self.h_first_line),
-                end=(x + self.w_code_field - self.layout_configuration.line_margin, y + self.h_first_line),
+                start=(x + self.layout_configuration.small_margin, y + self.h_first_line),
+                end=(x + self.w_code_field - self.layout_configuration.small_margin, y + self.h_first_line),
                 stroke_width=0.5,
                 stroke=self._color,
             )
@@ -166,8 +168,8 @@ class QuestionDetails(VisualElement):
 
         y_middle = (
             y
-            + self.layout_configuration.line_margin
-            + self.layout_configuration.line_margin
+            + self.layout_configuration.small_margin
+            + self.layout_configuration.small_margin
             + self.layout_configuration.font_size * 1.2
             + prio_symbol_height / 2.0
         )
@@ -194,7 +196,7 @@ class QuestionDetails(VisualElement):
             wrapped_text(
                 dwg,
                 self.question_lines,
-                insert=(x + self.w_code_field + self.layout_configuration.line_margin, y + self.layout_configuration.line_margin),
+                insert=(x + self.w_code_field + self.layout_configuration.small_margin, y + self.layout_configuration.small_margin),
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",
                 font_style="italic",
@@ -209,11 +211,11 @@ class QuestionDetails(VisualElement):
                 dwg,
                 self.question_explained_lines,
                 insert=(
-                    x + self.w_code_field + self.layout_configuration.line_margin,
+                    x + self.w_code_field + self.layout_configuration.small_margin,
                     y
-                    + self.layout_configuration.line_margin
+                    + self.layout_configuration.small_margin
                     + len(self.question_lines) * self.layout_configuration.font_size * 1.2
-                    + self.layout_configuration.line_margin,
+                    + self.layout_configuration.small_margin,
                 ),
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",
@@ -230,8 +232,8 @@ class QuestionDetails(VisualElement):
             dwg.text(
                 self.priority_title,
                 insert=(
-                    x_priority + self.layout_configuration.line_margin,
-                    y + self.layout_configuration.line_margin,
+                    x_priority + self.layout_configuration.small_margin,
+                    y + self.layout_configuration.small_margin,
                 ),
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",
@@ -243,9 +245,9 @@ class QuestionDetails(VisualElement):
 
         dwg.add(
             dwg.line(
-                start=(x_priority + self.layout_configuration.line_margin, y + self.h_first_line),
+                start=(x_priority + self.layout_configuration.small_margin, y + self.h_first_line),
                 end=(
-                    x_priority + self.w_priority_field + self.w_priority_field_fixed - self.layout_configuration.line_margin,
+                    x_priority + self.w_priority_field + self.w_priority_field_fixed - self.layout_configuration.small_margin,
                     y + self.h_first_line,
                 ),
                 stroke_width=0.5,
@@ -260,10 +262,10 @@ class QuestionDetails(VisualElement):
             ("B&O:", self.research_question.prio_management_maintenance),
         ]
 
-        y_prio_current = y + self.h_first_line + self.layout_configuration.line_margin
-        x_prio_label = x_priority + self.layout_configuration.line_margin
+        y_prio_current = y + self.h_first_line + self.layout_configuration.small_margin
+        x_prio_label = x_priority + self.layout_configuration.small_margin
         x_prio_first = (
-            x_prio_label + measure_text("Waterveiligheid:", self.layout_configuration.font_size)[0] + self.layout_configuration.line_margin
+            x_prio_label + measure_text("Waterveiligheid:", self.layout_configuration.font_size)[0] + self.layout_configuration.small_margin
         )
         for prio in prios:
             dwg.add(
@@ -296,8 +298,8 @@ class QuestionDetails(VisualElement):
             dwg.text(
                 self.related_title,
                 insert=(
-                    x_related_start + self.layout_configuration.line_margin,
-                    y + self.layout_configuration.line_margin,
+                    x_related_start + self.layout_configuration.small_margin,
+                    y + self.layout_configuration.small_margin,
                 ),
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",
@@ -309,9 +311,9 @@ class QuestionDetails(VisualElement):
 
         dwg.add(
             dwg.line(
-                start=(x_related_start + self.layout_configuration.line_margin, y + self.h_first_line),
+                start=(x_related_start + self.layout_configuration.small_margin, y + self.h_first_line),
                 end=(
-                    x_related_start + self.w_relation_field - self.layout_configuration.line_margin,
+                    x_related_start + self.w_relation_field - self.layout_configuration.small_margin,
                     y + self.h_first_line,
                 ),
                 stroke_width=0.5,
@@ -319,8 +321,8 @@ class QuestionDetails(VisualElement):
             )
         )
 
-        x_related = x_related_start + self.layout_configuration.line_margin
-        y_related_current = y + self.h_first_line + self.layout_configuration.line_margin
+        x_related = x_related_start + self.layout_configuration.small_margin
+        y_related_current = y + self.h_first_line + self.layout_configuration.small_margin
         for related in self.research_question.reference_ids:
             dwg.add(
                 dwg.text(

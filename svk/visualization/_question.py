@@ -45,8 +45,8 @@ class Question(VisualElement):
             self.research_question.question,
             max_width=self.layout_configuration.column_width
             - self.layout_configuration.arrow_depth
-            - 2 * self.layout_configuration.element_margin
-            - 3 * self.layout_configuration.line_margin
+            - 2 * self.layout_configuration.intermediate_margin
+            - 3 * self.layout_configuration.small_margin
             - self._id_box_width
             - self._priority_box_width,
             font_size=self.layout_configuration.font_size,
@@ -55,7 +55,7 @@ class Question(VisualElement):
     @model_validator(mode="after")
     def compute_height(self):
         self.construct_lines()
-        self.height = self.layout_configuration.font_size * len(self._lines) * 1.2 + self.layout_configuration.line_margin * 2.0
+        self.height = self.layout_configuration.font_size * len(self._lines) * 1.2 + self.layout_configuration.small_margin * 2.0
 
         return self
 
@@ -79,8 +79,8 @@ class Question(VisualElement):
     def _priority_box_width(self) -> float:
         return (
             self.layout_configuration.question_priority_box_width
-            + self.layout_configuration.line_margin
-            + self.layout_configuration.line_margin
+            + self.layout_configuration.small_margin
+            + self.layout_configuration.small_margin
         )
 
     def draw(self, dwg: Drawing, x: float, y: float, width: float):
@@ -98,18 +98,18 @@ class Question(VisualElement):
         y_middle = y + self.height / 2
         if not self.research_question.has_priority:
             draw_priority_arrow(
-                dwg, x=x + self.layout_configuration.line_margin, y=y_middle, width=self.layout_configuration.question_priority_box_width
+                dwg, x=x + self.layout_configuration.small_margin, y=y_middle, width=self.layout_configuration.question_priority_box_width
             )
         else:
             draw_priority_arrow(
                 dwg,
-                x=x + self.layout_configuration.line_margin,
+                x=x + self.layout_configuration.small_margin,
                 y=y_middle - 2.5,
                 width=self.layout_configuration.question_priority_box_width,
             )
             draw_priority_arrow(
                 dwg,
-                x=x + self.layout_configuration.line_margin,
+                x=x + self.layout_configuration.small_margin,
                 y=y_middle + 2.5,
                 width=self.layout_configuration.question_priority_box_width,
             )
@@ -151,8 +151,8 @@ class Question(VisualElement):
                 dwg,
                 lines=self._lines,
                 insert=(
-                    x + self._priority_box_width + self._id_box_width + self.layout_configuration.line_margin,
-                    y + self.layout_configuration.line_margin,
+                    x + self._priority_box_width + self._id_box_width + self.layout_configuration.small_margin,
+                    y + self.layout_configuration.small_margin,
                 ),
                 text_anchor="start",
                 dominant_baseline="text-before-edge",

@@ -19,11 +19,11 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svk.visualization._column import Column
+from svk.visualization._cluster import Cluster
 from svk.data import StormSurgeBarrier
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 from svk.visualization.helpers._draw_callout import draw_callout
-from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization._visual_element import VisualElement
 from svgwrite import Drawing
 from uuid import uuid4
@@ -46,41 +46,71 @@ class OverviewPage(VisualElement):
     columns: list[Column] = []
     """The columns included in this overview page (that all hold groups and questions)"""
 
-    def draw(self) -> Drawing:
-        groups = {}
-        sorted_group_numbers = {key for col in self.columns for key in col.groups}
-        y_current = (
-            self.layout_configuration.column_header_height
-            + 3 * self.layout_configuration.paper_margin
-            + self.layout_configuration.page_title_height
-        )
-        for number in sorted_group_numbers:
-            group_height = max(
-                c.groups[number].get_height() + 2 * self.layout_configuration.element_margin if number in c.groups else 0.0
-                for c in self.columns
-            )
-            for column in self.columns:
-                column.y_clusters[number] = y_current
-            groups[number] = (
-                y_current,
-                group_height - self.layout_configuration.element_margin,
-            )
-            y_current = y_current + group_height + self.layout_configuration.element_margin
+    clusters: list[Cluster] = []
 
-        y_column_start = self.layout_configuration.page_title_height + 2 * self.layout_configuration.paper_margin
-        column_heights = [column.get_height(y_column_start) for column in self.columns]
+    def draw(self) -> Drawing:
+        y_column_header = (
+            self.layout_configuration.paper_margin + self.layout_configuration.page_title_height + self.layout_configuration.large_margin
+        )
+
+        y_top_questions = y_column_header + self.layout_configuration.column_header_height + self.layout_configuration.large_margin
+
+        y_current = y_top_questions
+        for cluster in self.clusters:
+            cluster.y_top = y_current
+            y_current += cluster.get_height() + self.layout_configuration.large_margin
+
+        max_column_height = self._get_max_column_height()
 
         paper_height = (
-            self.layout_configuration.page_title_height
-            + self.layout_configuration.paper_margin * 4
-            + max(column_heights)
+            self.layout_configuration.paper_margin
+            + self.layout_configuration.page_title_height
+            + self.layout_configuration.large_margin
+            + self.layout_configuration.column_header_height
+            + self.layout_configuration.large_margin
+            + max_column_height
+            + self.layout_configuration.large_margin
             + 1.2 * self.layout_configuration.disclamer_font_size
+            + self.layout_configuration.paper_margin
         )
 
         dwg = Drawing(size=(f"{self.layout_configuration.overview_page_width}px", f"{paper_height}px"), debug=False)
         self.links_register.register_page(self.page_number, self.layout_configuration.overview_page_width, paper_height)
 
-        icon_width = 0
+        self.draw_title(dwg=dwg)
+
+        x_current = self.layout_configuration.paper_margin
+        for column in self.columns:
+            column.header.draw(dwg, x_current, y_column_header)
+            x_current += self.layout_configuration.column_width
+
+        y_current = y_top_questions
+        for cluster in self.clusters:
+            cluster.draw(dwg=dwg)
+            y_top_questions += cluster.get_height(column) + self.layout_configuration.intermediate_margin
+
+        draw_disclaimer(
+            dwg=dwg,
+            disclaimer_text=self.disclaimer,
+            insert=(
+                self.layout_configuration.paper_margin,
+                self.layout_configuration.paper_margin
+                + self.layout_configuration.page_title_height
+                + self.layout_configuration.large_margin
+                + self.layout_configuration.column_header_height
+                + self.layout_configuration.large_margin
+                + max_column_height
+                + self.layout_configuration.large_margin,
+            ),
+            dominant_baseline="hanging",
+            text_anchor="start",
+            font_size=self.layout_configuration.disclamer_font_size,
+            links=[("Riva de Vries", "mailto:riva.de.vries@rws.nl"), ("Marit de Jong", "mailto:marit.de.jong@rws.nl")],
+        )
+
+        return dwg
+
+    def draw_title(self, dwg):
         icon_size = self.layout_configuration.page_title_height
         icon_width = icon_size + self.layout_configuration.arrow_depth
         draw_callout(dwg, self.layout_configuration.paper_margin, self.layout_configuration.paper_margin, icon_width, icon_size, "#000000")
@@ -109,85 +139,5 @@ class OverviewPage(VisualElement):
             )
         )
 
-        for number in groups.keys():
-            x_group = self.layout_configuration.paper_margin
-            y_group = groups[number][0]
-            group_width = self.layout_configuration.overview_page_width - 2 * self.layout_configuration.paper_margin
-            group_height = groups[number][1]
-            group_color = self.layout_configuration.cluster_colors[number] if number in self.layout_configuration.cluster_colors else None
-            if group_color is None:
-                continue
-
-            gradient_id = f"gradient_{str(uuid4())}"
-            x_scale = group_width / group_height
-            gradient_center = ((x_group + group_width / 2) / x_scale, y_group)
-            radius = group_height * 1.2
-            fill_radial_grad = dwg.radialGradient(
-                center=gradient_center,
-                r=radius,
-                gradientUnits="userSpaceOnUse",
-                id=gradient_id,
-            )
-            fill_radial_grad.add_stop_color(0, "white")
-            fill_radial_grad.add_stop_color(0.6, "white")
-            fill_radial_grad.add_stop_color(1, color_toward_grey(group_color, 0.5, grey=(250, 250, 250)))
-            fill_radial_grad["gradientTransform"] = f"scale({x_scale},1)"
-
-            stroke_gradient_id = f"gradient_{str(uuid4())}"
-            stroke_radial_grad = dwg.radialGradient(
-                center=gradient_center,
-                r=radius,
-                gradientUnits="userSpaceOnUse",
-                id=stroke_gradient_id,
-            )
-            stroke_radial_grad.add_stop_color(0, "white")
-            stroke_radial_grad.add_stop_color(0.6, "white")
-            stroke_radial_grad.add_stop_color(1, color_toward_grey(group_color, 0.0))
-            stroke_radial_grad["gradientTransform"] = f"scale({x_scale},1)"
-
-            dwg.defs.add(fill_radial_grad)
-            dwg.defs.add(stroke_radial_grad)
-
-            dwg.add(
-                dwg.rect(
-                    insert=(
-                        x_group,
-                        y_group,
-                    ),
-                    size=(group_width, group_height),
-                    fill=f"url(#{gradient_id})",
-                    stroke="none",
-                )
-            )
-            dwg.add(
-                dwg.rect(
-                    insert=(
-                        x_group,
-                        y_group,
-                    ),
-                    size=(group_width, group_height),
-                    fill="none",
-                    stroke=f"url(#{stroke_gradient_id})",
-                    stroke_widht=3,
-                )
-            )
-
-        x_current = self.layout_configuration.paper_margin
-        for column in self.columns:
-            column.draw(dwg, x_current, y_column_start)
-            x_current = x_current + self.layout_configuration.column_width
-
-        draw_disclaimer(
-            dwg=dwg,
-            disclaimer_text=self.disclaimer,
-            insert=(
-                self.layout_configuration.paper_margin,
-                self.layout_configuration.paper_margin * 3 + max(column_heights) + self.layout_configuration.page_title_height,
-            ),
-            dominant_baseline="hanging",
-            text_anchor="start",
-            font_size=self.layout_configuration.disclamer_font_size,
-            links=[("Riva de Vries", "mailto:riva.de.vries@rws.nl"), ("Marit de Jong", "mailto:marit.de.jong@rws.nl")],
-        )
-
-        return dwg
+    def _get_max_column_height(self):
+        return sum([c.get_height() for c in self.clusters]) + self.layout_configuration.large_margin * (len(self.clusters) - 1)

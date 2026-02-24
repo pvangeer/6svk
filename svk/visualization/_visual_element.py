@@ -13,8 +13,8 @@ class VisualElement(BaseModel):
     def draw_vertical_separator(self, dwg: Drawing, x: float, y: float, element_height: float, color: str):
         dwg.add(
             dwg.line(
-                start=(x, y + self.layout_configuration.line_margin),
-                end=(x, y + element_height - self.layout_configuration.line_margin),
+                start=(x, y + self.layout_configuration.small_margin),
+                end=(x, y + element_height - self.layout_configuration.small_margin),
                 stroke_width=0.5,
                 stroke=color,
             )
