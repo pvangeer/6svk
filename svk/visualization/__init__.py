@@ -19,6 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from ._knowledge_calendar import KnowledgeCalendar
+from ._impact_pathway import ImpactPathway
 from ._overview_page import OverviewPage
 from ._details_page import DetailsPage
 from ._layout_configuration import LayoutConfiguration

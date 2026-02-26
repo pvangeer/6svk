@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.io import KnowledgeAgendaDatabase
+from svk.io import ImpactPathwayDatabase
 import sys
 import pytest
 
@@ -26,7 +26,7 @@ print(sys.path)
 
 
 def test_database_creation_full_database_ssb_delta():
-    d = KnowledgeAgendaDatabase("C:/src/6svk/test/test-data/example-SSB-delta.xlsx")
+    d = ImpactPathwayDatabase("C:/src/6svk/test/test-data/example-SSB-delta.xlsx")
     d.read()
     if len(d) < 20:
         print("length = " + str(len(d)))
