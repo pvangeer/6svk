@@ -81,15 +81,15 @@ class ImpactPathwayDatabase(ExcelDatabase, list[ImpactPathwayResearchQuestion]):
     def _get_impact_category(row: tuple, i_column: int) -> ImpactCategory:
         category_string = ExcelDatabase._get_as_str(row, i_column)
         match category_string:
-            case ImpactCategory.SocioEconomicAndEnvironment.description:
+            case ImpactCategory.SocioEconomicAndEnvironment.title:
                 return ImpactCategory.SocioEconomicAndEnvironment
-            case ImpactCategory.ReliableSSB.description:
+            case ImpactCategory.ReliableSSB.title:
                 return ImpactCategory.ReliableSSB
-            case ImpactCategory.MaintenanceDecisions.description:
+            case ImpactCategory.MaintenanceDecisions.title:
                 return ImpactCategory.MaintenanceDecisions
-            case ImpactCategory.HumanCapical.description:
+            case ImpactCategory.HumanCapical.title:
                 return ImpactCategory.HumanCapical
-            case ImpactCategory.Example.description:
+            case ImpactCategory.Example.title:
                 return ImpactCategory.Example
             case _:
                 raise DatabaseReadError("Cannot read impact category.", i_column=i_column)

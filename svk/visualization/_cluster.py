@@ -1,5 +1,5 @@
 from svk.visualization._visual_element import VisualElement
-from svk.visualization._group import Group
+from svk.visualization._group import GroupBase
 from svk.visualization._column import Column
 from svk.visualization.helpers._greyfraction import color_toward_grey
 
@@ -11,7 +11,7 @@ from collections import defaultdict
 class Cluster(VisualElement):
     color: tuple[int, int, int]
     """Base color of the cluster (background)"""
-    groups: defaultdict[int, list[Group]] = defaultdict(list[Group])
+    groups: defaultdict[int, list[GroupBase]] = defaultdict(list[GroupBase])
     """A list of groups per column index (zero based)."""
     y_top: float | None = None
     """y-coordinate of the top left of the cluster"""

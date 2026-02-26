@@ -49,6 +49,8 @@ class OverviewPage(VisualElement):
     clusters: list[Cluster] = []
 
     def draw(self) -> Drawing:
+        self.layout_configuration.n_columns = len(self.columns)
+
         y_column_header = (
             self.layout_configuration.paper_margin + self.layout_configuration.page_title_height + self.layout_configuration.large_margin
         )
@@ -80,8 +82,8 @@ class OverviewPage(VisualElement):
         self.draw_title(dwg=dwg)
 
         x_current = self.layout_configuration.paper_margin
-        for column in self.columns:
-            column.header.draw(dwg, x_current, y_column_header)
+        for column in sorted(self.columns, key=lambda c: c.number):
+            column.draw(dwg, x_current, y_column_header)
             x_current += self.layout_configuration.column_width
 
         y_current = y_top_questions

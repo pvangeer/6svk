@@ -14,7 +14,7 @@ from svk.visualization._overview_page import OverviewPage
 from svk.visualization._details_page import DetailsPage
 from svk.visualization._question_details import QuestionDetails
 from svk.visualization._column import Column
-from svk.visualization._group import Group
+from svk.visualization._group import Group, PlainTextGroup
 from svk.visualization._cluster import Cluster
 from svk.visualization._question import Question
 
@@ -98,6 +98,17 @@ class ImpactPathway(BaseModel):
         self.add_column(fig=fig, time_frame=TimeFrame.Now, number=0)
         self.add_column(fig=fig, time_frame=TimeFrame.NearFuture, number=1)
         self.add_column(fig=fig, time_frame=TimeFrame.Future, number=2)
+        # The impact column
+        fig.columns.append(
+            Column(
+                layout_configuration=self.layout_configuration,
+                links_register=self.links_register,
+                header_title="",
+                header_subtitle="",
+                header_color="",
+                number=3,
+            )
+        )
         self.add_clusters(fig=fig, questions=questions)
 
         return fig
@@ -145,11 +156,13 @@ class ImpactPathway(BaseModel):
         )
 
         for question in questions:
-            if question.research_line_primary is None:
+            if question.research_line_primary is None or question.time_frame not in time_frame_column_numbers:
                 continue
             grouped_quenstions_lists[(question.time_frame, question.impact_category, question.research_line_primary)].append(question)
 
-        for questions_list_key in grouped_quenstions_lists:
+        for questions_list_key in sorted(
+            grouped_quenstions_lists, key=lambda k: (k[1].number, k[2].number, time_frame_column_numbers[k[0]])
+        ):
             current_time_frame = questions_list_key[0]
             current_impact_category = questions_list_key[1]
             current_research_line = questions_list_key[2]
@@ -158,7 +171,7 @@ class ImpactPathway(BaseModel):
                 clusters[current_impact_category.number] = Cluster(
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
-                    color=current_research_line.base_color,  # TODO: Come up with base colors for the clusters (or maybe just all grey?)
+                    color=(180, 180, 180),
                 )
 
             cluster = clusters[current_impact_category.number]
@@ -180,4 +193,16 @@ class ImpactPathway(BaseModel):
                     )
                 )
 
+        for category in [
+            ImpactCategory.SocioEconomicAndEnvironment,
+            ImpactCategory.ReliableSSB,
+            ImpactCategory.MaintenanceDecisions,
+            ImpactCategory.HumanCapical,
+            ImpactCategory.Example,
+        ]:
+            clusters[category.number].groups[3].append(
+                PlainTextGroup(
+                    layout_configuration=self.layout_configuration, links_register=self.links_register, text=category.description
+                )
+            )
         fig.clusters = list(clusters.values())

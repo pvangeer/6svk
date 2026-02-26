@@ -40,8 +40,7 @@ class LayoutConfiguration(BaseModel):
     column_header_height: float = 60
     group_header_height: float = 30
 
-    # TODO: This equals the number of columns * column_width + 2 * paper_margin. Whould be a derived property? Or should column width be derived?
-    overview_page_width: float = 1990.0
+    n_columns: int = 3
     details_page_width: float = 1500.0
     column_width: float = 650.0
     question_priority_box_width: float = 15.0
@@ -50,3 +49,7 @@ class LayoutConfiguration(BaseModel):
 
     cluster_colors: dict[int, tuple[int, int, int]] = {}
     """A dictionary with group colors."""
+
+    @property
+    def overview_page_width(self):
+        return 2 * self.paper_margin + self.n_columns * self.column_width

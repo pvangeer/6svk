@@ -18,8 +18,9 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.visualization._header import Header
 from svk.visualization._visual_element import VisualElement
+from svgwrite import Drawing
+from svk.visualization.helpers._drawchevron import draw_half_chevron
 
 
 class Column(VisualElement):
@@ -35,15 +36,55 @@ class Column(VisualElement):
     """Color of the column (used as shading and as stroke color)"""
     number: int
 
-    @property
-    def header(self) -> Header:
+    def get_header_height(self) -> float:
+        return self.layout_configuration.column_header_height
+
+    def draw(self, dwg: Drawing, x: float, y: float):
         """
-        The header object of the header of this column
+        Draws the header
+
+        :param dwg: The svgwrite.Drawing object used to draw the header
+        :type dwg: Drawing
+        :param x: The x-position of the left upper corner of the header
+        :type x: float
+        :param y: The y-position of the left upper corner of the header
+        :type y: float
         """
-        return Header(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            title=self.header_title,
-            subtitle=self.header_subtitle,
-            color=self.header_color,
+
+        if self.header_title == "":
+            return
+
+        dwg.add(
+            draw_half_chevron(
+                dwg,
+                x=x,
+                y=y,
+                width=self.layout_configuration.column_width,
+                height=self.layout_configuration.column_header_height,
+                color=self.header_color,
+            )
         )
+        y_column_header_text = y + self.layout_configuration.column_header_height / 2
+        dwg.add(
+            dwg.text(
+                self.header_title,
+                insert=(x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin, y_column_header_text),
+                font_size=self.layout_configuration.column_header_font_size,
+                font_family="Arial",
+                font_weight="bold",
+                text_anchor="start",
+                dominant_baseline="middle",
+            )
+        )
+        if self.header_subtitle != "":
+            dwg.add(
+                dwg.text(
+                    self.header_subtitle,
+                    insert=(x + self.layout_configuration.column_width - self.layout_configuration.arrow_depth, y_column_header_text),
+                    font_family="Arial",
+                    text_anchor="end",
+                    dominant_baseline="middle",
+                    font_size=self.layout_configuration.column_header_font_size,
+                    font_weight="normal",
+                )
+            )

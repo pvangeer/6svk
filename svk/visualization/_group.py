@@ -21,10 +21,19 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from svgwrite import Drawing
 from svk.visualization._question import Question
 from svk.visualization.helpers._draw_callout import draw_callout
+from svk.visualization.helpers._drawwrappedtext import wrapped_lines, wrapped_text
 from svk.visualization._visual_element import VisualElement
 
 
-class Group(VisualElement):
+class GroupBase(VisualElement):
+    def get_height(self) -> float:
+        return 0.0
+
+    def draw(self, dwg: Drawing, x: float, y: float):
+        pass
+
+
+class Group(GroupBase):
     """
     A group of items (as part of a column)
     """
@@ -106,5 +115,32 @@ class Group(VisualElement):
                 font_weight="bold",
                 text_anchor="start",
                 dominant_baseline="middle",
+            )
+        )
+
+
+class PlainTextGroup(GroupBase):
+    text: str
+    _lines: list[str] | None = None
+
+    def _compute_lines(self) -> list[str]:
+        if self._lines is None:
+            self._lines = wrapped_lines(self.text, self.layout_configuration.column_width, self.layout_configuration.font_size)
+
+        return self._lines
+
+    def get_height(self) -> float:
+
+        return self.layout_configuration.font_size * len(self._compute_lines()) * 1.2 + self.layout_configuration.small_margin
+
+    def draw(self, dwg: Drawing, x: float, y: float):
+        dwg.add(
+            wrapped_text(
+                dwg=dwg,
+                lines=self._compute_lines(),
+                insert=(x, y),
+                font_size=self.layout_configuration.font_size,
+                dominant_baseline="text-before-edge",
+                text_anchor="start",
             )
         )

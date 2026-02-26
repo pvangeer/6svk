@@ -54,7 +54,7 @@ def test_create_image():
         title="Test-image",
         storm_surge_barrier=StormSurgeBarrier.All,
     )
-    cluster = Cluster(layout_configuration=config, links_register=links_register, id=1, color=(132, 243, 124))
+    cluster = Cluster(layout_configuration=config, links_register=links_register, color=(132, 243, 124))
     fig.clusters.append(cluster)
 
     adaptation_now = Group(layout_configuration=config, links_register=links_register, title="test", color="black")
