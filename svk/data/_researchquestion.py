@@ -69,6 +69,8 @@ class ResearchQuestion(BaseModel):
     costs_estimate: float | None = None
     """A first cost estimate for acquiring an answer to the research question."""
 
+    keywords: str
+
     @model_validator(mode="after")
     def check_research_line(cls, model):
         if model.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and model.research_line_primary is None:

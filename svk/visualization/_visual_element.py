@@ -19,3 +19,13 @@ class VisualElement(BaseModel):
                 stroke=color,
             )
         )
+
+    def draw_horizontal_separator(self, dwg: Drawing, x: float, y: float, element_width: float, color: str):
+        dwg.add(
+            dwg.line(
+                start=(x + self.layout_configuration.small_margin, y),
+                end=(x + element_width - self.layout_configuration.small_margin, y),
+                stroke_width=0.5,
+                stroke=color,
+            )
+        )

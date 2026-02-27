@@ -93,5 +93,6 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[ResearchQuestion]):
                     else []
                 ),
                 reference_question=ExcelDatabase._get_int_optional(row, self.i_reference_question),
+                keywords=ExcelDatabase._get_as_str(row=row, i_column=self.i_keywords),
             )
         )

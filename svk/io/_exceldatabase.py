@@ -105,7 +105,11 @@ class ExcelDatabase(ABC):
 
     @staticmethod
     def _get_as_str(row: tuple, i_column: int) -> str:
-        return str(row[i_column])
+        value = row[i_column]
+        if not isinstance(value, str):
+            return ""
+
+        return value
 
     @staticmethod
     def _get_str_optional(row: tuple, i_column: int) -> str | None:

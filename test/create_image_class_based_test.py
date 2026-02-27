@@ -37,6 +37,7 @@ def generate_research_question(question, time_frame, research_line: ResearchLine
         prio_operation=Priority.High,
         time_frame=time_frame,
         research_line_primary=research_line,
+        keywords="",
     )
 
 
