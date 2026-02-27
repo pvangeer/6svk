@@ -49,6 +49,7 @@ class QuestionDetails(VisualElement):
     related_title: Label = Label.QD_Related
     priority_title: Label = Label.QD_Priority
     organizational_title: Label = Label.QD_Organizational
+    _dotradius: float = 5
 
     def construct_lines(self):
 
@@ -93,18 +94,18 @@ class QuestionDetails(VisualElement):
             + self.layout_configuration.font_size * 1.2 * 4
             + self.layout_configuration.small_margin
         )
-        # TODO: Calculate this. It is not correct this way.
-        self.w_priority_metrices_column = 50
-        w_remaining = (
+
+        self.w_priority_metrices_column = self._get_w_priority_metrices_column()
+        self.w_priority_explanation_column = self.layout_configuration.details_priority_explanation_width
+        self.w_question_column = (
             self.layout_configuration.details_page_width
             - self.layout_configuration.paper_margin * 2.0
             - self.w_code_column
             - self.w_priority_metrices_column
+            - self.w_priority_explanation_column
             - self.w_organizational_column
             - self.w_relation_field
         )
-        self.w_priority_explanation_column = w_remaining * 0.4
-        self.w_question_column = w_remaining * 0.6
 
         h_prio_arrow_column = self.layout_configuration.question_priority_box_width + self.layout_configuration.intermediate_margin * 2
         self.question_explained_lines = wrapped_lines(
@@ -303,19 +304,12 @@ class QuestionDetails(VisualElement):
         )
 
         y_prios_start = y + self.h_first_line + self.layout_configuration.font_size * 1.2 + 3 * self.layout_configuration.small_margin
-        dwg.add(
-            dwg.line(
-                start=(x_priority + self.layout_configuration.small_margin, y_prios_start - self.layout_configuration.small_margin),
-                end=(
-                    x_priority
-                    + self.w_priority_explanation_column
-                    + self.w_priority_metrices_column
-                    - self.layout_configuration.small_margin,
-                    y_prios_start - self.layout_configuration.small_margin,
-                ),
-                stroke_width=0.5,
-                stroke=self._color,
-            )
+        self.draw_horizontal_separator(
+            dwg,
+            x_priority,
+            y_prios_start - self.layout_configuration.small_margin,
+            self.w_priority_explanation_column + self.w_priority_metrices_column,
+            self._color,
         )
 
         prios = [
@@ -346,6 +340,20 @@ class QuestionDetails(VisualElement):
             )
             self.draw_priority_dots(dwg, x_prio_first, y_prio_current, prio[1])
             y_prio_current += self.layout_configuration.font_size * 1.2
+
+        self.draw_vertical_separator(
+            dwg,
+            x_priority + self.w_priority_metrices_column,
+            y_prios_start - self.layout_configuration.small_margin,
+            self.height
+            - self.h_first_line
+            - self.h_last_line
+            - self.layout_configuration.small_margin * 2
+            - self.layout_configuration.font_size * 1.2,
+            self._color,
+        )
+
+        # TODO: Draw priority explanation here
 
     def draw_organisational_column(self, dwg: Drawing, x: float, y: float, width: float, page_number: int):
         x_organisational = (
@@ -517,22 +525,21 @@ class QuestionDetails(VisualElement):
             y_related_current += self.layout_configuration.font_size * 1.2
 
     def draw_priority_dots(self, dwg: Drawing, x: float, y_current: float, prio: Priority):
-        dotradius = 5
-        y_center = y_current + self.layout_configuration.font_size - dotradius
-        x_prio_first = x + dotradius
-        x_prio_second = x_prio_first + dotradius * 2.5
-        x_prio_third = x_prio_second + dotradius * 2.5
+        y_center = y_current + self.layout_configuration.font_size - self._dotradius
+        x_prio_first = x + self._dotradius
+        x_prio_second = x_prio_first + self._dotradius * 2.5
+        x_prio_third = x_prio_second + self._dotradius * 2.5
 
         match prio:
             case Priority.High:
-                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotradius, fill="black"))
-                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=dotradius, fill="black"))
-                dwg.add(dwg.circle(center=(x_prio_third, y_center), r=dotradius, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=self._dotradius, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=self._dotradius, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_third, y_center), r=self._dotradius, fill="black"))
             case Priority.Medium:
-                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotradius, fill="black"))
-                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=dotradius, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=self._dotradius, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=self._dotradius, fill="black"))
             case Priority.Low:
-                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=dotradius, fill="black"))
+                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=self._dotradius, fill="black"))
             case Priority.No:
                 dwg.add(
                     dwg.text(
@@ -619,5 +626,32 @@ class QuestionDetails(VisualElement):
                     )[0],
                 ]
             )
+            + self.layout_configuration.small_margin
+        )
+
+    def _get_w_priority_metrices_column(self):
+        return (
+            self.layout_configuration.small_margin
+            + max(
+                [
+                    measure_text(
+                        self.translator.get_label(Label.QD_WaterSafety) + ": ",
+                        self.layout_configuration.font_size,
+                    )[0],
+                    measure_text(
+                        self.translator.get_label(Label.QD_OtherFunctions) + ": ",
+                        self.layout_configuration.font_size,
+                    )[0],
+                    measure_text(
+                        self.translator.get_label(Label.QD_Operation) + ": ",
+                        self.layout_configuration.font_size,
+                    )[0],
+                    measure_text(
+                        self.translator.get_label(Label.QD_Maitenance) + ": ",
+                        self.layout_configuration.font_size,
+                    )[0],
+                ]
+            )
+            + self._dotradius * 7
             + self.layout_configuration.small_margin
         )

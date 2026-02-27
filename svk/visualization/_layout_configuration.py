@@ -45,6 +45,7 @@ class LayoutConfiguration(BaseModel):
     column_width: float = 650.0
     question_priority_box_width: float = 15.0
     question_id_box_width: float = 40.0
+    details_priority_explanation_width: float = 200  # TODO: Tweak? derive from sizes of questions and explanations?
     arrow_depth: float = 20
 
     cluster_colors: dict[int, tuple[int, int, int]] = {}

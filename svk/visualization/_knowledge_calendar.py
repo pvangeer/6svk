@@ -153,7 +153,7 @@ class KnowledgeCalendar(BaseModel):
             now_questions_groups: DefaultDict[ResearchLine, list[ResearchQuestion]] = defaultdict(list)
             for q in questions:
                 if q.research_line_primary is None:
-                    # TODO: This should not occur here.
+                    # TODO: This should not occur here. Look at impact pathway for solution (build rows instead of columns)
                     continue
                 now_questions_groups[q.research_line_primary].append(q)
 
