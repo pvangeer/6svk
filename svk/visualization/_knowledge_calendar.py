@@ -3,8 +3,9 @@ from collections import defaultdict
 from typing import DefaultDict
 import os
 
-from svk.data import ResearchQuestion, StormSurgeBarrier, TimeFrame, LinksRegister, ResearchLine
+from svk.data import ResearchQuestion, StormSurgeBarrier, TimeFrame, LinksRegister, ResearchLine, Translator
 from svk.io import svg_to_pdf_chrome, merge_pdf_files, add_links
+
 
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._greyfraction import color_toward_grey
@@ -22,6 +23,7 @@ from svk.visualization._question import Question
 class KnowledgeCalendar(BaseModel):
     layout_configuration: LayoutConfiguration = LayoutConfiguration()
     links_register: LinksRegister = LinksRegister()
+    translator: Translator = Translator(lang="nl")
     storm_surge_barrier: StormSurgeBarrier
     questions: list[ResearchQuestion]
     output_dir: str
@@ -30,7 +32,9 @@ class KnowledgeCalendar(BaseModel):
 
     def build(self):
         # build overview page
-        overview = self.create_overview_page_from_questions(page_number=0, title=self.storm_surge_barrier.title, questions=self.questions)
+        overview = self.create_overview_page_from_questions(
+            page_number=0, title=self.translator.get_label(self.storm_surge_barrier.title), questions=self.questions
+        )
 
         # build detailed pages
         grouped_questions: defaultdict[ResearchLine, list[ResearchQuestion]] = defaultdict(list[ResearchQuestion])
@@ -46,7 +50,7 @@ class KnowledgeCalendar(BaseModel):
         for research_line in sorted(grouped_questions, key=lambda r_l: r_l.number):
             details_pages[research_line] = self.create_details_page_from_questions(
                 page_number=page_number,
-                title=str(research_line.number) + ". " + research_line.title,
+                title=str(research_line.number) + ". " + self.translator.get_label(research_line.title),
                 questions=grouped_questions[research_line],
             )
             page_number += 1
@@ -100,6 +104,7 @@ class KnowledgeCalendar(BaseModel):
             title=title,
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
+            translator=self.translator,
             storm_surge_barrier=self.storm_surge_barrier,
         )
         self.add_column(fig=fig, questions=time_groups[TimeFrame.Now], time_frame=TimeFrame.Now, number=0)
@@ -115,12 +120,19 @@ class KnowledgeCalendar(BaseModel):
         questions: list[ResearchQuestion],
     ) -> DetailsPage:
         dwg_details_page = DetailsPage(
-            page_number=page_number, title=title, layout_configuration=self.layout_configuration, links_register=self.links_register
+            page_number=page_number,
+            title=title,
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator,
         )
         for question in sorted(questions, key=lambda q: q.id):
             dwg_details_page.questions.append(
                 QuestionDetails(
-                    layout_configuration=self.layout_configuration, links_register=self.links_register, research_question=question
+                    layout_configuration=self.layout_configuration,
+                    links_register=self.links_register,
+                    translator=self.translator,
+                    research_question=question,
                 )
             )
 
@@ -130,7 +142,8 @@ class KnowledgeCalendar(BaseModel):
         column = Column(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
-            header_title=helper.get_column_title(time_frame),
+            translator=self.translator,
+            header_title=self.translator.get_label(time_frame.description),
             header_subtitle=helper.get_subtitle(time_frame),
             header_color=helper.get_header_color(time_frame),
             number=number,
@@ -149,6 +162,7 @@ class KnowledgeCalendar(BaseModel):
                     cluster = Cluster(
                         layout_configuration=self.layout_configuration,
                         links_register=self.links_register,
+                        translator=self.translator,
                         color=research_line.base_color,
                     )
                     self._clusters[research_line.cluster] = cluster
@@ -158,14 +172,18 @@ class KnowledgeCalendar(BaseModel):
                 new_group = Group(
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
-                    title=research_line.title,
+                    translator=self.translator,
+                    title=self.translator.get_label(research_line.title),
                     color=color_toward_grey(research_line.base_color, time_frame.grey_fraction),
                 )
                 cluster.groups[column.number].append(new_group)
                 for question in sorted(now_questions_groups[research_line], key=helper.get_priority, reverse=True):
                     new_group.questions.append(
                         Question(
-                            layout_configuration=self.layout_configuration, links_register=self.links_register, research_question=question
+                            layout_configuration=self.layout_configuration,
+                            links_register=self.links_register,
+                            translator=self.translator,
+                            research_question=question,
                         )
                     )
 

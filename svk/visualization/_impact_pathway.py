@@ -3,7 +3,7 @@ from collections import defaultdict
 from typing import DefaultDict
 import os
 
-from svk.data import ImpactPathwayResearchQuestion, StormSurgeBarrier, TimeFrame, LinksRegister, ResearchLine, ImpactCategory
+from svk.data import ImpactPathwayResearchQuestion, StormSurgeBarrier, TimeFrame, LinksRegister, ResearchLine, ImpactCategory, Translator
 from svk.io import svg_to_pdf_chrome, merge_pdf_files, add_links
 
 from svk.visualization.helpers._measuretext import measure_text
@@ -24,6 +24,7 @@ class ImpactPathway(BaseModel):
     layout_configuration: LayoutConfiguration = LayoutConfiguration()
     links_register: LinksRegister = LinksRegister()
     questions: list[ImpactPathwayResearchQuestion]
+    translator: Translator = Translator(lang="en")
     output_dir: str
     output_file: str
 
@@ -45,7 +46,7 @@ class ImpactPathway(BaseModel):
         for research_line in sorted(grouped_questions, key=lambda r_l: r_l.number):
             details_pages[research_line] = self.create_details_page_from_questions(
                 page_number=page_number,
-                title=str(research_line.number) + ". " + research_line.title,
+                title=str(research_line.number) + ". " + self.translator.get_label(research_line.title),
                 questions=grouped_questions[research_line],
             )
             page_number += 1
@@ -53,7 +54,7 @@ class ImpactPathway(BaseModel):
         if len(non_grouped) > 0:
             uncategorized_page = self.create_details_page_from_questions(
                 page_number=page_number,
-                title="Zonder onderzoekslijn",
+                title="No research line",
                 questions=non_grouped,
             )
 
@@ -93,6 +94,7 @@ class ImpactPathway(BaseModel):
             title="Impact pathway",
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
+            translator=self.translator,
             storm_surge_barrier=StormSurgeBarrier.All,
         )
         self.add_column(fig=fig, time_frame=TimeFrame.Now, number=0)
@@ -103,6 +105,7 @@ class ImpactPathway(BaseModel):
             Column(
                 layout_configuration=self.layout_configuration,
                 links_register=self.links_register,
+                translator=self.translator,
                 header_title="",
                 header_subtitle="",
                 header_color="",
@@ -120,12 +123,19 @@ class ImpactPathway(BaseModel):
         questions: list[ImpactPathwayResearchQuestion],
     ) -> DetailsPage:
         dwg_details_page = DetailsPage(
-            page_number=page_number, title=title, layout_configuration=self.layout_configuration, links_register=self.links_register
+            page_number=page_number,
+            title=title,
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator,
         )
         for question in sorted(questions, key=lambda q: q.id):
             dwg_details_page.questions.append(
                 QuestionDetails(
-                    layout_configuration=self.layout_configuration, links_register=self.links_register, research_question=question
+                    layout_configuration=self.layout_configuration,
+                    links_register=self.links_register,
+                    translator=self.translator,
+                    research_question=question,
                 )
             )
 
@@ -135,7 +145,8 @@ class ImpactPathway(BaseModel):
         column = Column(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
-            header_title=helper.get_column_title(time_frame),
+            translator=self.translator,
+            header_title=self.translator.get_label(time_frame.description),
             header_subtitle=helper.get_subtitle(time_frame),
             header_color=helper.get_header_color(time_frame),
             number=number,
@@ -171,6 +182,7 @@ class ImpactPathway(BaseModel):
                 clusters[current_impact_category.number] = Cluster(
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
+                    translator=self.translator,
                     color=(180, 180, 180),
                 )
 
@@ -179,7 +191,8 @@ class ImpactPathway(BaseModel):
             new_group = Group(
                 layout_configuration=self.layout_configuration,
                 links_register=self.links_register,
-                title=current_research_line.title,
+                translator=self.translator,
+                title=self.translator.get_label(current_research_line.title),
                 color=color_toward_grey(current_research_line.base_color, current_time_frame.grey_fraction),
             )
 
@@ -189,6 +202,7 @@ class ImpactPathway(BaseModel):
                     Question(
                         layout_configuration=self.layout_configuration,
                         links_register=self.links_register,
+                        translator=self.translator,
                         research_question=question,
                     )
                 )
@@ -202,7 +216,10 @@ class ImpactPathway(BaseModel):
         ]:
             clusters[category.number].groups[3].append(
                 PlainTextGroup(
-                    layout_configuration=self.layout_configuration, links_register=self.links_register, text=category.description
+                    layout_configuration=self.layout_configuration,
+                    links_register=self.links_register,
+                    translator=self.translator,
+                    text=category.description,
                 )
             )
         fig.clusters = list(clusters.values())

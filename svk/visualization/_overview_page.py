@@ -107,7 +107,10 @@ class OverviewPage(VisualElement):
             dominant_baseline="hanging",
             text_anchor="start",
             font_size=self.layout_configuration.disclamer_font_size,
-            links=[("Riva de Vries", "mailto:riva.de.vries@rws.nl"), ("Marit de Jong", "mailto:marit.de.jong@rws.nl")],
+            links=[
+                ("Riva de Vries", "mailto:riva.de.vries@rws.nl"),
+                ("Marit de Jong", "mailto:marit.de.jong@rws.nl"),
+            ],  # TODO: move this to KnowledgeCalendar.
         )
 
         return dwg

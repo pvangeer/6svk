@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svk.visualization import LayoutConfiguration, OverviewPage, Question, Group, Column, Cluster
-from svk.data import TimeFrame, ResearchLine, ResearchQuestion, Priority, TimeFrame, StormSurgeBarrier, LinksRegister
+from svk.data import TimeFrame, ResearchLine, ResearchQuestion, Priority, TimeFrame, StormSurgeBarrier, LinksRegister, Translator
 from svk.io import svg_to_pdf_chrome
 
 
@@ -46,22 +46,25 @@ generate_research_question.counter = 0
 def test_create_image():
     config = LayoutConfiguration()
     links_register = LinksRegister()
+    translator = Translator(lang="nl")
 
     fig = OverviewPage(
         page_number=0,
         layout_configuration=config,
         links_register=links_register,
+        translator=translator,
         title="Test-image",
         storm_surge_barrier=StormSurgeBarrier.All,
     )
-    cluster = Cluster(layout_configuration=config, links_register=links_register, color=(132, 243, 124))
+    cluster = Cluster(layout_configuration=config, links_register=links_register, translator=translator, color=(132, 243, 124))
     fig.clusters.append(cluster)
 
-    adaptation_now = Group(layout_configuration=config, links_register=links_register, title="test", color="black")
+    adaptation_now = Group(layout_configuration=config, links_register=links_register, translator=translator, title="test", color="black")
     adaptation_now.questions.append(
         Question(
             layout_configuration=config,
             links_register=links_register,
+            translator=translator,
             research_question=generate_research_question(
                 question="This is my first question", time_frame=TimeFrame.Now, research_line=ResearchLine.Adaptation.value
             ),
@@ -71,6 +74,7 @@ def test_create_image():
         Question(
             layout_configuration=config,
             links_register=links_register,
+            translator=translator,
             research_question=generate_research_question(
                 question="This is my second question", time_frame=TimeFrame.Now, research_line=ResearchLine.Adaptation.value
             ),
@@ -80,6 +84,7 @@ def test_create_image():
         Question(
             layout_configuration=config,
             links_register=links_register,
+            translator=translator,
             research_question=generate_research_question(
                 question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
                 time_frame=TimeFrame.Now,
@@ -90,6 +95,7 @@ def test_create_image():
     column = Column(
         layout_configuration=config,
         links_register=links_register,
+        translator=translator,
         header_title="test",
         header_subtitle="sub 1",
         header_color="#07583753",
@@ -102,6 +108,7 @@ def test_create_image():
     cyber_near = Group(
         layout_configuration=config,
         links_register=links_register,
+        translator=translator,
         title="test",
         color="blue",
     )
@@ -109,6 +116,7 @@ def test_create_image():
         Question(
             layout_configuration=config,
             links_register=links_register,
+            translator=translator,
             research_question=generate_research_question(
                 question="This is my first question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Cyber.value
             ),
@@ -118,6 +126,7 @@ def test_create_image():
         Question(
             layout_configuration=config,
             links_register=links_register,
+            translator=translator,
             research_question=generate_research_question(
                 question="This is my second question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Cyber.value
             ),
@@ -127,6 +136,7 @@ def test_create_image():
         Question(
             layout_configuration=config,
             links_register=links_register,
+            translator=translator,
             research_question=generate_research_question(
                 question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
                 time_frame=TimeFrame.NearFuture,
@@ -137,6 +147,7 @@ def test_create_image():
     column2 = Column(
         layout_configuration=config,
         links_register=links_register,
+        translator=translator,
         header_title="test",
         header_subtitle="sub 1",
         header_color="#478956",
@@ -149,6 +160,7 @@ def test_create_image():
     adaptation_near = Group(
         layout_configuration=config,
         links_register=links_register,
+        translator=translator,
         title="test",
         color="blue",
     )
@@ -156,6 +168,7 @@ def test_create_image():
         Question(
             layout_configuration=config,
             links_register=links_register,
+            translator=translator,
             research_question=generate_research_question(
                 question="This is my first question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Adaptation.value
             ),
@@ -165,6 +178,7 @@ def test_create_image():
         Question(
             layout_configuration=config,
             links_register=links_register,
+            translator=translator,
             research_question=generate_research_question(
                 question="This is my second question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Adaptation.value
             ),
@@ -174,6 +188,7 @@ def test_create_image():
         Question(
             layout_configuration=config,
             links_register=links_register,
+            translator=translator,
             research_question=generate_research_question(
                 question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
                 time_frame=TimeFrame.NearFuture,

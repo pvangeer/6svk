@@ -22,7 +22,7 @@ from datetime import datetime
 
 from svk.io import KnowledgeAgendaDatabase
 from svk.visualization import KnowledgeCalendar
-from svk.data import StormSurgeBarrier
+from svk.data import StormSurgeBarrier, Translator
 
 base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK"
 
@@ -30,8 +30,9 @@ base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen S
 def test_create_hv():
     hv_dir = base_dir + "/03 HV/01 Uitwerking"
     database_path = hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
+    t = Translator(lang="nl")
     output_dir = "C:/Test/"  # hv_dir
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {StormSurgeBarrier.HaringvlietBarrier.title}"
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.HaringvlietBarrier.title)}"
 
     questions = KnowledgeAgendaDatabase(database_path)
     questions.read()
@@ -48,8 +49,9 @@ def test_create_hv():
 def test_create_rp():
     rp_dir = base_dir + "/07 RP/01 Uitwerking"
     database_path = rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx"
+    t = Translator(lang="nl")
     output_dir = "C:/Test/"  # rp_dir
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {StormSurgeBarrier.Ramspol.title}"
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.Ramspol.title)}"
 
     questions = KnowledgeAgendaDatabase(database_path)
     questions.read()
@@ -66,8 +68,9 @@ def test_create_rp():
 def test_create_hijk():
     hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
     database_path = hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx"
+    t = Translator(lang="nl")
     output_dir = "C:/Test/"  # rp_dir
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {StormSurgeBarrier.HollandseIJsselBarrier.title}"
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.HollandseIJsselBarrier.title)}"
 
     questions = KnowledgeAgendaDatabase(database_path)
     questions.read()

@@ -19,10 +19,10 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from pydantic import Field, model_validator
-from svk.data import ResearchQuestion, Priority
+from svk.data import ResearchQuestion, Priority, Label
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
-from svk.visualization.helpers._drawwrappedtext import wrapped_text, wrapped_lines
+from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization._visual_element import VisualElement
 from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
@@ -43,8 +43,8 @@ class QuestionDetails(VisualElement):
     question_lines: list[str] = Field(default_factory=list[str])
     question_explained_lines: list[str] = Field(default_factory=list[str])
 
-    related_title: str = "Gerelateerd"
-    priority_title: str = "Prioriteit"
+    related_title: Label = Label.QD_Related
+    priority_title: Label = Label.QD_Priority
 
     def construct_lines(self):
 
@@ -71,7 +71,8 @@ class QuestionDetails(VisualElement):
             self.h_first_line + self.layout_configuration.question_priority_box_width + self.layout_configuration.intermediate_margin
         )
         self.w_relation_field = max(
-            measure_text(self.related_title, self.layout_configuration.font_size)[0] + 2 * self.layout_configuration.small_margin,
+            measure_text(self.translator.get_label(self.related_title), self.layout_configuration.font_size)[0]
+            + 2 * self.layout_configuration.small_margin,
             self.layout_configuration.question_id_box_width + 2 * self.layout_configuration.small_margin,
         )
         h_relation_field = (
@@ -230,7 +231,7 @@ class QuestionDetails(VisualElement):
         x_priority = x + self.w_code_field + self.w_question_field
         dwg.add(
             dwg.text(
-                self.priority_title,
+                self.translator.get_label(self.priority_title),
                 insert=(
                     x_priority + self.layout_configuration.small_margin,
                     y + self.layout_configuration.small_margin,
@@ -256,18 +257,17 @@ class QuestionDetails(VisualElement):
         )
 
         prios = [
-            ("Waterveiligheid:", self.research_question.prio_water_safety),
-            ("Ander functies:", self.research_question.prio_other_functions),
-            ("Operatie:", self.research_question.prio_operation),
-            ("B&O:", self.research_question.prio_management_maintenance),
+            (Label.QD_WaterSafety, self.research_question.prio_water_safety),
+            (Label.QD_OtherFunctions, self.research_question.prio_other_functions),
+            (Label.QD_Operation, self.research_question.prio_operation),
+            (Label.QD_Maitenance, self.research_question.prio_management_maintenance),
         ]
-
+        prios_translated = [(self.translator.get_label(p[0]) + ":", p[1]) for p in prios]
+        max_label_width = max([measure_text(p[0], self.layout_configuration.font_size)[0] for p in prios_translated])
         y_prio_current = y + self.h_first_line + self.layout_configuration.small_margin
         x_prio_label = x_priority + self.layout_configuration.small_margin
-        x_prio_first = (
-            x_prio_label + measure_text("Waterveiligheid:", self.layout_configuration.font_size)[0] + self.layout_configuration.small_margin
-        )
-        for prio in prios:
+        x_prio_first = x_prio_label + max_label_width + self.layout_configuration.small_margin
+        for prio in prios_translated:
             dwg.add(
                 dwg.text(
                     prio[0],
@@ -296,7 +296,7 @@ class QuestionDetails(VisualElement):
 
         dwg.add(
             dwg.text(
-                self.related_title,
+                self.translator.get_label(self.related_title),
                 insert=(
                     x_related_start + self.layout_configuration.small_margin,
                     y + self.layout_configuration.small_margin,

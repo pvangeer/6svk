@@ -19,6 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from enum import Enum
+from svk.data._translator import Label
 
 
 class StormSurgeBarrier(Enum):
@@ -35,14 +36,14 @@ class StormSurgeBarrier(Enum):
     After initiation, the "title" property will containg the Dutch title of the storm surge barrier.
     """
 
-    All = "6SVK"
-    MaeslantBarrier = "Maeslantkering"
-    HartelBarrier = "Hartelkering"
-    Ramspol = "Ramspol"
-    HollandseIJsselBarrier = "Hollandsche IJssel Kering"
-    EasternScheldBarrier = "Oosterscheldekering"
-    HaringvlietBarrier = "Haringvlietsluizen"
+    All = Label.SSB_All
+    MaeslantBarrier = Label.SSB_MaeslantBarrier
+    HartelBarrier = Label.SSB_HartelBarrier
+    Ramspol = Label.SSB_Ramspol
+    HollandseIJsselBarrier = Label.SSB_HollandseIJsselBarrier
+    EasternScheldBarrier = Label.SSB_EasternScheldBarrier
+    HaringvlietBarrier = Label.SSB_HaringvlietBarrier
 
-    def __init__(self, title: str):
-        self.title: str = title
+    def __init__(self, title: Label):
+        self.title: Label = title
         """The name of the storm surge barrier in Dutch."""

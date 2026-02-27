@@ -19,6 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from enum import Enum
+from svk.data._translator import Label
 
 
 class TimeFrame(Enum):
@@ -35,14 +36,14 @@ class TimeFrame(Enum):
     [grey_fraction] - The grey fraction associated to the specified time frame (a percentage expressed as a float between 0 and 1 that is used when generating colors during visualization)
     """
 
-    NotRelevant = ("niet relevant", 1)
-    Now = ("nu", 0.0)
-    NearFuture = ("nabije toekomst", 0.5)
-    Future = ("toekomst", 0.7)
-    Unknown = ("onbekend", 0)
+    NotRelevant = (Label.TFNotRelevant, 1)
+    Now = (Label.TFNow, 0.0)
+    NearFuture = (Label.TFNearFuture, 0.5)
+    Future = (Label.TFFuture, 0.7)
+    Unknown = (Label.TFUnknown, 0)
 
-    def __init__(self, description: str, grey_fraction: float):
-        self.description: str = description
+    def __init__(self, description: Label, grey_fraction: float):
+        self.description: Label = description
         """The Dutch description of the time frame."""
         self.grey_fraction: float = grey_fraction
         """The grey fraction for this time frame (a percentage expressed as a float between 0 and 1)"""

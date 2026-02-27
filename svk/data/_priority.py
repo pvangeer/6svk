@@ -20,6 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from enum import Enum
+from svk.data._translator import Label
 
 
 class Priority(Enum):
@@ -33,12 +34,12 @@ class Priority(Enum):
     Above Description and id (number) are available through the properties "description" and "id" after initiation of the enum value.
     """
 
-    High = (3, "hoog")
-    Medium = (2, "middel")
-    Low = (1, "laag")
-    Unknown = (0, "onbekend")
+    High = (3, Label.P_High)
+    Medium = (2, Label.P_Medium)
+    Low = (1, Label.P_Low)
+    Unknown = (0, Label.P_Unknown)
 
-    def __init__(self, id: int, description: str):
+    def __init__(self, id: int, description: Label):
         self.description = description
         """The description of the priority value."""
         self.id = id

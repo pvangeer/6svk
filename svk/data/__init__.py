@@ -25,3 +25,4 @@ from ._priority import Priority
 from ._stormsurgebarrier import StormSurgeBarrier
 from ._linksregister import LinksRegister
 from ._impactcategory import ImpactCategory
+from ._translator import Translator, Label

@@ -2,6 +2,10 @@ from enum import Enum
 
 
 class ImpactCategory(Enum):
+    """
+    Enum that lists the impact categories. Labels do not have to be translated as they are only used in en-context.
+    """
+
     SocioEconomicAndEnvironment = (
         1,
         "SSBs contribute to satisfying socio-economic and environmental needs in the hinterland",
@@ -30,5 +34,8 @@ class ImpactCategory(Enum):
 
     def __init__(self, number: int, title: str, description: str):
         self.number = number
+        """The number of the impact category."""
         self.title = title
+        """The title of the impact categorie"""
         self.description = description
+        """The description of the impact category"""

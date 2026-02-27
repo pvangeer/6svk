@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from ._measuretext import measure_text
 from ._drawchevron import draw_half_chevron
-from ._drawwrappedtext import wrapped_text, wrapped_lines
+from ._wrappedtext import wrapped_text, wrapped_lines
 from ._greyfraction import color_toward_grey
 from ._draw_scaled_icon import draw_scaled_icon
 from ._draw_disclaimer import draw_disclaimer

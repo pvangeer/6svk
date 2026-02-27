@@ -19,6 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from enum import Enum
+from svk.data._translator import Label
 
 orange = (233, 113, 50)
 light_green = (142, 178, 30)
@@ -30,21 +31,21 @@ class ResearchLine(Enum):
     This enum exposes default research line objects used in the SVK-project.
     """
 
-    ConstructiveAspects = (1, "Constructieve aspecten", 1)
-    OperatingSystem = (2, "Besturingssystemen / IA", 1)
-    Facilities = (3, "Voorzieningen en gebouwen", 1)
-    Maintenance = (4, "Onderhoud en operatie", 1)
-    Cyber = (5, "Cyber & security", 2)
-    Hydrodynamics = (6, "Hydrodynamische effecten en belastingen", 2)
-    ProbabilityOfFailyre = (7, "Faalkans", 2)
-    Adaptation = (8, "Adaptatie stormvloedkeringen", 2)
-    Organizational = (9, "Organisatorische aspecten", 3)
-    Lifespan = (10, "Restlevensduur huidige objecten", 3)
+    ConstructiveAspects = (1, Label.RL_ConstructiveAspects, 1)
+    OperatingSystem = (2, Label.RL_OperatingSystem, 1)
+    Facilities = (3, Label.RL_Facilities, 1)
+    Maintenance = (4, Label.RL_Maintenance, 1)
+    Cyber = (5, Label.RL_Cyber, 2)
+    Hydrodynamics = (6, Label.RL_Hydrodynamics, 2)
+    ProbabilityOfFailyre = (7, Label.RL_ProbabilityOfFailyre, 2)
+    Adaptation = (8, Label.RL_Adaptation, 2)
+    Organizational = (9, Label.RL_Organizational, 3)
+    Lifespan = (10, Label.RL_Lifespan, 3)
 
-    def __init__(self, number: int, title: str, cluster: int):
-        self.number = number
-        self.title = title
-        self.cluster = cluster
+    def __init__(self, number: int, title: Label, cluster: int):
+        self.number: int = number
+        self.title: Label = title
+        self.cluster: int = cluster
 
     @property
     def base_color(self) -> tuple[int, int, int]:

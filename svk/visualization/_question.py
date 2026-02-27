@@ -22,7 +22,7 @@ from pydantic import model_validator, Field
 from svgwrite import Drawing
 
 from svk.data import ResearchQuestion
-from svk.visualization.helpers._drawwrappedtext import wrapped_text, wrapped_lines
+from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
 from svk.visualization._visual_element import VisualElement
