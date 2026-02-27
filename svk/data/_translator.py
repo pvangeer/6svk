@@ -18,7 +18,7 @@ class Label(Enum):
     RL_Hydrodynamics = ("Hydrodynamische effecten en belastingen", "Hydrodynamic effects and loads")
     RL_ProbabilityOfFailyre = ("Faalkans", "Probability of failure")
     RL_Adaptation = ("Adaptatie stormvloedkeringen", "Adaptation storm surge barriers")
-    RL_Organizational = ("Organisatorische aspects", "Organizational aspects")
+    RL_Organizational = ("Organisatorische aspecten", "Organizational aspects")
     RL_Lifespan = ("Restlevensduur huidige objecten", "Remaining lifetime current objects")
 
     P_High = ("hoog", "high")
