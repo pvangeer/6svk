@@ -37,7 +37,8 @@ class Priority(Enum):
     High = (3, Label.P_High)
     Medium = (2, Label.P_Medium)
     Low = (1, Label.P_Low)
-    Unknown = (0, Label.P_Unknown)
+    No = (0, Label.P_No)
+    Unknown = (-1, Label.P_Unknown)
 
     def __init__(self, id: int, description: Label):
         self.description = description

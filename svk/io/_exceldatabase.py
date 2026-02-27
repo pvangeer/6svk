@@ -151,6 +151,8 @@ class ExcelDatabase(ABC):
             return Priority.Unknown
 
         match int(value):
+            case 0:
+                return Priority.No
             case 1:
                 return Priority.Low
             case 2:

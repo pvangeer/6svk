@@ -24,6 +24,7 @@ class Label(Enum):
     P_High = ("hoog", "high")
     P_Medium = ("middel", "medium")
     P_Low = ("laag", "low")
+    P_No = ("geen", "no")
     P_Unknown = ("onbekend", "unknown")
 
     SSB_All = ("6SVK", "6SSB")
@@ -36,10 +37,10 @@ class Label(Enum):
 
     QD_Related = ("Gerelateerd", "Related")
     QD_Priority = ("Prioriteit", "Priority")
-    QD_WaterSafety = ("Waterveiligheid:", "Water safety")
-    QD_OtherFunctions = ("Ander functies:", "Other functions")
-    QD_Operation = ("Operatie:", "Operation")
-    QD_Maitenance = ("B&O:", "Maintenance")
+    QD_WaterSafety = ("Waterveiligheid", "Water safety")
+    QD_OtherFunctions = ("Ander functies", "Other functions")
+    QD_Operation = ("Operatie", "Operation")
+    QD_Maitenance = ("B&O", "Maintenance")
 
     def __init__(self, nl_label: str, en_label: str):
         self.nl = nl_label
