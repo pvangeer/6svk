@@ -47,6 +47,7 @@ class ImpactPathway(BaseModel):
             details_pages[research_line] = self.create_details_page_from_questions(
                 page_number=page_number,
                 title=str(research_line.number) + ". " + self.translator.get_label(research_line.title),
+                title_link_target=research_line.id,
                 questions=grouped_questions[research_line],
             )
             page_number += 1
@@ -55,6 +56,7 @@ class ImpactPathway(BaseModel):
             uncategorized_page = self.create_details_page_from_questions(
                 page_number=page_number,
                 title="No research line",
+                title_link_target="",
                 questions=non_grouped,
             )
 
@@ -120,11 +122,13 @@ class ImpactPathway(BaseModel):
         self,
         page_number: int,
         title: str,
+        title_link_target: str,
         questions: list[ImpactPathwayResearchQuestion],
     ) -> DetailsPage:
         dwg_details_page = DetailsPage(
             page_number=page_number,
             title=title,
+            title_link_target=title_link_target,
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,

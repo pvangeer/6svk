@@ -43,6 +43,7 @@ class ResearchLine(Enum):
     Lifespan = (10, Label.RL_Lifespan, 3)
 
     def __init__(self, number: int, title: Label, cluster: int):
+        self.id: str = "#RL-" + str(number)
         self.number: int = number
         self.title: Label = title
         self.cluster: int = cluster

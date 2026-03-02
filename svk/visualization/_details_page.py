@@ -6,6 +6,7 @@ from svgwrite import Drawing
 class DetailsPage(VisualElement):
     page_number: int
     title: str
+    title_link_target: str
     questions: list[QuestionDetails] = []
 
     def draw(self) -> Drawing:
@@ -36,6 +37,15 @@ class DetailsPage(VisualElement):
                 dominant_baseline="middle",
             )
         )
+        if self.title_link_target is not "":
+            self.links_register.register_link_target(
+                self.title_link_target,
+                self.page_number,
+                self.layout_configuration.paper_margin,
+                self.layout_configuration.paper_margin
+                + self.layout_configuration.page_title_height / 2
+                - self.layout_configuration.font_size * 1.2 / 2,
+            )
 
         y_current = (
             self.layout_configuration.paper_margin

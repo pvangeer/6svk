@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from pydantic import Field, model_validator
-from svk.data import ResearchQuestion, Priority, Label
+from svk.data import ResearchQuestion, Priority, Label, ResearchLine
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
@@ -417,44 +417,23 @@ class QuestionDetails(VisualElement):
         )
 
         y_current += self.layout_configuration.font_size * 1.2
-        research_line_primary = (
-            self.translator.get_label(self.research_question.research_line_primary.title)
-            if self.research_question.research_line_primary is not None
-            else ""
+        self._draw_research_line_link(
+            dwg=dwg,
+            page_number=page_number,
+            x_start=x_organisational + self.layout_configuration.small_margin,
+            y_start=y_current,
+            research_line=self.research_question.research_line_primary,
+            label=Label.QD_ResearchLineOne,
         )
-        dwg.add(
-            dwg.text(
-                self.translator.get_label(Label.QD_ResearchLineOne) + ": " + research_line_primary,
-                insert=(
-                    x_organisational + self.layout_configuration.small_margin,
-                    y_current,
-                ),
-                font_size=self.layout_configuration.font_size,
-                font_family="Arial",
-                font_weight="normal",
-                text_anchor="start",
-                dominant_baseline="text-before-edge",
-            )
-        )
+
         y_current += self.layout_configuration.font_size * 1.2
-        research_line_secondary = (
-            self.translator.get_label(self.research_question.research_line_secondary.title)
-            if self.research_question.research_line_secondary is not None
-            else ""
-        )
-        dwg.add(
-            dwg.text(
-                self.translator.get_label(Label.QD_ResearchLineTwo) + ": " + research_line_secondary,
-                insert=(
-                    x_organisational + self.layout_configuration.small_margin,
-                    y_current,
-                ),
-                font_size=self.layout_configuration.font_size,
-                font_family="Arial",
-                font_weight="normal",
-                text_anchor="start",
-                dominant_baseline="text-before-edge",
-            )
+        self._draw_research_line_link(
+            dwg=dwg,
+            page_number=page_number,
+            x_start=x_organisational + self.layout_configuration.small_margin,
+            y_start=y_current,
+            research_line=self.research_question.research_line_secondary,
+            label=Label.QD_ResearchLineTwo,
         )
 
     def draw_related_column(self, dwg: Drawing, x: float, y: float, width: float, page_number: int):
@@ -655,3 +634,32 @@ class QuestionDetails(VisualElement):
             + self._dotradius * 7
             + self.layout_configuration.small_margin
         )
+
+    def _draw_research_line_link(
+        self, dwg: Drawing, page_number: int, x_start: float, y_start: float, research_line: ResearchLine | None, label: Label
+    ):
+        link_text = self.translator.get_label(research_line.title) if research_line is not None else ""
+        dwg.add(
+            dwg.text(
+                self.translator.get_label(label) + ": " + link_text,
+                insert=(
+                    x_start,
+                    y_start,
+                ),
+                font_size=self.layout_configuration.font_size,
+                font_family="Arial",
+                font_weight="normal",
+                text_anchor="start",
+                dominant_baseline="text-before-edge",
+            )
+        )
+
+        if research_line is not None:
+            self.links_register.register_link(
+                link_target=research_line.id,
+                page_number=page_number,
+                x=x_start + measure_text(self.translator.get_label(label) + ": ", self.layout_configuration.font_size)[0],
+                y=y_start,
+                width=measure_text(link_text, self.layout_configuration.font_size)[0],
+                height=self.layout_configuration.font_size * 1.2,
+            )
