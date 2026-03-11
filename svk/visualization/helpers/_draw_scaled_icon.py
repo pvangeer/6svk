@@ -48,6 +48,8 @@ class Symbol(SvgObject):
     This object can be used to add an svg symbol to the svgwrite.Drawing.
     """
 
+    id: str = f"#{uuid4()}"
+    """id of the symbol"""
     width: float = 300
     """Width of the symbol"""
     height: float = 300
@@ -57,14 +59,19 @@ class Symbol(SvgObject):
 
     def create(self, dwg: Drawing):
         """
-        Creates the symbol
+        Retrieves the symbol from the defs of the dwg, or creates the symbol and adds it to the defs if necessary.
 
         :param dwg: The svgwrite.Drawing that should be used to create the symbol.
         :type dwg: Drawing
         """
-        icon_symbol = dwg.symbol(id=f"icon_{ uuid4()}", viewBox=f"0 0 {self.width} {self.height}")
+        for element in dwg.defs.elements:
+            if element.get_id() == self.id:
+                return element
+
+        icon_symbol = dwg.symbol(id=self.id, viewBox=f"0 0 {self.width} {self.height}")
         for svg_object in self.objects:
             icon_symbol.add(svg_object.create(dwg))
+        dwg.defs.add(icon_symbol)
 
         return icon_symbol
 
@@ -79,9 +86,7 @@ class Symbol(SvgObject):
         :param size: the target size of the symbol
         :type size: tuple[float, float]
         """
-        # TODO: Adding the symbol to the defs is only needed once. Don't add every time we add the same symbol to the image.
         icon_symbol = self.create(dwg)
-        dwg.defs.add(icon_symbol)
         dwg.add(dwg.use(icon_symbol, insert=insert, size=size))
 
 

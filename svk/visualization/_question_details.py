@@ -26,6 +26,7 @@ from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization._visual_element import VisualElement
 from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
+from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 
 
 class QuestionDetails(VisualElement):
@@ -34,7 +35,7 @@ class QuestionDetails(VisualElement):
 
     height: float = Field(default_factory=int)
     w_code_column: float = Field(default_factory=float)
-    w_relation_field: float = Field(default_factory=float)
+    w_related_field: float = Field(default_factory=float)
     w_priority_metrices_column: float = Field(default_factory=float)
     w_priority_explanation_column: float = Field(default_factory=float)
     w_organizational_column: float = Field(default_factory=float)
@@ -80,10 +81,17 @@ class QuestionDetails(VisualElement):
             + self.layout_configuration.small_margin
         )
 
-        self.w_relation_field = max(
-            measure_text(self.translator.get_label(self.related_title), self.layout_configuration.font_size)[0]
-            + 2 * self.layout_configuration.small_margin,
-            self.layout_configuration.question_id_box_width + 2 * self.layout_configuration.small_margin,
+        w_related_title = (
+            self.layout_configuration.small_margin
+            + measure_text(self.translator.get_label(self.related_title), self.layout_configuration.font_size)[0]
+            + self.layout_configuration.small_margin
+        )
+        w_related_barrier_icons: float = 2 * self.layout_configuration.small_margin + self.layout_configuration.icon_width_small
+        w_related_relations: float = self.layout_configuration.question_id_box_width
+
+        self.w_related_field = max(
+            w_related_title,
+            w_related_relations + w_related_barrier_icons,
         )
 
         self.w_organizational_column = self._get_w_organizational_column()
@@ -104,7 +112,7 @@ class QuestionDetails(VisualElement):
             - self.w_priority_metrices_column
             - self.w_priority_explanation_column
             - self.w_organizational_column
-            - self.w_relation_field
+            - self.w_related_field
         )
 
         h_prio_arrow_column = self.layout_configuration.question_priority_box_width + self.layout_configuration.intermediate_margin * 2
@@ -137,8 +145,12 @@ class QuestionDetails(VisualElement):
             self.layout_configuration.small_margin
             + self.layout_configuration.font_size * 1.2
             + 2 * self.layout_configuration.small_margin
-            + len(self.research_question.reference_ids) * self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.small_margin
+            + max(
+                len(self.research_question.reference_ids) * self.layout_configuration.font_size * 1.2
+                + self.layout_configuration.small_margin,
+                len(self.research_question.storm_surge_barriers)
+                * (self.layout_configuration.icon_width_small + self.layout_configuration.small_margin),
+            )
         )
 
         self.last_line_keywords = wrapped_lines(
@@ -461,22 +473,35 @@ class QuestionDetails(VisualElement):
         )
 
         y_hline = y + self.h_first_line + self.layout_configuration.font_size * 1.2 + 2 * self.layout_configuration.small_margin
-        dwg.add(
-            dwg.line(
-                start=(
-                    x_related_start + self.layout_configuration.small_margin,
-                    y_hline,
+        self.draw_horizontal_separator(dwg=dwg, x=x_related_start, y=y_hline, element_width=self.w_related_field, color=self._color)
+
+        x_icons = x_related_start + self.layout_configuration.small_margin
+        y_icon_current = y_hline + self.layout_configuration.small_margin
+        for barrier in self.research_question.storm_surge_barriers:
+            draw_scaled_icon(
+                dwg=dwg,
+                storm_surge_barrier=barrier,
+                insert=(
+                    x_icons,
+                    y_icon_current,
                 ),
-                end=(
-                    x_related_start + self.w_relation_field - self.layout_configuration.small_margin,
-                    y_hline,
-                ),
-                stroke_width=0.5,
-                stroke=self._color,
+                size=(self.layout_configuration.icon_width_small, self.layout_configuration.icon_width_small),
             )
+            y_icon_current += self.layout_configuration.icon_width_small + self.layout_configuration.small_margin
+
+        x_related = x_related_start + 2 * self.layout_configuration.small_margin + self.layout_configuration.icon_width_small
+        self.draw_vertical_separator(
+            dwg=dwg,
+            x=x_related,
+            y=y_hline,
+            element_height=self.height
+            - self.h_last_line
+            - self.h_first_line
+            - (self.layout_configuration.font_size * 1.2 + 2 * self.layout_configuration.small_margin),
+            color=self._color,
         )
 
-        x_related = x_related_start + self.layout_configuration.small_margin
+        x_related += self.layout_configuration.small_margin
         y_related_current = y_hline + self.layout_configuration.small_margin
         for related in self.research_question.reference_ids:
             dwg.add(
