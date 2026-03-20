@@ -1,6 +1,5 @@
 from collections import defaultdict
 from typing import DefaultDict
-from pydantic import model_validator
 
 from svk.data import ResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine
 from svk.visualization.helpers._measuretext import measure_text
@@ -18,19 +17,13 @@ from svk.visualization.pages._page import Page
 class KnowledgeCalendarDocument(Document):
     storm_surge_barrier: StormSurgeBarrier
     _clusters: dict[int, Cluster] = {}
-
-    @model_validator(mode="before")
-    @classmethod
-    def set_defaults(cls, data):
-        data["disclaimer"] = (
-            "Dit is een eerste concept van de onderzoeksagenda stormvloedkeringen. Deze versie is ontstaan in samenwerking met de asset management teams van de keringen. De prioritering van de onderzoeksvragen moet nog gereviewd worden door o.a. de asset management teams en RWS WVL/GPO. De indeling in tijdsperiode is op dit moment in ontwikkeling. Voor vragen, neem contact op met Marit de Jong of Riva de Vries."
-        )
-        data["disclaimer_links"] = [
-            ("Riva de Vries", "mailto:riva.de.vries@rws.nl"),
-            ("Marit de Jong", "mailto:marit.de.jong@rws.nl"),
-        ]
-
-        return data
+    disclaimer: str | None = (
+        "Dit is een eerste concept van de onderzoeksagenda stormvloedkeringen. Deze versie is ontstaan in samenwerking met de asset management teams van de keringen. De prioritering van de onderzoeksvragen moet nog gereviewd worden door o.a. de asset management teams en RWS WVL/GPO. De indeling in tijdsperiode is op dit moment in ontwikkeling. Voor vragen, neem contact op met Marit de Jong of Riva de Vries."
+    )
+    disclaimer_links: list[tuple[str, str]] | None = [
+        ("Riva de Vries", "mailto:riva.de.vries@rws.nl"),
+        ("Marit de Jong", "mailto:marit.de.jong@rws.nl"),
+    ]
 
     def create_pages(self) -> list[Page]:
         return [self._create_overview_page(page_number=0)] + self.create_detailes_pages(current_page_number=1)

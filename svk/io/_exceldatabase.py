@@ -107,7 +107,7 @@ class ExcelDatabase(ABC):
     def _get_as_str(row: tuple, i_column: int) -> str:
         value = row[i_column]
         if not isinstance(value, str):
-            return ""
+            return str(value)
 
         return value
 

@@ -1,6 +1,5 @@
 from collections import defaultdict
 from typing import cast
-from pydantic import model_validator
 from svk.data import ImpactPathwayResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine, ImpactCategory
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
@@ -16,18 +15,13 @@ from datetime import date
 
 
 class ImpactPathwayDocument(Document):
-    @model_validator(mode="before")
-    @classmethod
-    def set_defaults(cls, data):
-        data["disclaimer"] = (
-            f"This is the impact pathway of the NWO SSB-∆ project (version 0.9 - {date.today()}). For questions, please contact Esther van Baaren or Bram van Prooijen."
-        )
-        data["disclaimer_links"] = [
-            ("Esther van Baaren", "mailto:esther.vanbaaren@deltares.nl"),
-            ("Bram van Prooijen", "mailto:b.c.vanprooijen@tudelft.nl"),
-        ]
-
-        return data
+    disclaimer: str | None = (
+        f"This is the impact pathway of the NWO SSB-∆ project (version 0.9 - {date.today()}). For questions, please contact Esther van Baaren or Bram van Prooijen."
+    )
+    disclaimer_links: list[tuple[str, str]] | None = [
+        ("Esther van Baaren", "mailto:esther.vanbaaren@deltares.nl"),
+        ("Bram van Prooijen", "mailto:b.c.vanprooijen@tudelft.nl"),
+    ]
 
     def create_pages(self) -> list[Page]:
         return [self._create_overview_page(page_number=0)] + self.create_detailes_pages(current_page_number=1)

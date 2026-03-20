@@ -21,8 +21,8 @@ class Document(BaseModel, ABC):
     pages: list[Page] = []
     output_dir: str
     output_file: str
-    disclaimer: str | None
-    disclaimer_links: list[tuple[str, str]] | None
+    disclaimer: str | None = None
+    disclaimer_links: list[tuple[str, str]] | None = None
     cleanup: bool = True
     """When set to false, intermediate files are left in the output dir."""
     _str_table = str.maketrans({".": "-", " ": "-"})
