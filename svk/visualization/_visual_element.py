@@ -2,13 +2,22 @@ from pydantic import BaseModel
 from svk.data import LinksRegister, Translator
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svgwrite import Drawing
+from abc import ABC, abstractmethod
 
 
-class VisualElement(BaseModel):
+class VisualElement(BaseModel, ABC):
     layout_configuration: LayoutConfiguration
     """The layout configuration shared across all elements of a document."""
     links_register: LinksRegister
     translator: Translator
+
+    # @abstractmethod
+    # def get_size(self) -> tuple[float, float]:
+    #     pass
+
+    @abstractmethod
+    def draw(self, dwg: Drawing, left: float, top: float) -> tuple[float, float]:
+        pass
 
     def draw_vertical_separator(self, dwg: Drawing, x: float, y: float, element_height: float, color: str):
         dwg.add(

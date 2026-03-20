@@ -13,8 +13,6 @@ class Cluster(VisualElement):
     """Base color of the cluster (background)"""
     groups: defaultdict[int, list[GroupBase]] = defaultdict(list[GroupBase])
     """A list of groups per column index (zero based)."""
-    y_top: float | None = None
-    """y-coordinate of the top left of the cluster"""
 
     def get_height(self, column: Column | None = None):
         if column is None:
@@ -22,15 +20,13 @@ class Cluster(VisualElement):
         else:
             return self._get_height_for_column(column.number) if column.number in self.groups else 0.0
 
-    def draw(self, dwg: Drawing):
-        x_cluster = self.layout_configuration.paper_margin
-        y_cluster = self.y_top
+    def draw(self, dwg: Drawing, left: float, top: float):
         width = self.layout_configuration.overview_page_width - 2 * self.layout_configuration.paper_margin
         height = self.get_height()
 
         gradient_id = f"gradient_{str(uuid4())}"
         x_scale = width / height
-        gradient_center = ((x_cluster + width / 2) / x_scale, y_cluster)
+        gradient_center = ((left + width / 2) / x_scale, top)
         radius = height * 1.2
         fill_radial_grad = dwg.radialGradient(
             center=gradient_center,
@@ -61,8 +57,8 @@ class Cluster(VisualElement):
         dwg.add(
             dwg.rect(
                 insert=(
-                    x_cluster,
-                    y_cluster,
+                    left,
+                    top,
                 ),
                 size=(width, height),
                 fill=f"url(#{gradient_id})",
@@ -72,8 +68,8 @@ class Cluster(VisualElement):
         dwg.add(
             dwg.rect(
                 insert=(
-                    x_cluster,
-                    y_cluster,
+                    left,
+                    top,
                 ),
                 size=(width, height),
                 fill="none",
@@ -83,7 +79,7 @@ class Cluster(VisualElement):
         )
 
         for i_column in self.groups:
-            y_current = self.y_top if self.y_top is not None else 0.0
+            y_current = top
             for group in self.groups[i_column]:
                 group.draw(
                     dwg=dwg, x=self.layout_configuration.paper_margin + i_column * self.layout_configuration.column_width, y=y_current

@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.visualization import LayoutConfiguration, OverviewPage, Question, Group, Column, Cluster
+from svk.visualization import LayoutConfiguration, TimeLineOverviewPage, Question, Group, Column, Cluster
 from svk.data import TimeFrame, ResearchLine, ResearchQuestion, Priority, TimeFrame, StormSurgeBarrier, LinksRegister, Translator
 from svk.io import svg_to_pdf_chrome
 
@@ -49,7 +49,7 @@ def test_create_image():
     links_register = LinksRegister()
     translator = Translator(lang="nl")
 
-    fig = OverviewPage(
+    fig = TimeLineOverviewPage(
         page_number=0,
         layout_configuration=config,
         links_register=links_register,

@@ -6,7 +6,7 @@ from svk.data import ResearchQuestion, LinksRegister, ResearchLine, Translator, 
 from svk.io import svg_to_pdf_chrome, merge_pdf_files, add_links
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization._layout_configuration import LayoutConfiguration
-from svk.visualization._overview_page import OverviewPage
+from svk.visualization._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization._details_page import DetailsPage
 from svk.visualization._question_details import QuestionDetails
 from svk.visualization._column import Column
@@ -23,7 +23,7 @@ class MainVisualizationContainer(BaseModel, ABC):
     """When set to false, intermediate files are left in the output dir."""
 
     @abstractmethod
-    def create_overview_page(self, page_number: int) -> OverviewPage:
+    def create_overview_page(self, page_number: int) -> TimeLineOverviewPage:
         pass
 
     def build(self):
@@ -90,7 +90,7 @@ class MainVisualizationContainer(BaseModel, ABC):
 
         return output_file_final
 
-    def add_time_frame_column(self, fig: OverviewPage, time_frame: TimeFrame, number: int):
+    def add_time_frame_column(self, fig: TimeLineOverviewPage, time_frame: TimeFrame, number: int):
         column = Column(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,

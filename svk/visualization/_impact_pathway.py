@@ -4,7 +4,7 @@ from svk.data import ImpactPathwayResearchQuestion, StormSurgeBarrier, TimeFrame
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._greyfraction import color_toward_grey
-from svk.visualization._overview_page import OverviewPage
+from svk.visualization._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization._column import Column
 from svk.visualization._group import Group, PlainTextGroup
 from svk.visualization._cluster import Cluster
@@ -16,19 +16,19 @@ class ImpactPathway(MainVisualizationContainer):
     def create_overview_page(
         self,
         page_number: int,
-    ) -> OverviewPage:
+    ) -> TimeLineOverviewPage:
         self.layout_configuration.question_id_box_width = (
             max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in self.questions])
             + self.layout_configuration.small_margin
         )
 
-        fig = OverviewPage(
+        fig = TimeLineOverviewPage(
             page_number=page_number,
             title="Impact pathway",
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            storm_surge_barrier=StormSurgeBarrier.All,
+            icon=StormSurgeBarrier.All,
         )
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Now, number=0)
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=1)
@@ -50,7 +50,7 @@ class ImpactPathway(MainVisualizationContainer):
 
         return fig
 
-    def add_clusters(self, fig: OverviewPage, questions: list[ImpactPathwayResearchQuestion]):
+    def add_clusters(self, fig: TimeLineOverviewPage, questions: list[ImpactPathwayResearchQuestion]):
         clusters: dict[int, Cluster] = {}
         time_frame_column_numbers: dict[TimeFrame, int] = {
             TimeFrame.Now: 0,
