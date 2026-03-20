@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from svk.visualization._question import Question
+from svk.visualization.elements._question import Question
 from svk.visualization.helpers._draw_callout import draw_callout
 from svk.visualization.helpers._wrappedtext import wrapped_lines, wrapped_text
 from svk.visualization.elements._visual_element import VisualElement

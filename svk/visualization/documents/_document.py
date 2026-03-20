@@ -6,11 +6,11 @@ from svk.data import ResearchQuestion, LinksRegister, ResearchLine, Translator, 
 from svk.io import svg_to_pdf_chrome, merge_pdf_files, add_links
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization._layout_configuration import LayoutConfiguration
-from svk.visualization._time_line_overview_page import TimeLineOverviewPage
-from svk.visualization._details_page import DetailsPage
-from svk.visualization._question_details import QuestionDetails
-from svk.visualization._page import Page
-from svk.visualization._column import Column
+from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
+from svk.visualization.pages._details_page import DetailsPage
+from svk.visualization.elements._question_details import QuestionDetails
+from svk.visualization.pages._page import Page
+from svk.visualization.elements._column import Column
 
 
 class Document(BaseModel, ABC):

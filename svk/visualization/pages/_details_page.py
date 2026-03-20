@@ -1,5 +1,5 @@
-from svk.visualization._question_details import QuestionDetails
-from svk.visualization._page import Page
+from svk.visualization.elements._question_details import QuestionDetails
+from svk.visualization.pages._page import Page
 from svgwrite import Drawing
 
 

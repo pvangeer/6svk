@@ -18,13 +18,13 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from ._knowledge_calendar_document import KnowledgeCalendarDocument
-from ._impact_pathway_document import ImpactPathwayDocument
-from ._time_line_overview_page import TimeLineOverviewPage
-from ._details_page import DetailsPage
+from .documents._knowledge_calendar_document import KnowledgeCalendarDocument
+from .documents._impact_pathway_document import ImpactPathwayDocument
+from .pages._time_line_overview_page import TimeLineOverviewPage
+from .pages._details_page import DetailsPage
 from ._layout_configuration import LayoutConfiguration
-from ._column import Column
-from ._cluster import Cluster
-from ._group import Group
-from ._question import Question
-from ._question_details import QuestionDetails
+from .elements._column import Column
+from .elements._cluster import Cluster
+from .elements._group import Group
+from .elements._question import Question
+from .elements._question_details import QuestionDetails

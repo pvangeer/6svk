@@ -18,9 +18,9 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.visualization._column import Column
-from svk.visualization._cluster import Cluster
-from svk.visualization._page import Page
+from svk.visualization.elements._column import Column
+from svk.visualization.elements._cluster import Cluster
+from svk.visualization.pages._page import Page
 from svgwrite import Drawing
 
 

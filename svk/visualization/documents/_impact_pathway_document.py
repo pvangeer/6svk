@@ -2,16 +2,16 @@ from collections import defaultdict
 from typing import cast
 from pydantic import model_validator
 from svk.data import ImpactPathwayResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine, ImpactCategory
-from svk.visualization._page import Page
+from svk.visualization.pages._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._greyfraction import color_toward_grey
-from svk.visualization._time_line_overview_page import TimeLineOverviewPage
-from svk.visualization._column import Column
-from svk.visualization._group import Group, PlainTextGroup
-from svk.visualization._cluster import Cluster
-from svk.visualization._question import Question
-from svk.visualization._document import Document
+from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
+from svk.visualization.elements._column import Column
+from svk.visualization.elements._group import Group, PlainTextGroup
+from svk.visualization.elements._cluster import Cluster
+from svk.visualization.elements._question import Question
+from svk.visualization.documents._document import Document
 from datetime import date
 
 
