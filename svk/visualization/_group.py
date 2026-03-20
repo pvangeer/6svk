@@ -22,7 +22,7 @@ from svgwrite import Drawing
 from svk.visualization._question import Question
 from svk.visualization.helpers._draw_callout import draw_callout
 from svk.visualization.helpers._wrappedtext import wrapped_lines, wrapped_text
-from svk.visualization._visual_element import VisualElement
+from svk.visualization.elements._visual_element import VisualElement
 
 
 class GroupBase(VisualElement):

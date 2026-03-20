@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from datetime import datetime
 
 from svk.io import KnowledgeAgendaDatabase
-from svk.visualization import KnowledgeCalendar
+from svk.visualization import KnowledgeCalendarDocument
 from svk.data import StormSurgeBarrier, Translator
 
 base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK"
@@ -36,7 +36,7 @@ def test_create_hv():
 
     questions = KnowledgeAgendaDatabase(database_path)
     questions.read()
-    calendar = KnowledgeCalendar(
+    calendar = KnowledgeCalendarDocument(
         output_dir=output_dir,
         output_file=output_file,
         questions=questions,
@@ -55,7 +55,7 @@ def test_create_rp():
 
     questions = KnowledgeAgendaDatabase(database_path)
     questions.read()
-    calendar = KnowledgeCalendar(
+    calendar = KnowledgeCalendarDocument(
         output_dir=output_dir,
         output_file=output_file,
         questions=questions,
@@ -74,7 +74,7 @@ def test_create_hijk():
 
     questions = KnowledgeAgendaDatabase(database_path)
     questions.read()
-    calendar = KnowledgeCalendar(
+    calendar = KnowledgeCalendarDocument(
         output_dir=output_dir,
         output_file=output_file,
         questions=questions,

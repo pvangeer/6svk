@@ -18,8 +18,8 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from ._knowledge_calendar import KnowledgeCalendar
-from ._impact_pathway import ImpactPathway
+from ._knowledge_calendar_document import KnowledgeCalendarDocument
+from ._impact_pathway_document import ImpactPathwayDocument
 from ._time_line_overview_page import TimeLineOverviewPage
 from ._details_page import DetailsPage
 from ._layout_configuration import LayoutConfiguration

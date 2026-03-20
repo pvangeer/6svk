@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.visualization._visual_element import VisualElement
+from svk.visualization.elements._visual_element import VisualElement
 from svgwrite import Drawing
 from svk.visualization.helpers._drawchevron import draw_half_chevron
 

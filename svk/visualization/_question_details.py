@@ -24,7 +24,7 @@ from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
-from svk.visualization._visual_element import VisualElement
+from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 

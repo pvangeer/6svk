@@ -1,6 +1,8 @@
 from collections import defaultdict
 from typing import cast
+from pydantic import model_validator
 from svk.data import ImpactPathwayResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine, ImpactCategory
+from svk.visualization._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._greyfraction import color_toward_grey
@@ -9,11 +11,28 @@ from svk.visualization._column import Column
 from svk.visualization._group import Group, PlainTextGroup
 from svk.visualization._cluster import Cluster
 from svk.visualization._question import Question
-from svk.visualization._main_visualization_container import MainVisualizationContainer
+from svk.visualization._document import Document
+from datetime import date
 
 
-class ImpactPathway(MainVisualizationContainer):
-    def create_overview_page(
+class ImpactPathwayDocument(Document):
+    @model_validator(mode="before")
+    @classmethod
+    def set_defaults(cls, data):
+        data["disclaimer"] = (
+            f"This is the impact pathway of the NWO SSB-∆ project (version 0.9 - {date.today()}). For questions, please contact Esther van Baaren or Bram van Prooijen."
+        )
+        data["disclaimer_links"] = [
+            ("Esther van Baaren", "mailto:esther.vanbaaren@deltares.nl"),
+            ("Bram van Prooijen", "mailto:b.c.vanprooijen@tudelft.nl"),
+        ]
+
+        return data
+
+    def create_pages(self) -> list[Page]:
+        return [self._create_overview_page(page_number=0)] + self.create_detailes_pages(current_page_number=1)
+
+    def _create_overview_page(
         self,
         page_number: int,
     ) -> TimeLineOverviewPage:
@@ -29,11 +48,12 @@ class ImpactPathway(MainVisualizationContainer):
             links_register=self.links_register,
             translator=self.translator,
             icon=StormSurgeBarrier.All,
+            disclaimer=self.disclaimer,
+            disclaimer_links=self.disclaimer_links,
         )
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Now, number=0)
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=1)
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=2)
-        # The impact column
         fig.columns.append(
             Column(
                 layout_configuration=self.layout_configuration,

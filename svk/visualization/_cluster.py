@@ -1,4 +1,4 @@
-from svk.visualization._visual_element import VisualElement
+from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization._group import GroupBase
 from svk.visualization._column import Column
 from svk.visualization.helpers._greyfraction import color_toward_grey
