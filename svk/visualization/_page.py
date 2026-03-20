@@ -44,12 +44,12 @@ class Page(BaseModel, ABC):
             self.layout_configuration.paper_margin + self.layout_configuration.page_title_height + self.layout_configuration.large_margin
         )
         disclaimer_height = (
-            self.layout_configuration.large_margin
-            + 1.2 * self.layout_configuration.disclamer_font_size
-            + self.layout_configuration.paper_margin
+            (self.layout_configuration.large_margin + 1.2 * self.layout_configuration.disclamer_font_size)
+            if self.disclaimer is not None
+            else 0.0
         )
         page_width = content_size[0]
-        page_height = title_height + content_size[1] + disclaimer_height
+        page_height = title_height + content_size[1] + disclaimer_height + self.layout_configuration.paper_margin
         return (page_width, page_height)
 
     def draw(self) -> Drawing:

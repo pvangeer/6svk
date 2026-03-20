@@ -38,6 +38,11 @@ class KnowledgeCalendar(MainVisualizationContainer):
             links_register=self.links_register,
             translator=self.translator,
             icon=self.storm_surge_barrier,
+            disclaimer="Dit is een eerste concept van de onderzoeksagenda stormvloedkeringen. Deze versie is ontstaan in samenwerking met de asset management teams van de keringen. De prioritering van de onderzoeksvragen moet nog gereviewd worden door o.a. de asset management teams en RWS WVL/GPO. De indeling in tijdsperiode is op dit moment in ontwikkeling. Voor vragen, neem contact op met Marit de Jong of Riva de Vries.",
+            disclaimer_links=[
+                ("Riva de Vries", "mailto:riva.de.vries@rws.nl"),
+                ("Marit de Jong", "mailto:marit.de.jong@rws.nl"),
+            ],
         )
         self.add_time_frame_column(fig=fig, questions=time_groups[TimeFrame.Now], time_frame=TimeFrame.Now, number=0)
         self.add_time_frame_column(fig=fig, questions=time_groups[TimeFrame.NearFuture], time_frame=TimeFrame.NearFuture, number=1)
