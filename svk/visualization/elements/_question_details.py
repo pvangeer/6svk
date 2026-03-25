@@ -38,7 +38,7 @@ class QuestionDetails(VisualElement):
     w_related_field: float = Field(default_factory=float)
     w_priority_metrices_column: float = Field(default_factory=float)
     w_priority_explanation_column: float = Field(default_factory=float)
-    w_organizational_column: float = Field(default_factory=float)
+    w_organisational_column: float = Field(default_factory=float)
     h_first_line: float = Field(default_factory=float)
     h_last_line: float = Field(default_factory=float)
     priority_explained_lines: list[str] = Field(default_factory=list[str])
@@ -94,8 +94,8 @@ class QuestionDetails(VisualElement):
             w_related_relations + w_related_barrier_icons,
         )
 
-        self.w_organizational_column = self._get_w_organizational_column()
-        h_organizational_column = (
+        self.w_organisational_column = self._get_w_organizational_column()
+        h_organisational_column = (
             self.layout_configuration.small_margin
             + self.layout_configuration.font_size * 1.2
             + self.layout_configuration.small_margin * 2
@@ -111,7 +111,7 @@ class QuestionDetails(VisualElement):
             - self.w_code_column
             - self.w_priority_metrices_column
             - self.w_priority_explanation_column
-            - self.w_organizational_column
+            - self.w_organisational_column
             - self.w_related_field
         )
 
@@ -134,9 +134,18 @@ class QuestionDetails(VisualElement):
             + 4 * self.layout_configuration.font_size * 1.2
             + self.layout_configuration.small_margin
         )
-        self.priority_explained_lines = []
+        self.priority_explained_lines = (
+            wrapped_lines(
+                self.research_question.prio_explanation,
+                self.layout_configuration.details_priority_explanation_width - self.layout_configuration.small_margin * 2,
+            )
+            if self.research_question.prio_explanation is not None
+            else []
+        )
         h_priority_column_explained_lines = (
             self.layout_configuration.small_margin
+            + self.layout_configuration.font_size * 1.2
+            + 2 * self.layout_configuration.small_margin
             + len(self.priority_explained_lines) * self.layout_configuration.font_size * 1.2
             + self.layout_configuration.small_margin
         )
@@ -174,7 +183,7 @@ class QuestionDetails(VisualElement):
                 h_question_explained_column,
                 h_priority_column_explained_lines,
                 h_priority_column_fixed_items,
-                h_organizational_column,
+                h_organisational_column,
                 h_relation_column,
             )
             + self.h_last_line
@@ -226,7 +235,7 @@ class QuestionDetails(VisualElement):
             + self.w_question_column
             + self.w_priority_metrices_column
             + self.w_priority_explanation_column
-            + self.w_organizational_column
+            + self.w_organisational_column
         )
         self.draw_vertical_separator(dwg, x_related_separator, y + self.h_first_line, vertical_separator_height, self._color)
         self.draw_related_column(dwg, x, y, width, page_number)
@@ -365,7 +374,19 @@ class QuestionDetails(VisualElement):
             self._color,
         )
 
-        # TODO: Draw priority explanation here
+        if self.priority_explained_lines:
+            dwg.add(
+                wrapped_text(
+                    dwg=dwg,
+                    lines=self.priority_explained_lines,
+                    insert=(
+                        x_priority + self.w_priority_metrices_column + self.layout_configuration.small_margin,
+                        y_prios_start,
+                    ),
+                    font_size=self.layout_configuration.font_size,
+                    dominant_baseline="text-before-edge",
+                )
+            )
 
     def draw_organisational_column(self, dwg: Drawing, x: float, y: float, width: float, page_number: int):
         x_organisational = (
@@ -389,7 +410,7 @@ class QuestionDetails(VisualElement):
         y_org_start = y + self.h_first_line + self.layout_configuration.font_size * 1.2 + 3 * self.layout_configuration.small_margin
 
         self.draw_horizontal_separator(
-            dwg, x_organisational, y_org_start - self.layout_configuration.small_margin, self.w_organizational_column, self._color
+            dwg, x_organisational, y_org_start - self.layout_configuration.small_margin, self.w_organisational_column, self._color
         )
 
         y_current = y_org_start
@@ -455,7 +476,7 @@ class QuestionDetails(VisualElement):
             + self.w_question_column
             + self.w_priority_metrices_column
             + self.w_priority_explanation_column
-            + self.w_organizational_column
+            + self.w_organisational_column
         )
         dwg.add(
             dwg.text(
