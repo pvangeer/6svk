@@ -26,9 +26,9 @@ print(sys.path)
 
 
 def test_database_creation_full_database_ssb_delta():
-    d = ImpactPathwayDatabase("C:/src/6svk/test/test-data/example-SSB-delta.xlsx")
+    d = ImpactPathwayDatabase("C:/src/6svk/test/test-data/example-SSB-delta-v2.xlsx")
     d.read()
-    if len(d) < 20:
+    if len(d) < 60:
         print("length = " + str(len(d)))
         for e in d.errors:
             print(e)
