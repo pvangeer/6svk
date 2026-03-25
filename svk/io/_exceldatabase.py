@@ -151,6 +151,8 @@ class ExcelDatabase(ABC):
     @staticmethod
     def _get_priority(row: tuple, i_column: int) -> Priority:
         value = row[i_column]
+        if isinstance(value, float):
+            value = int(value)
         if not isinstance(value, int):
             return Priority.Unknown
 

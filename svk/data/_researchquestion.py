@@ -53,6 +53,7 @@ class ResearchQuestion(BaseModel):
     """Priority of this question related to maintenance of the barrier."""
     prio_operation: Priority
     """Priority of this question related to operation of the barrier."""
+    prio_explanation: str | None = None
 
     time_frame: TimeFrame
     """The time frame this question is associated with."""
@@ -89,3 +90,4 @@ class ResearchQuestion(BaseModel):
 
 class ImpactPathwayResearchQuestion(ResearchQuestion):
     impact_category: ImpactCategory
+    prio_urgency_decision_making: Priority
