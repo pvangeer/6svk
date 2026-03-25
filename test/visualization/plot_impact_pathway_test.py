@@ -13,7 +13,8 @@ def test_plot_pathway():
 
     d = ImpactPathwayDatabase(database_path)
     d.read()
+    questions = [q for q in d if q.action_holder != "Not included"]
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Impact pathway SSB-delta"
 
-    pathway = ImpactPathwayDocument(questions=cast(list[ResearchQuestion], d), output_dir=output_dir, output_file=output_file)
+    pathway = ImpactPathwayDocument(questions=cast(list[ResearchQuestion], questions), output_dir=output_dir, output_file=output_file)
     pathway.build()
