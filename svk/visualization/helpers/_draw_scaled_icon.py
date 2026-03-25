@@ -194,7 +194,7 @@ def draw_scaled_icon(
     :param size: The size (width and height) of the desired icon
     :type size: tuple[float, float]
     """
-    ico = Symbol()
+    ico = Symbol(id=storm_surge_barrier.name)
     match storm_surge_barrier:
         case StormSurgeBarrier.MaeslantBarrier:
             ico.objects = [

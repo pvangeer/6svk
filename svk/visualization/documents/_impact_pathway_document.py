@@ -65,9 +65,9 @@ class ImpactPathwayDocument(Document):
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
         )
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Now, number=0)
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=1)
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=2)
+
+        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=0)
+        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=1)
         fig.columns.append(
             Column(
                 layout_configuration=self.layout_configuration,
@@ -76,7 +76,7 @@ class ImpactPathwayDocument(Document):
                 header_title="",
                 header_subtitle="",
                 header_color="",
-                number=3,
+                number=2,
             )
         )
 
@@ -87,9 +87,8 @@ class ImpactPathwayDocument(Document):
     def add_clusters(self, fig: TimeLineOverviewPage, questions: list[ImpactPathwayResearchQuestion]):
         clusters: dict[int, Cluster] = {}
         time_frame_column_numbers: dict[TimeFrame, int] = {
-            TimeFrame.Now: 0,
-            TimeFrame.NearFuture: 1,
-            TimeFrame.Future: 2,
+            TimeFrame.NearFuture: 0,
+            TimeFrame.Future: 1,
         }
 
         grouped_quenstions_lists: defaultdict[tuple[TimeFrame, ImpactCategory, ResearchLine], list[ImpactPathwayResearchQuestion]] = (
@@ -144,7 +143,7 @@ class ImpactPathwayDocument(Document):
             ImpactCategory.HumanCapical,
             ImpactCategory.Example,
         ]:
-            clusters[category.number].groups[3].append(
+            clusters[category.number].groups[2].append(
                 PlainTextGroup(
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,

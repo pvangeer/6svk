@@ -188,7 +188,7 @@ class ExcelDatabase(ABC):
 
     @staticmethod
     def _get_storm_surge_barriers(row: tuple, i_column: int) -> list[StormSurgeBarrier]:
-        barrier_strings = ExcelDatabase._get_as_str(row, i_column).split(",")
+        barrier_strings = [s.strip() for s in ExcelDatabase._get_as_str(row, i_column).split(",") if s.strip()]
         barriers = []
         for b in barrier_strings:
             match b:
