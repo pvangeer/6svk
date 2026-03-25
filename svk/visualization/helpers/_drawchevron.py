@@ -20,6 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from svgwrite import Drawing
 from uuid import uuid4
+from svk.visualization.helpers._radial_gradient import create_radial_gradient
 
 
 def draw_half_chevron(
@@ -33,6 +34,7 @@ def draw_half_chevron(
     stroke_width: float = 0.5,
     header_size: float = 30,
     add_to_dwg: bool = True,
+    gradient_center: float = 0.3,
 ):
     """
     Draws a chevron inside an svgwrite.Drawing object.
@@ -57,22 +59,16 @@ def draw_half_chevron(
     :type header_size: float
     :param add_to_dwg: Bool indicating whether the chevrond directly needs to be added to the svgwrite.Drawing object or not. The method also returns the created svg polygon element (such that the user can add it later).
     :type add_to_dwg: bool
+    :param gradient_center: The location of the center of the radial gradient (horizontal, relative to the width). This needs to be in the range [0-1]
+    :type gradient_center: float
     """
-    x_scale = width / header_size
-    gradient_id = f"gradient_{str(uuid4())}"
 
-    radial_grad = dwg.radialGradient(
-        center=((x + 20) / x_scale, y),
-        r=header_size,
-        gradientUnits="userSpaceOnUse",
-        id=gradient_id,
+    if gradient_center > 1 or gradient_center < 0:
+        raise ValueError
+
+    gradient_id = create_radial_gradient(
+        dwg=dwg, x=x + gradient_center * width, y=y, width=(1 - gradient_center) * width * 2, height=header_size * 2, color=color
     )
-    radial_grad.add_stop_color(0, color)
-    radial_grad.add_stop_color(1, "white")
-
-    radial_grad["gradientTransform"] = f"scale({x_scale},1)"
-
-    dwg.defs.add(radial_grad)
 
     points = [
         (x, y),

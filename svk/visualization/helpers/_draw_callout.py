@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from uuid import uuid4
+from svk.visualization.helpers._radial_gradient import create_radial_gradient
 
 
 def draw_callout(
@@ -32,6 +32,7 @@ def draw_callout(
     stroke_width: float = 0.5,
     arrow_height: float = 30.0,
     arrow_depth: float = 20,
+    gradient_center: float = 0.3,
 ):
     """
     Draws a callout object and adds it to the drawing.
@@ -54,24 +55,16 @@ def draw_callout(
     :type arrow_height: float
     :param arrow_depth: The depth of the arrow of the callout.
     :type arrow_depth: float
+    :param gradient_center: The location of the center of the radial gradient (horizontal, relative to the width). This needs to be in the range [0-1]
+    :type gradient_center: float
     """
-    gradient_id = f"gradient_group_header_{str(uuid4())}"
-    x_scale = width / arrow_height
-    radial_grad = dwg.radialGradient(
-        center=(
-            (x + 20) / x_scale,
-            y,
-        ),  # TODO: Make the 20 configurable? Should we put generating a radial gradient into a separate function as it is done in multiple helper functions?
-        r=arrow_height,
-        gradientUnits="userSpaceOnUse",
-        id=gradient_id,
+
+    if gradient_center > 1 or gradient_center < 0:
+        raise ValueError
+
+    gradient_id = create_radial_gradient(
+        dwg=dwg, x=x + gradient_center * width, y=y, width=(1 - gradient_center) * width * 2, height=arrow_height * 2, color=color
     )
-    radial_grad.add_stop_color(0, color)  # center
-    radial_grad.add_stop_color(1, "white")  # edge
-
-    radial_grad["gradientTransform"] = f"scale({x_scale},1)"
-
-    dwg.defs.add(radial_grad)
 
     points = [
         (x, y),
@@ -81,5 +74,5 @@ def draw_callout(
         (x + arrow_depth, y + arrow_height),
     ]
 
-    polygon = dwg.polygon(points=points, stroke=color, fill=f"url(#{gradient_id})", stroke_width=stroke_width, id=str(uuid4()))
+    polygon = dwg.polygon(points=points, stroke=color, fill=f"url(#{gradient_id})", stroke_width=stroke_width)
     dwg.add(polygon)

@@ -9,7 +9,8 @@ class Label(Enum):
     TFFuture = ("Toekomst", "Future")
     TFUnknown = ("Onbekend", "Unknown")
 
-    # TODO: Check translation
+    D_NoResearchLine = ("Zonder onderzoekslijn", "No research line")
+
     RL_ConstructiveAspects = ("Constructieve aspecten", "Structural aspects")
     RL_OperatingSystem = ("Besturingssystemen / IA", "Operating system / IA")
     RL_Facilities = ("Voorzieningen en gebouwen", "Facilities and buildings")

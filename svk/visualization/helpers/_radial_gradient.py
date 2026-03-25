@@ -18,29 +18,27 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.data import ResearchQuestion, TimeFrame
-from svk.visualization.helpers._greyfraction import color_toward_grey
+from uuid import uuid4
+from svgwrite import Drawing
 
 
-def get_priority(question: ResearchQuestion) -> int:
-    return 1 if question.has_priority else 0
+def create_radial_gradient(dwg: Drawing, x: float, y: float, width: float, height: float, color: str) -> str:
+    gradient_id = f"gradient_group_header_{str(uuid4())}"
+    x_scale = width / (height)
+    radial_grad = dwg.radialGradient(
+        center=(
+            x / x_scale,
+            y,
+        ),
+        r=height / 2,
+        gradientUnits="userSpaceOnUse",
+        id=gradient_id,
+    )
+    radial_grad.add_stop_color(0, color)  # center
+    radial_grad.add_stop_color(1, "white")  # edge
 
+    radial_grad["gradientTransform"] = f"scale({x_scale},1)"
 
-def get_subtitle(time_frame: TimeFrame) -> str:
-    match time_frame:
-        case TimeFrame.Now:
-            return ""
-        case TimeFrame.NearFuture:
-            return "(2033 - 2040)"
-        case TimeFrame.Future:
-            return "(>2040)"
-        case TimeFrame.NotRelevant:
-            return "(-)"
-        case TimeFrame.Unknown:
-            return "(?)"
-        case _:
-            raise ValueError("Unknown time frame")
+    dwg.defs.add(radial_grad)
 
-
-def get_header_color(time_frame: TimeFrame) -> str:
-    return color_toward_grey((18, 103, 221), grey_fraction=time_frame.grey_fraction)
+    return gradient_id
