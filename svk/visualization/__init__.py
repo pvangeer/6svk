@@ -26,5 +26,5 @@ from ._layout_configuration import LayoutConfiguration
 from .elements._column import Column
 from .elements._cluster import Cluster
 from .elements._group import Group
-from .elements._question import Question
-from .elements._question_details import QuestionDetails
+from .elements._question_overview import QuestionOverviewElement
+from .elements._question_details import QuestionDetailsElement

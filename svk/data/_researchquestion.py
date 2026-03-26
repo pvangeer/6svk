@@ -79,15 +79,37 @@ class ResearchQuestion(BaseModel):
         return model
 
     @property
-    def has_priority(self) -> bool:
+    def priority(self) -> int:
         return (
-            self.prio_management_maintenance.id == 3
-            or self.prio_water_safety.id == 3
-            or self.prio_operation.id == 3
-            or (self.prio_management_maintenance.id + self.prio_operation.id + self.prio_water_safety.id + self.prio_other_functions.id) > 8
+            1
+            if (
+                self.prio_management_maintenance.id == 3
+                or self.prio_water_safety.id == 3
+                or self.prio_operation.id == 3
+                or (self.prio_management_maintenance.id + self.prio_operation.id + self.prio_water_safety.id + self.prio_other_functions.id)
+                > 8
+            )
+            else 0
         )
 
 
 class ImpactPathwayResearchQuestion(ResearchQuestion):
     impact_category: ImpactCategory
     prio_urgency_decision_making: Priority
+
+    @property
+    def priority(self) -> int:
+        prios = [
+            self.prio_management_maintenance,
+            self.prio_operation,
+            self.prio_other_functions,
+            self.prio_urgency_decision_making,
+            self.prio_water_safety,
+        ]
+        combined_priority = sum([p.id for p in prios])
+        n_high_prio = sum(1 for p in prios if p.id == 3)
+        if n_high_prio > 1 or combined_priority > 10:
+            return 2
+        if n_high_prio > 0 or combined_priority > 8:
+            return 1
+        return 0

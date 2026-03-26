@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.visualization import LayoutConfiguration, TimeLineOverviewPage, Question, Group, Column, Cluster
+from svk.visualization import LayoutConfiguration, TimeLineOverviewPage, QuestionOverviewElement, Group, Column, Cluster
 from svk.data import TimeFrame, ResearchLine, ResearchQuestion, Priority, TimeFrame, StormSurgeBarrier, LinksRegister, Translator
 from svk.io import svg_to_pdf_chrome
 
@@ -62,7 +62,7 @@ def test_create_image():
 
     adaptation_now = Group(layout_configuration=config, links_register=links_register, translator=translator, title="test", color="black")
     adaptation_now.questions.append(
-        Question(
+        QuestionOverviewElement(
             layout_configuration=config,
             links_register=links_register,
             translator=translator,
@@ -72,7 +72,7 @@ def test_create_image():
         )
     )
     adaptation_now.questions.append(
-        Question(
+        QuestionOverviewElement(
             layout_configuration=config,
             links_register=links_register,
             translator=translator,
@@ -82,7 +82,7 @@ def test_create_image():
         )
     )
     adaptation_now.questions.append(
-        Question(
+        QuestionOverviewElement(
             layout_configuration=config,
             links_register=links_register,
             translator=translator,
@@ -114,7 +114,7 @@ def test_create_image():
         color="blue",
     )
     cyber_near.questions.append(
-        Question(
+        QuestionOverviewElement(
             layout_configuration=config,
             links_register=links_register,
             translator=translator,
@@ -124,7 +124,7 @@ def test_create_image():
         )
     )
     cyber_near.questions.append(
-        Question(
+        QuestionOverviewElement(
             layout_configuration=config,
             links_register=links_register,
             translator=translator,
@@ -134,7 +134,7 @@ def test_create_image():
         )
     )
     cyber_near.questions.append(
-        Question(
+        QuestionOverviewElement(
             layout_configuration=config,
             links_register=links_register,
             translator=translator,
@@ -166,7 +166,7 @@ def test_create_image():
         color="blue",
     )
     adaptation_near.questions.append(
-        Question(
+        QuestionOverviewElement(
             layout_configuration=config,
             links_register=links_register,
             translator=translator,
@@ -176,7 +176,7 @@ def test_create_image():
         )
     )
     adaptation_near.questions.append(
-        Question(
+        QuestionOverviewElement(
             layout_configuration=config,
             links_register=links_register,
             translator=translator,
@@ -186,7 +186,7 @@ def test_create_image():
         )
     )
     adaptation_near.questions.append(
-        Question(
+        QuestionOverviewElement(
             layout_configuration=config,
             links_register=links_register,
             translator=translator,

@@ -29,7 +29,7 @@ from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._measuretext import measure_text
 
 
-class Question(VisualElement):
+class QuestionOverviewElement(VisualElement):
     """
     Represents a question element (as part of  a group, column and the overview page)
     """
@@ -96,23 +96,46 @@ class Question(VisualElement):
         )
 
         y_middle = y + self.height / 2
-        if not self.research_question.has_priority:
-            draw_priority_arrow(
-                dwg, x=x + self.layout_configuration.small_margin, y=y_middle, width=self.layout_configuration.question_priority_box_width
-            )
-        else:
-            draw_priority_arrow(
-                dwg,
-                x=x + self.layout_configuration.small_margin,
-                y=y_middle - 2.5,
-                width=self.layout_configuration.question_priority_box_width,
-            )
-            draw_priority_arrow(
-                dwg,
-                x=x + self.layout_configuration.small_margin,
-                y=y_middle + 2.5,
-                width=self.layout_configuration.question_priority_box_width,
-            )
+        match self.research_question.priority:
+            case 0:
+                draw_priority_arrow(
+                    dwg,
+                    x=x + self.layout_configuration.small_margin,
+                    y=y_middle,
+                    width=self.layout_configuration.question_priority_box_width,
+                )
+            case 1:
+                draw_priority_arrow(
+                    dwg,
+                    x=x + self.layout_configuration.small_margin,
+                    y=y_middle - 2.5,
+                    width=self.layout_configuration.question_priority_box_width,
+                )
+                draw_priority_arrow(
+                    dwg,
+                    x=x + self.layout_configuration.small_margin,
+                    y=y_middle + 2.5,
+                    width=self.layout_configuration.question_priority_box_width,
+                )
+            case 2:
+                draw_priority_arrow(
+                    dwg,
+                    x=x + self.layout_configuration.small_margin,
+                    y=y_middle - 5,
+                    width=self.layout_configuration.question_priority_box_width,
+                )
+                draw_priority_arrow(
+                    dwg,
+                    x=x + self.layout_configuration.small_margin,
+                    y=y_middle,
+                    width=self.layout_configuration.question_priority_box_width,
+                )
+                draw_priority_arrow(
+                    dwg,
+                    x=x + self.layout_configuration.small_margin,
+                    y=y_middle + 5,
+                    width=self.layout_configuration.question_priority_box_width,
+                )
 
         self.draw_vertical_separator(dwg, x + self._priority_box_width, y, self.height, self._color)
 

@@ -18,13 +18,13 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.visualization.elements._question_details import QuestionDetails
+from svk.visualization.elements._question_details import QuestionDetailsElement
 from svk.visualization.pages._page import Page
 from svgwrite import Drawing
 
 
 class DetailsPage(Page):
-    questions: list[QuestionDetails] = []
+    questions: list[QuestionDetailsElement] = []
 
     def get_content_size(self) -> tuple[float, float]:
         return (

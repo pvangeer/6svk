@@ -29,7 +29,7 @@ from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPag
 from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group, PlainTextGroup
 from svk.visualization.elements._cluster import Cluster
-from svk.visualization.elements._question import Question
+from svk.visualization.elements._question_overview import QuestionOverviewElement
 from svk.visualization.documents._document import Document
 from datetime import date
 
@@ -126,9 +126,9 @@ class ImpactPathwayDocument(Document):
             )
 
             cluster.groups[time_frame_column_numbers[current_time_frame]].append(new_group)
-            for question in sorted(grouped_quenstions_lists[questions_list_key], key=helper.get_priority, reverse=True):
+            for question in sorted(grouped_quenstions_lists[questions_list_key], key=lambda q: q.priority, reverse=True):
                 new_group.questions.append(
-                    Question(
+                    QuestionOverviewElement(
                         layout_configuration=self.layout_configuration,
                         links_register=self.links_register,
                         translator=self.translator,

@@ -29,7 +29,7 @@ from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 
 
-class QuestionDetails(VisualElement):
+class QuestionDetailsElement(VisualElement):
     research_question: ResearchQuestion
     """The research question"""
 
@@ -274,21 +274,41 @@ class QuestionDetails(VisualElement):
 
         y_middle = y + self.h_first_line + prio_symbol_height / 2.0
         x_arrows_left = x + self.w_code_column / 2 - self.layout_configuration.question_priority_box_width / 2
-        if not self.research_question.has_priority:
-            draw_priority_arrow(dwg, x=x_arrows_left, y=y_middle, width=self.layout_configuration.question_priority_box_width)
-        else:
-            draw_priority_arrow(
-                dwg,
-                x=x_arrows_left,
-                y=y_middle - 2.5,
-                width=self.layout_configuration.question_priority_box_width,
-            )
-            draw_priority_arrow(
-                dwg,
-                x=x_arrows_left,
-                y=y_middle + 2.5,
-                width=self.layout_configuration.question_priority_box_width,
-            )
+        match self.research_question.priority:
+            case 0:
+                draw_priority_arrow(dwg, x=x_arrows_left, y=y_middle, width=self.layout_configuration.question_priority_box_width)
+            case 1:
+                draw_priority_arrow(
+                    dwg,
+                    x=x_arrows_left,
+                    y=y_middle - 2.5,
+                    width=self.layout_configuration.question_priority_box_width,
+                )
+                draw_priority_arrow(
+                    dwg,
+                    x=x_arrows_left,
+                    y=y_middle + 2.5,
+                    width=self.layout_configuration.question_priority_box_width,
+                )
+            case 2:
+                draw_priority_arrow(
+                    dwg,
+                    x=x_arrows_left,
+                    y=y_middle - 5,
+                    width=self.layout_configuration.question_priority_box_width,
+                )
+                draw_priority_arrow(
+                    dwg,
+                    x=x_arrows_left,
+                    y=y_middle,
+                    width=self.layout_configuration.question_priority_box_width,
+                )
+                draw_priority_arrow(
+                    dwg,
+                    x=x_arrows_left,
+                    y=y_middle + 5,
+                    width=self.layout_configuration.question_priority_box_width,
+                )
 
     def draw_question_column(self, dwg: Drawing, x: float, y: float, width: float, page_number: int):
         dwg.add(

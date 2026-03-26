@@ -18,12 +18,25 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.data import ResearchQuestion, TimeFrame
+from svk.data import ResearchQuestion, ImpactPathwayResearchQuestion, TimeFrame
 from svk.visualization.helpers._greyfraction import color_toward_grey
 
 
-def get_priority(question: ResearchQuestion) -> int:
-    return 1 if question.has_priority else 0
+def get_priority_2(question: ImpactPathwayResearchQuestion) -> int:
+    prios = [
+        question.prio_management_maintenance,
+        question.prio_operation,
+        question.prio_other_functions,
+        question.prio_urgency_decision_making,
+        question.prio_water_safety,
+    ]
+    combined_priority = sum([p.id for p in prios])
+    n_high_prio = sum(1 for p in prios if p.id == 3)
+    if n_high_prio > 1 or combined_priority > 10:
+        return 3
+    if n_high_prio > 0 or combined_priority > 8:
+        return 2
+    return 1
 
 
 def get_subtitle(time_frame: TimeFrame) -> str:
