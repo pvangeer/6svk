@@ -31,30 +31,16 @@ class VisualElement(BaseModel, ABC):
     links_register: LinksRegister
     translator: Translator
 
-    # @abstractmethod
-    # def get_size(self) -> tuple[float, float]:
-    #     pass
-
+    @property
     @abstractmethod
-    def draw(self, dwg: Drawing, left: float, top: float) -> tuple[float, float]:
+    def width(self) -> float:
         pass
 
-    def draw_vertical_separator(self, dwg: Drawing, x: float, y: float, element_height: float, color: str):
-        dwg.add(
-            dwg.line(
-                start=(x, y + self.layout_configuration.small_margin),
-                end=(x, y + element_height - self.layout_configuration.small_margin),
-                stroke_width=0.5,
-                stroke=color,
-            )
-        )
+    @property
+    @abstractmethod
+    def height(self) -> float:
+        pass
 
-    def draw_horizontal_separator(self, dwg: Drawing, x: float, y: float, element_width: float, color: str):
-        dwg.add(
-            dwg.line(
-                start=(x + self.layout_configuration.small_margin, y),
-                end=(x + element_width - self.layout_configuration.small_margin, y),
-                stroke_width=0.5,
-                stroke=color,
-            )
-        )
+    @abstractmethod
+    def draw(self, dwg: Drawing, x: float, y: float) -> tuple[float, float]:
+        pass

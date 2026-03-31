@@ -34,6 +34,14 @@ class Cluster(VisualElement):
     groups: defaultdict[int, list[GroupBase]] = defaultdict(list[GroupBase])
     """A list of groups per column index (zero based)."""
 
+    @property
+    def width(self) -> float:
+        return self.layout_configuration.overview_page_width - 2 * self.layout_configuration.paper_margin
+
+    @property
+    def height(self) -> float:
+        return self.get_height()
+
     def get_height(self, column: Column | None = None):
         if column is None:
             return max([self._get_height_for_column(c) for c in self.groups])
@@ -41,8 +49,8 @@ class Cluster(VisualElement):
             return self._get_height_for_column(column.number) if column.number in self.groups else 0.0
 
     def draw(self, dwg: Drawing, left: float, top: float):
-        width = self.layout_configuration.overview_page_width - 2 * self.layout_configuration.paper_margin
-        height = self.get_height()
+        width = self.width
+        height = self.height
 
         gradient_id = f"gradient_{str(uuid4())}"
         x_scale = width / height
@@ -104,11 +112,11 @@ class Cluster(VisualElement):
                 group.draw(
                     dwg=dwg, x=self.layout_configuration.paper_margin + i_column * self.layout_configuration.column_width, y=y_current
                 )
-                y_current += group.get_height() + self.layout_configuration.intermediate_margin
+                y_current += group.height + self.layout_configuration.intermediate_margin
 
     def _get_height_for_column(self, i_column: int):
         return (
-            sum([g.get_height() + self.layout_configuration.intermediate_margin for g in self.groups[i_column]])
+            sum([g.height + self.layout_configuration.intermediate_margin for g in self.groups[i_column]])
             + self.layout_configuration.intermediate_margin
             - self.layout_configuration.small_margin
         )

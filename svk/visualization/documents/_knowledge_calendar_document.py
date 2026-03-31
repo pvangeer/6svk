@@ -59,7 +59,7 @@ class KnowledgeCalendarDocument(Document):
 
         self.layout_configuration.question_id_box_width = (
             max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in self.questions])
-            + self.layout_configuration.small_margin
+            + 2 * self.layout_configuration.small_margin
         )
 
         fig = TimeLineOverviewPage(
@@ -124,6 +124,7 @@ class KnowledgeCalendarDocument(Document):
                             links_register=self.links_register,
                             translator=self.translator,
                             research_question=question,
+                            page_number=0,
                         )
                     )
 

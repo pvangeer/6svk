@@ -36,7 +36,12 @@ class Column(VisualElement):
     """Color of the column (used as shading and as stroke color)"""
     number: int
 
-    def get_header_height(self) -> float:
+    @property
+    def width(self) -> float:
+        return self.layout_configuration.column_width
+
+    @property
+    def height(self) -> float:
         return self.layout_configuration.column_header_height
 
     def draw(self, dwg: Drawing, x: float, y: float):
@@ -59,8 +64,8 @@ class Column(VisualElement):
                 dwg,
                 x=x,
                 y=y,
-                width=self.layout_configuration.column_width,
-                height=self.layout_configuration.column_header_height,
+                width=self.width,
+                height=self.height,
                 color=self.header_color,
             )
         )

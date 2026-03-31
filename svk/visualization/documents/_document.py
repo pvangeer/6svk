@@ -143,6 +143,7 @@ class Document(BaseModel, ABC):
                     links_register=self.links_register,
                     translator=self.translator,
                     research_question=question,
+                    page_number=page_number,
                 )
             )
 

@@ -28,7 +28,7 @@ class DetailsPage(Page):
 
     def get_content_size(self) -> tuple[float, float]:
         return (
-            self.layout_configuration.details_page_width,
+            max([q.width for q in self.questions]) + 2 * self.layout_configuration.paper_margin,
             sum([q.height + self.layout_configuration.intermediate_margin for q in self.questions])
             - self.layout_configuration.intermediate_margin,
         )
@@ -46,8 +46,6 @@ class DetailsPage(Page):
                 dwg=dwg,
                 x=left,
                 y=top_current,
-                width=self.layout_configuration.details_page_width - 2 * self.layout_configuration.paper_margin,
-                page_number=self.page_number,
             )
             top_current += question.height + self.layout_configuration.intermediate_margin
 

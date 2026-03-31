@@ -42,10 +42,11 @@ class LayoutConfiguration(BaseModel):
 
     n_columns: int = 3
     details_page_width: float = 1500.0
-    column_width: float = 650.0
+    overview_question_width: float = 590.0
     question_priority_box_width: float = 15.0
     question_id_box_width: float = 40.0
     details_priority_explanation_width: float = 300
+    question_explanation_width: float = 600  # TODO: tweak. Also Check other widths
     arrow_depth: float = 20
     icon_width_small: float = 24
 
@@ -53,5 +54,9 @@ class LayoutConfiguration(BaseModel):
     """A dictionary with group colors."""
 
     @property
-    def overview_page_width(self):
+    def overview_page_width(self) -> float:
         return 2 * self.paper_margin + self.n_columns * self.column_width
+
+    @property
+    def column_width(self) -> float:
+        return self.overview_question_width + 2 * self.arrow_depth + 2 * self.intermediate_margin

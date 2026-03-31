@@ -26,7 +26,12 @@ from svk.visualization.elements._visual_element import VisualElement
 
 
 class GroupBase(VisualElement):
-    def get_height(self) -> float:
+    @property
+    def height(self) -> float:
+        return 0.0
+
+    @property
+    def width(self) -> float:
         return 0.0
 
     def draw(self, dwg: Drawing, x: float, y: float):
@@ -46,7 +51,8 @@ class Group(GroupBase):
     questions: list[QuestionOverviewElement] = []
     """The questions in this group"""
 
-    def get_height(self) -> float:
+    @property
+    def height(self) -> float:
         """
         Calculates the height of the group in pixels
 
@@ -59,6 +65,10 @@ class Group(GroupBase):
             + self.layout_configuration.small_margin * len(self.questions)
             + self.layout_configuration.intermediate_margin
         )
+
+    @property
+    def width(self) -> float:
+        return self.layout_configuration.column_width - self.layout_configuration.arrow_depth
 
     def draw(self, dwg: Drawing, x: float, y: float):
         """
@@ -74,8 +84,7 @@ class Group(GroupBase):
         :type width: float
         """
 
-        width = self.layout_configuration.column_width - self.layout_configuration.arrow_depth
-        self.draw_header(dwg, x, y, width)
+        self.draw_header(dwg, x, y, self.width)
 
         current_y = y + self.layout_configuration.group_header_height + self.layout_configuration.small_margin
         for question in self.questions:
@@ -83,7 +92,6 @@ class Group(GroupBase):
                 dwg,
                 x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin,
                 current_y,
-                width - self.layout_configuration.arrow_depth - 2 * self.layout_configuration.intermediate_margin,
             )
             current_y += self.layout_configuration.small_margin + question.height
             pass
@@ -101,7 +109,7 @@ class Group(GroupBase):
         :param width: The width of the header
         :type width: float
         """
-        draw_callout(dwg, x, y, width, self.get_height(), self.color)
+        draw_callout(dwg, x, y, width, self.height, self.color)
 
         dwg.add(
             dwg.text(
@@ -123,15 +131,19 @@ class PlainTextGroup(GroupBase):
     text: str
     _lines: list[str] | None = None
 
+    @property
+    def width(self) -> float:
+        return self.layout_configuration.column_width
+
+    @property
+    def height(self) -> float:
+        return self.layout_configuration.font_size * len(self._compute_lines()) * 1.2 + self.layout_configuration.small_margin
+
     def _compute_lines(self) -> list[str]:
         if self._lines is None:
             self._lines = wrapped_lines(self.text, self.layout_configuration.column_width, self.layout_configuration.font_size)
 
         return self._lines
-
-    def get_height(self) -> float:
-
-        return self.layout_configuration.font_size * len(self._compute_lines()) * 1.2 + self.layout_configuration.small_margin
 
     def draw(self, dwg: Drawing, x: float, y: float):
         dwg.add(

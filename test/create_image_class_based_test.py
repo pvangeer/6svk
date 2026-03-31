@@ -55,7 +55,7 @@ def test_create_image():
         links_register=links_register,
         translator=translator,
         title="Test-image",
-        storm_surge_barrier=StormSurgeBarrier.All,
+        icon=StormSurgeBarrier.All,
     )
     cluster = Cluster(layout_configuration=config, links_register=links_register, translator=translator, color=(132, 243, 124))
     fig.clusters.append(cluster)
@@ -69,6 +69,7 @@ def test_create_image():
             research_question=generate_research_question(
                 question="This is my first question", time_frame=TimeFrame.Now, research_line=ResearchLine.Adaptation.value
             ),
+            page_number=0,
         )
     )
     adaptation_now.questions.append(
@@ -79,6 +80,7 @@ def test_create_image():
             research_question=generate_research_question(
                 question="This is my second question", time_frame=TimeFrame.Now, research_line=ResearchLine.Adaptation.value
             ),
+            page_number=0,
         )
     )
     adaptation_now.questions.append(
@@ -91,6 +93,7 @@ def test_create_image():
                 time_frame=TimeFrame.Now,
                 research_line=ResearchLine.Adaptation.value,
             ),
+            page_number=0,
         )
     )
     column = Column(
@@ -121,6 +124,7 @@ def test_create_image():
             research_question=generate_research_question(
                 question="This is my first question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Cyber.value
             ),
+            page_number=0,
         )
     )
     cyber_near.questions.append(
@@ -131,6 +135,7 @@ def test_create_image():
             research_question=generate_research_question(
                 question="This is my second question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Cyber.value
             ),
+            page_number=0,
         )
     )
     cyber_near.questions.append(
@@ -143,6 +148,7 @@ def test_create_image():
                 time_frame=TimeFrame.NearFuture,
                 research_line=ResearchLine.Cyber.value,
             ),
+            page_number=0,
         )
     )
     column2 = Column(
@@ -173,6 +179,7 @@ def test_create_image():
             research_question=generate_research_question(
                 question="This is my first question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Adaptation.value
             ),
+            page_number=0,
         )
     )
     adaptation_near.questions.append(
@@ -183,6 +190,7 @@ def test_create_image():
             research_question=generate_research_question(
                 question="This is my second question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Adaptation.value
             ),
+            page_number=0,
         )
     )
     adaptation_near.questions.append(
@@ -195,6 +203,7 @@ def test_create_image():
                 time_frame=TimeFrame.NearFuture,
                 research_line=ResearchLine.Adaptation.value,
             ),
+            page_number=0,
         )
     )
     cluster.groups[1].append(adaptation_near)

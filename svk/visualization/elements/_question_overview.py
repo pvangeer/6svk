@@ -18,46 +18,56 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from pydantic import model_validator, Field
+from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
 
 from svk.data import ResearchQuestion
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
-from svk.visualization.elements._visual_element import VisualElement
+from svk.visualization.elements._elements_container import VisualElementsContainer
 from svk.visualization.helpers._measuretext import measure_text
 
 
-class QuestionOverviewElement(VisualElement):
+class QuestionOverviewElement(VisualElementsContainer):
     """
     Represents a question element (as part of  a group, column and the overview page)
     """
 
     research_question: ResearchQuestion
     """The research question"""
-    height: float = Field(default_factory=int)
+    page_number: int
+
+    _height: float = PrivateAttr()
 
     _lines: list[str] = []
 
-    def construct_lines(self):
-        self._lines = wrapped_lines(
-            self.research_question.question,
-            max_width=self.layout_configuration.column_width
-            - self.layout_configuration.arrow_depth
-            - 2 * self.layout_configuration.intermediate_margin
-            - 3 * self.layout_configuration.small_margin
-            - self._id_box_width
-            - self._priority_box_width,
-            font_size=self.layout_configuration.font_size,
-        )
-
     @model_validator(mode="after")
     def compute_height(self):
-        self.construct_lines()
-        self.height = self.layout_configuration.font_size * len(self._lines) * 1.2 + self.layout_configuration.small_margin * 2.0
+        self._construct_lines()
+        self._height = self.layout_configuration.font_size * len(self._lines) * 1.2 + self.layout_configuration.small_margin * 2.0
 
         return self
+
+    @property
+    def height(self) -> float:
+        return self._height
+
+    @property
+    def width(self) -> float:
+        return (
+            self.layout_configuration.overview_question_width
+            - 2 * self.layout_configuration.small_margin
+            - self._id_box_width
+            - self._priority_box_width
+        )
+
+    def _construct_lines(self):
+        self._lines = wrapped_lines(
+            self.research_question.question,
+            max_width=self.width,
+            font_size=self.layout_configuration.font_size,
+        )
 
     @property
     def _color(self):
@@ -83,11 +93,11 @@ class QuestionOverviewElement(VisualElement):
             + self.layout_configuration.small_margin
         )
 
-    def draw(self, dwg: Drawing, x: float, y: float, width: float):
+    def draw(self, dwg: Drawing, x: float, y: float):
         dwg.add(
             dwg.rect(
                 insert=(x, y),
-                size=(width, self.height),
+                size=(self.layout_configuration.overview_question_width, self.height),
                 stroke_width=0.5,
                 fill=self._color,
                 fill_opacity=0.3,
@@ -143,7 +153,7 @@ class QuestionOverviewElement(VisualElement):
         x_id_middle = x + self._priority_box_width + self._id_box_width / 2.0
         self.links_register.register_link(
             link_target=self.research_question.id,
-            page_number=0,
+            page_number=self.page_number,
             x=x_id_middle - text_w / 2.0,
             y=y + self.height / 2.0 - self.layout_configuration.font_size / 2,
             width=text_w,
@@ -167,7 +177,7 @@ class QuestionOverviewElement(VisualElement):
         self.draw_vertical_separator(dwg, x + self._priority_box_width + self._id_box_width, y, self.height, self._color)
 
         if len(self._lines) < 1:
-            self.construct_lines()
+            self._construct_lines()
 
         dwg.add(
             wrapped_text(

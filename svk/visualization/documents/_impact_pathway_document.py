@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from collections import defaultdict
 from typing import cast
-from svk.data import ImpactPathwayResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine, ImpactCategory
+from svk.data import ImpactPathwayResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine, ImpactCategory, Translator
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers._measuretext import measure_text
@@ -42,6 +42,7 @@ class ImpactPathwayDocument(Document):
         ("Esther van Baaren", "mailto:esther.vanbaaren@deltares.nl"),
         ("Bram van Prooijen", "mailto:b.c.vanprooijen@tudelft.nl"),
     ]
+    translator: Translator = Translator(lang="en")
 
     def create_pages(self) -> list[Page]:
         return [self._create_overview_page(page_number=0)] + self.create_detailes_pages(current_page_number=1)
@@ -52,7 +53,7 @@ class ImpactPathwayDocument(Document):
     ) -> TimeLineOverviewPage:
         self.layout_configuration.question_id_box_width = (
             max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in self.questions])
-            + self.layout_configuration.small_margin
+            + 2 * self.layout_configuration.small_margin
         )
 
         fig = TimeLineOverviewPage(
@@ -133,6 +134,7 @@ class ImpactPathwayDocument(Document):
                         links_register=self.links_register,
                         translator=self.translator,
                         research_question=question,
+                        page_number=0,
                     )
                 )
 
