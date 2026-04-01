@@ -38,6 +38,7 @@ class QuestionSummaryElement(VisualElementsContainer):
     research_question: ResearchQuestion
     """The research question"""
     page_number: int
+    show_priority: bool = True
 
     _height: float = PrivateAttr()
     _width: float = PrivateAttr()
@@ -63,6 +64,7 @@ class QuestionSummaryElement(VisualElementsContainer):
             links_register=self.links_register,
             priority=self.research_question.priority,
             translator=self.translator,
+            show=self.show_priority,
         )
         self._question_element = WrappedTextElement(
             layout_configuration=self.layout_configuration,

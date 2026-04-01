@@ -45,9 +45,11 @@ class ImpactPathwayDocument(Document):
     translator: Translator = Translator(lang="en")
 
     def create_pages(self) -> list[Page]:
-        return [self._create_overview_page(page_number=0)] + self.create_detailes_pages(current_page_number=1)
+        return [self._create_overview_page(page_number=0), self._create_impact_overview_page(page_number=1)] + self.create_detailes_pages(
+            current_page_number=2
+        )
 
-    def _create_overview_page(
+    def _create_impact_overview_page(
         self,
         page_number: int,
     ) -> TimeLineOverviewPage:
@@ -58,7 +60,7 @@ class ImpactPathwayDocument(Document):
 
         fig = TimeLineOverviewPage(
             page_number=page_number,
-            title="Impact pathway",
+            title="SSB-∆ Impact Pathway",
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
@@ -81,11 +83,13 @@ class ImpactPathwayDocument(Document):
             )
         )
 
-        self.add_clusters(fig=fig, questions=cast(list[ImpactPathwayResearchQuestion], self.questions))
+        self.add_clusters_per_impact_group(
+            fig=fig, questions=cast(list[ImpactPathwayResearchQuestion], self.questions), page_number=page_number
+        )
 
         return fig
 
-    def add_clusters(self, fig: TimeLineOverviewPage, questions: list[ImpactPathwayResearchQuestion]):
+    def add_clusters_per_impact_group(self, fig: TimeLineOverviewPage, questions: list[ImpactPathwayResearchQuestion], page_number: int):
         clusters: dict[int, Cluster] = {}
         time_frame_column_numbers: dict[TimeFrame, int] = {
             TimeFrame.NearFuture: 0,
@@ -134,7 +138,8 @@ class ImpactPathwayDocument(Document):
                         links_register=self.links_register,
                         translator=self.translator,
                         research_question=question,
-                        page_number=0,
+                        page_number=page_number,
+                        show_priority=False,
                     )
                 )
 
@@ -153,5 +158,85 @@ class ImpactPathwayDocument(Document):
                     text=category.description,
                 )
             )
+
+        fig.clusters = list(clusters.values())
+
+    def _create_overview_page(
+        self,
+        page_number: int,
+    ) -> TimeLineOverviewPage:
+        self.layout_configuration.question_id_box_width = (
+            max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in self.questions])
+            + 2 * self.layout_configuration.small_margin
+        )
+
+        fig = TimeLineOverviewPage(
+            page_number=page_number,
+            title="Research agenda SSB-∆",
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator,
+            icon=StormSurgeBarrier.All,
+            disclaimer=self.disclaimer,
+            disclaimer_links=self.disclaimer_links,
+        )
+
+        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=0)
+        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=1)
+        self.add_clusters_per_research_line(
+            fig=fig, questions=cast(list[ImpactPathwayResearchQuestion], self.questions), page_number=page_number
+        )
+        return fig
+
+    def add_clusters_per_research_line(self, fig: TimeLineOverviewPage, questions: list[ImpactPathwayResearchQuestion], page_number: int):
+        clusters: dict[int, Cluster] = {}
+        time_frame_column_numbers: dict[TimeFrame, int] = {
+            TimeFrame.NearFuture: 0,
+            TimeFrame.Future: 1,
+        }
+
+        grouped_quenstions_lists: defaultdict[tuple[TimeFrame, ResearchLine], list[ImpactPathwayResearchQuestion]] = defaultdict(
+            list[ImpactPathwayResearchQuestion]
+        )
+
+        for question in questions:
+            if question.research_line_primary is None or question.time_frame not in time_frame_column_numbers:
+                continue
+            grouped_quenstions_lists[(question.time_frame, question.research_line_primary)].append(question)
+
+        for questions_list_key in sorted(grouped_quenstions_lists, key=lambda kv: (kv[1].number, time_frame_column_numbers[kv[0]])):
+            current_time_frame = questions_list_key[0]
+            current_research_line = questions_list_key[1]
+
+            if current_research_line.cluster not in clusters:
+                clusters[current_research_line.cluster] = Cluster(
+                    layout_configuration=self.layout_configuration,
+                    links_register=self.links_register,
+                    translator=self.translator,
+                    color=current_research_line.base_color,
+                )
+
+            cluster = clusters[current_research_line.cluster]
+
+            new_group = Group(
+                layout_configuration=self.layout_configuration,
+                links_register=self.links_register,
+                translator=self.translator,
+                title=self.translator.get_label(current_research_line.title),
+                color=color_toward_grey(current_research_line.base_color, current_time_frame.grey_fraction),
+            )
+
+            cluster.groups[time_frame_column_numbers[current_time_frame]].append(new_group)
+            for question in sorted(grouped_quenstions_lists[questions_list_key], key=lambda q: q.priority, reverse=True):
+                new_group.questions.append(
+                    QuestionSummaryElement(
+                        layout_configuration=self.layout_configuration,
+                        links_register=self.links_register,
+                        translator=self.translator,
+                        research_question=question,
+                        page_number=page_number,
+                        show_priority=False,
+                    )
+                )
 
         fig.clusters = list(clusters.values())

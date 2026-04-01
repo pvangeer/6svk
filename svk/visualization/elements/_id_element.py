@@ -28,6 +28,7 @@ class IdElement(VisualElement):
     id: str
     is_link_target: bool = False
     is_link: bool = False
+    is_bottom_margin: bool = True
     page_number: int | None = None
 
     @property
@@ -36,7 +37,7 @@ class IdElement(VisualElement):
 
     @property
     def height(self) -> float:
-        return 2 * self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2
+        return (2 if not self.is_bottom_margin else 1) * self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2
 
     def draw(self, dwg: Drawing, x: float, y: float):
         y_top = y + self.layout_configuration.small_margin

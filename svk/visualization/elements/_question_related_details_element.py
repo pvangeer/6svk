@@ -24,6 +24,7 @@ from svk.data import ResearchQuestion, Label
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
+from svk.visualization.elements._id_element import IdElement
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 
 
@@ -34,19 +35,38 @@ class QuestionRelatedDetailsElement(VisualElementsContainer):
     page_number: int
     related_title: Label = Label.QD_Related
 
+    _related_elements: list[IdElement] = PrivateAttr()
+
     _height: float = PrivateAttr()
     _width: float = PrivateAttr()
 
     @model_validator(mode="after")
     def validate(self) -> QuestionRelatedDetailsElement:
+        self._related_elements = [
+            IdElement(
+                id=id,
+                is_link=True,
+                layout_configuration=self.layout_configuration,
+                links_register=self.links_register,
+                page_number=self.page_number,
+                translator=self.translator,
+                is_bottom_margin=False,
+            )
+            for id in self.research_question.reference_ids
+        ]
+        if len(self._related_elements) > 0:
+            self._related_elements[-1].is_bottom_margin = True
+
         w_related_title = (
             self.layout_configuration.small_margin
             + measure_text(self.translator.get_label(self.related_title), self.layout_configuration.font_size)[0]
             + self.layout_configuration.small_margin
         )
+
         # TODO: Move this to another part of the details?
         w_related_barrier_icons: float = 2 * self.layout_configuration.small_margin + self.layout_configuration.icon_width_small
-        w_related_questions: float = self.layout_configuration.question_id_box_width
+
+        w_related_questions: float = max([e.width for e in self._related_elements] + [self.layout_configuration.question_id_box_width])
 
         self._width = max(
             w_related_title,
@@ -56,11 +76,11 @@ class QuestionRelatedDetailsElement(VisualElementsContainer):
         self._height = (
             self.layout_configuration.small_margin
             + self.layout_configuration.font_size * 1.2
-            + 2 * self.layout_configuration.small_margin
+            + self.layout_configuration.small_margin
             + max(
-                len(self.research_question.reference_ids) * self.layout_configuration.font_size * 1.2
-                + self.layout_configuration.small_margin,
-                len(self.research_question.storm_surge_barriers)
+                sum([e.height for e in self._related_elements]),
+                self.layout_configuration.small_margin
+                + len(self.research_question.storm_surge_barriers)
                 * (self.layout_configuration.icon_width_small + self.layout_configuration.small_margin),
             )
         )
@@ -118,29 +138,14 @@ class QuestionRelatedDetailsElement(VisualElementsContainer):
             color=self.color,
         )
 
-        x_related += self.layout_configuration.small_margin
-        y_related_current = y_hline + self.layout_configuration.small_margin
-        for related in self.research_question.reference_ids:
-            dwg.add(
-                dwg.text(
-                    related,
-                    insert=(
-                        x_related,
-                        y_related_current,
-                    ),
-                    font_size=self.layout_configuration.font_size,
-                    font_family="Arial",
-                    font_weight="normal",
-                    text_anchor="start",
-                    dominant_baseline="text-before-edge",
-                )
+        y_related_current = y_hline
+        for related in self._related_elements:
+            self.draw_element(
+                dwg=dwg,
+                element=related,
+                x_container=x_related,
+                y_container=y_related_current,
+                width_container=related.width,
+                height_container=related.height,
             )
-            self.links_register.register_link(
-                link_target=related,
-                page_number=self.page_number,
-                x=x_related,
-                y=y_related_current,
-                width=measure_text(related, self.layout_configuration.font_size)[0],
-                height=self.layout_configuration.font_size,
-            )
-            y_related_current += self.layout_configuration.font_size * 1.2
+            y_related_current += related.height

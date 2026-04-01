@@ -28,6 +28,7 @@ from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
 class PriorityIconElement(VisualElement):
     priority: int
     """The research question"""
+    show: bool = True
 
     _height: float = PrivateAttr()
     _width: float = PrivateAttr()
@@ -47,6 +48,9 @@ class PriorityIconElement(VisualElement):
         return self
 
     def draw(self, dwg: Drawing, x: float, y: float):
+        if not self.show:
+            return
+
         y_middle = y + self.height / 2.0
         x_arrows_left = x + self.layout_configuration.small_margin
         match self.priority:
@@ -84,4 +88,3 @@ class PriorityIconElement(VisualElement):
                     y=y_middle + 5,
                     width=self.layout_configuration.priority_arrow_width,
                 )
-        pass
