@@ -29,7 +29,7 @@ from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPag
 from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group
 from svk.visualization.elements._cluster import Cluster
-from svk.visualization.elements._question_overview import QuestionOverviewElement
+from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.documents._document import Document
 from svk.visualization.pages._page import Page
 
@@ -119,7 +119,7 @@ class KnowledgeCalendarDocument(Document):
                 cluster.groups[column.number].append(new_group)
                 for question in sorted(now_questions_groups[research_line], key=lambda q: q.priority, reverse=True):
                     new_group.questions.append(
-                        QuestionOverviewElement(
+                        QuestionSummaryElement(
                             layout_configuration=self.layout_configuration,
                             links_register=self.links_register,
                             translator=self.translator,

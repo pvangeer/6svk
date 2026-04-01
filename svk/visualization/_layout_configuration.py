@@ -42,11 +42,11 @@ class LayoutConfiguration(BaseModel):
 
     n_columns: int = 3
     details_page_width: float = 1500.0
-    overview_question_width: float = 590.0
-    question_priority_box_width: float = 15.0
+    summary_question_lines_width: float = 535.0
+    priority_arrow_width: float = 15.0
     question_id_box_width: float = 40.0
     details_priority_explanation_width: float = 300
-    question_explanation_width: float = 600  # TODO: tweak. Also Check other widths
+    question_explanation_width: float = 600
     arrow_depth: float = 20
     icon_width_small: float = 24
 
@@ -59,4 +59,12 @@ class LayoutConfiguration(BaseModel):
 
     @property
     def column_width(self) -> float:
-        return self.overview_question_width + 2 * self.arrow_depth + 2 * self.intermediate_margin
+        # tODO: This is not ok. It requires knowleds of the width of a QuestionSummaryElement (and which aspects are included in that). Derive this from the data model (and don;t include it here).
+        return (
+            self.summary_question_lines_width
+            + self.question_id_box_width
+            + self.priority_arrow_width
+            + 2 * self.small_margin
+            + 2 * self.arrow_depth
+            + 2 * self.intermediate_margin
+        )

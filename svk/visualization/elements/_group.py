@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from svk.visualization.elements._question_overview import QuestionOverviewElement
+from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.helpers._draw_callout import draw_callout
 from svk.visualization.helpers._wrappedtext import wrapped_lines, wrapped_text
 from svk.visualization.elements._visual_element import VisualElement
@@ -48,7 +48,7 @@ class Group(GroupBase):
     color: str
     """The color of the group"""
 
-    questions: list[QuestionOverviewElement] = []
+    questions: list[QuestionSummaryElement] = []
     """The questions in this group"""
 
     @property
