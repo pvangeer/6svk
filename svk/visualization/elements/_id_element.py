@@ -21,11 +21,14 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from svgwrite import Drawing
 from svk.visualization.elements._visual_element import VisualElement
+from svk.visualization.helpers._wrappedtext import measure_text
 
 
 class IdElement(VisualElement):
     id: str
-    """The research question"""
+    is_link_target: bool = False
+    is_link: bool = False
+    page_number: int | None = None
 
     @property
     def width(self) -> float:
@@ -36,10 +39,11 @@ class IdElement(VisualElement):
         return 2 * self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2
 
     def draw(self, dwg: Drawing, x: float, y: float):
+        y_top = y + self.layout_configuration.small_margin
         dwg.add(
             dwg.text(
                 self.id,
-                insert=(x + self.width / 2.0, y + self.layout_configuration.small_margin),
+                insert=(x + self.width / 2.0, y_top),
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",
                 font_weight="normal",
@@ -47,4 +51,21 @@ class IdElement(VisualElement):
                 dominant_baseline="text-before-edge",
             )
         )
-        pass
+
+        if self.page_number is None:
+            return
+
+        if self.is_link:
+            text_w, _ = measure_text(text=self.id, font_size=self.layout_configuration.font_size)
+            x_text_start = x + self.width / 2.0 - text_w / 2.0
+            self.links_register.register_link(
+                link_target=self.id,
+                page_number=self.page_number,
+                x=x_text_start,
+                y=y_top,
+                width=text_w,
+                height=self.layout_configuration.font_size * 1.2,
+            )
+
+        if self.is_link_target:
+            self.links_register.register_link_target(link_target=self.id, page_number=self.page_number, x=x, y=y)

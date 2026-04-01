@@ -64,7 +64,7 @@ class QuestionDetailsElement(VisualElementsContainer):
         return self._width
 
     @model_validator(mode="after")
-    def compute_dimensions(self):
+    def validate(self):
         self._priority_icon_element = PriorityIconElement(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
@@ -106,6 +106,8 @@ class QuestionDetailsElement(VisualElementsContainer):
             links_register=self.links_register,
             translator=self.translator,
             id=self.research_question.id,
+            is_link_target=True,
+            page_number=self.page_number,
         )
 
         self._width = (
@@ -201,6 +203,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.MiddleCenter,
         )
         self.draw_vertical_separator(dwg, x + width_first_column, y, element_height=self._h_first_line, color=self._color)
+        # TODO: Use WrappedTextElement
         dwg.add(
             wrapped_text(
                 dwg,

@@ -32,7 +32,7 @@ from svk.visualization.helpers._measuretext import measure_text
 
 class QuestionSummaryElement(VisualElementsContainer):
     """
-    Represents a question element (as part of  a group, column and the overview page)
+    Represents a question element (as part of  a group, column on the overview page)
     """
 
     research_question: ResearchQuestion
@@ -55,6 +55,8 @@ class QuestionSummaryElement(VisualElementsContainer):
             links_register=self.links_register,
             id=self.research_question.id,
             translator=self.translator,
+            is_link=True,
+            page_number=self.page_number,
         )
         self._priority_icon_element = PriorityIconElement(
             layout_configuration=self.layout_configuration,
@@ -131,18 +133,6 @@ class QuestionSummaryElement(VisualElementsContainer):
         )
 
         x_current += self._id_element.width
-        # TODO: Move this to the id element? Both registering a link as well as a target?
-        text_w, _ = measure_text(text=self.research_question.id, font_size=self.layout_configuration.font_size)
-        x_id_middle = x_current - self._id_element.width / 2.0
-        self.links_register.register_link(
-            link_target=self.research_question.id,
-            page_number=self.page_number,
-            x=x_id_middle - text_w / 2.0,
-            y=y + self.height / 2.0 - self.layout_configuration.font_size / 2,
-            width=text_w,
-            height=self.layout_configuration.font_size,
-        )
-
         self.draw_vertical_separator(dwg, x_current, y, self.height, self._color)
 
         self.draw_element(
