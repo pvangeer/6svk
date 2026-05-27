@@ -37,7 +37,7 @@ class IdElement(VisualElement):
 
     @property
     def height(self) -> float:
-        return (2 if not self.is_bottom_margin else 1) * self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2
+        return (2 if self.is_bottom_margin else 1) * self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2
 
     def draw(self, dwg: Drawing, x: float, y: float):
         y_top = y + self.layout_configuration.small_margin
