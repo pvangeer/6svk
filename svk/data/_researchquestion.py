@@ -57,6 +57,7 @@ class ResearchQuestion(BaseModel):
 
     time_frame: TimeFrame
     """The time frame this question is associated with."""
+    # TODO: Time frame explanation
     lead_time: float | None = None
     """The amount of time needed to come to an answer to the question in years."""
 
@@ -64,6 +65,7 @@ class ResearchQuestion(BaseModel):
     """The primary research line this question is associated with."""
     research_line_secondary: ResearchLine | None = None
     """An optional secondary research line this question is associated with."""
+    # TODO: research line explanation
 
     action_holder: str | None = None
     """The organisation that is most likely to be responsible or leading in answering this research question."""

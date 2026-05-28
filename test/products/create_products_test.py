@@ -7,65 +7,118 @@ from svk.io import KnowledgeAgendaDatabase, ImpactPathwayDatabase
 from svk.visualization import KnowledgeCalendarDocument, ImpactPathwayDocument
 
 base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK"
+hv_dir = base_dir + "/03 HV/01 Uitwerking"
+mlk_dir = base_dir + "/05 MLK/01 Uitwerking"
+hk_dir = base_dir + "/06 HK/01 Uitwerking"
+rp_dir = base_dir + "/07 RP/01 Uitwerking"
+hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
+esb_dir = base_dir + "/04 OSK/01 Uitwerking"
+
+
+def read_hv_database() -> KnowledgeAgendaDatabase:
+    questions = KnowledgeAgendaDatabase(hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx")
+    questions.read()
+    return questions
+
+
+def read_mlk_database() -> KnowledgeAgendaDatabase:
+    questions = KnowledgeAgendaDatabase(mlk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK MLK.xlsx")
+    questions.read()
+    return questions
+
+
+def read_hk_database() -> KnowledgeAgendaDatabase:
+    questions = KnowledgeAgendaDatabase(hk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HK.xlsx")
+    questions.read()
+    return questions
+
+
+def read_rp_database() -> KnowledgeAgendaDatabase:
+    questions = KnowledgeAgendaDatabase(rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx")
+    questions.read()
+    return questions
+
+
+def read_hijk_database() -> KnowledgeAgendaDatabase:
+    questions = KnowledgeAgendaDatabase(hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx")
+    questions.read()
+    return questions
+
+
+def read_esb_database() -> KnowledgeAgendaDatabase:
+    questions = KnowledgeAgendaDatabase(esb_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK OSK.xlsx")
+    questions.read()
+    return questions
+
+
+def get_output_file(barrier: StormSurgeBarrier) -> str:
+    t = Translator(lang="nl")
+    return f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
 
 @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
-def test_create_hv_calendar():
-    hv_dir = base_dir + "/03 HV/01 Uitwerking"
-    database_path = hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
-    t = Translator(lang="nl")
-    output_dir = hv_dir
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.HaringvlietBarrier.title)}"
-
-    questions = KnowledgeAgendaDatabase(database_path)
-    questions.read()
+def test_create_hv():
     calendar = KnowledgeCalendarDocument(
-        output_dir=output_dir,
-        output_file=output_file,
-        questions=questions,
+        output_dir=hv_dir,
+        output_file=get_output_file(StormSurgeBarrier.HaringvlietBarrier),
+        questions=read_hv_database(),
         storm_surge_barrier=StormSurgeBarrier.HaringvlietBarrier,
     )
-
     calendar.build()
 
 
 @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_rp():
-    rp_dir = base_dir + "/07 RP/01 Uitwerking"
-    database_path = rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx"
-    t = Translator(lang="nl")
-    output_dir = rp_dir
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.Ramspol.title)}"
-
-    questions = KnowledgeAgendaDatabase(database_path)
-    questions.read()
     calendar = KnowledgeCalendarDocument(
-        output_dir=output_dir,
-        output_file=output_file,
-        questions=questions,
+        output_dir=rp_dir,
+        output_file=get_output_file(StormSurgeBarrier.Ramspol),
+        questions=read_rp_database(),
         storm_surge_barrier=StormSurgeBarrier.Ramspol,
     )
-
     calendar.build()
 
 
 @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_hijk():
-    hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
-    database_path = hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx"
-    t = Translator(lang="nl")
-    output_dir = hijk_dir
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.HollandseIJsselBarrier.title)}"
-
-    questions = KnowledgeAgendaDatabase(database_path)
-    questions.read()
     calendar = KnowledgeCalendarDocument(
-        output_dir=output_dir,
-        output_file=output_file,
-        questions=questions,
+        output_dir=hijk_dir,
+        output_file=get_output_file(StormSurgeBarrier.HollandseIJsselBarrier),
+        questions=read_hijk_database(),
         storm_surge_barrier=StormSurgeBarrier.HollandseIJsselBarrier,
     )
+    calendar.build()
 
+
+@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+def test_create_mlk():
+    calendar = KnowledgeCalendarDocument(
+        output_dir=mlk_dir,
+        output_file=get_output_file(StormSurgeBarrier.MaeslantBarrier),
+        questions=read_mlk_database(),
+        storm_surge_barrier=StormSurgeBarrier.MaeslantBarrier,
+    )
+    calendar.build()
+
+
+@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+def test_create_hk():
+    calendar = KnowledgeCalendarDocument(
+        output_dir=hk_dir,
+        output_file=get_output_file(StormSurgeBarrier.HartelBarrier),
+        questions=read_hk_database(),
+        storm_surge_barrier=StormSurgeBarrier.HartelBarrier,
+    )
+    calendar.build()
+
+
+@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+def test_create_6svk():
+    calendar = KnowledgeCalendarDocument(
+        output_dir=base_dir,
+        output_file=get_output_file(StormSurgeBarrier.All),
+        questions=read_hk_database() + read_hijk_database() + read_hv_database() + read_mlk_database() + read_rp_database(),
+        storm_surge_barrier=StormSurgeBarrier.All,
+    )
     calendar.build()
 
 
@@ -80,5 +133,7 @@ def test_create_impact_pathway():
     questions = [q for q in d if q.action_holder != "Not included"]
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Impact pathway SSB-delta"
 
-    pathway = ImpactPathwayDocument(questions=cast(list[ResearchQuestion], questions), output_dir=output_dir, output_file=output_file)
+    pathway = ImpactPathwayDocument(
+        questions=cast(list[ResearchQuestion], questions), output_dir=output_dir, output_file=output_file, cleanup=False
+    )
     pathway.build()

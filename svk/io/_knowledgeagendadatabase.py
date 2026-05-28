@@ -28,43 +28,47 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[ResearchQuestion]):
     """
 
     i_barrier = 0
-    """Hard coded column number for the barrier"""
+    """A - Hard coded column number for the barrier"""
     i_id = 1
-    """Hard coded column number for the question id"""
+    """B - Hard coded column number for the question id"""
     i_reference_ids = 2
-    """Hard coded column number for the references to other questions"""
+    """C - Hard coded column number for the references to other questions"""
     i_reference_question = 3
-    """Hard coded column number for the reference number to the 160 questions list"""
+    """D - Hard coded column number for the reference number to the 160 questions list"""
     i_keywords = 4
-    """Hard coded column number for the keywords"""
+    """E - Hard coded column number for the keywords"""
     i_question = 5
-    """Hard coded column number for the question"""
+    """F - Hard coded column number for the question"""
     i_explanation = 6
-    """Hard coded column number for the question explanation"""
+    """G - Hard coded column number for the question explanation"""
     i_prio_water_safety = 7
-    """Hard coded column number for the priority (water safety)"""
+    """H - Hard coded column number for the priority (water safety)"""
     i_prio_other_functions = 8
-    """Hard coded column number for the priority (other functions)"""
+    """I - Hard coded column number for the priority (other functions)"""
     i_prio_management_maintenance = 9
-    """Hard coded column number for the priority (management and maintenance)"""
+    """J - Hard coded column number for the priority (management and maintenance)"""
     i_prio_operation = 10
-    """Hard coded column number for the priority (operation)"""
-    i_time_frame = 11
-    """Hard coded column number for the time frame"""
-    i_primary_research_line = 12
-    """Hard coded column number for the primary research line"""
-    i_secundary_research_line = 13
-    """Hard coded column number for the secundary research line"""
-    i_research_line_explanation = 14
-    """Hard coded column number for the research line explanation"""
-    i_status = 15
-    """Hard coded column number for the status"""
-    i_action_holder = 16
-    """Hard coded column number for the action holder"""
-    i_costs = 17
-    """Hard coded column number for the costs"""
-    i_lead_time = 18
-    """Hard coded column number for the lead time"""
+    """K - Hard coded column number for the priority (operation)"""
+    i_prio_explanation = 11
+    """L - Hard coded column number for the priority explanation"""
+    i_time_frame = 12
+    """M - Hard coded column number for the time frame"""
+    i_primary_research_line = 13
+    """N - Hard coded column number for the primary research line"""
+    i_secundary_research_line = 14
+    """O - Hard coded column number for the secundary research line"""
+    i_time_frame_explanation = 15
+    """P - Hard coded column number for the time frame explanation"""
+    i_research_line_explanation = 16
+    """Q - Hard coded column number for the research line explanation"""
+    i_status = 17
+    """R - Hard coded column number for the status"""
+    i_action_holder = 18
+    """S - Hard coded column number for the action holder"""
+    i_costs = 19
+    """T - Hard coded column number for the costs"""
+    i_lead_time = 20
+    """U - Hard coded column number for the lead time"""
 
     def read_and_append_row(self, row):
         self.append(
@@ -80,6 +84,7 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[ResearchQuestion]):
                 prio_other_functions=ExcelDatabase._get_priority(row, self.i_prio_other_functions),
                 prio_operation=ExcelDatabase._get_priority(row, self.i_prio_operation),
                 prio_water_safety=ExcelDatabase._get_priority(row, self.i_prio_water_safety),
+                prio_explanation=ExcelDatabase._get_as_str(row, self.i_prio_explanation),
                 action_holder=ExcelDatabase._get_str_optional(row, self.i_action_holder),
                 lead_time=ExcelDatabase._get_int_optional(row, self.i_lead_time),
                 costs_estimate=ExcelDatabase._get_int_optional(row, self.i_costs),
