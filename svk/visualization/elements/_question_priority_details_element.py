@@ -36,7 +36,7 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
 
     _width: float = PrivateAttr()
     _height: float = PrivateAttr()
-    _lines: list[str] = PrivateAttr()
+    _lines_prio_explanation: list[str] = PrivateAttr()
     _w_priority_metrices_column: float = PrivateAttr()
 
     @property
@@ -67,9 +67,9 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
             + self.layout_configuration.small_margin
         )
 
-        self._lines = (
+        self._lines_prio_explanation = (
             wrapped_lines(
-                self.research_question.prio_explanation,
+                self.research_question.prio_explanation if self.research_question.prio_explanation is not None else "-",
                 self.layout_configuration.details_priority_explanation_width - self.layout_configuration.small_margin * 2,
             )
             if self.research_question.prio_explanation is not None
@@ -80,7 +80,7 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
             self.layout_configuration.small_margin
             + self.layout_configuration.font_size * 1.2
             + 2 * self.layout_configuration.small_margin
-            + len(self._lines) * self.layout_configuration.font_size * 1.2
+            + len(self._lines_prio_explanation) * self.layout_configuration.font_size * 1.2
             + self.layout_configuration.small_margin
         )
 
@@ -149,11 +149,11 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
             self.color,
         )
 
-        if self._lines:
+        if self._lines_prio_explanation:
             dwg.add(
                 wrapped_text(
                     dwg=dwg,
-                    lines=self._lines,
+                    lines=self._lines_prio_explanation,
                     insert=(
                         x + self._w_priority_metrices_column + self.layout_configuration.small_margin,
                         y_prios_start + self.layout_configuration.small_margin,

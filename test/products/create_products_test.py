@@ -51,12 +51,15 @@ def read_esb_database() -> KnowledgeAgendaDatabase:
     return questions
 
 
-def get_output_file(barrier: StormSurgeBarrier) -> str:
+def get_output_file(barrier: StormSurgeBarrier, add:str | None = None) -> str:
     t = Translator(lang="nl")
-    return f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
+    name = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
+    if add is not None and add != "":
+        name += f" - {add}"
+    return name
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_hv():
     calendar = KnowledgeCalendarDocument(
         output_dir=hv_dir,
@@ -67,7 +70,7 @@ def test_create_hv():
     calendar.build()
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_rp():
     calendar = KnowledgeCalendarDocument(
         output_dir=rp_dir,
@@ -78,7 +81,7 @@ def test_create_rp():
     calendar.build()
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_hijk():
     calendar = KnowledgeCalendarDocument(
         output_dir=hijk_dir,
@@ -89,7 +92,7 @@ def test_create_hijk():
     calendar.build()
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_mlk():
     calendar = KnowledgeCalendarDocument(
         output_dir=mlk_dir,
@@ -100,7 +103,7 @@ def test_create_mlk():
     calendar.build()
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_hk():
     calendar = KnowledgeCalendarDocument(
         output_dir=hk_dir,
@@ -111,16 +114,27 @@ def test_create_hk():
     calendar.build()
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_6svk():
+    all_questions = read_hk_database() + read_hijk_database() + read_hv_database() + read_mlk_database() + read_rp_database()
+    six_svk_questions = [q for q in all_questions if StormSurgeBarrier.All in q.storm_surge_barriers]
     calendar = KnowledgeCalendarDocument(
         output_dir=base_dir,
         output_file=get_output_file(StormSurgeBarrier.All),
-        questions=read_hk_database() + read_hijk_database() + read_hv_database() + read_mlk_database() + read_rp_database(),
+        questions=six_svk_questions,
         storm_surge_barrier=StormSurgeBarrier.All,
     )
     calendar.build()
 
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+def test_create_all():
+    calendar = KnowledgeCalendarDocument(
+        output_dir=base_dir,
+        output_file=get_output_file(StormSurgeBarrier.All, "alle vragen"),
+        questions=read_hk_database() + read_hijk_database() + read_hv_database() + read_mlk_database() + read_rp_database(),
+        storm_surge_barrier=StormSurgeBarrier.All,
+    )
+    calendar.build()
 
 @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_impact_pathway():

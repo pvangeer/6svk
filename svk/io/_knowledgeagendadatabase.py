@@ -84,7 +84,7 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[ResearchQuestion]):
                 prio_other_functions=ExcelDatabase._get_priority(row, self.i_prio_other_functions),
                 prio_operation=ExcelDatabase._get_priority(row, self.i_prio_operation),
                 prio_water_safety=ExcelDatabase._get_priority(row, self.i_prio_water_safety),
-                prio_explanation=ExcelDatabase._get_as_str(row, self.i_prio_explanation),
+                prio_explanation=ExcelDatabase._get_str_optional(row, self.i_prio_explanation),
                 action_holder=ExcelDatabase._get_str_optional(row, self.i_action_holder),
                 lead_time=ExcelDatabase._get_int_optional(row, self.i_lead_time),
                 costs_estimate=ExcelDatabase._get_int_optional(row, self.i_costs),

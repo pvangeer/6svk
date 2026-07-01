@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-import os
+import os, re
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
 from collections import defaultdict
@@ -152,7 +152,8 @@ class Document(BaseModel, ABC):
     def _convert_pages_to_pdf(self) -> list[str]:
         pages_file_paths: list[str] = []
         for page in sorted(self.pages, key=lambda p: p.page_number):
-            target_path = os.path.join(self.output_dir, self.output_file + "-" + page.title.translate(self._str_table) + ".pdf")
+            safe_title = re.sub(r'[\\/**?:"<>|/]', "_", page.title.translate(self._str_table))
+            target_path = os.path.join(self.output_dir, f"{self.output_file} - {safe_title}.pdf")
             svg_to_pdf_chrome(svg_dwg=page.draw(), pdf_path=target_path)
             pages_file_paths.append(target_path)
 
