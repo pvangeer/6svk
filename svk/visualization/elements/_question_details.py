@@ -22,7 +22,6 @@ from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svk.data import ResearchQuestion, Label
 from svgwrite import Drawing
-from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
@@ -32,7 +31,8 @@ from svk.visualization.elements._question_priority_details_element import Questi
 from svk.visualization.elements._priority_icon_element import PriorityIconElement
 from svk.visualization.elements._id_element import IdElement
 from svk.visualization.elements._question_related_details_element import QuestionRelatedDetailsElement
-from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
+from svk.visualization.elements._ssb_icons_element import SsbIconsElement
+
 
 
 class QuestionDetailsElement(VisualElementsContainer):
@@ -109,6 +109,12 @@ class QuestionDetailsElement(VisualElementsContainer):
             is_link_target=True,
             page_number=self.page_number,
         )
+        self._ssb_icons_element = SsbIconsElement(
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator,
+            storm_surge_barriers=self.research_question.storm_surge_barriers,
+        )
 
         self._width = (
             max([self._priority_icon_element.width, self._id_element.width])
@@ -120,20 +126,20 @@ class QuestionDetailsElement(VisualElementsContainer):
 
         self._question_lines = wrapped_lines(
             self.research_question.question,
-            self.width - self._id_element.width - 2 * self.layout_configuration.small_margin,
+            self.width - self._id_element.width - self._ssb_icons_element.width - 2 * self.layout_configuration.small_margin,
             self.layout_configuration.font_size,
         )
 
-        self._h_first_line = (
+        self._h_first_line = max([self._ssb_icons_element.height, (
             self.layout_configuration.small_margin
             + self.layout_configuration.font_size * len(self._question_lines) * 1.2
             + self.layout_configuration.small_margin
-        )
+        )])
 
         self._last_line_keywords = wrapped_lines(
             self.translator.get_label(Label.QD_Keywords)
             + ": "
-            + (self.research_question.keywords if self.research_question.keywords is not "" else ""),
+            + (self.research_question.keywords if self.research_question.keywords != "" else ""),
             self.layout_configuration.details_page_width
             - self.layout_configuration.paper_margin * 2.0
             - self.layout_configuration.small_margin * 2,
@@ -204,11 +210,13 @@ class QuestionDetailsElement(VisualElementsContainer):
         )
         self.draw_vertical_separator(dwg, x + width_first_column, y, element_height=self._h_first_line, color=self._color)
         # TODO: Use WrappedTextElement
+        block_height = len(self._question_lines) * self.layout_configuration.font_size * 1.2
+        y_top_question = y + self.layout_configuration.small_margin + (self._h_first_line - self.layout_configuration.small_margin * 2.0 - block_height)/2.0
         dwg.add(
             wrapped_text(
                 dwg,
                 self._question_lines,
-                insert=(x + width_first_column + self.layout_configuration.small_margin, y + self.layout_configuration.small_margin),
+                insert=(x + width_first_column + self.layout_configuration.small_margin, y_top_question),
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",
                 font_style="italic",
@@ -216,6 +224,16 @@ class QuestionDetailsElement(VisualElementsContainer):
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
             )
+        )
+        self.draw_vertical_separator(dwg, x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self._color)
+        self.draw_element(
+            dwg=dwg,
+            element=self._ssb_icons_element,
+            x_container=x + self.width - self._ssb_icons_element.width,
+            y_container=y,
+            width_container=self._ssb_icons_element.width,
+            height_container=self._h_first_line,
+            alignment=Alignment.MiddleCenter,
         )
 
     def draw_second_line(self, dwg: Drawing, x: float, y: float):

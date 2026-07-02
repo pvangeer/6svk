@@ -41,7 +41,7 @@ class StormSurgeBarrier(Enum):
     HartelBarrier = Label.SSB_HartelBarrier
     Ramspol = Label.SSB_Ramspol
     HollandseIJsselBarrier = Label.SSB_HollandseIJsselBarrier
-    EasternScheldBarrier = Label.SSB_EasternScheldBarrier
+    EasternScheldtBarrier = Label.SSB_EasternScheldBarrier
     HaringvlietBarrier = Label.SSB_HaringvlietBarrier
 
     def __init__(self, title: Label):

@@ -246,7 +246,7 @@ def draw_scaled_icon(
                 Path(d="M 8.2382951,105.06773 116.74205,104.72071", stroke_width=10),
                 Path(d="m 226.25716,166.70787 64.74651,0.1839", stroke_width=10),
             ]
-        case StormSurgeBarrier.EasternScheldBarrier:
+        case StormSurgeBarrier.EasternScheldtBarrier:
             ico.objects = [
                 Rect(
                     x=66.862007,

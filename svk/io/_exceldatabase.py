@@ -199,7 +199,7 @@ class ExcelDatabase(ABC):
                 case "6SVK" | "6SSB":
                     barriers.append(StormSurgeBarrier.All)
                 case "OSK" | "ESB":
-                    barriers.append(StormSurgeBarrier.EasternScheldBarrier)
+                    barriers.append(StormSurgeBarrier.EasternScheldtBarrier)
                 case "MLK" | "MLB":
                     barriers.append(StormSurgeBarrier.MaeslantBarrier)
                 case "HK":

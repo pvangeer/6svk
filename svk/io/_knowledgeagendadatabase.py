@@ -69,6 +69,12 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[ResearchQuestion]):
     """T - Hard coded column number for the costs"""
     i_lead_time = 20
     """U - Hard coded column number for the lead time"""
+    i_drivers = 21
+    """V - Hard coded column number for the related drivers"""
+    i_components = 22
+    """W - Hard coded column number for the related components"""
+    i_functions = 23
+    """X - Hard coded column number for the related functions"""
 
     def read_and_append_row(self, row):
         self.append(
@@ -99,5 +105,8 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[ResearchQuestion]):
                 ),
                 reference_question=ExcelDatabase._get_int_optional(row, self.i_reference_question),
                 keywords=ExcelDatabase._get_as_str(row=row, i_column=self.i_keywords),
+                related_drivers=ExcelDatabase._get_as_str(row=row, i_column=self.i_drivers),
+                related_components=ExcelDatabase._get_as_str(row=row, i_column=self.i_components),
+                related_functions=ExcelDatabase._get_as_str(row=row, i_column=self.i_functions),
             )
         )

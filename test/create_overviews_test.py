@@ -30,6 +30,7 @@ mlk_dir = base_dir + "/05 MLK/01 Uitwerking"
 hk_dir = base_dir + "/06 HK/01 Uitwerking"
 rp_dir = base_dir + "/07 RP/01 Uitwerking"
 hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
+esb_dir = base_dir + "/04 OSK/01 Uitwerking"
 
 
 def read_hv_database() -> KnowledgeAgendaDatabase:
@@ -61,6 +62,10 @@ def read_hijk_database() -> KnowledgeAgendaDatabase:
     questions.read()
     return questions
 
+def read_esb_database() -> KnowledgeAgendaDatabase:
+    questions = KnowledgeAgendaDatabase(esb_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK OSK.xlsx")
+    questions.read()
+    return questions
 
 def test_create_hv():
     barrier: StormSurgeBarrier = StormSurgeBarrier.HaringvlietBarrier
@@ -144,6 +149,22 @@ def test_create_hijk():
         output_file=output_file,
         questions=questions,
         storm_surge_barrier=StormSurgeBarrier.HollandseIJsselBarrier,
+    )
+
+    calendar.build()
+
+def test_create_esb():
+    questions = read_esb_database()
+
+    t = Translator(lang="nl")
+    output_dir = "C:/Test/"  # esb_dir
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.EasternScheldtBarrier.title)}"
+
+    calendar = KnowledgeCalendarDocument(
+        output_dir=output_dir,
+        output_file=output_file,
+        questions=questions,
+        storm_surge_barrier=StormSurgeBarrier.EasternScheldtBarrier,
     )
 
     calendar.build()

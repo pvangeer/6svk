@@ -18,8 +18,8 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+from __future__ import annotations
 from pydantic import BaseModel, model_validator
-
 from svk.data._timeframe import TimeFrame
 from svk.data._priority import Priority
 from svk.data._researchline import ResearchLine
@@ -72,14 +72,21 @@ class ResearchQuestion(BaseModel):
     costs_estimate: float | None = None
     """A first cost estimate for acquiring an answer to the research question."""
 
+    related_drivers: str | None = None
+    """The drivers related to this question."""
+    related_functions:str | None = None
+    """The functions related to this question."""
+    related_components:str | None = None
+    """The components related to this question."""
+
     keywords: str
 
     @model_validator(mode="after")
-    def check_research_line(cls, model):
-        if model.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and model.research_line_primary is None:
+    def check_research_line(self) -> ResearchQuestion:
+        if self.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and self.research_line_primary is None:
             raise ValueError("Research line can only be unknown in case the time frame is either not relevant or unknown.")
-        return model
-
+        return self
+    
     @property
     def priority(self) -> int:
         return (

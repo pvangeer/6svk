@@ -63,14 +63,11 @@ class QuestionRelatedDetailsElement(VisualElementsContainer):
             + self.layout_configuration.small_margin
         )
 
-        # TODO: Move this to another part of the details?
-        w_related_barrier_icons: float = 2 * self.layout_configuration.small_margin + self.layout_configuration.icon_width_small
-
         w_related_questions: float = max([e.width for e in self._related_elements] + [self.layout_configuration.question_id_box_width])
 
         self._width = max(
             w_related_title,
-            w_related_questions + w_related_barrier_icons,
+            w_related_questions,
         )
 
         self._height = (
@@ -95,13 +92,13 @@ class QuestionRelatedDetailsElement(VisualElementsContainer):
         return self._width
 
     def draw(self, dwg: Drawing, x: float, y: float):
-        x_related_start = x
+        x_related = x
 
         dwg.add(
             dwg.text(
                 self.translator.get_label(self.related_title),
                 insert=(
-                    x_related_start + self.layout_configuration.small_margin,
+                    x_related + self.layout_configuration.small_margin,
                     y + self.layout_configuration.small_margin,
                 ),
                 font_size=self.layout_configuration.font_size,
@@ -113,30 +110,7 @@ class QuestionRelatedDetailsElement(VisualElementsContainer):
         )
 
         y_hline = y + self.layout_configuration.font_size * 1.2 + 2 * self.layout_configuration.small_margin
-        self.draw_horizontal_separator(dwg=dwg, x=x_related_start, y=y_hline, element_width=self.width, color=self.color)
-
-        x_icons = x_related_start + self.layout_configuration.small_margin
-        y_icon_current = y_hline + self.layout_configuration.small_margin
-        for barrier in self.research_question.storm_surge_barriers:
-            draw_scaled_icon(
-                dwg=dwg,
-                storm_surge_barrier=barrier,
-                insert=(
-                    x_icons,
-                    y_icon_current,
-                ),
-                size=(self.layout_configuration.icon_width_small, self.layout_configuration.icon_width_small),
-            )
-            y_icon_current += self.layout_configuration.icon_width_small + self.layout_configuration.small_margin
-
-        x_related = x_related_start + 2 * self.layout_configuration.small_margin + self.layout_configuration.icon_width_small
-        self.draw_vertical_separator(
-            dwg=dwg,
-            x=x_related,
-            y=y_hline,
-            element_height=self.height - (self.layout_configuration.font_size * 1.2 + 2 * self.layout_configuration.small_margin),
-            color=self.color,
-        )
+        self.draw_horizontal_separator(dwg=dwg, x=x_related, y=y_hline, element_width=self.width, color=self.color)
 
         y_related_current = y_hline
         for related in self._related_elements:
