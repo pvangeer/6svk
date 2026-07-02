@@ -2,7 +2,7 @@ import pytest
 from typing import cast
 from datetime import datetime
 
-from svk.data import StormSurgeBarrier, Translator, ResearchQuestion
+from svk.data import StormSurgeBarrier, Translator, ResearchQuestion, ImpactPathwayResearchQuestion
 from svk.io import KnowledgeAgendaDatabase, ImpactPathwayDatabase
 from svk.visualization import KnowledgeCalendarDocument, ImpactPathwayDocument
 
@@ -13,7 +13,7 @@ hk_dir = base_dir + "/06 HK/01 Uitwerking"
 rp_dir = base_dir + "/07 RP/01 Uitwerking"
 hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
 esb_dir = base_dir + "/04 OSK/01 Uitwerking"
-
+ssb_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/11212142 - NWO SSB Delta/General/C. Report - advise/Impact pathway and research agenda"
 
 def read_hv_database() -> KnowledgeAgendaDatabase:
     questions = KnowledgeAgendaDatabase(hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx")
@@ -50,6 +50,10 @@ def read_esb_database() -> KnowledgeAgendaDatabase:
     questions.read()
     return questions
 
+def read_ssb_pathway_database() -> list[ImpactPathwayResearchQuestion]:
+    d = ImpactPathwayDatabase(ssb_dir + "/SSB-delta_impact-pathway-database.xlsx")
+    d.read()
+    return [q for q in d if q.action_holder != "Not included"]
 
 def get_output_file(barrier: StormSurgeBarrier, add:str | None = None) -> str:
     t = Translator(lang="nl")
@@ -59,7 +63,7 @@ def get_output_file(barrier: StormSurgeBarrier, add:str | None = None) -> str:
     return name
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_hv():
     calendar = KnowledgeCalendarDocument(
         output_dir=hv_dir,
@@ -70,7 +74,7 @@ def test_create_hv():
     calendar.build()
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_rp():
     calendar = KnowledgeCalendarDocument(
         output_dir=rp_dir,
@@ -81,7 +85,7 @@ def test_create_rp():
     calendar.build()
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_hijk():
     calendar = KnowledgeCalendarDocument(
         output_dir=hijk_dir,
@@ -92,7 +96,7 @@ def test_create_hijk():
     calendar.build()
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_mlk():
     calendar = KnowledgeCalendarDocument(
         output_dir=mlk_dir,
@@ -103,7 +107,7 @@ def test_create_mlk():
     calendar.build()
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_hk():
     calendar = KnowledgeCalendarDocument(
         output_dir=hk_dir,
@@ -116,16 +120,16 @@ def test_create_hk():
 @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_osk():
     calendar = KnowledgeCalendarDocument(
-        output_dir=hk_dir,
+        output_dir=esb_dir,
         output_file=get_output_file(StormSurgeBarrier.EasternScheldtBarrier),
         questions=read_esb_database(),
         storm_surge_barrier=StormSurgeBarrier.EasternScheldtBarrier,
     )
     calendar.build()
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_6svk():
-    all_questions = read_hk_database() + read_hijk_database() + read_hv_database() + read_mlk_database() + read_rp_database()
+    all_questions = read_hk_database() + read_hijk_database() + read_hv_database() + read_mlk_database() + read_rp_database() + read_ssb_pathway_database()
     six_svk_questions = [q for q in all_questions if StormSurgeBarrier.All in q.storm_surge_barriers]
     calendar = KnowledgeCalendarDocument(
         output_dir=base_dir,
@@ -135,28 +139,22 @@ def test_create_6svk():
     )
     calendar.build()
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_all():
     calendar = KnowledgeCalendarDocument(
         output_dir=base_dir,
         output_file=get_output_file(StormSurgeBarrier.All, "alle vragen"),
-        questions=read_hk_database() + read_hijk_database() + read_hv_database() + read_mlk_database() + read_rp_database(),
+        questions=read_hk_database() + read_hijk_database() + read_hv_database() + read_mlk_database() + read_rp_database() + read_ssb_pathway_database(),
         storm_surge_barrier=StormSurgeBarrier.All,
     )
     calendar.build()
 
 @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_impact_pathway():
-    impact_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/11212142 - NWO SSB Delta/General/C. Report - advise/Impact pathway"
-    database_path = impact_dir + "/SSB-delta_impact-pathway-database.xlsx"
-    output_dir = impact_dir
-
-    d = ImpactPathwayDatabase(database_path)
-    d.read()
-    questions = [q for q in d if q.action_holder != "Not included"]
+    questions = read_ssb_pathway_database()
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Impact pathway SSB-delta"
 
     pathway = ImpactPathwayDocument(
-        questions=cast(list[ResearchQuestion], questions), output_dir=output_dir, output_file=output_file, cleanup=False
+        questions=cast(list[ResearchQuestion], questions), output_dir=ssb_dir, output_file=output_file, cleanup=False
     )
     pathway.build()

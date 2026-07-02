@@ -50,7 +50,6 @@ class QuestionDetailsElement(VisualElementsContainer):
     _related_element: QuestionRelatedDetailsElement = PrivateAttr()
     _id_element: IdElement = PrivateAttr()
 
-    _question_lines: list[str] = PrivateAttr()
     _h_first_line: float = PrivateAttr()
     _last_line_keywords: list[str] = PrivateAttr()
     _h_last_line: float = PrivateAttr()
@@ -124,17 +123,15 @@ class QuestionDetailsElement(VisualElementsContainer):
             + self._related_element.width
         )
 
-        self._question_lines = wrapped_lines(
-            self.research_question.question,
-            self.width - self._id_element.width - self._ssb_icons_element.width - 2 * self.layout_configuration.small_margin,
-            self.layout_configuration.font_size,
+        self._question_wrapped_text_element = WrappedTextElement(
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator,
+            text=self.research_question.question,
+            max_width=self.width - self._id_element.width - self._ssb_icons_element.width - 2 * self.layout_configuration.small_margin,
         )
-
-        self._h_first_line = max([self._ssb_icons_element.height, (
-            self.layout_configuration.small_margin
-            + self.layout_configuration.font_size * len(self._question_lines) * 1.2
-            + self.layout_configuration.small_margin
-        )])
+        
+        self._h_first_line = max([self._ssb_icons_element.height, self._question_wrapped_text_element.height])
 
         self._last_line_keywords = wrapped_lines(
             self.translator.get_label(Label.QD_Keywords)
@@ -209,21 +206,15 @@ class QuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.MiddleCenter,
         )
         self.draw_vertical_separator(dwg, x + width_first_column, y, element_height=self._h_first_line, color=self._color)
-        # TODO: Use WrappedTextElement
-        block_height = len(self._question_lines) * self.layout_configuration.font_size * 1.2
-        y_top_question = y + self.layout_configuration.small_margin + (self._h_first_line - self.layout_configuration.small_margin * 2.0 - block_height)/2.0
-        dwg.add(
-            wrapped_text(
-                dwg,
-                self._question_lines,
-                insert=(x + width_first_column + self.layout_configuration.small_margin, y_top_question),
-                font_size=self.layout_configuration.font_size,
-                font_family="Arial",
-                font_style="italic",
-                font_weight="normal",
-                text_anchor="start",
-                dominant_baseline="text-before-edge",
-            )
+
+        self.draw_element(
+            dwg=dwg,
+            element=self._question_wrapped_text_element,
+            x_container=x + width_first_column,
+            y_container=y,
+            width_container=self._question_wrapped_text_element.width,
+            height_container=self._h_first_line,
+            alignment=Alignment.MiddleLeft,
         )
         self.draw_vertical_separator(dwg, x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self._color)
         self.draw_element(
