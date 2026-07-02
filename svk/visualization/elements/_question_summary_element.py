@@ -144,5 +144,5 @@ class QuestionSummaryElement(VisualElementsContainer):
             y_container=y,
             width_container=self._id_element.width,
             height_container=self.height,
-            alignment=Alignment.TopLeft,
+            alignment=Alignment.MiddleLeft,
         )
