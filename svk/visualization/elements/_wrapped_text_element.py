@@ -28,7 +28,7 @@ class WrappedTextElement(VisualElement):
         return self._width
 
     def draw(self, dwg: Drawing, x: float, y: float) -> None:
-        dwg.add(
+        dwg.add(    
             wrapped_text(
                 dwg,
                 lines=self._lines,

@@ -104,9 +104,9 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[ResearchQuestion]):
                     else []
                 ),
                 reference_question=ExcelDatabase._get_int_optional(row, self.i_reference_question),
-                keywords=ExcelDatabase._get_as_str(row=row, i_column=self.i_keywords),
-                related_drivers=ExcelDatabase._get_as_str(row=row, i_column=self.i_drivers),
-                related_components=ExcelDatabase._get_as_str(row=row, i_column=self.i_components),
-                related_functions=ExcelDatabase._get_as_str(row=row, i_column=self.i_functions),
+                keywords=ExcelDatabase._get_str_optional(row=row, i_column=self.i_keywords),
+                related_drivers=ExcelDatabase._get_str_optional(row=row, i_column=self.i_drivers),
+                related_components=ExcelDatabase._get_str_optional(row=row, i_column=self.i_components),
+                related_functions=ExcelDatabase._get_str_optional(row=row, i_column=self.i_functions),
             )
         )

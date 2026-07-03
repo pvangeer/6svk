@@ -37,6 +37,9 @@ class Label(Enum):
     SSB_HaringvlietBarrier = ("Haringvlietsluizen", "Haringvliet Sluices")
 
     QD_Related = ("Gerelateerd", "Related")
+    QD_Drivers = ("Drivers", "Drivers")
+    QD_Components = ("Componenten", "Components")
+    QD_Functions = ("Functies", "Functions")
     QD_Priority = ("Prioriteit", "Priority")
     QD_Organizational = ("Organisatorisch", "Organizational")
     QD_WaterSafety = ("Waterveiligheid", "Water safety")
@@ -48,6 +51,7 @@ class Label(Enum):
     QD_ActionHolder = ("Belegd bij", "Action holder")
     QD_Status = ("Status", "Status")
     QD_Keywords = ("Trefwoorden", "Keywords")
+    QD_Related_Questions = ("Gerelateerde vragen", "Related questions")
 
     def __init__(self, nl_label: str, en_label: str):
         self.nl = nl_label

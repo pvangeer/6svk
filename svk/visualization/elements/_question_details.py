@@ -22,6 +22,7 @@ from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svk.data import ResearchQuestion, Label
 from svgwrite import Drawing
+from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
@@ -30,7 +31,7 @@ from svk.visualization.elements._question_organisation_details_element import Qu
 from svk.visualization.elements._question_priority_details_element import QuestionPriorityDetailsElement
 from svk.visualization.elements._priority_icon_element import PriorityIconElement
 from svk.visualization.elements._id_element import IdElement
-from svk.visualization.elements._question_related_details_element import QuestionRelatedDetailsElement
+from svk.visualization.elements._question_analysis_details_element import QuestionAnalysisDetailsElement
 from svk.visualization.elements._ssb_icons_element import SsbIconsElement
 
 
@@ -47,7 +48,7 @@ class QuestionDetailsElement(VisualElementsContainer):
     _question_explanation_element: WrappedTextElement = PrivateAttr()
     _priority_details_element: QuestionPriorityDetailsElement = PrivateAttr()
     _organisation_details_element: QuestionOrganisationDetailsElement = PrivateAttr()
-    _related_element: QuestionRelatedDetailsElement = PrivateAttr()
+    _related_element: QuestionAnalysisDetailsElement = PrivateAttr()
     _id_element: IdElement = PrivateAttr()
 
     _h_first_line: float = PrivateAttr()
@@ -92,7 +93,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             color=self._color,
             page_number=self.page_number,
         )
-        self._related_element = QuestionRelatedDetailsElement(
+        self._related_element = QuestionAnalysisDetailsElement(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
@@ -131,18 +132,33 @@ class QuestionDetailsElement(VisualElementsContainer):
             max_width=self.width - self._id_element.width - self._ssb_icons_element.width - 2 * self.layout_configuration.small_margin,
         )
         
+        self._related_elements = [
+            IdElement(
+                id=id,
+                is_link=True,
+                layout_configuration=self.layout_configuration,
+                links_register=self.links_register,
+                page_number=self.page_number,
+                translator=self.translator,
+                is_bottom_margin=True,
+            )
+            for id in self.research_question.reference_ids
+        ]
+
         self._h_first_line = max([self._ssb_icons_element.height, self._question_wrapped_text_element.height])
 
         self._last_line_keywords = wrapped_lines(
             self.translator.get_label(Label.QD_Keywords)
             + ": "
-            + (self.research_question.keywords if self.research_question.keywords != "" else ""),
+            + (self.research_question.keywords if self.research_question.keywords is not None else ""),
             self.layout_configuration.details_page_width
             - self.layout_configuration.paper_margin * 2.0
             - self.layout_configuration.small_margin * 2,
         )
         self._h_last_line = (
             self.layout_configuration.small_margin
+            + self.layout_configuration.font_size * 1.2
+            + self.layout_configuration.small_margin
             + len(self._last_line_keywords) * 1.2 * self.layout_configuration.font_size
             + self.layout_configuration.small_margin
         )
@@ -289,13 +305,35 @@ class QuestionDetailsElement(VisualElementsContainer):
         )
 
     def draw_last_lines(self, dwg: Drawing, x: float, y: float):
+        label = self.translator.get_label(Label.QD_Related_Questions) + ":"
+        dwg.add(dwg.text(
+            label,insert=(x + self.layout_configuration.small_margin, y + self.layout_configuration.small_margin),
+            font_size=self.layout_configuration.font_size,
+            font_family="Arial",
+            font_weight="normal",
+            text_anchor="start",
+            dominant_baseline="text-before-edge",
+        ))
+        x_current = x + self.layout_configuration.small_margin + measure_text(label, self.layout_configuration.font_size)[0]
+        for related in self._related_elements:
+            self.draw_element(
+                dwg=dwg,
+                element=related,
+                x_container=x_current,
+                y_container=y,
+                width_container=related.width,
+                height_container=related.height,
+            )
+            x_current += related.width
+
+        y_keywords = y + 2 * self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2
         dwg.add(
             wrapped_text(
-                dwg,
-                self._last_line_keywords,
+                dwg=dwg,
+                lines=self._last_line_keywords,
                 insert=(
                     x + self.layout_configuration.small_margin,
-                    y + self.layout_configuration.small_margin,
+                    y_keywords,
                 ),
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",

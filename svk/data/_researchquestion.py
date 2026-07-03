@@ -79,7 +79,7 @@ class ResearchQuestion(BaseModel):
     related_components:str | None = None
     """The components related to this question."""
 
-    keywords: str
+    keywords: str | None
 
     @model_validator(mode="after")
     def check_research_line(self) -> ResearchQuestion:

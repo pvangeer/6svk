@@ -22,6 +22,8 @@ from pydantic import BaseModel
 
 
 class LayoutConfiguration(BaseModel):
+    bullet_character: str = "\u25E6"
+    
     # Margins
     paper_margin: float = 20.0
     large_margin: float = 20.0
@@ -47,6 +49,7 @@ class LayoutConfiguration(BaseModel):
     question_id_box_width: float = 40.0
     details_priority_explanation_width: float = 300
     question_explanation_width: float = 600
+    analysis_details_width: float = 300
     arrow_depth: float = 20
     icon_width_small: float = 24
 
