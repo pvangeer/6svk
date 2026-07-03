@@ -6,7 +6,6 @@ from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 class WrappedBulletListElement(VisualElement):
     max_width: float
     bullet_list: list[str]
-    indent: float = 20.0
 
     _height: float = PrivateAttr()
     _width: float = PrivateAttr()
@@ -16,7 +15,7 @@ class WrappedBulletListElement(VisualElement):
         self._width = self.max_width
         self._height = self.layout_configuration.small_margin
         for bullet in self.bullet_list:
-            lines = wrapped_lines(bullet, max_width=self.max_width - self.indent, font_size=self.layout_configuration.font_size)
+            lines = wrapped_lines(bullet, max_width=self.max_width - self.layout_configuration.bullet_list_indent, font_size=self.layout_configuration.font_size)
             self._height += len(lines) * self.layout_configuration.font_size * 1.2
         self._height += self.layout_configuration.small_margin
         return self
@@ -60,13 +59,13 @@ class WrappedBulletListElement(VisualElement):
                 )
             )
             
-            lines = wrapped_lines(bullet, max_width=self.max_width - self.indent, font_size=self.layout_configuration.font_size)
+            lines = wrapped_lines(bullet, max_width=self.max_width - self.layout_configuration.bullet_list_indent, font_size=self.layout_configuration.font_size)
             dwg.add(
                 wrapped_text(
                     dwg,
                     lines=lines,
                     insert=(
-                        x + self.indent + self.layout_configuration.small_margin,
+                        x + self.layout_configuration.bullet_list_indent + self.layout_configuration.small_margin,
                         y_current,
                     ),
                     text_anchor="start",

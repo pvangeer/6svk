@@ -22,6 +22,7 @@ from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
 from svk.data import ResearchQuestion, Label, ResearchLine
+from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 
@@ -31,10 +32,10 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
     """The research question"""
     color: str
     page_number: int
-    organizational_title: Label = Label.QD_Organizational
 
     _width: float = PrivateAttr()
     _height: float = PrivateAttr()
+    _title_element: TitleElement = PrivateAttr()
 
     @property
     def width(self) -> float:
@@ -46,6 +47,13 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self) -> QuestionOrganisationDetailsElement:
+        self._title_element = TitleElement(
+            title=Label.QD_Organizational,
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator
+        )
+        
         fixed_fields: list[tuple[Label, float]] = [
             (Label.QD_ResearchLineOne, self._get_max_research_line_title_length()),
             (Label.QD_ResearchLineTwo, self._get_max_research_line_title_length()),
@@ -61,51 +69,35 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
                 )
             ),
         ]
-        self._width = (
+        self._width = max([
+            self._title_element.width,
+            (
             self.layout_configuration.small_margin
-            + max(
-                [
-                    measure_text(
-                        (self.translator.get_label(l[0]) + ": "),
-                        self.layout_configuration.font_size,
+            + max([
+                measure_text(
+                    (self.translator.get_label(l[0]) + ": "),
+                    self.layout_configuration.font_size,
                     )[0]
-                    + l[1]
-                    for l in fixed_fields
-                ]
-            )
+                + l[1]
+                for l in fixed_fields
+                ])
             + self.layout_configuration.small_margin
-        )
+            )])
         self._height = (
-            self.layout_configuration.small_margin
-            + self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.small_margin * 2
-            + self.layout_configuration.font_size * 1.2 * 4
+            self._title_element.height
+            + self.layout_configuration.small_margin
+            + self.layout_configuration.font_size * 1.2 * len(fixed_fields)
             + self.layout_configuration.small_margin
         )
         return self
 
     def draw(self, dwg: Drawing, x: float, y: float):
-        x_organisational = x
-        dwg.add(
-            dwg.text(
-                self.translator.get_label(self.organizational_title),
-                insert=(
-                    x_organisational + self.layout_configuration.small_margin,
-                    y + self.layout_configuration.small_margin,
-                ),
-                font_size=self.layout_configuration.font_size,
-                font_family="Arial",
-                font_weight="normal",
-                text_anchor="start",
-                dominant_baseline="text-before-edge",
-            )
-        )
-
-        y_org_start = y + self.layout_configuration.font_size * 1.2 + 3 * self.layout_configuration.small_margin
-
-        self.draw_horizontal_separator(dwg, x_organisational, y_org_start - self.layout_configuration.small_margin, self.width, self.color)
-
-        y_current = y_org_start
+        self._title_element.draw(dwg, x, y)
+        
+        y += self._title_element.height
+        self.draw_horizontal_separator(dwg, x, y, self.width, self.color)
+        
+        y_current = y + self.layout_configuration.small_margin
         # status = self.research_question.status if self.research_question.status is not None else ""
         # TODO: Read status from database
         status = ""
@@ -113,7 +105,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
             dwg.text(
                 self.translator.get_label(Label.QD_Status) + ": " + status,
                 insert=(
-                    x_organisational + self.layout_configuration.small_margin,
+                    x + self.layout_configuration.small_margin,
                     y_current,
                 ),
                 font_size=self.layout_configuration.font_size,
@@ -130,7 +122,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
             dwg.text(
                 self.translator.get_label(Label.QD_ActionHolder) + ": " + action_holder,
                 insert=(
-                    x_organisational + self.layout_configuration.small_margin,
+                    x + self.layout_configuration.small_margin,
                     y_current,
                 ),
                 font_size=self.layout_configuration.font_size,
@@ -145,7 +137,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
         self._draw_research_line_link(
             dwg=dwg,
             page_number=self.page_number,
-            x_start=x_organisational + self.layout_configuration.small_margin,
+            x_start=x + self.layout_configuration.small_margin,
             y_start=y_current,
             research_line=self.research_question.research_line_primary,
             label=Label.QD_ResearchLineOne,
@@ -155,7 +147,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
         self._draw_research_line_link(
             dwg=dwg,
             page_number=self.page_number,
-            x_start=x_organisational + self.layout_configuration.small_margin,
+            x_start=x + self.layout_configuration.small_margin,
             y_start=y_current,
             research_line=self.research_question.research_line_secondary,
             label=Label.QD_ResearchLineTwo,

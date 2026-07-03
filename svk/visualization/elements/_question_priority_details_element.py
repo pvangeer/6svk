@@ -22,6 +22,7 @@ from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svk.data import ResearchQuestion, Priority, Label
 from svgwrite import Drawing
+from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
@@ -32,12 +33,12 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
     """The research question"""
     color: str
     dotradius: float = 5
-    priority_title: Label = Label.QD_Priority
 
     _width: float = PrivateAttr()
     _height: float = PrivateAttr()
     _lines_prio_explanation: list[str] = PrivateAttr()
     _w_priority_metrices_column: float = PrivateAttr()
+    _title_element: TitleElement = PrivateAttr()
 
     @property
     def height(self) -> float:
@@ -49,6 +50,12 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self) -> QuestionPriorityDetailsElement:
+        self._title_element = TitleElement(
+            title=Label.QD_Priority,
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator
+        )
         prio_labels = [Label.QD_WaterSafety, Label.QD_OtherFunctions, Label.QD_Operation, Label.QD_Maitenance]
         self._w_priority_metrices_column = (
             self.layout_configuration.small_margin
@@ -57,12 +64,14 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
             + self.dotradius * 7
             + self.layout_configuration.small_margin
         )
-        self._width = self.layout_configuration.details_priority_explanation_width + self._w_priority_metrices_column
+        self._width = max([
+            self._title_element.width,
+            self.layout_configuration.details_priority_explanation_width + self._w_priority_metrices_column
+            ])
 
         h_priority_column_fixed_items = (
-            self.layout_configuration.small_margin
-            + self.layout_configuration.font_size * 1.2
-            + 2 * self.layout_configuration.small_margin
+            self._title_element.height
+            + self.layout_configuration.small_margin
             + len(prio_labels) * self.layout_configuration.font_size * 1.2
             + self.layout_configuration.small_margin
         )
@@ -77,9 +86,8 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
         )
 
         h_priority_column_explained_lines = (
-            self.layout_configuration.small_margin
-            + self.layout_configuration.font_size * 1.2
-            + 2 * self.layout_configuration.small_margin
+            self._title_element.height
+            + self.layout_configuration.small_margin
             + len(self._lines_prio_explanation) * self.layout_configuration.font_size * 1.2
             + self.layout_configuration.small_margin
         )
@@ -88,22 +96,8 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
         return self
 
     def draw(self, dwg: Drawing, x: float, y: float):
-        dwg.add(
-            dwg.text(
-                self.translator.get_label(self.priority_title),
-                insert=(
-                    x + self.layout_configuration.small_margin,
-                    y + self.layout_configuration.small_margin,
-                ),
-                font_size=self.layout_configuration.font_size,
-                font_family="Arial",
-                font_weight="normal",
-                text_anchor="start",
-                dominant_baseline="text-before-edge",
-            )
-        )
-
-        y_prios_start = y + self.layout_configuration.font_size * 1.2 + 2 * self.layout_configuration.small_margin
+        self._title_element.draw(dwg, x, y)
+        y_prios_start = y + self._title_element.height
         self.draw_horizontal_separator(
             dwg,
             x,

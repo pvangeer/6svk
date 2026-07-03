@@ -23,7 +23,8 @@ from pydantic import BaseModel
 
 class LayoutConfiguration(BaseModel):
     bullet_character: str = "\u25E6"
-    
+    bullet_list_indent: float = 12.0
+
     # Margins
     paper_margin: float = 20.0
     large_margin: float = 20.0

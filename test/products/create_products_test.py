@@ -149,12 +149,15 @@ def test_create_all():
     )
     calendar.build()
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+#@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_impact_pathway():
     questions = read_ssb_pathway_database()
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Impact pathway SSB-delta"
 
     pathway = ImpactPathwayDocument(
-        questions=cast(list[ResearchQuestion], questions), output_dir=ssb_dir, output_file=output_file, cleanup=False
+        questions=cast(list[ResearchQuestion], questions), 
+        output_dir=ssb_dir, 
+        output_file=output_file, 
+        cleanup=False
     )
     pathway.build()

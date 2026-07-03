@@ -22,6 +22,7 @@ from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svk.data import ResearchQuestion, Label
 from svgwrite import Drawing
+from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_lines, wrapped_text
 from svk.visualization.elements._wrapped_bullet_list import WrappedBulletListElement
@@ -33,14 +34,13 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
     """The research question"""
     color: str
     page_number: int
-    drivers_title: Label = Label.QD_Drivers
-    functions_title: Label = Label.QD_Functions
-    components_title: Label = Label.QD_Components
     
-    # TODO: Implement
     _driver_lines: list[str] = PrivateAttr()
     _function_lines: list[str] = PrivateAttr()
     _component_lines: list[str] = PrivateAttr()
+    _driver_title_element: TitleElement = PrivateAttr()
+    _function_title_element: TitleElement = PrivateAttr()
+    _component_title_element: TitleElement = PrivateAttr()
     _driver_element: WrappedBulletListElement = PrivateAttr()
     _function_element: WrappedBulletListElement = PrivateAttr()
     _component_element: WrappedBulletListElement = PrivateAttr()
@@ -50,6 +50,24 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self) -> QuestionAnalysisDetailsElement:
+        self._driver_title_element = TitleElement(
+            title=Label.QD_Drivers,
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator
+        )
+        self._function_title_element = TitleElement(
+            title=Label.QD_Functions,
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator
+        )
+        self._component_title_element = TitleElement(
+            title=Label.QD_Components,
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator
+        )
         self._driver_element = WrappedBulletListElement(
             max_width=self.layout_configuration.analysis_details_width,
             bullet_list=self.research_question.related_drivers.split(";") if self.research_question.related_drivers is not None else ["-"],
@@ -69,23 +87,19 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
             links_register=self.links_register, 
             translator=self.translator)
         
-        w_titles_max = self.layout_configuration.small_margin + max([
-            measure_text(self.translator.get_label(self.drivers_title), self.layout_configuration.font_size)[0],
-            measure_text(self.translator.get_label(self.functions_title), self.layout_configuration.font_size)[0],
-            measure_text(self.translator.get_label(self.components_title), self.layout_configuration.font_size)[0]
-        ]) + self.layout_configuration.small_margin
-
         self._width = max(
-            w_titles_max,
+            self._driver_title_element.width,
+            self._function_title_element.width,
+            self._component_title_element.width,
             self.layout_configuration.analysis_details_width,
         )
 
         self._height = (
-            3 * (self.layout_configuration.small_margin
-            + self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.small_margin)
+            self._driver_title_element.height
             + self._driver_element.height
+            + self._function_title_element.height
             + self._function_element.height
+            + self._component_title_element.height
             + self._component_element.height
         )        
         return self
@@ -99,25 +113,15 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
         return self._width
 
     def draw(self, dwg: Drawing, x: float, y: float):
-        y_current = self.draw_bulleted_subsection(dwg=dwg, x=x, y=y + self.layout_configuration.small_margin, title=self.drivers_title, element=self._driver_element)
-        y_current = self.draw_bulleted_subsection(dwg=dwg, x=x, y=y_current, title=self.functions_title, element=self._function_element)
-        self.draw_bulleted_subsection(dwg=dwg, x=x, y=y_current, title=self.components_title, element=self._component_element)
+        y_current = self.draw_bulleted_subsection(dwg=dwg, x=x, y=y + self.layout_configuration.small_margin, title_element=self._driver_title_element, element=self._driver_element)
+        y_current = self.draw_bulleted_subsection(dwg=dwg, x=x, y=y_current, title_element=self._function_title_element, element=self._function_element)
+        self.draw_bulleted_subsection(dwg=dwg, x=x, y=y_current, title_element=self._component_title_element, element=self._component_element)
 
-    def draw_bulleted_subsection(self, dwg:Drawing, x: float, y: float, title: Label, element:WrappedBulletListElement) -> float:
-        dwg.add(
-            dwg.text(
-                self.translator.get_label(title),
-                insert=(
-                    x + self.layout_configuration.small_margin,
-                    y,
-                ),
-                font_size=self.layout_configuration.font_size,
-                font_family="Arial",
-                font_weight="normal",
-                font_style="italic",
-                text_anchor="start",
-                dominant_baseline="text-before-edge",
-            )
+    def draw_bulleted_subsection(self, dwg:Drawing, x: float, y: float, title_element: TitleElement, element:WrappedBulletListElement) -> float:
+        title_element.draw(
+            dwg=dwg,
+            x=x,
+            y=y - self.layout_configuration.small_margin
         )
         y += self.layout_configuration.font_size * 1.2 + self.layout_configuration.small_margin
         self.draw_horizontal_separator(
