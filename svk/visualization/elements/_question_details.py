@@ -35,7 +35,6 @@ from svk.visualization.elements._question_analysis_details_element import Questi
 from svk.visualization.elements._ssb_icons_element import SsbIconsElement
 
 
-
 class QuestionDetailsElement(VisualElementsContainer):
     research_question: ResearchQuestion
     """The research question"""
@@ -130,7 +129,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             text=self.research_question.question,
             max_width=self.width - self._id_element.width - self._ssb_icons_element.width - 2 * self.layout_configuration.small_margin,
         )
-        
+
         self._related_question_elements = [
             IdElement(
                 id=id,
@@ -150,7 +149,7 @@ class QuestionDetailsElement(VisualElementsContainer):
         self._last_line_keywords = wrapped_lines(
             self.translator.get_label(Label.QD_Keywords)
             + ": "
-            + (self.research_question.keywords if self.research_question.keywords is not None else ""),
+            + (self.research_question.keywords if self.research_question.keywords is not None else "-"),
             self.layout_configuration.details_page_width
             - self.layout_configuration.paper_margin * 2.0
             - self.layout_configuration.small_margin * 2,
@@ -231,7 +230,9 @@ class QuestionDetailsElement(VisualElementsContainer):
             height_container=self._h_first_line,
             alignment=Alignment.MiddleLeft,
         )
-        self.draw_vertical_separator(dwg, x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self._color)
+        self.draw_vertical_separator(
+            dwg, x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self._color
+        )
         self.draw_element(
             dwg=dwg,
             element=self._ssb_icons_element,
@@ -304,14 +305,19 @@ class QuestionDetailsElement(VisualElementsContainer):
 
     def draw_last_lines(self, dwg: Drawing, x: float, y: float):
         label = self.translator.get_label(Label.QD_Related_Questions) + ":"
-        dwg.add(dwg.text(
-            label,insert=(x + self.layout_configuration.small_margin, y + self.layout_configuration.small_margin),
-            font_size=self.layout_configuration.font_size,
-            font_family="Arial",
-            font_weight="normal",
-            text_anchor="start",
-            dominant_baseline="text-before-edge",
-        ))
+        if len(self._related_question_elements) == 0:
+            label += " -"
+        dwg.add(
+            dwg.text(
+                label,
+                insert=(x + self.layout_configuration.small_margin, y + self.layout_configuration.small_margin),
+                font_size=self.layout_configuration.font_size,
+                font_family="Arial",
+                font_weight="normal",
+                text_anchor="start",
+                dominant_baseline="text-before-edge",
+            )
+        )
         x_current = x + self.layout_configuration.small_margin + measure_text(label, self.layout_configuration.font_size)[0]
         for related in self._related_question_elements:
             self.draw_element(
