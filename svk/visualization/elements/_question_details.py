@@ -48,7 +48,7 @@ class QuestionDetailsElement(VisualElementsContainer):
     _question_explanation_element: WrappedTextElement = PrivateAttr()
     _priority_details_element: QuestionPriorityDetailsElement = PrivateAttr()
     _organisation_details_element: QuestionOrganisationDetailsElement = PrivateAttr()
-    _related_element: QuestionAnalysisDetailsElement = PrivateAttr()
+    _analysis_element: QuestionAnalysisDetailsElement = PrivateAttr()
     _id_element: IdElement = PrivateAttr()
 
     _h_first_line: float = PrivateAttr()
@@ -93,7 +93,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             color=self._color,
             page_number=self.page_number,
         )
-        self._related_element = QuestionAnalysisDetailsElement(
+        self._analysis_element = QuestionAnalysisDetailsElement(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
@@ -119,9 +119,8 @@ class QuestionDetailsElement(VisualElementsContainer):
         self._width = (
             max([self._priority_icon_element.width, self._id_element.width])
             + self._question_explanation_element.width
-            + self._priority_details_element.width
-            + self._organisation_details_element.width
-            + self._related_element.width
+            + max([self._priority_details_element.width, self._organisation_details_element.width])
+            + self._analysis_element.width
         )
 
         self._question_wrapped_text_element = WrappedTextElement(
@@ -132,7 +131,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             max_width=self.width - self._id_element.width - self._ssb_icons_element.width - 2 * self.layout_configuration.small_margin,
         )
         
-        self._related_elements = [
+        self._related_question_elements = [
             IdElement(
                 id=id,
                 is_link=True,
@@ -141,6 +140,7 @@ class QuestionDetailsElement(VisualElementsContainer):
                 page_number=self.page_number,
                 translator=self.translator,
                 is_bottom_margin=True,
+                is_tight_width=True,
             )
             for id in self.research_question.reference_ids
         ]
@@ -169,9 +169,8 @@ class QuestionDetailsElement(VisualElementsContainer):
                 [
                     self._priority_icon_element.height,
                     self._question_explanation_element.height,
-                    self._priority_details_element.height,
-                    self._organisation_details_element.height,
-                    self._related_element.height,
+                    self._priority_details_element.height + self._organisation_details_element.height,
+                    self._analysis_element.height,
                 ]
             )
             + self._h_last_line
@@ -280,26 +279,25 @@ class QuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.TopLeft,
         )
 
-        x_current += self._priority_details_element.width
         self.draw_vertical_separator(dwg, x_current, y, height_container, self._color)
         self.draw_element(
             dwg=dwg,
             element=self._organisation_details_element,
             x_container=x_current,
-            y_container=y,
+            y_container=y + self._priority_details_element.height,
             width_container=self._organisation_details_element.width,
             height_container=height_container,
             alignment=Alignment.TopLeft,
         )
 
-        x_current += self._organisation_details_element.width
+        x_current += max([self._organisation_details_element.width, self._priority_details_element.width])
         self.draw_vertical_separator(dwg, x_current, y, height_container, self._color)
         self.draw_element(
             dwg=dwg,
-            element=self._related_element,
+            element=self._analysis_element,
             x_container=x_current,
             y_container=y,
-            width_container=self._related_element.width,
+            width_container=self._analysis_element.width,
             height_container=height_container,
             alignment=Alignment.TopLeft,
         )
@@ -315,7 +313,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             dominant_baseline="text-before-edge",
         ))
         x_current = x + self.layout_configuration.small_margin + measure_text(label, self.layout_configuration.font_size)[0]
-        for related in self._related_elements:
+        for related in self._related_question_elements:
             self.draw_element(
                 dwg=dwg,
                 element=related,
@@ -324,7 +322,7 @@ class QuestionDetailsElement(VisualElementsContainer):
                 width_container=related.width,
                 height_container=related.height,
             )
-            x_current += related.width
+            x_current += related.width + self.layout_configuration.small_margin
 
         y_keywords = y + 2 * self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2
         dwg.add(

@@ -29,10 +29,13 @@ class IdElement(VisualElement):
     is_link_target: bool = False
     is_link: bool = False
     is_bottom_margin: bool = True
+    is_tight_width: bool = False
     page_number: int | None = None
 
     @property
     def width(self) -> float:
+        if self.is_tight_width:
+            return measure_text(text=self.id, font_size=self.layout_configuration.font_size)[0] 
         return self.layout_configuration.question_id_box_width
 
     @property

@@ -20,6 +20,8 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from datetime import datetime
 
+from svk.data._researchquestion import ResearchQuestion
+from svk.data._timeframe import TimeFrame
 from svk.io import KnowledgeAgendaDatabase
 from svk.visualization import KnowledgeCalendarDocument
 from svk.data import StormSurgeBarrier, Translator
@@ -33,39 +35,38 @@ hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
 esb_dir = base_dir + "/04 OSK/01 Uitwerking"
 
 
-def read_hv_database() -> KnowledgeAgendaDatabase:
-    questions = KnowledgeAgendaDatabase(hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx")
+def read_database(file_path: str) -> list[ResearchQuestion]:
+    questions = KnowledgeAgendaDatabase(file_path)
     questions.read()
-    return questions
+    if len(questions.errors) > 0:
+        for e in questions.errors:
+            print(e)
+    return [q for q in questions if q.time_frame != TimeFrame.NotRelevant]
 
 
-def read_mlk_database() -> KnowledgeAgendaDatabase:
-    questions = KnowledgeAgendaDatabase(mlk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK MLK.xlsx")
-    questions.read()
-    return questions
+def read_hv_database() -> list[ResearchQuestion]:
+    return read_database(hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx")
 
 
-def read_hk_database() -> KnowledgeAgendaDatabase:
-    questions = KnowledgeAgendaDatabase(hk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HK.xlsx")
-    questions.read()
-    return questions
+def read_mlk_database() -> list[ResearchQuestion]:
+    return read_database(mlk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK MLK.xlsx")
 
 
-def read_rp_database() -> KnowledgeAgendaDatabase:
-    questions = KnowledgeAgendaDatabase(rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx")
-    questions.read()
-    return questions
+def read_hk_database() -> list[ResearchQuestion]:
+    return read_database(hk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HK.xlsx")
 
 
-def read_hijk_database() -> KnowledgeAgendaDatabase:
-    questions = KnowledgeAgendaDatabase(hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx")
-    questions.read()
-    return questions
+def read_rp_database() -> list[ResearchQuestion]:
+    return read_database(rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx")
 
-def read_esb_database() -> KnowledgeAgendaDatabase:
-    questions = KnowledgeAgendaDatabase(esb_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK OSK.xlsx")
-    questions.read()
-    return questions
+
+def read_hijk_database() -> list[ResearchQuestion]:
+    return read_database(hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx")
+
+
+def read_esb_database() -> list[ResearchQuestion]:
+    return read_database(esb_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK OSK.xlsx")
+
 
 def test_create_hv():
     barrier: StormSurgeBarrier = StormSurgeBarrier.HaringvlietBarrier
@@ -86,9 +87,6 @@ def test_create_hv():
 
 def test_create_mlk():
     questions = read_mlk_database()
-    if len(questions.errors) > 0:
-        for e in questions.errors:
-            print(e)
 
     t = Translator(lang="nl")
     output_dir = "C:/Test/"  # mlk_dir
@@ -152,6 +150,7 @@ def test_create_hijk():
     )
 
     calendar.build()
+
 
 def test_create_esb():
     questions = read_esb_database()
