@@ -13,6 +13,7 @@ hk_dir = base_dir + "/06 HK/01 Uitwerking"
 rp_dir = base_dir + "/07 RP/01 Uitwerking"
 hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
 esb_dir = base_dir + "/04 OSK/01 Uitwerking"
+allsvk_dir = base_dir + "/08 6SVK"
 ssb_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/11212142 - NWO SSB Delta/General/C. Report - advise/Impact pathway and research agenda"
 
 
@@ -144,7 +145,7 @@ def test_create_6svk():
     )
     six_svk_questions = [q for q in all_questions if StormSurgeBarrier.All in q.storm_surge_barriers]
     calendar = KnowledgeCalendarDocument(
-        output_dir=base_dir,
+        output_dir=allsvk_dir,
         output_file=get_output_file(StormSurgeBarrier.All),
         questions=six_svk_questions,
         storm_surge_barrier=StormSurgeBarrier.All,
@@ -155,7 +156,7 @@ def test_create_6svk():
 # @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_all():
     calendar = KnowledgeCalendarDocument(
-        output_dir=base_dir,
+        output_dir=allsvk_dir,
         output_file=get_output_file(StormSurgeBarrier.All, "alle vragen"),
         questions=read_hk_database()
         + read_hijk_database()
