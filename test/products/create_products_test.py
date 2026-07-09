@@ -122,7 +122,7 @@ def test_create_hk():
     calendar.build()
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_osk():
     calendar = KnowledgeCalendarDocument(
         output_dir=esb_dir,
@@ -133,7 +133,7 @@ def test_create_osk():
     calendar.build()
 
 
-@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_6svk():
     all_questions = (
         read_hk_database()
@@ -141,6 +141,7 @@ def test_create_6svk():
         + read_hv_database()
         + read_mlk_database()
         + read_rp_database()
+        + read_esb_database()
         + read_ssb_pathway_database()
     )
     six_svk_questions = [q for q in all_questions if StormSurgeBarrier.All in q.storm_surge_barriers]
@@ -163,6 +164,7 @@ def test_create_all():
         + read_hv_database()
         + read_mlk_database()
         + read_rp_database()
+        + read_esb_database()
         + read_ssb_pathway_database(),
         storm_surge_barrier=StormSurgeBarrier.All,
     )

@@ -62,6 +62,12 @@ class ExcelDatabase(ABC):
         if not self._check_file_path(file_path):
             raise ValueError("Excel file could not be found.")
 
+        self.sheet_name: str = "Database"
+        """Name of the sheet that contains the database. Default is 'Database'."""
+        self.first_data_row: int = 3
+        """The first datarow to search for records."""
+        self.last_data_row: int | None = None
+        """The last datarow to search for records. If None, all rows will be searched."""
         self.file_path: str = file_path
         """The file path of the Excel database file."""
 
@@ -78,34 +84,33 @@ class ExcelDatabase(ABC):
         p = Path(file_path)
         return p.exists() and p.is_file() and p.suffix.lower() in {".xls", ".xlsx", ".xlsm", ".xlsb"}
 
-    def read(self, sheet_name: str = "Database", first_data_row: int = 3):
+    def read(self):
         """
         Reads the database file.
 
         :param self: The Database object.
         :param sheet_name: The name of the Sheet that contains the database ("Database" by default)
         :type sheet_name: str
-        :param first_data_row: The row number (1 based) of the first database record.
-        :type first_data_row: int
         """
         wb = load_workbook(self.file_path, data_only=True)
-        sheet = wb[sheet_name]
+        sheet = wb[self.sheet_name]
 
-        for i_row, row in enumerate(sheet.iter_rows(min_row=first_data_row, max_row=None, values_only=True)):
+        for i_row, row in enumerate(sheet.iter_rows(min_row=self.first_data_row, max_row=self.last_data_row, values_only=False)):
+            i_row += self.first_data_row
             try:
-                self.read_and_append_row(row)
+                self.read_and_append_row(row, i_row)
             except DatabaseReadError as e:
-                e.i_row = i_row + first_data_row - 1
+                e.i_row = i_row
                 self.errors.append(e)
                 continue
 
     @abstractmethod
-    def read_and_append_row(self, row):
+    def read_and_append_row(self, row, i_row: int) -> None:
         pass
 
     @staticmethod
     def _get_as_str(row: tuple, i_column: int) -> str:
-        value = row[i_column]
+        value = row[i_column].value
         if not isinstance(value, str):
             return str(value)
 
@@ -113,7 +118,7 @@ class ExcelDatabase(ABC):
 
     @staticmethod
     def _get_str_optional(row: tuple, i_column: int) -> str | None:
-        value = row[i_column]
+        value = row[i_column].value
         if not isinstance(value, str) or value == "":
             return None
 
@@ -121,7 +126,7 @@ class ExcelDatabase(ABC):
 
     @staticmethod
     def _get_int(row: tuple, i_column: int) -> int:
-        value = row[i_column]
+        value = row[i_column].value
         if not isinstance(value, int):
             raise DatabaseReadError("Read cell is of incorrect type.", i_column=i_column)
 
@@ -129,7 +134,7 @@ class ExcelDatabase(ABC):
 
     @staticmethod
     def _get_int_optional(row: tuple, i_column: int) -> int | None:
-        value = row[i_column]
+        value = row[i_column].value
         if not isinstance(value, int) or value is None:
             return None
 
@@ -137,7 +142,7 @@ class ExcelDatabase(ABC):
 
     @staticmethod
     def _get_research_line_optional(row: tuple, i_column: int) -> ResearchLine | None:
-        value = row[i_column]
+        value = row[i_column].value
         if not isinstance(value, str) or value is None:
             return None
 
@@ -145,12 +150,12 @@ class ExcelDatabase(ABC):
 
     @staticmethod
     def _empty(row: tuple, i_column: int) -> bool:
-        value = row[i_column]
-        return value == None
+        cell = row[i_column]
+        return cell.value == None
 
     @staticmethod
     def _get_priority(row: tuple, i_column: int) -> Priority:
-        value = row[i_column]
+        value = row[i_column].value
         if isinstance(value, float):
             value = int(value)
         if not isinstance(value, int):
@@ -170,7 +175,7 @@ class ExcelDatabase(ABC):
 
     @staticmethod
     def _get_time_frame(row: tuple, i_column: int) -> TimeFrame:
-        value = row[i_column]
+        value = row[i_column].value
         if not isinstance(value, int):
             return TimeFrame.Unknown
 

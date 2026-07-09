@@ -53,7 +53,7 @@ class ImpactPathwayDatabase(ExcelDatabase, list[ImpactPathwayResearchQuestion]):
     i_lead_time = 25
     """Hard coded column number for the lead time"""
 
-    def read_and_append_row(self, row):
+    def read_and_append_row(self, row, i_row: int) -> None:
         self.append(
             ImpactPathwayResearchQuestion(
                 id=ExcelDatabase._get_as_str(row, self.i_id),

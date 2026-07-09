@@ -76,7 +76,7 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[ResearchQuestion]):
     i_functions = 23
     """X - Hard coded column number for the related functions"""
 
-    def read_and_append_row(self, row):
+    def read_and_append_row(self, row, i_row: int) -> None:
         self.append(
             ResearchQuestion(
                 id=ExcelDatabase._get_as_str(row, self.i_id),
