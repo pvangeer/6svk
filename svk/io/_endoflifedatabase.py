@@ -1,35 +1,8 @@
 from bisect import bisect_right
 from openpyxl.styles.fills import PatternFill
 from svk.io._exceldatabase import ExcelDatabase
+from svk.data import Driver, Function, Color
 from pydantic import BaseModel
-from enum import Enum
-
-
-class Color(Enum):
-    White = "FFFFFF"
-    Yellow = "FFFF66"
-    Orange = "FFC000"
-    Red = "FF0000"
-
-
-class Driver(BaseModel):
-    """
-    Class that represents a driver in the EFL reader database. It is used to store the data in a structured way.
-    """
-
-    name: str
-    category: str
-    i_column: int
-
-
-class Function(BaseModel):
-    """
-    Class that represents a function in the EFL reader database. It is used to store the data in a structured way.
-    """
-
-    name: str
-    category: str
-    i_row: int
 
 
 class EndOfLifeCell(BaseModel):
@@ -37,10 +10,12 @@ class EndOfLifeCell(BaseModel):
     Class that represents a cell in the EFL reader database. It is used to store the data in a structured way.
     """
 
+    i_row: int
+    i_column: int
+    color: Color
     driver: Driver
     function: Function
     question_references: list[str] = []
-    color: Color
 
 
 class EndOfLifeDatabase(ExcelDatabase):
@@ -55,6 +30,8 @@ class EndOfLifeDatabase(ExcelDatabase):
         self.sheet_name = "EFL"
         self.driver_categories: dict[int, str] = {}
         self._current_function_category: str = "Onbekend"
+        self._drivers_dict: dict[int, int] = {}
+        self._functions_dict: dict[int, int] = {}
         self.drivers: list[Driver] = []
         self.functions: list[Function] = []
         self.cells: list[EndOfLifeCell] = []
@@ -77,17 +54,15 @@ class EndOfLifeDatabase(ExcelDatabase):
             return
 
         if i_row == self.first_data_row + 1:
-            self.drivers = [
-                Driver(
+            for i, cell in enumerate(row[3:]):
+                new_driver = Driver(
                     name=str(cell.value),
                     category=self.driver_categories[
                         self._driver_column_indices[bisect_right(self._driver_column_indices, cell.column) - 1]
                     ],
-                    i_column=cell.column,
                 )
-                for i, cell in enumerate(row[3:])
-                if str(cell.value) != "Drivers"
-            ]
+                self.drivers.append(new_driver)
+                self._drivers_dict[id(new_driver)] = i
             return
 
         if row[0].value is not None:
@@ -96,15 +71,20 @@ class EndOfLifeDatabase(ExcelDatabase):
         if row[1].value is None or self._current_function_category == "":
             return
 
-        current_function = Function(name=str(row[1].value), category=self._current_function_category, i_row=i_row)
-        self.functions.append(current_function)
+        new_function = Function(name=str(row[1].value), category=self._current_function_category)
+        self.functions.append(new_function)
+        self._functions_dict[id(new_function)] = i_row
         self.cells.extend(
             [
                 EndOfLifeCell(
                     driver=d,
-                    function=current_function,
-                    question_references=str(row[d.i_column - 1].value).split("/"),
-                    color=self.fill_to_rgb(row[d.i_column - 1].fill),
+                    function=new_function,
+                    question_references=str(row[self._drivers_dict[id(d)] - 1].value).split("/"),
+                    color=self.fill_to_rgb(row[self._drivers_dict[id(d)] - 1].fill),
+                    i_row=i_row,
+                    i_column=self._drivers_dict[
+                        id(d)
+                    ],  # TODO: This is not the actual column in Excel, but the i when looking at the cells from D onwards
                 )
                 for d in self.drivers
             ]

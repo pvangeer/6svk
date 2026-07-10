@@ -22,7 +22,7 @@ from pydantic import BaseModel
 
 
 class LayoutConfiguration(BaseModel):
-    bullet_character: str = "\u25E6"
+    bullet_character: str = "\u25e6"
     bullet_list_indent: float = 12.0
 
     # Margins
@@ -42,6 +42,11 @@ class LayoutConfiguration(BaseModel):
     page_title_height: float = 80
     column_header_height: float = 60
     group_header_height: float = 30
+
+    grid_cell_minimal_width: float = 30
+    grid_cell_minimal_height: float = 30
+    grid_cell_min_width: float = 30
+    grid_cell_min_height: float = 30
 
     n_columns: int = 3
     details_page_width: float = 1500.0

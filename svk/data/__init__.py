@@ -26,3 +26,6 @@ from ._stormsurgebarrier import StormSurgeBarrier
 from ._linksregister import LinksRegister
 from ._impactcategory import ImpactCategory
 from ._translator import Translator, Label
+from ._function import Function
+from ._driver import Driver
+from ._color import Color

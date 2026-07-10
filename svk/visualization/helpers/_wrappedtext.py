@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from ._measuretext import measure_text
 
 from svgwrite import Drawing
-from svgwrite.elementfactory import ElementBuilder
+from svgwrite.text import Text
 
 
 def wrapped_lines(
@@ -46,7 +46,7 @@ def wrapped_lines(
     line = ""
     for word in words:
         test_line = line + word + " "
-        (w, _) = measure_text(test_line, font_size)
+        w, _ = measure_text(test_line, font_size)
         if w > max_width:
             lines.append(line)
             line = word + " "
@@ -69,7 +69,7 @@ def wrapped_text(
     text_anchor: str = "start",
     dominant_baseline: str = "middle",
     font_style: str = "normal",
-) -> ElementBuilder:
+) -> Text:
     """
     Creates an svg text element with lines for each text line in lines.
 
@@ -93,6 +93,10 @@ def wrapped_text(
     :type text_anchor: str
     :param dominant_baseline: The dominant baseline
     :type dominant_baseline: str
+    :param font_style: The font style to use
+    :type font_style: str
+    :param style: The svg text-style to use
+    :type style: str
     :return: An element builder object (svg text) to add to the svgwrite.Drawing
     :rtype: ElementBuilder
     """

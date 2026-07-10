@@ -73,7 +73,7 @@ class Page(BaseModel, ABC):
         return (page_width, page_height)
 
     def draw(self) -> Drawing:
-        (page_width, page_height) = self.get_size()
+        page_width, page_height = self.get_size()
 
         dwg = Drawing(size=(f"{page_width}px", f"{page_height}px"), debug=False)
         self.links_register.register_page(self.page_number, page_width, page_height)
@@ -138,7 +138,7 @@ class Page(BaseModel, ABC):
 
     def draw_disclaimer(self, dwg: Drawing):
         if self.disclaimer is not None:
-            (_, page_height) = self.get_size()
+            _, page_height = self.get_size()
             draw_disclaimer(
                 dwg=dwg,
                 disclaimer_text=self.disclaimer,
