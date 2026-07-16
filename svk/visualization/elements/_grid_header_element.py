@@ -23,7 +23,9 @@ class GridHeaderElement(VisualElement):
 
     @model_validator(mode="after")
     def validate(self):
-        self._lines = wrapped_lines(text=self.label, max_width=200, font_size=self.layout_configuration.font_size)
+        self._lines = wrapped_lines(
+            text=self.label, max_width=self.layout_configuration.grid_header_maximum_width, font_size=self.layout_configuration.font_size
+        )
 
         if self.orientation.value:
             self._width = max([measure_text(text=l, font_size=self.layout_configuration.font_size)[0] for l in self._lines])
@@ -51,7 +53,7 @@ class GridHeaderElement(VisualElement):
                 font_family="Arial",
                 font_weight="normal",
                 text_anchor="start",
-                dominant_baseline="mathematical",
+                dominant_baseline="middle",
             )
             text_element.rotate(-90, center=(x, y))
             dwg.add(text_element)
@@ -65,6 +67,6 @@ class GridHeaderElement(VisualElement):
                     font_family="Arial",
                     font_weight="normal",
                     text_anchor="end",
-                    dominant_baseline="text-after-edge",
+                    dominant_baseline="middle",
                 )
             )

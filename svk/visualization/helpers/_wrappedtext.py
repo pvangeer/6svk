@@ -104,13 +104,19 @@ def wrapped_text(
     text_elem = dwg.text("", insert=insert, dominant_baseline=dominant_baseline)
 
     y = insert[1]
+    start_offset = 0
+    center_vertically = dominant_baseline in ["central", "middle", "mathematical"]
+    if center_vertically:
+        start_offset = -(len(lines) - 1) / 2.0 * line_height
 
-    for line in lines:
+    for i_line, line in enumerate(lines):
+        dy = start_offset + i_line * line_height
         text_elem.add(
             dwg.tspan(
                 line,
                 x=[insert[0]],
                 y=[y],
+                dy=[f"{dy}em"],
                 font_size=font_size,
                 font_family=font_family,
                 font_weight=font_weight,
@@ -118,6 +124,5 @@ def wrapped_text(
                 font_style=font_style,
             )
         )
-        y += font_size * line_height
 
     return text_elem

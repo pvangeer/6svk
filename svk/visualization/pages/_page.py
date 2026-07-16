@@ -68,7 +68,7 @@ class Page(BaseModel, ABC):
             if self.disclaimer is not None
             else 0.0
         )
-        page_width = content_size[0]
+        page_width = content_size[0] + 2 * self.layout_configuration.paper_margin
         page_height = title_height + content_size[1] + disclaimer_height + self.layout_configuration.paper_margin
         return (page_width, page_height)
 

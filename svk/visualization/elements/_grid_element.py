@@ -54,12 +54,12 @@ class GridElement(VisualElementsContainer):
         ]
 
         self._cell_width = max(
-            [(c.width + 2 * self.layout_configuration.small_margin) for c in self._column_header_elements]
-            + [self.layout_configuration.grid_cell_minimal_width]
+            [(c.width + 2 * self.layout_configuration.grid_cell_margin) for c in self._column_header_elements]
+            + [self.layout_configuration.grid_cell_minimal_width + 2 * self.layout_configuration.grid_cell_margin]
         )
         self._cell_height = max(
-            [(f.height + 2 * self.layout_configuration.small_margin) for f in self._row_header_elements]
-            + [self.layout_configuration.grid_cell_minimal_height]
+            [(f.height + 2 * self.layout_configuration.grid_cell_margin) for f in self._row_header_elements]
+            + [self.layout_configuration.grid_cell_minimal_height + 2 * self.layout_configuration.grid_cell_margin]
         )
         self._top_header_height = max([d.height for d in self._column_header_elements]) + 2 * self.layout_configuration.small_margin
         self._left_header_width = max([d.width for d in self._row_header_elements]) + 2 * self.layout_configuration.small_margin
@@ -77,17 +77,25 @@ class GridElement(VisualElementsContainer):
         return self._height
 
     def draw(self, dwg: Drawing, x: float, y: float) -> None:
+        unique_categories = list(dict.fromkeys(header.category for header in self.grid.column_headers))
         self.draw_vertical_separator(dwg=dwg, x=x + self._left_header_width, y=y, element_height=self.height, color="#FF0000")
         for _column_header in self._column_header_elements:
-            x_base = (
-                x + self._left_header_width + (_column_header.i_position - 1) * self._cell_width + self.layout_configuration.small_margin
+            _column_header.draw(
+                dwg=dwg,
+                x=x
+                + self._left_header_width
+                + self.layout_configuration.small_margin
+                + (_column_header.i_position) * self._cell_width
+                - self._cell_width / 2.0,
+                y=y + self._top_header_height - self.layout_configuration.small_margin,
             )
-            x_label = x_base + (self._cell_width - _column_header.width) / 2.0
-            y_label = y + self._top_header_height - self.layout_configuration.small_margin
-            _column_header.draw(dwg=dwg, x=x_label, y=y_label)
             self.draw_vertical_separator(
                 dwg=dwg,
-                x=x + self._left_header_width + (_column_header.i_position) * self._cell_width - self._cell_width / 2.0,
+                x=x
+                + self._left_header_width
+                + self.layout_configuration.small_margin
+                + (_column_header.i_position) * self._cell_width
+                - self._cell_width / 2.0,
                 y=y,
                 element_height=self.height,
                 color="#00FF00",
@@ -98,12 +106,20 @@ class GridElement(VisualElementsContainer):
             _row_header.draw(
                 dwg=dwg,
                 x=x + self._left_header_width - self.layout_configuration.small_margin,
-                y=y + self._top_header_height + self._cell_height * _row_header.i_position - (self._cell_height - _row_header.height) / 2.0,
+                y=y
+                + self._top_header_height
+                + self.layout_configuration.small_margin
+                + self._cell_height * _row_header.i_position
+                - self._cell_height / 2.0,
             )
             self.draw_horizontal_separator(
                 dwg=dwg,
                 x=x,
-                y=y + self._top_header_height + _row_header.i_position * self._cell_height - self._cell_height / 2.0,
+                y=y
+                + self._top_header_height
+                + self.layout_configuration.small_margin
+                + _row_header.i_position * self._cell_height
+                - self._cell_height / 2.0,
                 element_width=self.width,
                 color="#00FF00",
             )
@@ -113,10 +129,12 @@ class GridElement(VisualElementsContainer):
                 dwg=dwg,
                 x=x
                 + self._left_header_width
+                + self.layout_configuration.small_margin
                 + (_cell_element.i_column - 1) * self._cell_width
                 + (self._cell_width - _cell_element.width) / 2.0,
                 y=y
                 + self._top_header_height
+                + self.layout_configuration.small_margin
                 + (_cell_element.i_row - 1) * self._cell_height
                 + (self._cell_height - _cell_element.height) / 2.0,
             )

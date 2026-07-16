@@ -45,8 +45,8 @@ class LayoutConfiguration(BaseModel):
 
     grid_cell_minimal_width: float = 30
     grid_cell_minimal_height: float = 30
-    grid_cell_min_width: float = 30
-    grid_cell_min_height: float = 30
+    grid_header_maximum_width: float = 300
+    grid_cell_margin: float = 2
 
     n_columns: int = 3
     details_page_width: float = 1500.0

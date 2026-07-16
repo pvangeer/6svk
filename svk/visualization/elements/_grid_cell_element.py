@@ -13,8 +13,8 @@ class GridCellElement(VisualElement):
 
     @model_validator(mode="after")
     def validate(self):
-        self._width = self.layout_configuration.grid_cell_min_width
-        self._height = self.layout_configuration.grid_cell_min_height
+        self._width = self.layout_configuration.grid_cell_minimal_width
+        self._height = self.layout_configuration.grid_cell_minimal_height
         return self
 
     @property
