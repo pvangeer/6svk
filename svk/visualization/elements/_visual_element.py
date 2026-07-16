@@ -42,5 +42,5 @@ class VisualElement(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def draw(self, dwg: Drawing, x: float, y: float) -> tuple[float, float]:
+    def draw(self, dwg: Drawing, x: float, y: float) -> None:
         pass

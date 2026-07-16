@@ -29,3 +29,4 @@ from ._translator import Translator, Label
 from ._function import Function
 from ._driver import Driver
 from ._color import Color
+from ._grid import Grid, GridCell, GridHeader

@@ -1,6 +1,6 @@
 from svgwrite import Drawing
 from pydantic import PrivateAttr, model_validator
-from svk.io._endoflifedatabase import EndOfLifeCell, Color
+from svk.io._endoflifedatabase import Color
 from svk.visualization.elements._visual_element import VisualElement
 
 

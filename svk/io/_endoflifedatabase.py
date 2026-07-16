@@ -1,7 +1,11 @@
+from pathlib import Path
+from openpyxl import load_workbook
+
 from bisect import bisect_right
+from typing import Any
 from openpyxl.styles.fills import PatternFill
-from svk.io._exceldatabase import ExcelDatabase
-from svk.data import Driver, Function, Color
+from svk.io._exceldatabase import DatabaseReadError
+from svk.data import Driver, Function, Color, Grid, GridCell, GridHeader
 from pydantic import BaseModel
 
 
@@ -18,80 +22,133 @@ class EndOfLifeCell(BaseModel):
     question_references: list[str] = []
 
 
-class EndOfLifeDatabase(ExcelDatabase):
+class EndOfLifeDatabase:
     """
     Class that represents the EFL database. It is used to read the database file and store the data in a
     structured way.
     """
 
     def __init__(self, file_path: str):
-        super().__init__(file_path)
-        self.first_data_row = 1
+        self.errors: list[DatabaseReadError] = []
+        """A list of errors that can be filled during import/reading the database file."""
+
+        if not self._check_file_path(file_path):
+            raise ValueError("Excel file could not be found.")
+
+        self.row_header_categories_column: int | None = 1
+        self.row_header_column: int = 2
+        self.column_header_categories_row: int = 1
+        self.column_header_row: int = 2
+        self.first_data_column: int = 4
+        self.first_data_row: int = 4
+        self.columns_to_ignore: list[str] = ["Drivers"]
+
         self.sheet_name = "EFL"
-        self.driver_categories: dict[int, str] = {}
-        self._current_function_category: str = "Onbekend"
+        """Name of the sheet that contains the database. Default is 'Database'."""
+
+        self.file_path: str = file_path
+        """The file path of the Excel database file."""
+
+        self.grid: Grid | None = None
+
         self._drivers_dict: dict[int, int] = {}
         self._functions_dict: dict[int, int] = {}
-        self.drivers: list[Driver] = []
-        self.functions: list[Function] = []
-        self.cells: list[EndOfLifeCell] = []
 
-    def read_and_append_row(self, row, i_row: int) -> None:
+    def _check_file_path(self, file_path: str) -> bool:
         """
-        Reads the database file and stores the data in a structured way.
+        Check existance of the Excel file indicated as the database.
 
         :param self: The Database object
-        :return: None
-        :rtype: None
+        :param file_path: file path that needs to be checked
+        :type file_path: str
+        :return: True in case the file exists, False if it doesn't exist or is not an Excel file.
+        :rtype: bool
         """
-        if i_row == self.first_data_row:
-            self.driver_categories[0] = "Autonome situatie"
-            for c in row[3:]:
-                if c.value is not None:
-                    self.driver_categories[c.column] = c.value
+        p = Path(file_path)
+        return p.exists() and p.is_file() and p.suffix.lower() in {".xls", ".xlsx", ".xlsm", ".xlsb"}
 
-            self._driver_column_indices = [k for k in self.driver_categories.keys()]
-            return
+    def read(self):
+        """
+        Reads the database file.
 
-        if i_row == self.first_data_row + 1:
-            for i, cell in enumerate(row[3:]):
-                new_driver = Driver(
-                    name=str(cell.value),
-                    category=self.driver_categories[
-                        self._driver_column_indices[bisect_right(self._driver_column_indices, cell.column) - 1]
-                    ],
+        :param self: The Database object.
+        :param sheet_name: The name of the Sheet that contains the database ("Database" by default)
+        :type sheet_name: str
+        """
+        wb = load_workbook(self.file_path, data_only=True)
+        sheet = wb[self.sheet_name]
+
+        _column_headers: dict[int, tuple[str, str]] = {}
+        _row_headers: dict[int, tuple[str, str]] = {}
+
+        _current_column_header_category: str = "Autonome situatie"
+        for i_col in range(self.first_data_column, sheet.max_column + 1):
+            header_category_cell = sheet.cell(row=self.column_header_categories_row, column=i_col)
+            header_cell = sheet.cell(row=self.column_header_row, column=i_col)
+            if header_category_cell.value is not None and isinstance(header_category_cell.value, str):
+                _current_column_header_category = str(header_category_cell.value)
+
+            if (
+                header_cell.value is not None
+                and isinstance(header_cell.value, str)
+                and str(header_cell.value) not in self.columns_to_ignore
+            ):
+                _column_headers[i_col] = (_current_column_header_category, str(header_cell.value))
+
+        _current_row_header_category: str = "Onbekend"
+        for i_row in range(self.first_data_row, sheet.max_row + 1):
+            if self.row_header_categories_column is not None:
+                header_category_cell = sheet.cell(row=i_row, column=self.row_header_categories_column)
+                if header_category_cell.value is not None and isinstance(header_category_cell.value, str):
+                    _current_row_header_category = str(header_category_cell.value)
+
+            header_cell = sheet.cell(row=i_row, column=self.row_header_column)
+            if (
+                header_cell.value is not None
+                and isinstance(header_cell.value, str)
+                and str(header_cell.value) not in self.columns_to_ignore
+            ):
+                _row_headers[i_row] = (_current_row_header_category, str(header_cell.value))
+
+        _final_column_headers: list[GridHeader] = []
+        _final_row_headers: list[GridHeader] = []
+        _final_grid_cells: list[GridCell] = []
+        is_first_column: bool = True
+        for i_col_grid, i_col in enumerate(_column_headers.keys()):
+            _final_column_headers.append(
+                GridHeader(i_position=i_col_grid + 1, label=_column_headers[i_col][1], category=_column_headers[i_col][0])
+            )
+
+            for i_row_grid, i_row in enumerate(_row_headers.keys()):
+                if is_first_column:
+                    _final_row_headers.append(
+                        GridHeader(i_position=i_row_grid + 1, label=_row_headers[i_row][1], category=_row_headers[i_row][0])
+                    )
+                _data_cell = sheet.cell(row=i_row, column=i_col)
+                _final_grid_cells.append(
+                    GridCell(
+                        i_row=i_row_grid + 1,
+                        i_column=i_col_grid + 1,
+                        content=str(_data_cell.value),
+                        color=self.fill_to_rgb(_data_cell.fill),
+                    )
                 )
-                self.drivers.append(new_driver)
-                self._drivers_dict[id(new_driver)] = i
-            return
 
-        if row[0].value is not None:
-            self._current_function_category = row[0].value
+            is_first_column = False
 
-        if row[1].value is None or self._current_function_category == "":
-            return
-
-        new_function = Function(name=str(row[1].value), category=self._current_function_category)
-        self.functions.append(new_function)
-        self._functions_dict[id(new_function)] = i_row
-        self.cells.extend(
-            [
-                EndOfLifeCell(
-                    driver=d,
-                    function=new_function,
-                    question_references=str(row[self._drivers_dict[id(d)] - 1].value).split("/"),
-                    color=self.fill_to_rgb(row[self._drivers_dict[id(d)] - 1].fill),
-                    i_row=i_row,
-                    i_column=self._drivers_dict[
-                        id(d)
-                    ],  # TODO: This is not the actual column in Excel, but the i when looking at the cells from D onwards
-                )
-                for d in self.drivers
-            ]
+        self.grid = Grid(
+            n_columns=len(_final_column_headers),
+            n_rows=len(_final_row_headers),
+            column_headers=_final_column_headers,
+            row_headers=_final_row_headers,
+            cells=_final_grid_cells,
         )
 
     @staticmethod
-    def fill_to_rgb(fill: PatternFill) -> Color:
+    def fill_to_rgb(fill: Any) -> Color:
+        if not hasattr(fill, "fgColor"):
+            return Color.White
+
         color = fill.fgColor
 
         rgb = "FFFFFF"

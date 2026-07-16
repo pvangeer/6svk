@@ -1,4 +1,3 @@
-from svk.visualization.pages._page import Page
 from svgwrite import Drawing
 from pydantic import PrivateAttr, model_validator
 from svk.visualization.helpers._measuretext import measure_text
@@ -16,6 +15,7 @@ class GridHeaderElement(VisualElement):
     label: str
     color: str | None = None  # TODO: Also include a background and include color in drawing/size?
     orientation: HeaderOrientation
+    i_position: int
 
     _height: float = PrivateAttr()
     _width: float = PrivateAttr()
@@ -50,8 +50,8 @@ class GridHeaderElement(VisualElement):
                 font_size=self.layout_configuration.font_size,
                 font_family="Arial",
                 font_weight="normal",
-                text_anchor="left",
-                dominant_baseline="text-bottom",
+                text_anchor="start",
+                dominant_baseline="mathematical",
             )
             text_element.rotate(-90, center=(x, y))
             dwg.add(text_element)
@@ -64,7 +64,7 @@ class GridHeaderElement(VisualElement):
                     font_size=self.layout_configuration.font_size,
                     font_family="Arial",
                     font_weight="normal",
-                    text_anchor="left",
-                    dominant_baseline="text-top",
+                    text_anchor="end",
+                    dominant_baseline="text-after-edge",
                 )
             )

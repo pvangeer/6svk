@@ -14,9 +14,10 @@ def test_read_efl_database():
         "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK/03 HV/01 Uitwerking/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
     )
     d.read()
-    assert len(d.cells) > 0
-    assert len(d.functions) > 0
-    assert len(d.drivers) > 0
+    assert d.grid is not None
+    assert len(d.grid.cells) > 0
+    assert len(d.grid.column_headers) > 0
+    assert len(d.grid.row_headers) > 0
 
 
 def test_first_try_efl_page():
@@ -24,6 +25,8 @@ def test_first_try_efl_page():
         "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK/03 HV/01 Uitwerking/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
     )
     d.read()
+    assert d.grid is not None
+
     page = EndOfLifePage(
         page_number=2,
         title="EOL",
@@ -31,9 +34,7 @@ def test_first_try_efl_page():
         layout_configuration=LayoutConfiguration(),
         links_register=LinksRegister(),
         translator=Translator(),
-        functions=d.functions,
-        drivers=d.drivers,
-        cells=d.cells,
+        grid=d.grid,
     )
     dwg = page.draw()
     pt = "C:/test/EOL.pdf"
