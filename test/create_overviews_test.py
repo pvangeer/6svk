@@ -120,6 +120,41 @@ def test_create_efl(barrier: StormSurgeBarrier, row_header_column: int, row_head
     svg_to_pdf_chrome(dwg, "C:/Test/" + output_file + ".pdf")
 
 
+@pytest.mark.parametrize(
+    "barrier",
+    [
+        pytest.param(StormSurgeBarrier.EasternScheldtBarrier, id=StormSurgeBarrier.EasternScheldtBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.MaeslantBarrier, id=StormSurgeBarrier.MaeslantBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.HartelBarrier, id=StormSurgeBarrier.HartelBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.HaringvlietBarrier, id=StormSurgeBarrier.HaringvlietBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.HollandseIJsselBarrier, id=StormSurgeBarrier.HollandseIJsselBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.Ramspol, id=StormSurgeBarrier.Ramspol.title.value[0]),
+    ],
+)
+def test_create_etl(barrier: StormSurgeBarrier):
+    barrier_title = Translator(lang="nl").get_label(barrier.title)
+
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - ETL {barrier_title}"
+    d = EndOfLifeDatabase(file_path=get_database_path(barrier=barrier))
+    d.sheet_name = "ETL"
+    d.row_header_column = 1
+    d.row_header_categories_column = 1
+    d.read()
+    assert d.grid is not None
+
+    page = EndOfLifePage(
+        page_number=0,
+        title=f"ETL - {barrier_title}",
+        icon=barrier,
+        layout_configuration=LayoutConfiguration(),
+        links_register=LinksRegister(),
+        translator=Translator(),
+        grid=d.grid,
+    )
+    dwg = page.draw()
+    svg_to_pdf_chrome(dwg, "C:/Test/" + output_file + ".pdf")
+
+
 def test_create_mlk():
     barrier = StormSurgeBarrier.MaeslantBarrier
     questions = read_database(barrier)
