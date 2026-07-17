@@ -5,7 +5,7 @@ from svk.visualization.pages._page import Page
 from svk.visualization.elements._grid_element import GridElement, Grid
 
 
-class EndOfLifePage(Page):
+class LifeTimeAnalysisPage(Page):
     grid: Grid
 
     @model_validator(mode="after")

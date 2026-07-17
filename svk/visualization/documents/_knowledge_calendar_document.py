@@ -30,11 +30,11 @@ from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group
 from svk.visualization.elements._cluster import Cluster
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
-from svk.visualization.documents._document import Document
+from svk.visualization.documents._document import ResearchQuestionsDocument
 from svk.visualization.pages._page import Page
 
 
-class KnowledgeCalendarDocument(Document):
+class KnowledgeCalendarDocument(ResearchQuestionsDocument):
     storm_surge_barrier: StormSurgeBarrier
     _clusters: dict[int, Cluster] = {}
     disclaimer: str | None = (

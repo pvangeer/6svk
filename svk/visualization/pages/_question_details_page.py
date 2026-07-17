@@ -23,7 +23,7 @@ from svk.visualization.pages._page import Page
 from svgwrite import Drawing
 
 
-class DetailsPage(Page):
+class QuestionDetailsPage(Page):
     questions: list[QuestionDetailsElement] = []
 
     def get_content_size(self) -> tuple[float, float]:

@@ -1,5 +1,5 @@
 from svk.io import EndOfLifeDatabase, svg_to_pdf_chrome
-from svk.visualization import EndOfLifePage, LayoutConfiguration
+from svk.visualization import LifeTimeAnalysisPage, LayoutConfiguration
 from svk.data import StormSurgeBarrier, LinksRegister, Translator
 
 
@@ -27,7 +27,7 @@ def test_first_try_efl_page():
     d.read()
     assert d.grid is not None
 
-    page = EndOfLifePage(
+    page = LifeTimeAnalysisPage(
         page_number=2,
         title="EOL",
         icon=StormSurgeBarrier.HaringvlietBarrier,

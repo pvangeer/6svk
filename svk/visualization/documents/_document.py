@@ -27,7 +27,7 @@ from svk.io import svg_to_pdf_chrome, merge_pdf_files, add_links
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
-from svk.visualization.pages._details_page import DetailsPage
+from svk.visualization.pages._question_details_page import QuestionDetailsPage
 from svk.visualization.elements._question_details import QuestionDetailsElement
 from svk.visualization.pages._page import Page
 from svk.visualization.elements._column import Column
@@ -37,7 +37,6 @@ class Document(BaseModel, ABC):
     layout_configuration: LayoutConfiguration = LayoutConfiguration()
     links_register: LinksRegister = LinksRegister()
     translator: Translator = Translator(lang="nl")
-    questions: list[ResearchQuestion]
     pages: list[Page] = []
     output_dir: str
     output_file: str
@@ -49,7 +48,7 @@ class Document(BaseModel, ABC):
 
     @abstractmethod
     def create_pages(self) -> list[Page]:
-        return self.create_detailes_pages(current_page_number=1)
+        return []
 
     def build(self):
         self.pages = self.create_pages()
@@ -71,6 +70,23 @@ class Document(BaseModel, ABC):
                 os.remove(no_links_output_file)
 
         return output_file_final
+
+    def _convert_pages_to_pdf(self) -> list[str]:
+        pages_file_paths: list[str] = []
+        for page in sorted(self.pages, key=lambda p: p.page_number):
+            safe_title = re.sub(r'[\\/**?:"<>|/]', "_", page.title.translate(self._str_table))
+            target_path = os.path.join(self.output_dir, f"{self.output_file} - {safe_title}.pdf")
+            svg_to_pdf_chrome(svg_dwg=page.draw(), pdf_path=target_path)
+            pages_file_paths.append(target_path)
+
+        return pages_file_paths
+
+
+class ResearchQuestionsDocument(Document):
+    questions: list[ResearchQuestion]
+
+    def create_pages(self) -> list[Page]:
+        return self.create_detailes_pages(current_page_number=1)
 
     def create_detailes_pages(self, current_page_number: int) -> list[Page]:
         pages: list[Page] = []
@@ -126,7 +142,7 @@ class Document(BaseModel, ABC):
         link_target: str,
         questions: list[ResearchQuestion],
     ) -> Page:
-        dwg_details_page = DetailsPage(
+        dwg_details_page = QuestionDetailsPage(
             page_number=page_number,
             title=title,
             title_link_target=link_target,
@@ -149,12 +165,9 @@ class Document(BaseModel, ABC):
 
         return dwg_details_page
 
-    def _convert_pages_to_pdf(self) -> list[str]:
-        pages_file_paths: list[str] = []
-        for page in sorted(self.pages, key=lambda p: p.page_number):
-            safe_title = re.sub(r'[\\/**?:"<>|/]', "_", page.title.translate(self._str_table))
-            target_path = os.path.join(self.output_dir, f"{self.output_file} - {safe_title}.pdf")
-            svg_to_pdf_chrome(svg_dwg=page.draw(), pdf_path=target_path)
-            pages_file_paths.append(target_path)
 
-        return pages_file_paths
+class CustomPagesDocument(Document):
+    custom_pages: list[Page] = []
+
+    def create_pages(self):
+        return self.custom_pages

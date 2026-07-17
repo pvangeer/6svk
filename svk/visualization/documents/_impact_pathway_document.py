@@ -30,11 +30,11 @@ from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group, PlainTextGroup
 from svk.visualization.elements._cluster import Cluster
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
-from svk.visualization.documents._document import Document
+from svk.visualization.documents._document import ResearchQuestionsDocument
 from datetime import date
 
 
-class ImpactPathwayDocument(Document):
+class ImpactPathwayDocument(ResearchQuestionsDocument):
     disclaimer: str | None = (
         f"This is the impact pathway of the NWO SSB-∆ project (version 0.9 - {date.today()}). For questions, please contact Esther van Baaren or Bram van Prooijen."
     )

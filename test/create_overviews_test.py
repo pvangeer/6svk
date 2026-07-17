@@ -23,7 +23,7 @@ from datetime import datetime
 
 from svk.data import TimeFrame, ResearchQuestion, Translator
 from svk.io import KnowledgeAgendaDatabase, EndOfLifeDatabase, svg_to_pdf_chrome
-from svk.visualization import KnowledgeCalendarDocument, EndOfLifePage, LayoutConfiguration
+from svk.visualization import KnowledgeCalendarDocument, LifeTimeAnalysisPage, LayoutConfiguration
 from svk.data import StormSurgeBarrier, Translator, LinksRegister
 
 base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK"
@@ -107,7 +107,7 @@ def test_create_efl(barrier: StormSurgeBarrier, row_header_column: int, row_head
     d.read()
     assert d.grid is not None
 
-    page = EndOfLifePage(
+    page = LifeTimeAnalysisPage(
         page_number=0,
         title=f"EFL - {barrier_title}",
         icon=barrier,
@@ -142,7 +142,7 @@ def test_create_etl(barrier: StormSurgeBarrier):
     d.read()
     assert d.grid is not None
 
-    page = EndOfLifePage(
+    page = LifeTimeAnalysisPage(
         page_number=0,
         title=f"ETL - {barrier_title}",
         icon=barrier,
