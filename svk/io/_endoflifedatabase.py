@@ -32,9 +32,6 @@ class EndOfLifeDatabase:
         self.errors: list[DatabaseReadError] = []
         """A list of errors that can be filled during import/reading the database file."""
 
-        if not self._check_file_path(file_path):
-            raise ValueError("Excel file could not be found.")
-
         self.row_header_categories_column: int | None = 1
         self.row_header_column: int = 2
         self.column_header_categories_row: int = 1
@@ -46,10 +43,13 @@ class EndOfLifeDatabase:
         self.sheet_name = "EFL"
         """Name of the sheet that contains the database. Default is 'Database'."""
 
+        self.grid: Grid | None = None
+
+        if not self._check_file_path(file_path):
+            raise ValueError("Excel file could not be found.")
+
         self.file_path: str = file_path
         """The file path of the Excel database file."""
-
-        self.grid: Grid | None = None
 
         self._drivers_dict: dict[int, int] = {}
         self._functions_dict: dict[int, int] = {}

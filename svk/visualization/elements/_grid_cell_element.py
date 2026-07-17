@@ -33,7 +33,8 @@ class GridCellElement(VisualElement):
                 rx=10,  # horizontal corner radius TODO: move to layout_configuration
                 ry=10,  # vertical corner radius
                 fill="#" + self.fill.value,
+                fill_opacity=0.2 if self.fill == Color.White else 0.7,
                 stroke="#" + self.fill.value,
-                stroke_width=0,
+                stroke_width=1,
             )
         )

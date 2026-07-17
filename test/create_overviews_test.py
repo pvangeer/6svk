@@ -18,13 +18,13 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+import pytest
 from datetime import datetime
 
-from svk.data._researchquestion import ResearchQuestion
-from svk.data._timeframe import TimeFrame
-from svk.io import KnowledgeAgendaDatabase
-from svk.visualization import KnowledgeCalendarDocument
-from svk.data import StormSurgeBarrier, Translator
+from svk.data import TimeFrame, ResearchQuestion, Translator
+from svk.io import KnowledgeAgendaDatabase, EndOfLifeDatabase, svg_to_pdf_chrome
+from svk.visualization import KnowledgeCalendarDocument, EndOfLifePage, LayoutConfiguration
+from svk.data import StormSurgeBarrier, Translator, LinksRegister
 
 base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK"
 hv_dir = base_dir + "/03 HV/01 Uitwerking"
@@ -34,9 +34,34 @@ rp_dir = base_dir + "/07 RP/01 Uitwerking"
 hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
 esb_dir = base_dir + "/04 OSK/01 Uitwerking"
 
+hv_database_path = hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
+mlk_database_path = mlk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK MLK.xlsx"
+hk_database_path = hk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HK.xlsx"
+rp_database_path = rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx"
+hijk_database_path = hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx"
+esb_database_path = esb_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK OSK.xlsx"
 
-def read_database(file_path: str) -> list[ResearchQuestion]:
-    questions = KnowledgeAgendaDatabase(file_path)
+
+def get_database_path(barrier: StormSurgeBarrier) -> str:
+    match barrier:
+        case StormSurgeBarrier.MaeslantBarrier:
+            return mlk_database_path
+        case StormSurgeBarrier.HartelBarrier:
+            return hk_database_path
+        case StormSurgeBarrier.Ramspol:
+            return rp_database_path
+        case StormSurgeBarrier.HollandseIJsselBarrier:
+            return hijk_database_path
+        case StormSurgeBarrier.HaringvlietBarrier:
+            return hv_database_path
+        case StormSurgeBarrier.EasternScheldtBarrier:
+            return esb_database_path
+        case _:
+            raise
+
+
+def read_database(barrier: StormSurgeBarrier) -> list[ResearchQuestion]:
+    questions = KnowledgeAgendaDatabase(get_database_path(barrier=barrier))
     questions.read()
     if len(questions.errors) > 0:
         for e in questions.errors:
@@ -44,33 +69,9 @@ def read_database(file_path: str) -> list[ResearchQuestion]:
     return [q for q in questions if q.time_frame != TimeFrame.NotRelevant]
 
 
-def read_hv_database() -> list[ResearchQuestion]:
-    return read_database(hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx")
-
-
-def read_mlk_database() -> list[ResearchQuestion]:
-    return read_database(mlk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK MLK.xlsx")
-
-
-def read_hk_database() -> list[ResearchQuestion]:
-    return read_database(hk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HK.xlsx")
-
-
-def read_rp_database() -> list[ResearchQuestion]:
-    return read_database(rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx")
-
-
-def read_hijk_database() -> list[ResearchQuestion]:
-    return read_database(hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx")
-
-
-def read_esb_database() -> list[ResearchQuestion]:
-    return read_database(esb_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK OSK.xlsx")
-
-
 def test_create_hv():
     barrier: StormSurgeBarrier = StormSurgeBarrier.HaringvlietBarrier
-    questions = read_hv_database()
+    questions = read_database(barrier)
     t = Translator(lang="nl")
     output_dir = "C:/Test/"  # hv_dir
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
@@ -85,92 +86,138 @@ def test_create_hv():
     calendar.build()
 
 
+@pytest.mark.parametrize(
+    "barrier,row_header_column,row_header_categories_column",
+    [
+        pytest.param(StormSurgeBarrier.EasternScheldtBarrier, 1, 1, id=StormSurgeBarrier.EasternScheldtBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.MaeslantBarrier, 1, 1, id=StormSurgeBarrier.MaeslantBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.HartelBarrier, 1, 1, id=StormSurgeBarrier.HartelBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.HaringvlietBarrier, 2, 1, id=StormSurgeBarrier.HaringvlietBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.HollandseIJsselBarrier, 1, 1, id=StormSurgeBarrier.HollandseIJsselBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.Ramspol, 1, 1, id=StormSurgeBarrier.Ramspol.title.value[0]),
+    ],
+)
+def test_create_efl(barrier: StormSurgeBarrier, row_header_column: int, row_header_categories_column: int):
+    barrier_title = Translator(lang="nl").get_label(barrier.title)
+
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - EFL {barrier_title}"
+    d = EndOfLifeDatabase(file_path=get_database_path(barrier=barrier))
+    d.row_header_column = row_header_column
+    d.row_header_categories_column = row_header_categories_column
+    d.read()
+    assert d.grid is not None
+
+    page = EndOfLifePage(
+        page_number=0,
+        title=f"EFL - {barrier_title}",
+        icon=barrier,
+        layout_configuration=LayoutConfiguration(),
+        links_register=LinksRegister(),
+        translator=Translator(),
+        grid=d.grid,
+    )
+    dwg = page.draw()
+    svg_to_pdf_chrome(dwg, "C:/Test/" + output_file + ".pdf")
+
+
 def test_create_mlk():
-    questions = read_mlk_database()
+    barrier = StormSurgeBarrier.MaeslantBarrier
+    questions = read_database(barrier)
 
     t = Translator(lang="nl")
     output_dir = "C:/Test/"  # mlk_dir
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.MaeslantBarrier.title)}"
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
     calendar = KnowledgeCalendarDocument(
         output_dir=output_dir,
         output_file=output_file,
         questions=questions,
-        storm_surge_barrier=StormSurgeBarrier.MaeslantBarrier,
+        storm_surge_barrier=barrier,
     )
 
     calendar.build()
 
 
 def test_create_hk():
-    questions = read_hk_database()
+    barrier = StormSurgeBarrier.HartelBarrier
+    questions = read_database(barrier)
     t = Translator(lang="nl")
     output_dir = "C:/Test/"  # mlk_dir
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.HartelBarrier.title)}"
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
     calendar = KnowledgeCalendarDocument(
         output_dir=output_dir,
         output_file=output_file,
         questions=questions,
-        storm_surge_barrier=StormSurgeBarrier.HartelBarrier,
+        storm_surge_barrier=barrier,
     )
 
     calendar.build()
 
 
 def test_create_rp():
-    questions = read_rp_database()
+    barrier = StormSurgeBarrier.Ramspol
+    questions = read_database(barrier)
 
     t = Translator(lang="nl")
     output_dir = "C:/Test/"  # rp_dir
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.Ramspol.title)}"
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
     calendar = KnowledgeCalendarDocument(
         output_dir=output_dir,
         output_file=output_file,
         questions=questions,
-        storm_surge_barrier=StormSurgeBarrier.Ramspol,
+        storm_surge_barrier=barrier,
     )
 
     calendar.build()
 
 
 def test_create_hijk():
-    questions = read_hijk_database()
+    barrier = StormSurgeBarrier.HollandseIJsselBarrier
+    questions = read_database(barrier)
 
     t = Translator(lang="nl")
     output_dir = "C:/Test/"  # rp_dir
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.HollandseIJsselBarrier.title)}"
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
     calendar = KnowledgeCalendarDocument(
         output_dir=output_dir,
         output_file=output_file,
         questions=questions,
-        storm_surge_barrier=StormSurgeBarrier.HollandseIJsselBarrier,
+        storm_surge_barrier=barrier,
     )
 
     calendar.build()
 
 
 def test_create_esb():
-    questions = read_esb_database()
+    barrier = StormSurgeBarrier.EasternScheldtBarrier
+    questions = read_database(barrier)
 
     t = Translator(lang="nl")
     output_dir = "C:/Test/"  # esb_dir
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(StormSurgeBarrier.EasternScheldtBarrier.title)}"
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
     calendar = KnowledgeCalendarDocument(
         output_dir=output_dir,
         output_file=output_file,
         questions=questions,
-        storm_surge_barrier=StormSurgeBarrier.EasternScheldtBarrier,
+        storm_surge_barrier=barrier,
     )
 
     calendar.build()
 
 
 def test_create_complete_list():
-    questions = read_hv_database() + read_rp_database() + read_mlk_database() + read_hijk_database() + read_hk_database()
+    questions = (
+        read_database(StormSurgeBarrier.HaringvlietBarrier)
+        + read_database(StormSurgeBarrier.Ramspol)
+        + read_database(StormSurgeBarrier.MaeslantBarrier)
+        + read_database(StormSurgeBarrier.HartelBarrier)
+        + read_database(StormSurgeBarrier.HollandseIJsselBarrier)
+        + read_database(StormSurgeBarrier.EasternScheldtBarrier)
+    )
 
     t = Translator(lang="nl")
     output_dir = "C:/Test/"
