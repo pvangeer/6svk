@@ -22,6 +22,7 @@ from ._research_question import ResearchQuestion
 from ._ssb_research_question import StormSurgeBarrierResearchQuestion
 from ._ssbd_research_question import ImpactPathwayResearchQuestion
 from ._sp_research_question import SluicesResearchQuestion
+from ._sp_research_line_factory import SluicesResearchLineFactory
 from ._research_line import ResearchLine
 from ._ssb_research_lines import StormSurgeBarrierResearchLines
 from ._ssb_research_line_factory import StormSurgeBarrierResearchLineFactory

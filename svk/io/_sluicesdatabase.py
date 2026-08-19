@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.data import SluicesResearchQuestion, ResearchLine
+from svk.data import SluicesResearchQuestion, ResearchLine, SluicesResearchLineFactory
 from svk.io._exceldatabase import ExcelDatabase
 
 
@@ -112,4 +112,8 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
 
     @staticmethod
     def _get_research_line_optional(row: tuple, i_column: int) -> ResearchLine | None:
-        return None  # TODO: Implement all research lines of sluices and create own factory.
+        value = row[i_column].value
+        if not isinstance(value, str) or value is None:
+            return None
+
+        return SluicesResearchLineFactory.get_research_line_from_str(str(value).split(".")[0])

@@ -43,6 +43,9 @@ class StormSurgeBarrier(Enum):
     HollandseIJsselBarrier = Label.SSB_HollandseIJsselBarrier
     EasternScheldtBarrier = Label.SSB_EasternScheldBarrier
     HaringvlietBarrier = Label.SSB_HaringvlietBarrier
+    SluicePanheel = (
+        Label.SSB_SluicePanheel
+    )  # TODO: This is not really a ssb, so this construction (and automatic coupling with an icon) should be refactored.
 
     def __init__(self, title: Label):
         self.title: Label = title

@@ -1,16 +1,15 @@
 from collections import defaultdict
 from typing import cast
-from svk.data import TimeFrame, ResearchLine
+from svk.data import TimeFrame, ResearchLine, StormSurgeBarrier
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers._measuretext import measure_text
 from svk.data.helpers._greyfraction import color_toward_grey
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization.elements._column import Column
-from svk.visualization.elements._group import Group, PlainTextGroup
+from svk.visualization.elements._group import Group
 from svk.visualization.elements._cluster import Cluster
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
-from svk.visualization.documents._document import ResearchQuestionsDocument
 
 from svk.data import SluicesResearchQuestion, TimeFrame
 from svk.visualization.documents._document import Document
@@ -40,13 +39,14 @@ class SluicesDocument(Document):
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            icon=None,  # TODO: Implement Icon.
+            icon=StormSurgeBarrier.SluicePanheel,
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
         )
 
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=0)
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=1)
+        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Now, number=0)
+        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=1)
+        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=2)
         self.add_clusters_per_research_line(fig=fig, questions=cast(list[SluicesResearchQuestion], self.questions), page_number=page_number)
         return fig
 
@@ -66,10 +66,11 @@ class SluicesDocument(Document):
     def add_clusters_per_research_line(self, fig: TimeLineOverviewPage, questions: list[SluicesResearchQuestion], page_number: int):
         clusters: dict[int, Cluster] = {}
         time_frame_column_numbers: dict[TimeFrame, int] = {
-            TimeFrame.NearFuture: 0,
-            TimeFrame.Future: 1,
+            TimeFrame.Now: 0,
+            TimeFrame.NearFuture: 1,
+            TimeFrame.Future: 2,
         }
-
+        # TODO: columns are not correctly mapped yet (added the Now column and changed numbers).
         grouped_quenstions_lists: defaultdict[tuple[TimeFrame, ResearchLine], list[SluicesResearchQuestion]] = defaultdict(
             list[SluicesResearchQuestion]
         )
@@ -110,7 +111,7 @@ class SluicesDocument(Document):
                         translator=self.translator,
                         research_question=question,
                         page_number=page_number,
-                        show_priority=False,
+                        show_priority=True,
                     )
                 )
 

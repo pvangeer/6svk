@@ -22,6 +22,22 @@ class Label(Enum):
     RL_Organizational = ("Organisatorische aspecten", "Organisational aspects")
     RL_Lifespan = ("Restlevensduur huidige objecten", "Remaining lifetime")
 
+    RL_TechnicalLifeTimeCivilParts = ("Technische levensduur civiele delen", "Technische levensduur - civiele delen")
+    RL_TechnicalLifeTimeInstallations = ("Technische levensduur installaties", "Technische levensduur - installaties")
+    RL_InspectionsMonitoringAndData = ("Inspecties, monitoring en data", "Inspecties, monitoring en data")
+    RL_WaterSafety = ("Hoogwaterveiligheid", "Hoogwaterveiligheid")
+    RL_WaterSystemAndAvailability = ("Watersysteem en waterbeschikbaarheid", "Watersysteem en waterbeschikbaarheid")
+    RL_EcologyAndWaterQuality = ("Ecologie en waterkwaliteit watersysteem", "Ecologie en waterkwaliteit watersysteem")
+    RL_Functions = (
+        "Functies van het complex (scheepvaart, weg en water)",
+        "Functies van het complex in het netwerk (scheepvaart, weg en water)",
+    )
+    RL_Operation = ("Operatie: bediening en besturing", "Operatie: bediening en besturing")
+    RL_Robuustness = ("Beschikbaarheid en robuustheid", "Beschikbaarheid en robuustheid")
+    RL_Strategy = ("Stategie, afweging en keuzes", "Stategie, afweging en keuzes")
+    RL_EnvironmentalImpact = ("Milieu impact", "Milieu-impact")
+    RL_SP_Organizational = ("Organisatorische aspecten", "Organisatorische aspecten")
+
     P_High = ("hoog", "high")
     P_Medium = ("middel", "medium")
     P_Low = ("laag", "low")
@@ -35,6 +51,7 @@ class Label(Enum):
     SSB_HollandseIJsselBarrier = ("Hollandsche IJssel Kering", "Hollandsche IJssel Barrier")
     SSB_EasternScheldBarrier = ("Oosterscheldekering", "Eastern Scheldt Barrier")
     SSB_HaringvlietBarrier = ("Haringvlietsluizen", "Haringvliet Sluices")
+    SSB_SluicePanheel = ("Sluis Panheel", "Panheel Sluices")
 
     QD_Related = ("Gerelateerd", "Related")
     QD_Drivers = ("Drivers", "Drivers")

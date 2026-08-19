@@ -22,6 +22,7 @@ from .documents._document import CustomPagesDocument, ResearchQuestionsDocument
 from .documents._knowledge_calendar_document import KnowledgeCalendarDocument
 from .documents._impact_pathway_document import ImpactPathwayDocument
 from .documents._lifetime_analysis_document import LifeTimeAnalysDocument
+from .documents._sluices_document import SluicesDocument
 
 from .pages._time_line_overview_page import TimeLineOverviewPage
 from .pages._question_details_page import QuestionDetailsPage

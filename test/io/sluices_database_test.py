@@ -23,5 +23,6 @@ def test_read_sluices_database():
     assert q.prio_management_maintenance == Priority.High
     assert q.prio_operation == Priority.Low
     assert q.time_frame == TimeFrame.Now
-    assert q.research_line == "Technische levensduur - civiele delen"  # TODO: Adjust to research lines
+    assert q.research_line is not None
+    assert q.research_line.number == 1
     assert q.contributes_to_standardisation
