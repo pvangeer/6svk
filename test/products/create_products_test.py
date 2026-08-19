@@ -2,7 +2,7 @@ import pytest
 from typing import cast
 from datetime import datetime
 
-from svk.data import StormSurgeBarrier, Translator, ResearchQuestion, ImpactPathwayResearchQuestion, TimeFrame, Grid
+from svk.data import StormSurgeBarrier, Translator, StormSurgeBarrierResearchQuestion, ImpactPathwayResearchQuestion, TimeFrame, Grid
 from svk.io import KnowledgeAgendaDatabase, ImpactPathwayDatabase, EndOfLifeDatabase
 from svk.visualization import (
     KnowledgeCalendarDocument,
@@ -12,6 +12,7 @@ from svk.visualization import (
     LifeTimeAnalysisPage,
 )
 
+# TODO: Move to the paths.py file and use that instead of hard coded paths.
 base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK"
 hv_dir = base_dir + "/03 HV/01 Uitwerking"
 mlk_dir = base_dir + "/05 MLK/01 Uitwerking"
@@ -67,12 +68,13 @@ def get_database_path(barrier: StormSurgeBarrier) -> str:
             raise
 
 
-def read_database(barrier: StormSurgeBarrier) -> list[ResearchQuestion]:
+def read_database(barrier: StormSurgeBarrier) -> list[StormSurgeBarrierResearchQuestion]:
     questions = KnowledgeAgendaDatabase(get_database_path(barrier=barrier))
     questions.read()
     return [q for q in questions if q.time_frame != TimeFrame.NotRelevant]
 
 
+# TODO: Move to a utils directory
 def read_efl(barrier: StormSurgeBarrier) -> Grid:
     d = EndOfLifeDatabase(file_path=get_database_path(barrier=barrier))
     d.sheet_name = "EFL"
@@ -107,7 +109,7 @@ def get_knowledge_calendar_output_file(barrier: StormSurgeBarrier, add: str | No
     return name
 
 
-# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 @pytest.mark.parametrize(
     "barrier",
     [
@@ -129,7 +131,7 @@ def test_create_knowledge_calendar_per_ssb(barrier: StormSurgeBarrier):
     calendar_document.build()
 
 
-# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_6svk():
     all_questions = (
         read_database(StormSurgeBarrier.HartelBarrier)
@@ -150,7 +152,7 @@ def test_create_6svk():
     calendar.build()
 
 
-# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_all():
     calendar = KnowledgeCalendarDocument(
         output_dir=allsvk_dir,
@@ -167,7 +169,7 @@ def test_create_all():
     calendar.build()
 
 
-# @pytest.mark.skip(reason="Use this to publish official version to correct output dir")
+@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 @pytest.mark.parametrize(
     "barrier",
     [
@@ -179,6 +181,7 @@ def test_create_all():
         pytest.param(StormSurgeBarrier.Ramspol, id=StormSurgeBarrier.Ramspol.title.value[0]),
     ],
 )
+@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_end_of_life_analysis_document(barrier: StormSurgeBarrier):
     document = LifeTimeAnalysDocument(
         storm_surge_barrier=barrier,
@@ -190,6 +193,7 @@ def test_create_end_of_life_analysis_document(barrier: StormSurgeBarrier):
     document.build()
 
 
+@pytest.mark.skip(reason="Use this to publish official version to correct output dir")
 def test_create_end_of_life_time_summary():
     pages = []
     page_count = 0
@@ -244,6 +248,6 @@ def test_create_impact_pathway():
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Impact pathway SSB-delta"
 
     pathway = ImpactPathwayDocument(
-        questions=cast(list[ResearchQuestion], questions), output_dir=ssb_dir, output_file=output_file, cleanup=False
+        questions=cast(list[StormSurgeBarrierResearchQuestion], questions), output_dir=ssb_dir, output_file=output_file, cleanup=False
     )
     pathway.build()

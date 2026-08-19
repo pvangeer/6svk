@@ -19,13 +19,23 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svk.visualization import LayoutConfiguration, TimeLineOverviewPage, QuestionSummaryElement, Group, Column, Cluster
-from svk.data import TimeFrame, ResearchLine, ResearchQuestion, Priority, TimeFrame, StormSurgeBarrier, LinksRegister, Translator
+from svk.data import (
+    TimeFrame,
+    ResearchLine,
+    StormSurgeBarrierResearchQuestion,
+    Priority,
+    TimeFrame,
+    StormSurgeBarrier,
+    LinksRegister,
+    Translator,
+)
 from svk.io import svg_to_pdf_chrome
+from test.paths import test_output_dir
 
 
 def generate_research_question(question, time_frame, research_line: ResearchLine):
     generate_research_question.counter += 1
-    return ResearchQuestion(
+    return StormSurgeBarrierResearchQuestion(
         id=f"T{str(generate_research_question.counter)}",
         question=question,
         storm_surge_barriers=[StormSurgeBarrier.HaringvlietBarrier],
@@ -209,5 +219,5 @@ def test_create_image():
     cluster.groups[1].append(adaptation_near)
     dwg = fig.draw()
 
-    pt = "C:/test/Kennisagenda_auto.pdf"
+    pt = test_output_dir + "/Kennisagenda_auto.pdf"
     svg_to_pdf_chrome(dwg, pt)

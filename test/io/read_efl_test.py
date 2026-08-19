@@ -1,6 +1,7 @@
 from svk.io import EndOfLifeDatabase, svg_to_pdf_chrome
 from svk.visualization import LifeTimeAnalysisPage, LayoutConfiguration
 from svk.data import StormSurgeBarrier, LinksRegister, Translator
+from test.paths import test_data_dir, test_output_dir
 
 
 def test_read_efl_database():
@@ -10,9 +11,7 @@ def test_read_efl_database():
     :return: None
     """
 
-    d = EndOfLifeDatabase(
-        "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK/03 HV/01 Uitwerking/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
-    )
+    d = EndOfLifeDatabase(test_data_dir + "/example_1.xlsx")
     d.read()
     assert d.grid is not None
     assert len(d.grid.cells) > 0
@@ -21,9 +20,7 @@ def test_read_efl_database():
 
 
 def test_first_try_efl_page():
-    d = EndOfLifeDatabase(
-        "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK/03 HV/01 Uitwerking/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
-    )
+    d = EndOfLifeDatabase(test_data_dir + "/example_1.xlsx")
     d.read()
     assert d.grid is not None
 
@@ -37,5 +34,4 @@ def test_first_try_efl_page():
         grid=d.grid,
     )
     dwg = page.draw()
-    pt = "C:/test/EOL.pdf"
-    svg_to_pdf_chrome(dwg, pt)
+    svg_to_pdf_chrome(dwg, test_output_dir + "/EOL.pdf")

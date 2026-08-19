@@ -1,5 +1,6 @@
 import svgwrite
 from svk.io import svg_to_pdf, svg_to_pdf_chrome
+from test.paths import test_output_dir
 
 
 def test_create_internal_link():
@@ -23,5 +24,4 @@ def test_create_internal_link():
     link.add(link_rect)
     link.add(link_text)
 
-    # svg_to_pdf(dwg, "C:/Test/internal_link_test.pdf")
-    svg_to_pdf(dwg, "C:/Test/", "internal_link_via_inkscape")
+    svg_to_pdf(dwg, test_output_dir, "/internal_link_via_inkscape.pdf")

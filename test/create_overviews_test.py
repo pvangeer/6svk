@@ -21,11 +21,14 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 import pytest
 from datetime import datetime
 
-from svk.data import TimeFrame, ResearchQuestion, Translator
+from svk.data import TimeFrame, StormSurgeBarrierResearchQuestion, Translator
 from svk.io import KnowledgeAgendaDatabase, EndOfLifeDatabase, svg_to_pdf_chrome
 from svk.visualization import KnowledgeCalendarDocument, LifeTimeAnalysisPage, LayoutConfiguration
 from svk.data import StormSurgeBarrier, Translator, LinksRegister
 
+from test.paths import test_output_dir
+
+# TODO: Move to the paths.py file and use that instead of hard coded paths.
 base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK"
 hv_dir = base_dir + "/03 HV/01 Uitwerking"
 mlk_dir = base_dir + "/05 MLK/01 Uitwerking"
@@ -60,7 +63,7 @@ def get_database_path(barrier: StormSurgeBarrier) -> str:
             raise
 
 
-def read_database(barrier: StormSurgeBarrier) -> list[ResearchQuestion]:
+def read_database(barrier: StormSurgeBarrier) -> list[StormSurgeBarrierResearchQuestion]:
     questions = KnowledgeAgendaDatabase(get_database_path(barrier=barrier))
     questions.read()
     if len(questions.errors) > 0:
@@ -73,11 +76,10 @@ def test_create_hv():
     barrier: StormSurgeBarrier = StormSurgeBarrier.HaringvlietBarrier
     questions = read_database(barrier)
     t = Translator(lang="nl")
-    output_dir = "C:/Test/"  # hv_dir
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
     calendar = KnowledgeCalendarDocument(
-        output_dir=output_dir,
+        output_dir=test_output_dir,
         output_file=output_file,
         questions=questions,
         storm_surge_barrier=barrier,
@@ -117,7 +119,7 @@ def test_create_efl(barrier: StormSurgeBarrier, row_header_column: int, row_head
         grid=d.grid,
     )
     dwg = page.draw()
-    svg_to_pdf_chrome(dwg, "C:/Test/" + output_file + ".pdf")
+    svg_to_pdf_chrome(dwg, test_output_dir + "/" + output_file + ".pdf")
 
 
 @pytest.mark.parametrize(
@@ -152,7 +154,7 @@ def test_create_etl(barrier: StormSurgeBarrier):
         grid=d.grid,
     )
     dwg = page.draw()
-    svg_to_pdf_chrome(dwg, "C:/Test/" + output_file + ".pdf")
+    svg_to_pdf_chrome(dwg, test_output_dir + "/" + output_file + ".pdf")
 
 
 def test_create_mlk():
@@ -160,11 +162,10 @@ def test_create_mlk():
     questions = read_database(barrier)
 
     t = Translator(lang="nl")
-    output_dir = "C:/Test/"  # mlk_dir
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
     calendar = KnowledgeCalendarDocument(
-        output_dir=output_dir,
+        output_dir=test_output_dir,
         output_file=output_file,
         questions=questions,
         storm_surge_barrier=barrier,
@@ -177,11 +178,10 @@ def test_create_hk():
     barrier = StormSurgeBarrier.HartelBarrier
     questions = read_database(barrier)
     t = Translator(lang="nl")
-    output_dir = "C:/Test/"  # mlk_dir
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
     calendar = KnowledgeCalendarDocument(
-        output_dir=output_dir,
+        output_dir=test_output_dir,
         output_file=output_file,
         questions=questions,
         storm_surge_barrier=barrier,
@@ -195,11 +195,10 @@ def test_create_rp():
     questions = read_database(barrier)
 
     t = Translator(lang="nl")
-    output_dir = "C:/Test/"  # rp_dir
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
     calendar = KnowledgeCalendarDocument(
-        output_dir=output_dir,
+        output_dir=test_output_dir,
         output_file=output_file,
         questions=questions,
         storm_surge_barrier=barrier,
@@ -213,11 +212,10 @@ def test_create_hijk():
     questions = read_database(barrier)
 
     t = Translator(lang="nl")
-    output_dir = "C:/Test/"  # rp_dir
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
     calendar = KnowledgeCalendarDocument(
-        output_dir=output_dir,
+        output_dir=test_output_dir,
         output_file=output_file,
         questions=questions,
         storm_surge_barrier=barrier,
@@ -231,11 +229,10 @@ def test_create_esb():
     questions = read_database(barrier)
 
     t = Translator(lang="nl")
-    output_dir = "C:/Test/"  # esb_dir
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
 
     calendar = KnowledgeCalendarDocument(
-        output_dir=output_dir,
+        output_dir=test_output_dir,
         output_file=output_file,
         questions=questions,
         storm_surge_barrier=barrier,
@@ -255,11 +252,10 @@ def test_create_complete_list():
     )
 
     t = Translator(lang="nl")
-    output_dir = "C:/Test/"
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda compleet 6SVK"
 
     calendar = KnowledgeCalendarDocument(
-        output_dir=output_dir,
+        output_dir=test_output_dir,
         output_file=output_file,
         questions=questions,
         storm_surge_barrier=StormSurgeBarrier.All,
