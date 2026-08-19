@@ -18,11 +18,11 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.data import ResearchQuestion
+from svk.data import StormSurgeBarrierResearchQuestion
 from svk.io._exceldatabase import ExcelDatabase
 
 
-class KnowledgeAgendaDatabase(ExcelDatabase, list[ResearchQuestion]):
+class KnowledgeAgendaDatabase(ExcelDatabase, list[StormSurgeBarrierResearchQuestion]):
     """
     Class that wraps a list[ResearchQuestion] to allow additional logic to read an convert a database file stored in Excel.
     """
@@ -78,7 +78,7 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[ResearchQuestion]):
 
     def read_and_append_row(self, row, i_row: int) -> None:
         self.append(
-            ResearchQuestion(
+            StormSurgeBarrierResearchQuestion(
                 id=ExcelDatabase._get_as_str(row, self.i_id),
                 question=ExcelDatabase._get_as_str(row, self.i_question),
                 explanation=ExcelDatabase._get_str_optional(row, self.i_explanation),

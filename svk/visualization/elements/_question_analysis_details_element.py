@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svk.data import ResearchQuestion, Label
+from svk.data import StormSurgeBarrierResearchQuestion, Label
 from svgwrite import Drawing
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
@@ -30,11 +30,11 @@ from svk.visualization.elements._visual_elements_container import VisualElements
 
 
 class QuestionAnalysisDetailsElement(VisualElementsContainer):
-    research_question: ResearchQuestion
+    research_question: StormSurgeBarrierResearchQuestion
     """The research question"""
     color: str
     page_number: int
-    
+
     _driver_lines: list[str] = PrivateAttr()
     _function_lines: list[str] = PrivateAttr()
     _component_lines: list[str] = PrivateAttr()
@@ -54,39 +54,46 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
             title=Label.QD_Drivers,
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
-            translator=self.translator
+            translator=self.translator,
         )
         self._function_title_element = TitleElement(
             title=Label.QD_Functions,
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
-            translator=self.translator
+            translator=self.translator,
         )
         self._component_title_element = TitleElement(
             title=Label.QD_Components,
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
-            translator=self.translator
+            translator=self.translator,
         )
         self._driver_element = WrappedBulletListElement(
             max_width=self.layout_configuration.analysis_details_width,
             bullet_list=self.research_question.related_drivers.split(";") if self.research_question.related_drivers is not None else ["-"],
-            layout_configuration=self.layout_configuration, 
-            links_register=self.links_register, 
-            translator=self.translator)
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator,
+        )
         self._function_element = WrappedBulletListElement(
             max_width=self.layout_configuration.analysis_details_width,
-            bullet_list=self.research_question.related_functions.split(";") if self.research_question.related_functions is not None else ["-"],
-            layout_configuration=self.layout_configuration, 
-            links_register=self.links_register, 
-            translator=self.translator)
+            bullet_list=(
+                self.research_question.related_functions.split(";") if self.research_question.related_functions is not None else ["-"]
+            ),
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator,
+        )
         self._component_element = WrappedBulletListElement(
             max_width=self.layout_configuration.analysis_details_width,
-            bullet_list=self.research_question.related_components.split(";") if self.research_question.related_components is not None else ["-"],
-            layout_configuration=self.layout_configuration, 
-            links_register=self.links_register, 
-            translator=self.translator)
-        
+            bullet_list=(
+                self.research_question.related_components.split(";") if self.research_question.related_components is not None else ["-"]
+            ),
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator,
+        )
+
         self._width = max(
             self._driver_title_element.width,
             self._function_title_element.width,
@@ -101,7 +108,7 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
             + self._function_element.height
             + self._component_title_element.height
             + self._component_element.height
-        )        
+        )
         return self
 
     @property
@@ -113,28 +120,28 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
         return self._width
 
     def draw(self, dwg: Drawing, x: float, y: float):
-        y_current = self.draw_bulleted_subsection(dwg=dwg, x=x, y=y + self.layout_configuration.small_margin, title_element=self._driver_title_element, element=self._driver_element)
-        y_current = self.draw_bulleted_subsection(dwg=dwg, x=x, y=y_current, title_element=self._function_title_element, element=self._function_element)
-        self.draw_bulleted_subsection(dwg=dwg, x=x, y=y_current, title_element=self._component_title_element, element=self._component_element)
-
-    def draw_bulleted_subsection(self, dwg:Drawing, x: float, y: float, title_element: TitleElement, element:WrappedBulletListElement) -> float:
-        title_element.draw(
+        y_current = self.draw_bulleted_subsection(
             dwg=dwg,
             x=x,
-            y=y - self.layout_configuration.small_margin
+            y=y + self.layout_configuration.small_margin,
+            title_element=self._driver_title_element,
+            element=self._driver_element,
         )
+        y_current = self.draw_bulleted_subsection(
+            dwg=dwg, x=x, y=y_current, title_element=self._function_title_element, element=self._function_element
+        )
+        self.draw_bulleted_subsection(
+            dwg=dwg, x=x, y=y_current, title_element=self._component_title_element, element=self._component_element
+        )
+
+    def draw_bulleted_subsection(
+        self, dwg: Drawing, x: float, y: float, title_element: TitleElement, element: WrappedBulletListElement
+    ) -> float:
+        title_element.draw(dwg=dwg, x=x, y=y - self.layout_configuration.small_margin)
         y += self.layout_configuration.font_size * 1.2 + self.layout_configuration.small_margin
-        self.draw_horizontal_separator(
-            dwg=dwg, 
-            x=x, 
-            y=y, 
-            element_width=self.width, 
-            color=self.color)
-        
-        element.draw(
-            dwg=dwg, 
-            x=x, 
-            y=y)
-        
+        self.draw_horizontal_separator(dwg=dwg, x=x, y=y, element_width=self.width, color=self.color)
+
+        element.draw(dwg=dwg, x=x, y=y)
+
         y += element.height
         return y

@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.data import ResearchQuestion, ImpactPathwayResearchQuestion, TimeFrame
+from svk.data import StormSurgeBarrierResearchQuestion, ImpactPathwayResearchQuestion, TimeFrame
 from svk.visualization.helpers._greyfraction import color_toward_grey
 
 

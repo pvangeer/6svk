@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from collections import defaultdict
 from typing import DefaultDict
 
-from svk.data import ResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine
+from svk.data import StormSurgeBarrierResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.helpers import _calendar_helper as helper
@@ -52,7 +52,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
         self,
         page_number: int,
     ) -> TimeLineOverviewPage:
-        time_groups = defaultdict(list[ResearchQuestion])
+        time_groups = defaultdict(list[StormSurgeBarrierResearchQuestion])
 
         for q in self.questions:
             time_groups[q.time_frame].append(q)
@@ -78,7 +78,9 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
         fig.clusters = list(self._clusters.values())
         return fig
 
-    def add_time_frame_column(self, fig: TimeLineOverviewPage, questions: list[ResearchQuestion], time_frame: TimeFrame, number: int):
+    def add_time_frame_column(
+        self, fig: TimeLineOverviewPage, questions: list[StormSurgeBarrierResearchQuestion], time_frame: TimeFrame, number: int
+    ):
         column = Column(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
@@ -90,7 +92,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
         )
 
         if len(questions) > 0:
-            now_questions_groups: DefaultDict[ResearchLine, list[ResearchQuestion]] = defaultdict(list)
+            now_questions_groups: DefaultDict[ResearchLine, list[StormSurgeBarrierResearchQuestion]] = defaultdict(list)
             for q in questions:
                 if q.research_line_primary is None:
                     # TODO: This should not occur here. Look at impact pathway for solution (build rows instead of columns)

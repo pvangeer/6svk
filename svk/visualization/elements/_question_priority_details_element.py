@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svk.data import ResearchQuestion, Priority, Label
+from svk.data import StormSurgeBarrierResearchQuestion, Priority, Label
 from svgwrite import Drawing
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
@@ -29,7 +29,7 @@ from svk.visualization.elements._visual_elements_container import VisualElements
 
 
 class QuestionPriorityDetailsElement(VisualElementsContainer):
-    research_question: ResearchQuestion
+    research_question: StormSurgeBarrierResearchQuestion
     """The research question"""
     color: str
     dotradius: float = 5
@@ -54,7 +54,7 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
             title=Label.QD_Priority,
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
-            translator=self.translator
+            translator=self.translator,
         )
         prio_labels = [Label.QD_WaterSafety, Label.QD_OtherFunctions, Label.QD_Operation, Label.QD_Maitenance]
         self._w_priority_metrices_column = (
@@ -64,10 +64,9 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
             + self.dotradius * 7
             + self.layout_configuration.small_margin
         )
-        self._width = max([
-            self._title_element.width,
-            self.layout_configuration.details_priority_explanation_width + self._w_priority_metrices_column
-            ])
+        self._width = max(
+            [self._title_element.width, self.layout_configuration.details_priority_explanation_width + self._w_priority_metrices_column]
+        )
 
         h_priority_column_fixed_items = (
             self._title_element.height

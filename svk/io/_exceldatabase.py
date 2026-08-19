@@ -9,6 +9,7 @@ from svk.data import (
 from pathlib import Path
 from abc import ABC, abstractmethod
 from openpyxl import load_workbook
+from openpyxl.utils import column_index_from_string
 
 
 class DatabaseReadError(Exception):
@@ -23,18 +24,6 @@ class DatabaseReadError(Exception):
         self.i_column = i_column
         """The index of the column that could not be read/translated (zero based)."""
 
-    @staticmethod
-    def __number_to_letter(n: int) -> str:
-        """
-        Helper function that translates a column index (one based) to column name in Excel.
-
-        :param n: The column index (one based, like in Excel)
-        :type n: int
-        :return: The Excel column name.
-        :rtype: str
-        """
-        return chr(ord("A") + n - 1)
-
     @property
     def cell_reference(self) -> str:
         """
@@ -46,7 +35,7 @@ class DatabaseReadError(Exception):
         """
         reference = ""
         if self.i_column is not None:
-            reference = self.__number_to_letter(self.i_column + 1)
+            reference = ExcelDatabase._number_to_letter(self.i_column + 1)
 
         if self.i_row is not None:
             return reference + str(self.i_row + 1)
@@ -55,18 +44,18 @@ class DatabaseReadError(Exception):
 
 
 class ExcelDatabase(ABC):
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, sheet_name: str = "Database", first_data_row: int = 3, last_data_row: int | None = None):
         self.errors: list[DatabaseReadError] = []
         """A list of errors that can be filled during import/reading the database file."""
 
         if not self._check_file_path(file_path):
             raise ValueError("Excel file could not be found.")
 
-        self.sheet_name: str = "Database"
+        self.sheet_name: str = sheet_name
         """Name of the sheet that contains the database. Default is 'Database'."""
-        self.first_data_row: int = 3
+        self.first_data_row: int = first_data_row
         """The first datarow to search for records."""
-        self.last_data_row: int | None = None
+        self.last_data_row: int | None = last_data_row
         """The last datarow to search for records. If None, all rows will be searched."""
         self.file_path: str = file_path
         """The file path of the Excel database file."""
@@ -216,3 +205,27 @@ class ExcelDatabase(ABC):
                         "Cannot read storm surge barrier. Should be on of ['6SVK','HV','HIJK','HK','MLK','OSK','RP'].", i_column=i_column
                     )
         return barriers
+
+    @staticmethod
+    def _string_to_column_index(s: str) -> int:
+        """
+        Helper function that translates a column string to a column index (zero based) in Excel.
+
+        :param s: The column string (e.g., "A", "B", "Z")
+        :type s: str
+        :return: The column index (zero based).
+        :rtype: int
+        """
+        return column_index_from_string(s) - 1
+
+    @staticmethod
+    def _number_to_letter(n: int) -> str:
+        """
+        Helper function that translates a column index (one based) to column name in Excel.
+
+        :param n: The column index (one based, like in Excel)
+        :type n: int
+        :return: The Excel column name.
+        :rtype: str
+        """
+        return chr(ord("A") + n - 1)

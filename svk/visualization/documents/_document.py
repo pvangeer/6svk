@@ -22,7 +22,7 @@ import os, re
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from svk.data import ResearchQuestion, LinksRegister, ResearchLine, Translator, TimeFrame, Label
+from svk.data import StormSurgeBarrierResearchQuestion, LinksRegister, ResearchLine, Translator, TimeFrame, Label
 from svk.io import svg_to_pdf_chrome, merge_pdf_files, add_links
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization._layout_configuration import LayoutConfiguration
@@ -83,7 +83,7 @@ class Document(BaseModel, ABC):
 
 
 class ResearchQuestionsDocument(Document):
-    questions: list[ResearchQuestion]
+    questions: list[StormSurgeBarrierResearchQuestion]
 
     def create_pages(self) -> list[Page]:
         return self.create_detailes_pages(current_page_number=1)
@@ -91,8 +91,10 @@ class ResearchQuestionsDocument(Document):
     def create_detailes_pages(self, current_page_number: int) -> list[Page]:
         pages: list[Page] = []
 
-        grouped_questions: defaultdict[ResearchLine, list[ResearchQuestion]] = defaultdict(list[ResearchQuestion])
-        non_grouped: list[ResearchQuestion] = []
+        grouped_questions: defaultdict[ResearchLine, list[StormSurgeBarrierResearchQuestion]] = defaultdict(
+            list[StormSurgeBarrierResearchQuestion]
+        )
+        non_grouped: list[StormSurgeBarrierResearchQuestion] = []
         for question in self.questions:
             if question.research_line_primary is None:
                 non_grouped.append(question)
@@ -140,7 +142,7 @@ class ResearchQuestionsDocument(Document):
         page_number: int,
         title: str,
         link_target: str,
-        questions: list[ResearchQuestion],
+        questions: list[StormSurgeBarrierResearchQuestion],
     ) -> Page:
         dwg_details_page = QuestionDetailsPage(
             page_number=page_number,

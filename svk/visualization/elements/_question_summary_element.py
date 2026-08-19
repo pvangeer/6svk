@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
 
-from svk.data import ResearchQuestion
+from svk.data import StormSurgeBarrierResearchQuestion
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer, Alignment
@@ -35,7 +35,7 @@ class QuestionSummaryElement(VisualElementsContainer):
     Represents a question element (as part of  a group, column on the overview page)
     """
 
-    research_question: ResearchQuestion
+    research_question: StormSurgeBarrierResearchQuestion
     """The research question"""
     page_number: int
     show_priority: bool = True

@@ -26,6 +26,7 @@ light_green = (142, 178, 30)
 dark_green = (25, 107, 36)
 
 
+# TODO: Make this a dataclass instead of an enum and introduce a factory method to create a research line from a number.
 class ResearchLine(Enum):
     """
     This enum exposes default research line objects used in the SVK-project.

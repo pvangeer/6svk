@@ -25,9 +25,10 @@ from svk.data._priority import Priority
 from svk.data._researchline import ResearchLine
 from svk.data._stormsurgebarrier import StormSurgeBarrier
 from svk.data._impactcategory import ImpactCategory
+from abc import ABC, abstractmethod
 
 
-class ResearchQuestion(BaseModel):
+class ResearchQuestion(ABC, BaseModel):
     """
     Data class representing a research question related to a storm surge barrier.
     """
@@ -38,12 +39,36 @@ class ResearchQuestion(BaseModel):
     """The research question."""
     explanation: str | None = None
     """Further explanation of the research question."""
-    storm_surge_barriers: list[StormSurgeBarrier]
-    """A list of storm surge barriers this question is related to."""
+
     reference_ids: list[str]
     """A list of id's of other research questions this question is related to."""
+
+    time_frame: TimeFrame
+    """The time frame this question is associated with."""
+    # TODO: Time frame explanation
+
+    keywords: str | None
+    """Keywords associated with this research question. These keywords are used to search for research questions in the database."""
+
+    @property
+    @abstractmethod
+    def priority(self) -> int:
+        """
+        Returns the priority of this research question. The priority is an integer between 0 and 2, where 0 is low priority, 1 is medium priority and 2 is high priority.
+
+        :return: The priority of this research question.
+        :rtype: int
+        """
+        pass
+
+
+# TODO: Move to separate files and separate general classes from specific implementations.
+class StormSurgeBarrierResearchQuestion(ResearchQuestion):
     reference_question: int | None = None
     """The number of this research question in the "160 questions list"."""
+
+    storm_surge_barriers: list[StormSurgeBarrier]
+    """A list of storm surge barriers this question is related to."""
 
     prio_water_safety: Priority
     """Priority of this question related to water safety."""
@@ -55,9 +80,6 @@ class ResearchQuestion(BaseModel):
     """Priority of this question related to operation of the barrier."""
     prio_explanation: str | None = None
 
-    time_frame: TimeFrame
-    """The time frame this question is associated with."""
-    # TODO: Time frame explanation
     lead_time: float | None = None
     """The amount of time needed to come to an answer to the question in years."""
 
@@ -74,19 +96,17 @@ class ResearchQuestion(BaseModel):
 
     related_drivers: str | None = None
     """The drivers related to this question."""
-    related_functions:str | None = None
+    related_functions: str | None = None
     """The functions related to this question."""
-    related_components:str | None = None
+    related_components: str | None = None
     """The components related to this question."""
 
-    keywords: str | None
-
     @model_validator(mode="after")
-    def check_research_line(self) -> ResearchQuestion:
+    def check_research_line(self) -> StormSurgeBarrierResearchQuestion:
         if self.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and self.research_line_primary is None:
             raise ValueError("Research line can only be unknown in case the time frame is either not relevant or unknown.")
         return self
-    
+
     @property
     def priority(self) -> int:
         return (
@@ -102,7 +122,7 @@ class ResearchQuestion(BaseModel):
         )
 
 
-class ImpactPathwayResearchQuestion(ResearchQuestion):
+class ImpactPathwayResearchQuestion(StormSurgeBarrierResearchQuestion):
     impact_category: ImpactCategory
     prio_urgency_decision_making: Priority
 
@@ -122,3 +142,52 @@ class ImpactPathwayResearchQuestion(ResearchQuestion):
         if n_high_prio > 0 or combined_priority > 8:
             return 1
         return 0
+
+
+class SluicesResearchQuestion(ResearchQuestion):
+    prio_water_safety: Priority
+    """Priority of this question related to water safety."""
+    prio_water_availability: Priority
+    """Priority of this question related to water availability."""
+    prio_shipping: Priority
+    """Priority of this question related to shipping."""
+    prio_other_functions: Priority
+    """Priority of this question related to functions of the barrier other than water safety."""
+    prio_management_maintenance: Priority
+    """Priority of this question related to maintenance of the barrier."""
+    prio_operation: Priority
+    """Priority of this question related to operation of the barrier."""
+    sluice: str  # TODO: Make this an enum that can be translated to an icon?
+    """The sluice this question is related to."""
+    research_line: str  # TODO: Adjust ResearchLine to be a more general class that can be used for sluices as well.
+    """The research line this question is associated with."""
+    research_program: str | None = None
+    """The research program this question is associated with."""
+    status: str | None = None
+    """The status of this question."""
+    contributes_to_standardisation: bool
+    """Indicates whether the answer to this question contributes to standardisation of sluices."""
+
+    @model_validator(mode="after")
+    def check_research_line(self) -> SluicesResearchQuestion:
+        if self.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and self.research_line is None:
+            raise ValueError("Research line can only be unknown in case the time frame is either not relevant or unknown.")
+        return self
+
+    @property
+    def priority(self) -> int:
+        return (
+            1
+            if sum(
+                [
+                    self.prio_water_safety.id,
+                    self.prio_water_availability.id,
+                    self.prio_shipping.id,
+                    self.prio_other_functions.id,
+                    self.prio_management_maintenance.id,
+                    self.prio_operation.id,
+                ]
+            )
+            > 8
+            else 0
+        )

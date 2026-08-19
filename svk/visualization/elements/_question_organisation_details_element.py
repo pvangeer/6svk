@@ -21,14 +21,14 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
-from svk.data import ResearchQuestion, Label, ResearchLine
+from svk.data import StormSurgeBarrierResearchQuestion, Label, ResearchLine
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 
 
 class QuestionOrganisationDetailsElement(VisualElementsContainer):
-    research_question: ResearchQuestion
+    research_question: StormSurgeBarrierResearchQuestion
     """The research question"""
     color: str
     page_number: int
@@ -51,9 +51,9 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
             title=Label.QD_Organizational,
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
-            translator=self.translator
+            translator=self.translator,
         )
-        
+
         fixed_fields: list[tuple[Label, float]] = [
             (Label.QD_ResearchLineOne, self._get_max_research_line_title_length()),
             (Label.QD_ResearchLineTwo, self._get_max_research_line_title_length()),
@@ -69,20 +69,25 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
                 )
             ),
         ]
-        self._width = max([
-            self._title_element.width,
-            (
-            self.layout_configuration.small_margin
-            + max([
-                measure_text(
-                    (self.translator.get_label(l[0]) + ": "),
-                    self.layout_configuration.font_size,
-                    )[0]
-                + l[1]
-                for l in fixed_fields
-                ])
-            + self.layout_configuration.small_margin
-            )])
+        self._width = max(
+            [
+                self._title_element.width,
+                (
+                    self.layout_configuration.small_margin
+                    + max(
+                        [
+                            measure_text(
+                                (self.translator.get_label(l[0]) + ": "),
+                                self.layout_configuration.font_size,
+                            )[0]
+                            + l[1]
+                            for l in fixed_fields
+                        ]
+                    )
+                    + self.layout_configuration.small_margin
+                ),
+            ]
+        )
         self._height = (
             self._title_element.height
             + self.layout_configuration.small_margin
@@ -93,10 +98,10 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
 
     def draw(self, dwg: Drawing, x: float, y: float):
         self._title_element.draw(dwg, x, y)
-        
+
         y += self._title_element.height
         self.draw_horizontal_separator(dwg, x, y, self.width, self.color)
-        
+
         y_current = y + self.layout_configuration.small_margin
         # status = self.research_question.status if self.research_question.status is not None else ""
         # TODO: Read status from database

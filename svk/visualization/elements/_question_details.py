@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svk.data import ResearchQuestion, Label
+from svk.data import StormSurgeBarrierResearchQuestion, Label
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
@@ -36,7 +36,7 @@ from svk.visualization.elements._ssb_icons_element import SsbIconsElement
 
 
 class QuestionDetailsElement(VisualElementsContainer):
-    research_question: ResearchQuestion
+    research_question: StormSurgeBarrierResearchQuestion
     """The research question"""
     page_number: int
 
