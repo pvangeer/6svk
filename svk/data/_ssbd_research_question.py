@@ -1,4 +1,4 @@
-from svk.data._storm_surge_barrier_research_question import StormSurgeBarrierResearchQuestion
+from svk.data._ssb_research_question import StormSurgeBarrierResearchQuestion
 from svk.data._impactcategory import ImpactCategory
 from svk.data._priority import Priority
 

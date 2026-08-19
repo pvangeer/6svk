@@ -21,13 +21,10 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
 
-from svk.data import StormSurgeBarrierResearchQuestion
-from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
-from svk.visualization.helpers._greyfraction import color_toward_grey
+from svk.data import ResearchQuestion
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer, Alignment
 from svk.visualization.elements._question_details import IdElement, PriorityIconElement
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
-from svk.visualization.helpers._measuretext import measure_text
 
 
 class QuestionSummaryElement(VisualElementsContainer):
@@ -35,7 +32,7 @@ class QuestionSummaryElement(VisualElementsContainer):
     Represents a question element (as part of  a group, column on the overview page)
     """
 
-    research_question: StormSurgeBarrierResearchQuestion
+    research_question: ResearchQuestion
     """The research question"""
     page_number: int
     show_priority: bool = True
@@ -88,15 +85,7 @@ class QuestionSummaryElement(VisualElementsContainer):
 
     @property
     def _color(self):
-        research_line = self.research_question.research_line_primary
-        return (
-            color_toward_grey(
-                research_line.base_color,
-                self.research_question.time_frame.grey_fraction,
-            )
-            if research_line is not None
-            else "rgb(120,120,120)"
-        )
+        return self.research_question.color
 
     def draw(self, dwg: Drawing, x: float, y: float):
         dwg.add(

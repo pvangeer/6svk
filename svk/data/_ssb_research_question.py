@@ -4,10 +4,11 @@ from __future__ import annotations
 from pydantic import model_validator
 
 from svk.data._priority import Priority
-from svk.data._researchline import ResearchLine
-from svk.data._researchquestion import ResearchQuestion
+from svk.data._research_line import ResearchLine
+from svk.data._research_question import ResearchQuestion
 from svk.data._stormsurgebarrier import StormSurgeBarrier
 from svk.data._timeframe import TimeFrame
+from svk.data.helpers._greyfraction import color_toward_grey
 
 
 class StormSurgeBarrierResearchQuestion(ResearchQuestion):
@@ -53,6 +54,18 @@ class StormSurgeBarrierResearchQuestion(ResearchQuestion):
         if self.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and self.research_line_primary is None:
             raise ValueError("Research line can only be unknown in case the time frame is either not relevant or unknown.")
         return self
+
+    @property
+    def color(self) -> str:
+        research_line = self.research_line_primary
+        return (
+            color_toward_grey(
+                research_line.base_color,
+                self.time_frame.grey_fraction,
+            )
+            if research_line is not None
+            else "rgb(120,120,120)"
+        )
 
     @property
     def priority(self) -> int:

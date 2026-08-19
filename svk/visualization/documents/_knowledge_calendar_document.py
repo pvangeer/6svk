@@ -23,7 +23,7 @@ from typing import DefaultDict
 
 from svk.data import StormSurgeBarrierResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine
 from svk.visualization.helpers._measuretext import measure_text
-from svk.visualization.helpers._greyfraction import color_toward_grey
+from svk.data.helpers import color_toward_grey
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization.elements._column import Column

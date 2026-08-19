@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
-from svk.data import StormSurgeBarrierResearchQuestion, Label, ResearchLine
+from svk.data import StormSurgeBarrierResearchQuestion, Label, ResearchLine, StormSurgeBarrierResearchLines
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
@@ -160,7 +160,10 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
 
     def _get_max_research_line_title_length(self) -> float:
         return max(
-            [measure_text(self.translator.get_label(line.title), self.layout_configuration.font_size)[0] for line in list(ResearchLine)]
+            [
+                measure_text(self.translator.get_label(line.title), self.layout_configuration.font_size)[0]
+                for line in list(StormSurgeBarrierResearchLines)
+            ]
         )
 
     def _draw_research_line_link(

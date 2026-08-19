@@ -21,7 +21,8 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from svk.visualization import LayoutConfiguration, TimeLineOverviewPage, QuestionSummaryElement, Group, Column, Cluster
 from svk.data import (
     TimeFrame,
-    ResearchLine,
+    StormSurgeBarrierResearchLineFactory,
+    StormSurgeBarrierResearchLines,
     StormSurgeBarrierResearchQuestion,
     Priority,
     TimeFrame,
@@ -33,7 +34,7 @@ from svk.io import svg_to_pdf_chrome
 from test.paths import test_output_dir
 
 
-def generate_research_question(question, time_frame, research_line: ResearchLine):
+def generate_research_question(question, time_frame, research_line: StormSurgeBarrierResearchLines):
     generate_research_question.counter += 1
     return StormSurgeBarrierResearchQuestion(
         id=f"T{str(generate_research_question.counter)}",
@@ -46,7 +47,7 @@ def generate_research_question(question, time_frame, research_line: ResearchLine
         prio_other_functions=Priority.Medium,
         prio_operation=Priority.High,
         time_frame=time_frame,
-        research_line_primary=research_line,
+        research_line_primary=StormSurgeBarrierResearchLineFactory.get_research_line_from_ssb_enum(research_line),
         keywords="",
     )
 
@@ -77,7 +78,9 @@ def test_create_image():
             links_register=links_register,
             translator=translator,
             research_question=generate_research_question(
-                question="This is my first question", time_frame=TimeFrame.Now, research_line=ResearchLine.Adaptation.value
+                question="This is my first question",
+                time_frame=TimeFrame.Now,
+                research_line=StormSurgeBarrierResearchLines.Adaptation,
             ),
             page_number=0,
         )
@@ -88,7 +91,9 @@ def test_create_image():
             links_register=links_register,
             translator=translator,
             research_question=generate_research_question(
-                question="This is my second question", time_frame=TimeFrame.Now, research_line=ResearchLine.Adaptation.value
+                question="This is my second question",
+                time_frame=TimeFrame.Now,
+                research_line=StormSurgeBarrierResearchLines.Adaptation,
             ),
             page_number=0,
         )
@@ -101,7 +106,7 @@ def test_create_image():
             research_question=generate_research_question(
                 question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
                 time_frame=TimeFrame.Now,
-                research_line=ResearchLine.Adaptation.value,
+                research_line=StormSurgeBarrierResearchLines.Adaptation,
             ),
             page_number=0,
         )
@@ -132,7 +137,9 @@ def test_create_image():
             links_register=links_register,
             translator=translator,
             research_question=generate_research_question(
-                question="This is my first question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Cyber.value
+                question="This is my first question",
+                time_frame=TimeFrame.NearFuture,
+                research_line=StormSurgeBarrierResearchLines.Cyber,
             ),
             page_number=0,
         )
@@ -143,7 +150,9 @@ def test_create_image():
             links_register=links_register,
             translator=translator,
             research_question=generate_research_question(
-                question="This is my second question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Cyber.value
+                question="This is my second question",
+                time_frame=TimeFrame.NearFuture,
+                research_line=StormSurgeBarrierResearchLines.Cyber,
             ),
             page_number=0,
         )
@@ -156,7 +165,7 @@ def test_create_image():
             research_question=generate_research_question(
                 question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
                 time_frame=TimeFrame.NearFuture,
-                research_line=ResearchLine.Cyber.value,
+                research_line=StormSurgeBarrierResearchLines.Cyber,
             ),
             page_number=0,
         )
@@ -187,7 +196,9 @@ def test_create_image():
             links_register=links_register,
             translator=translator,
             research_question=generate_research_question(
-                question="This is my first question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Adaptation.value
+                question="This is my first question",
+                time_frame=TimeFrame.NearFuture,
+                research_line=StormSurgeBarrierResearchLines.Adaptation,
             ),
             page_number=0,
         )
@@ -198,7 +209,9 @@ def test_create_image():
             links_register=links_register,
             translator=translator,
             research_question=generate_research_question(
-                question="This is my second question", time_frame=TimeFrame.NearFuture, research_line=ResearchLine.Adaptation.value
+                question="This is my second question",
+                time_frame=TimeFrame.NearFuture,
+                research_line=StormSurgeBarrierResearchLines.Adaptation,
             ),
             page_number=0,
         )
@@ -211,7 +224,7 @@ def test_create_image():
             research_question=generate_research_question(
                 question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
                 time_frame=TimeFrame.NearFuture,
-                research_line=ResearchLine.Adaptation.value,
+                research_line=StormSurgeBarrierResearchLines.Adaptation,
             ),
             page_number=0,
         )

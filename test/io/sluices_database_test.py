@@ -1,4 +1,4 @@
-from svk.io.sluicesdatabase import SluicesKnowledgeAgendaDatabase
+from svk.io._sluicesdatabase import SluicesKnowledgeAgendaDatabase
 from svk.data import Priority, TimeFrame
 from test.paths import test_data_dir
 

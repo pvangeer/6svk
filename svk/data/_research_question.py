@@ -19,12 +19,8 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel
 from svk.data._timeframe import TimeFrame
-from svk.data._priority import Priority
-from svk.data._researchline import ResearchLine
-from svk.data._stormsurgebarrier import StormSurgeBarrier
-from svk.data._impactcategory import ImpactCategory
 from abc import ABC, abstractmethod
 
 
@@ -49,6 +45,11 @@ class ResearchQuestion(ABC, BaseModel):
 
     keywords: str | None
     """Keywords associated with this research question. These keywords are used to search for research questions in the database."""
+
+    @property
+    @abstractmethod
+    def color(self) -> str:
+        pass
 
     @property
     @abstractmethod

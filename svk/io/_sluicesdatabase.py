@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.data import SluicesResearchQuestion
+from svk.data import SluicesResearchQuestion, ResearchLine
 from svk.io._exceldatabase import ExcelDatabase
 
 
@@ -73,7 +73,9 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
                 question=ExcelDatabase._get_as_str(row, ExcelDatabase._string_to_column_index(self.i_question)),
                 explanation=ExcelDatabase._get_str_optional(row, ExcelDatabase._string_to_column_index(self.i_explanation)),
                 sluice=ExcelDatabase._get_as_str(row, ExcelDatabase._string_to_column_index(self.i_sluice)),  # TODO: Change to sluices
-                research_line=ExcelDatabase._get_as_str(row, ExcelDatabase._string_to_column_index(self.i_research_line)),
+                research_line=SluicesKnowledgeAgendaDatabase._get_research_line_optional(
+                    row, ExcelDatabase._string_to_column_index(self.i_research_line)
+                ),
                 time_frame=ExcelDatabase._get_time_frame(row, ExcelDatabase._string_to_column_index(self.i_time_frame)),
                 prio_management_maintenance=ExcelDatabase._get_priority(
                     row, ExcelDatabase._string_to_column_index(self.i_prio_maintenance)
@@ -107,3 +109,7 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
     def _get_bool_from_str(row: tuple, i_column: int) -> bool:
         value = ExcelDatabase._get_as_str(row, i_column)
         return value.lower() in ("true", "1", "yes", "y", "ja", "nee")
+
+    @staticmethod
+    def _get_research_line_optional(row: tuple, i_column: int) -> ResearchLine | None:
+        return None  # TODO: Implement all research lines of sluices and create own factory.

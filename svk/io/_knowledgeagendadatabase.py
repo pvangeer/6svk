@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.data import StormSurgeBarrierResearchQuestion
+from svk.data import StormSurgeBarrierResearchQuestion, StormSurgeBarrierResearchLineFactory, ResearchLine
 from svk.io._exceldatabase import ExcelDatabase
 
 
@@ -83,8 +83,8 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[StormSurgeBarrierResearchQuest
                 question=ExcelDatabase._get_as_str(row, self.i_question),
                 explanation=ExcelDatabase._get_str_optional(row, self.i_explanation),
                 storm_surge_barriers=ExcelDatabase._get_storm_surge_barriers(row, self.i_barrier),
-                research_line_primary=ExcelDatabase._get_research_line_optional(row, self.i_primary_research_line),
-                research_line_secondary=ExcelDatabase._get_research_line_optional(row, self.i_secundary_research_line),
+                research_line_primary=KnowledgeAgendaDatabase._get_ssb_research_line_optional(row, self.i_primary_research_line),
+                research_line_secondary=KnowledgeAgendaDatabase._get_ssb_research_line_optional(row, self.i_secundary_research_line),
                 time_frame=ExcelDatabase._get_time_frame(row, self.i_time_frame),
                 prio_management_maintenance=ExcelDatabase._get_priority(row, self.i_prio_management_maintenance),
                 prio_other_functions=ExcelDatabase._get_priority(row, self.i_prio_other_functions),
@@ -110,3 +110,11 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[StormSurgeBarrierResearchQuest
                 related_functions=ExcelDatabase._get_str_optional(row=row, i_column=self.i_functions),
             )
         )
+
+    @staticmethod
+    def _get_ssb_research_line_optional(row: tuple, i_column: int) -> ResearchLine | None:
+        value = row[i_column].value
+        if not isinstance(value, str) or value is None:
+            return None
+
+        return StormSurgeBarrierResearchLineFactory.get_research_line_from_int(int(str(value).split(".")[0]))

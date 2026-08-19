@@ -18,20 +18,17 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from ._research_question import ResearchQuestion
-from ._ssb_research_question import StormSurgeBarrierResearchQuestion
-from ._ssbd_research_question import ImpactPathwayResearchQuestion
-from ._sp_research_question import SluicesResearchQuestion
-from ._research_line import ResearchLine
-from ._ssb_research_lines import StormSurgeBarrierResearchLines
-from ._ssb_research_line_factory import StormSurgeBarrierResearchLineFactory
-from ._timeframe import TimeFrame
-from ._priority import Priority
-from ._stormsurgebarrier import StormSurgeBarrier
-from ._linksregister import LinksRegister
-from ._impactcategory import ImpactCategory
-from ._translator import Translator, Label
-from ._function import Function
-from ._driver import Driver
-from ._color import Color
-from ._grid import Grid, GridCell, GridHeader
+from pydantic import BaseModel, ConfigDict
+from svk.data._translator import Label
+
+
+class ResearchLine(BaseModel):
+    model_config = ConfigDict(frozen=True)
+    number: int
+    title: Label
+    cluster: int
+    base_color: tuple[int, int, int]
+
+    @property
+    def id(self) -> str:
+        return "#RL-" + str(self.number)

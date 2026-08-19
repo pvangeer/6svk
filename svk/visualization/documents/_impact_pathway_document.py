@@ -21,10 +21,9 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from collections import defaultdict
 from typing import cast
 from svk.data import ImpactPathwayResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine, ImpactCategory, Translator
+from svk.data.helpers import color_toward_grey
 from svk.visualization.pages._page import Page
-from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers._measuretext import measure_text
-from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group, PlainTextGroup

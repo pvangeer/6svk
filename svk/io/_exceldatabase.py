@@ -2,9 +2,10 @@ from svk.data import (
     Priority,
     ResearchLine,
     TimeFrame,
-    get_research_line,
     StormSurgeBarrier,
 )
+
+from svk.data import StormSurgeBarrierResearchLineFactory
 
 from pathlib import Path
 from abc import ABC, abstractmethod
@@ -128,14 +129,6 @@ class ExcelDatabase(ABC):
             return None
 
         return int(value)
-
-    @staticmethod
-    def _get_research_line_optional(row: tuple, i_column: int) -> ResearchLine | None:
-        value = row[i_column].value
-        if not isinstance(value, str) or value is None:
-            return None
-
-        return get_research_line(int(str(value).split(".")[0]))
 
     @staticmethod
     def _empty(row: tuple, i_column: int) -> bool:

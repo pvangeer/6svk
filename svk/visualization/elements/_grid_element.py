@@ -2,7 +2,7 @@ from pydantic import model_validator, PrivateAttr
 from uuid import uuid4
 from svgwrite import Drawing
 from svk.data import Grid
-from svk.visualization.helpers._greyfraction import color_toward_grey
+from svk.data.helpers import color_toward_grey
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.elements._grid_cell_element import GridCellElement
 from svk.visualization.elements._grid_header_element import GridHeaderElement, HeaderOrientation

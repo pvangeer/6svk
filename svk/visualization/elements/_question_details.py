@@ -21,10 +21,10 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svk.data import StormSurgeBarrierResearchQuestion, Label
+from svk.data.helpers import color_toward_grey
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
-from svk.visualization.helpers._greyfraction import color_toward_grey
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer, Alignment
 from svk.visualization.elements._question_organisation_details_element import QuestionOrganisationDetailsElement
