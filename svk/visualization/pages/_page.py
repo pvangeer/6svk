@@ -35,7 +35,7 @@ class Page(BaseModel, ABC):
     # TODO: Include the page number somewhere on the page as well?
     page_number: int
     """The page number"""
-    icon: StormSurgeBarrier | None = None
+    icon: StormSurgeBarrier | None = None  # TODO: this should be an icon class that provides the info to build an icon.
     """The icon of this page."""
     title_link_target: str | None = None
     """Optional link target to the title of the page."""

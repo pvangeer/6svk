@@ -96,10 +96,10 @@ class ResearchQuestionsDocument(Document):
         )
         non_grouped: list[StormSurgeBarrierResearchQuestion] = []
         for question in self.questions:
-            if question.research_line_primary is None:
+            if question.research_line is None:
                 non_grouped.append(question)
             else:
-                grouped_questions[question.research_line_primary].append(question)
+                grouped_questions[question.research_line].append(question)
 
         for research_line in sorted(grouped_questions, key=lambda r_l: r_l.number):
             pages.append(

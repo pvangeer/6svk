@@ -24,6 +24,7 @@ class SluicesDocument(Document):
     def create_pages(self) -> list[Page]:
         return [self._create_overview_page(page_number=0)]
 
+    # TODO: CReate shared methods over all overview pages.
     def _create_overview_page(
         self,
         page_number: int,
@@ -47,7 +48,7 @@ class SluicesDocument(Document):
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Now, number=0)
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=1)
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=2)
-        self.add_clusters_per_research_line(fig=fig, questions=cast(list[SluicesResearchQuestion], self.questions), page_number=page_number)
+        self.add_clusters_per_research_line(fig=fig, questions=self.questions, page_number=page_number)
         return fig
 
     def add_time_frame_column(self, fig: TimeLineOverviewPage, time_frame: TimeFrame, number: int):
@@ -70,7 +71,6 @@ class SluicesDocument(Document):
             TimeFrame.NearFuture: 1,
             TimeFrame.Future: 2,
         }
-        # TODO: columns are not correctly mapped yet (added the Now column and changed numbers).
         grouped_quenstions_lists: defaultdict[tuple[TimeFrame, ResearchLine], list[SluicesResearchQuestion]] = defaultdict(
             list[SluicesResearchQuestion]
         )

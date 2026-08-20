@@ -83,7 +83,7 @@ class KnowledgeAgendaDatabase(ExcelDatabase, list[StormSurgeBarrierResearchQuest
                 question=ExcelDatabase._get_as_str(row, self.i_question),
                 explanation=ExcelDatabase._get_str_optional(row, self.i_explanation),
                 storm_surge_barriers=ExcelDatabase._get_storm_surge_barriers(row, self.i_barrier),
-                research_line_primary=KnowledgeAgendaDatabase._get_ssb_research_line_optional(row, self.i_primary_research_line),
+                research_line=KnowledgeAgendaDatabase._get_ssb_research_line_optional(row, self.i_primary_research_line),
                 research_line_secondary=KnowledgeAgendaDatabase._get_ssb_research_line_optional(row, self.i_secundary_research_line),
                 time_frame=ExcelDatabase._get_time_frame(row, self.i_time_frame),
                 prio_management_maintenance=ExcelDatabase._get_priority(row, self.i_prio_management_maintenance),

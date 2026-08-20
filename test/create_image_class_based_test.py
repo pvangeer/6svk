@@ -47,7 +47,7 @@ def generate_research_question(question, time_frame, research_line: StormSurgeBa
         prio_other_functions=Priority.Medium,
         prio_operation=Priority.High,
         time_frame=time_frame,
-        research_line_primary=StormSurgeBarrierResearchLineFactory.get_research_line_from_ssb_enum(research_line),
+        research_line=StormSurgeBarrierResearchLineFactory.get_research_line_from_ssb_enum(research_line),
         keywords="",
     )
 

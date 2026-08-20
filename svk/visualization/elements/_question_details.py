@@ -179,7 +179,7 @@ class QuestionDetailsElement(VisualElementsContainer):
 
     @property
     def _color(self):
-        research_line = self.research_question.research_line_primary
+        research_line = self.research_question.research_line
         return (
             color_toward_grey(
                 research_line.base_color,

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-# TODO: Move to separate files and separate general classes from specific implementations.
 from pydantic import model_validator
 
 from svk.data._priority import Priority
@@ -31,8 +30,6 @@ class StormSurgeBarrierResearchQuestion(ResearchQuestion):
     lead_time: float | None = None
     """The amount of time needed to come to an answer to the question in years."""
 
-    research_line_primary: ResearchLine | None
-    """The primary research line this question is associated with."""
     research_line_secondary: ResearchLine | None = None
     """An optional secondary research line this question is associated with."""
     # TODO: research line explanation
@@ -51,13 +48,13 @@ class StormSurgeBarrierResearchQuestion(ResearchQuestion):
 
     @model_validator(mode="after")
     def check_research_line(self) -> StormSurgeBarrierResearchQuestion:
-        if self.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and self.research_line_primary is None:
+        if self.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and self.research_line is None:
             raise ValueError("Research line can only be unknown in case the time frame is either not relevant or unknown.")
         return self
 
     @property
     def color(self) -> str:
-        research_line = self.research_line_primary
+        research_line = self.research_line
         return (
             color_toward_grey(
                 research_line.base_color,

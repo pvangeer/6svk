@@ -1,7 +1,6 @@
 from __future__ import annotations
 from pydantic import model_validator
 from svk.data._research_question import ResearchQuestion
-from svk.data._research_line import ResearchLine
 from svk.data._priority import Priority
 from svk.data._timeframe import TimeFrame
 from svk.data.helpers._greyfraction import color_toward_grey
@@ -22,8 +21,6 @@ class SluicesResearchQuestion(ResearchQuestion):
     """Priority of this question related to operation of the barrier."""
     sluice: str  # TODO: Make this an enum that can be translated to an icon?
     """The sluice this question is related to."""
-    research_line: ResearchLine | None
-    """The research line this question is associated with."""
     research_program: str | None = None
     """The research program this question is associated with."""
     status: str | None = None

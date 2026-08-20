@@ -144,7 +144,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
             page_number=self.page_number,
             x_start=x + self.layout_configuration.small_margin,
             y_start=y_current,
-            research_line=self.research_question.research_line_primary,
+            research_line=self.research_question.research_line,
             label=Label.QD_ResearchLineOne,
         )
 

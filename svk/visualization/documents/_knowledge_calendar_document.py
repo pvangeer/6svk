@@ -94,10 +94,10 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
         if len(questions) > 0:
             now_questions_groups: DefaultDict[ResearchLine, list[StormSurgeBarrierResearchQuestion]] = defaultdict(list)
             for q in questions:
-                if q.research_line_primary is None:
+                if q.research_line is None:
                     # TODO: This should not occur here. Look at impact pathway for solution (build rows instead of columns)
                     continue
-                now_questions_groups[q.research_line_primary].append(q)
+                now_questions_groups[q.research_line].append(q)
 
             for research_line in sorted(now_questions_groups.keys(), key=lambda g: g.number):
                 if research_line.cluster not in self._clusters:

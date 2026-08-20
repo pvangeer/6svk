@@ -100,9 +100,9 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
         )
 
         for question in questions:
-            if question.research_line_primary is None or question.time_frame not in time_frame_column_numbers:
+            if question.research_line is None or question.time_frame not in time_frame_column_numbers:
                 continue
-            grouped_quenstions_lists[(question.time_frame, question.impact_category, question.research_line_primary)].append(question)
+            grouped_quenstions_lists[(question.time_frame, question.impact_category, question.research_line)].append(question)
 
         for questions_list_key in sorted(
             grouped_quenstions_lists, key=lambda k: (k[1].number, k[2].number, time_frame_column_numbers[k[0]])
@@ -199,9 +199,9 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
         )
 
         for question in questions:
-            if question.research_line_primary is None or question.time_frame not in time_frame_column_numbers:
+            if question.research_line is None or question.time_frame not in time_frame_column_numbers:
                 continue
-            grouped_quenstions_lists[(question.time_frame, question.research_line_primary)].append(question)
+            grouped_quenstions_lists[(question.time_frame, question.research_line)].append(question)
 
         for questions_list_key in sorted(grouped_quenstions_lists, key=lambda kv: (kv[1].number, time_frame_column_numbers[kv[0]])):
             current_time_frame = questions_list_key[0]

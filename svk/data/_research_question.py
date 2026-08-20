@@ -21,6 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import BaseModel
 from svk.data._timeframe import TimeFrame
+from svk.data._research_line import ResearchLine
 from abc import ABC, abstractmethod
 
 
@@ -42,6 +43,9 @@ class ResearchQuestion(ABC, BaseModel):
     time_frame: TimeFrame
     """The time frame this question is associated with."""
     # TODO: Time frame explanation
+
+    research_line: ResearchLine | None
+    """The primary research line this question is associated with."""
 
     keywords: str | None
     """Keywords associated with this research question. These keywords are used to search for research questions in the database."""
