@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from svk.data._timeframe import TimeFrame
 from svk.data._research_line import ResearchLine
 from abc import ABC, abstractmethod
@@ -65,3 +65,9 @@ class ResearchQuestion(ABC, BaseModel):
         :rtype: int
         """
         pass
+
+    @model_validator(mode="after")
+    def check_research_line(self) -> ResearchQuestion:
+        if self.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and self.research_line is None:
+            raise ValueError("Research line can only be unknown in case the time frame is either not relevant or unknown.")
+        return self
