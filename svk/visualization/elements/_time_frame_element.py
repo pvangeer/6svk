@@ -55,10 +55,9 @@ class TimeFrameElement(VisualElementsContainer):
                     Path(
                         d="M 34.048204,170.95036 C 95.440663,82.251406 178.95804,105.79218 237.61379,173.99809 m 0.42164,-42.29843 -0.7292,41.84658 m -44.17122,0.45245 44.59335,0.30091"
                     ),
-                    Path(d="M 59.743352,173.04971 H 76.910983", stroke_width=10, fill=accent_fill),
-                    Path(d="M 92.682122,172.58829 H 109.84975", stroke_width=10, fill=accent_fill),
-                    Path(d="M 125.09055,172.95992 H 17.16763", stroke_width=10, fill=accent_fill),
-                    Path(d="M 158.21396,173.14573 H 17.16763", stroke_width=10, fill=accent_fill),
+                    Path(d="M 67.960734,174 H 85.128362", stroke_width=10, stroke=accent_fill),
+                    Path(d="m 112.3865,174 h 17.16763", stroke_width=10, stroke=accent_fill),
+                    Path(d="m 154.78043,174 h 17.16763", stroke_width=10, stroke=accent_fill),
                 ]
 
         x_icon_current = x + self.layout_configuration.small_margin

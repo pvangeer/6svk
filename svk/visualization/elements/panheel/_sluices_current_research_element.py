@@ -60,7 +60,7 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
             links_register=self.links_register,
             translator=self.translator,
             has_margins=False,
-            max_width=self.layout_configuration.current_research_details_width - self.layout_configuration.small_margin * 2,
+            max_width=self.layout_configuration.current_research_details_width - self.layout_configuration.small_margin * 5,
         )
 
         self._research_program_element = WrappedTextElement(
@@ -69,7 +69,7 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
             links_register=self.links_register,
             translator=self.translator,
             has_margins=False,
-            max_width=self.layout_configuration.current_research_details_width - self.layout_configuration.small_margin * 2,
+            max_width=self.layout_configuration.current_research_details_width - self.layout_configuration.small_margin * 5,
         )
 
         self._width = max(
@@ -131,7 +131,7 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
         self.draw_element(
             dwg=dwg,
             element=self._research_program_element,
-            x_container=x + self.layout_configuration.small_margin,
+            x_container=x + self.layout_configuration.small_margin * 4,
             y_container=y_current,
             width_container=self._research_program_element.width,
             height_container=self._research_program_element.height,
@@ -157,7 +157,7 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
         self.draw_element(
             dwg=dwg,
             element=self._related_research_element,
-            x_container=x + self.layout_configuration.small_margin,
+            x_container=x + self.layout_configuration.small_margin * 4,
             y_container=y_current,
             width_container=self._research_program_element.width,
             height_container=self._research_program_element.height,

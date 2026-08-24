@@ -21,7 +21,7 @@ class WrappedTextElement(VisualElement):
         self._height = (
             len(self._lines) * self.layout_configuration.font_size * 1.2 + 2 * self.layout_configuration.small_margin
             if self.has_margins
-            else len(self._lines) * self.layout_configuration.font_size
+            else len(self._lines) * self.layout_configuration.font_size * 1.2
         )
         return self
 
