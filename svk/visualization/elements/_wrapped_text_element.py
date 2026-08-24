@@ -6,6 +6,7 @@ from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 
 class WrappedTextElement(VisualElement):
     max_width: float
+    has_margins: bool = True
     text: str
 
     _height: float = PrivateAttr()
@@ -15,8 +16,13 @@ class WrappedTextElement(VisualElement):
     @model_validator(mode="after")
     def validate(self):
         self._width = self.max_width
-        self._lines = wrapped_lines(self.text, max_width=self.max_width, font_size=self.layout_configuration.font_size)
-        self._height = len(self._lines) * self.layout_configuration.font_size * 1.2 + 2 * self.layout_configuration.small_margin
+        max_text_width = self.max_width - self.layout_configuration.small_margin * 2 if self.has_margins else self.max_width
+        self._lines = wrapped_lines(self.text, max_width=max_text_width, font_size=self.layout_configuration.font_size)
+        self._height = (
+            len(self._lines) * self.layout_configuration.font_size * 1.2 + 2 * self.layout_configuration.small_margin
+            if self.has_margins
+            else len(self._lines) * self.layout_configuration.font_size
+        )
         return self
 
     @property
@@ -28,13 +34,15 @@ class WrappedTextElement(VisualElement):
         return self._width
 
     def draw(self, dwg: Drawing, x: float, y: float) -> None:
-        dwg.add(    
+        x = x + self.layout_configuration.small_margin if self.has_margins else x
+        y = y + self.layout_configuration.small_margin if self.has_margins else y
+        dwg.add(
             wrapped_text(
                 dwg,
                 lines=self._lines,
                 insert=(
-                    x + self.layout_configuration.small_margin,
-                    y + self.layout_configuration.small_margin,
+                    x,
+                    y,
                 ),
                 text_anchor="start",
                 dominant_baseline="text-before-edge",

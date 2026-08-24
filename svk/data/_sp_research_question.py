@@ -23,16 +23,12 @@ class SluicesResearchQuestion(ResearchQuestion):
     """The sluice this question is related to."""
     research_program: str | None = None
     """The research program this question is associated with."""
+    related_research: str | None = None
+    """Research that is related to this question."""
     status: str | None = None
     """The status of this question."""
     contributes_to_standardisation: bool
     """Indicates whether the answer to this question contributes to standardisation of sluices."""
-
-    @model_validator(mode="after")
-    def check_research_line(self) -> SluicesResearchQuestion:
-        if self.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and self.research_line is None:
-            raise ValueError("Research line can only be unknown in case the time frame is either not relevant or unknown.")
-        return self
 
     @property
     def color(self) -> str:

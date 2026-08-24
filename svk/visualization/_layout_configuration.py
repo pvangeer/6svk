@@ -49,7 +49,6 @@ class LayoutConfiguration(BaseModel):
     grid_cell_margin: float = 2
 
     n_columns: int = 3
-    details_page_width: float = 1500.0
     summary_question_lines_width: float = 535.0
     priority_arrow_width: float = 15.0
     question_id_box_width: float = 40.0
@@ -58,6 +57,7 @@ class LayoutConfiguration(BaseModel):
     analysis_details_width: float = 300
     arrow_depth: float = 20
     icon_width_small: float = 24
+    current_research_details_width: float = 500
 
     cluster_colors: dict[int, tuple[int, int, int]] = {}
     """A dictionary with group colors."""

@@ -18,13 +18,13 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.visualization.elements._question_details_element import QuestionDetailsElement
+from svk.visualization.elements.panheel._sluices_question_details_element import SluicesQuestionDetailsElement
 from svk.visualization.pages._page import Page
 from svgwrite import Drawing
 
 
-class QuestionDetailsPage(Page):
-    questions: list[QuestionDetailsElement] = []
+class SluicesQuestionDetailsPage(Page):
+    questions: list[SluicesQuestionDetailsElement] = []
 
     def get_content_size(self) -> tuple[float, float]:
         return (
@@ -36,12 +36,6 @@ class QuestionDetailsPage(Page):
     def draw_content(self, dwg: Drawing, top: float, left: float):
         top_current = top
         for question in self.questions:
-            # self.links_register.register_link_target(
-            #     link_target=question.research_question.id,
-            #     page_number=self.page_number,
-            #     x=self.layout_configuration.paper_margin,
-            #     y=top_current,
-            # )
             question.draw(
                 dwg=dwg,
                 x=left,

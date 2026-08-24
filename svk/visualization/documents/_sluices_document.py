@@ -1,5 +1,4 @@
 from collections import defaultdict
-from typing import cast
 from svk.data import TimeFrame, ResearchLine, StormSurgeBarrier
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
@@ -10,11 +9,13 @@ from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group
 from svk.visualization.elements._cluster import Cluster
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
+from svk.visualization.elements.panheel._sluices_question_details_element import SluicesQuestionDetailsElement
 
-from svk.data import SluicesResearchQuestion, TimeFrame
+from svk.data import SluicesResearchQuestion, TimeFrame, Label
 from svk.visualization.documents._document import Document
 from svk.visualization.pages._page import Page
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
+from svk.visualization.pages._sluices_question_details_page import SluicesQuestionDetailsPage
 from svk.visualization.helpers._measuretext import measure_text
 
 
@@ -22,7 +23,7 @@ class SluicesDocument(Document):
     questions: list[SluicesResearchQuestion]
 
     def create_pages(self) -> list[Page]:
-        return [self._create_overview_page(page_number=0)]
+        return [self._create_overview_page(page_number=0)] + self.create_detailed_sluice_question_pages(current_page_number=1)
 
     # TODO: CReate shared methods over all overview pages.
     def _create_overview_page(
@@ -116,3 +117,67 @@ class SluicesDocument(Document):
                 )
 
         fig.clusters = list(clusters.values())
+
+    def create_detailed_sluice_question_pages(self, current_page_number: int) -> list[Page]:
+        pages: list[Page] = []
+
+        grouped_questions: defaultdict[ResearchLine, list[SluicesResearchQuestion]] = defaultdict(list[SluicesResearchQuestion])
+        non_grouped: list[SluicesResearchQuestion] = []
+        for question in self.questions:
+            if question.research_line is None:
+                non_grouped.append(question)
+            else:
+                grouped_questions[question.research_line].append(question)
+
+        for research_line in sorted(grouped_questions, key=lambda r_l: r_l.number):
+            pages.append(
+                self.create_details_page(
+                    page_number=current_page_number,
+                    title=str(research_line.number) + ". " + self.translator.get_label(research_line.title),
+                    link_target=research_line.id,
+                    questions=grouped_questions[research_line],
+                )
+            )
+            current_page_number += 1
+
+        if len(non_grouped) > 0:
+            pages.append(
+                self.create_details_page(
+                    page_number=current_page_number,
+                    title=self.translator.get_label(Label.D_NoResearchLine),
+                    link_target="",
+                    questions=non_grouped,
+                )
+            )
+
+        return pages
+
+    def create_details_page(
+        self,
+        page_number: int,
+        title: str,
+        link_target: str,
+        questions: list[SluicesResearchQuestion],
+    ) -> Page:
+        dwg_details_page = SluicesQuestionDetailsPage(
+            page_number=page_number,
+            title=title,
+            title_link_target=link_target,
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator,
+            disclaimer=self.disclaimer,
+            disclaimer_links=self.disclaimer_links,
+        )
+        for question in sorted(questions, key=lambda q: q.id):
+            dwg_details_page.questions.append(
+                SluicesQuestionDetailsElement(
+                    layout_configuration=self.layout_configuration,
+                    links_register=self.links_register,
+                    translator=self.translator,
+                    research_question=question,
+                    page_number=page_number,
+                )
+            )
+
+        return dwg_details_page

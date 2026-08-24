@@ -56,8 +56,10 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
     """N - Hard coded column number for the time frame"""
     i_research_line = "O"
     """O - Hard coded column number for the research line"""
-    i_research_program = "P"
+    i_related_research_program = "P"
     """P - Hard coded column for the related research program"""
+    i_research_program = "Q"
+    """Q - Hard coded column for the research program this question is adressed"""
     i_status = "R"
     """R - Hard coded column number for the status"""
     i_contributes_to_standardisation = "Y"
@@ -97,6 +99,10 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
                     ]
                     if not ExcelDatabase._empty(row, ExcelDatabase._string_to_column_index(self.i_reference_ids))
                     else []
+                ),
+                research_program=ExcelDatabase._get_str_optional(row, ExcelDatabase._string_to_column_index(self.i_research_program)),
+                related_research=ExcelDatabase._get_str_optional(
+                    row, ExcelDatabase._string_to_column_index(self.i_related_research_program)
                 ),
                 keywords=ExcelDatabase._get_str_optional(row=row, i_column=ExcelDatabase._string_to_column_index(self.i_keywords)),
                 contributes_to_standardisation=self._get_bool_from_str(

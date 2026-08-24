@@ -59,7 +59,10 @@ class Label(Enum):
     QD_Functions = ("Functies", "Functions")
     QD_Priority = ("Prioriteit", "Priority")
     QD_Organizational = ("Organisatorisch", "Organizational")
+    QD_CurrentResearch = ("Lopend onderzoek", "Current research")
     QD_WaterSafety = ("Waterveiligheid", "Water safety")
+    QD_WaterAvailability = ("Waterbeschikbaarheid", "Water availability")
+    QD_Shipping = ("Scheepvaart", "Shipping")
     QD_OtherFunctions = ("Ander functies", "Other functions")
     QD_Operation = ("Operatie", "Operation")
     QD_Maitenance = ("B&O", "Maintenance")
@@ -69,6 +72,8 @@ class Label(Enum):
     QD_Status = ("Status", "Status")
     QD_Keywords = ("Trefwoorden", "Keywords")
     QD_Related_Questions = ("Gerelateerde vragen", "Related questions")
+    QD_RelatedResearch = ("Gerelateerd onderzoek", "Related research")
+    QD_AdressedInResearchProject = ("Belegd in programma", "Adressed in research project")
 
     def __init__(self, nl_label: str, en_label: str):
         self.nl = nl_label

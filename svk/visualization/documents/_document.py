@@ -28,7 +28,7 @@ from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization.pages._question_details_page import QuestionDetailsPage
-from svk.visualization.elements._question_details import QuestionDetailsElement
+from svk.visualization.elements._question_details_element import QuestionDetailsElement
 from svk.visualization.pages._page import Page
 from svk.visualization.elements._column import Column
 
