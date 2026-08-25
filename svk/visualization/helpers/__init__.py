@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from ._measuretext import measure_text
+from ._measuretext import measure_text, measure_text_chromium
 from ._drawchevron import draw_half_chevron
 from ._wrappedtext import wrapped_text, wrapped_lines
 from ._draw_scaled_icon import draw_scaled_icon

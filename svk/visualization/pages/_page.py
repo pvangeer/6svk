@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from abc import ABC, abstractmethod
-from pydantic import BaseModel
+from pydantic import BaseModel, PrivateAttr
 from svgwrite import Drawing
 
 from svk.data import StormSurgeBarrier, LinksRegister, Translator
@@ -27,6 +27,7 @@ from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 from svk.visualization.helpers._draw_callout import draw_callout
+from svk.visualization.helpers._measuretext import measure_text_chromium
 
 
 class Page(BaseModel, ABC):
@@ -50,6 +51,8 @@ class Page(BaseModel, ABC):
     translator: Translator
     """The translator that should be used for this page."""
 
+    _title_width: float = 0.0
+
     @abstractmethod
     def get_content_size(self) -> tuple[float, float]:
         pass
@@ -68,7 +71,29 @@ class Page(BaseModel, ABC):
             if self.disclaimer is not None
             else 0.0
         )
-        page_width = content_size[0] + 2 * self.layout_configuration.paper_margin
+        self._title_width = (
+            (
+                self.layout_configuration.paper_margin
+                + self.layout_configuration.arrow_depth
+                + self.layout_configuration.page_title_height
+                + self.layout_configuration.paper_margin
+                + measure_text_chromium(
+                    self.title, font_size=self.layout_configuration.page_title_font_size, font_weight="bold", font_family="Arial"
+                )[
+                    0
+                ]  # TODO: This all is expensive Maybe consider caching the bowser in an object that is created once to speed things up?
+                + self.layout_configuration.paper_margin
+            )
+            if self.icon is not None
+            else (
+                self.layout_configuration.paper_margin
+                + measure_text_chromium(
+                    self.title, font_size=self.layout_configuration.page_title_font_size, font_weight="bold", font_family="Arial"
+                )[0]
+                + self.layout_configuration.paper_margin
+            )
+        )
+        page_width = max([content_size[0] + 2 * self.layout_configuration.paper_margin, self._title_width])
         page_height = title_height + content_size[1] + disclaimer_height + self.layout_configuration.paper_margin
         return (page_width, page_height)
 
@@ -80,9 +105,14 @@ class Page(BaseModel, ABC):
 
         self.draw_title(dwg=dwg)
 
+        x_left = self.layout_configuration.paper_margin
+        content_width = self.get_content_size()[0]
+        if self._title_width > content_width:
+            x_left = (self._title_width - content_width) / 2
+
         self.draw_content(
             dwg=dwg,
-            left=self.layout_configuration.paper_margin,
+            left=x_left,
             top=self.layout_configuration.paper_margin
             + self.layout_configuration.page_title_height
             + self.layout_configuration.large_margin,

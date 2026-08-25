@@ -38,7 +38,7 @@ class TimeLineOverviewPage(Page):
         max_column_height = sum([c.get_height() for c in self.clusters]) + self.layout_configuration.large_margin * (len(self.clusters) - 1)
 
         return (
-            self.layout_configuration.overview_page_width,
+            self.layout_configuration.overview_page_width - self.layout_configuration.paper_margin * 2,
             self.layout_configuration.column_header_height + self.layout_configuration.large_margin + max_column_height,
         )
 

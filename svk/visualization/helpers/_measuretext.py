@@ -18,6 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+from playwright.sync_api import sync_playwright
 from PIL import ImageFont
 import os
 
@@ -40,5 +41,50 @@ def measure_text(text: str, font_size: int):
     bbox = font.getbbox(text)
     width = bbox[2] - bbox[0]
     height = bbox[3] - bbox[1]
+
+    return width, height
+
+
+def measure_text_chromium(
+    text: str,
+    font_family: str = "Arial",
+    font_size: int = 12,
+    font_weight: str = "normal",
+    font_style: str = "normal",
+) -> tuple[float, float]:
+
+    html = f"""
+    <html>
+    <body style="margin:0">
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <text
+            id="measure"
+            x="0"
+            y="{font_size}"
+            font-family="{font_family}"
+            font-size="{font_size}px"
+            font-weight="{font_weight}"
+            font-style="{font_style}">
+            {text}
+        </text>
+      </svg>
+    </body>
+    </html>
+    """
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.set_content(html)
+
+        width, height = page.evaluate("""
+        () => {
+            const text = document.getElementById('measure');
+            const bbox = text.getBBox();
+            return [bbox.width, bbox.height];
+        }
+        """)
+
+        browser.close()
 
     return width, height

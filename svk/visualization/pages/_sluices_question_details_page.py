@@ -28,7 +28,7 @@ class SluicesQuestionDetailsPage(Page):
 
     def get_content_size(self) -> tuple[float, float]:
         return (
-            max([q.width for q in self.questions]) + 2 * self.layout_configuration.paper_margin,
+            max([q.width for q in self.questions]),
             sum([q.height + self.layout_configuration.intermediate_margin for q in self.questions])
             - self.layout_configuration.intermediate_margin,
         )
