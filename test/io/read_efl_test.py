@@ -1,4 +1,4 @@
-from svk.io import EndOfLifeDatabase, svg_to_pdf_chrome
+from svk.io import EndOfLifeDatabase, svg_to_pdf
 from svk.visualization import LifeTimeAnalysisPage, LayoutConfiguration
 from svk.data import StormSurgeBarrier, LinksRegister, Translator
 from test.paths import test_data_dir, test_output_dir
@@ -34,4 +34,4 @@ def test_first_try_efl_page():
         grid=d.grid,
     )
     dwg = page.draw()
-    svg_to_pdf_chrome(dwg, test_output_dir + "/EOL.pdf")
+    svg_to_pdf(dwg, test_output_dir + "/EOL.pdf")

@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from svgwrite import Drawing
 from svk.data import StormSurgeBarrier
 from svk.visualization.helpers import draw_scaled_icon
-from svk.io import svg_to_pdf_chrome
+from svk.io import svg_to_pdf
 from test.paths import test_output_dir
 
 
@@ -33,4 +33,4 @@ def test_draw_icon():
     draw_scaled_icon(dwg, storm_surge_barrier=StormSurgeBarrier.HartelBarrier, insert=(10, 70), size=(35, 35))
     draw_scaled_icon(dwg, storm_surge_barrier=StormSurgeBarrier.EasternScheldtBarrier, insert=(40, 60), size=(24, 24))
     draw_scaled_icon(dwg, storm_surge_barrier=StormSurgeBarrier.HollandseIJsselBarrier, insert=(80, 80), size=(16, 16))
-    svg_to_pdf_chrome(dwg, test_output_dir + "/icon.pdf")
+    svg_to_pdf(dwg, test_output_dir + "/icon.pdf")

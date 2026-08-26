@@ -22,7 +22,7 @@ import pytest
 from datetime import datetime
 
 from svk.data import TimeFrame, StormSurgeBarrierResearchQuestion, Translator
-from svk.io import KnowledgeAgendaDatabase, EndOfLifeDatabase, svg_to_pdf_chrome
+from svk.io import KnowledgeAgendaDatabase, EndOfLifeDatabase, svg_to_pdf
 from svk.visualization import KnowledgeCalendarDocument, LifeTimeAnalysisPage, LayoutConfiguration
 from svk.data import StormSurgeBarrier, Translator, LinksRegister
 
@@ -119,7 +119,7 @@ def test_create_efl(barrier: StormSurgeBarrier, row_header_column: int, row_head
         grid=d.grid,
     )
     dwg = page.draw()
-    svg_to_pdf_chrome(dwg, test_output_dir + "/" + output_file + ".pdf")
+    svg_to_pdf(dwg, test_output_dir + "/" + output_file + ".pdf")
 
 
 @pytest.mark.parametrize(
@@ -154,7 +154,7 @@ def test_create_etl(barrier: StormSurgeBarrier):
         grid=d.grid,
     )
     dwg = page.draw()
-    svg_to_pdf_chrome(dwg, test_output_dir + "/" + output_file + ".pdf")
+    svg_to_pdf(dwg, test_output_dir + "/" + output_file + ".pdf")
 
 
 def test_create_mlk():

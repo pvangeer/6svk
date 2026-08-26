@@ -30,7 +30,7 @@ from svk.data import (
     LinksRegister,
     Translator,
 )
-from svk.io import svg_to_pdf_chrome
+from svk.io import svg_to_pdf
 from test.paths import test_output_dir
 
 
@@ -233,4 +233,4 @@ def test_create_image():
     dwg = fig.draw()
 
     pt = test_output_dir + "/Kennisagenda_auto.pdf"
-    svg_to_pdf_chrome(dwg, pt)
+    svg_to_pdf(dwg, pt)

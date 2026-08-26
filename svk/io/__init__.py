@@ -22,5 +22,5 @@ from ._knowledgeagendadatabase import KnowledgeAgendaDatabase
 from ._impactpathwaydatabase import ImpactPathwayDatabase
 from ._sluicesdatabase import SluicesKnowledgeAgendaDatabase
 from ._endoflifedatabase import EndOfLifeDatabase, EndOfLifeCell, Color, Driver, Function
-from ._svgtopdf import svg_to_pdf, svg_to_pdf_chrome
+from ._svgtopdf import svg_to_pdf, RendererServer
 from ._pdf import merge_pdf_files, add_links

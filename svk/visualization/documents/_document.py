@@ -23,7 +23,7 @@ from pydantic import BaseModel
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from svk.data import StormSurgeBarrierResearchQuestion, LinksRegister, ResearchLine, Translator, TimeFrame, Label
-from svk.io import svg_to_pdf_chrome, merge_pdf_files, add_links
+from svk.io import svg_to_pdf, merge_pdf_files, add_links
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
@@ -76,7 +76,7 @@ class Document(BaseModel, ABC):
         for page in sorted(self.pages, key=lambda p: p.page_number):
             safe_title = re.sub(r'[\\/**?:"<>|/]', "_", page.title.translate(self._str_table))
             target_path = os.path.join(self.output_dir, f"{self.output_file} - {safe_title}.pdf")
-            svg_to_pdf_chrome(svg_dwg=page.draw(), pdf_path=target_path)
+            svg_to_pdf(svg_dwg=page.draw(), pdf_path=target_path)
             pages_file_paths.append(target_path)
 
         return pages_file_paths
