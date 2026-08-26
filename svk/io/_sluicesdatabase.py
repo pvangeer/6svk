@@ -18,6 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+from pathlib import Path
 from svk.data import SluicesResearchQuestion, ResearchLine, SluicesResearchLineFactory
 from svk.io._exceldatabase import ExcelDatabase
 
@@ -65,7 +66,7 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
     i_contributes_to_standardisation = "Y"
     """Y - Hard coded column indicating whether the anwer contributes to standardisation"""
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: Path):
         super().__init__(file_path, first_data_row=4)
 
     def read_and_append_row(self, row, i_row: int) -> None:

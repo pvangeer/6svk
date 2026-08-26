@@ -21,7 +21,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from svgwrite import Drawing
 from svk.io import svg_to_pdf, RendererServer
 from svk.visualization.helpers import draw_half_chevron
-import os
 from test.paths import test_output_dir
 
 
@@ -30,14 +29,12 @@ def test_svgtopdf_produces_overview_page():
     dwg.add(draw_half_chevron(dwg, x=20, y=20, width=400, height=80))
     dwg.add(draw_half_chevron(dwg, x=420, y=20, width=400, height=80))
     dwg.add(draw_half_chevron(dwg, x=820, y=20, width=400, height=80))
-    pt = test_output_dir + "/testimage.pdf"
-    if os.path.isfile(pt):
-        os.remove(pt)
+    pt = test_output_dir / "testimage.pdf"
+    pt.unlink(missing_ok=True)
 
     svg_to_pdf(dwg, pt)
-    assert os.path.isfile(pt)
-
-    os.remove(pt)
+    assert pt.is_file()
+    pt.unlink()
 
 
 def test_svgtopdf_with_renderer_produces_overview_page():
@@ -45,12 +42,10 @@ def test_svgtopdf_with_renderer_produces_overview_page():
     dwg.add(draw_half_chevron(dwg, x=20, y=20, width=400, height=80))
     dwg.add(draw_half_chevron(dwg, x=420, y=20, width=400, height=80))
     dwg.add(draw_half_chevron(dwg, x=820, y=20, width=400, height=80))
-    pt = test_output_dir + "/testimage.pdf"
-    if os.path.isfile(pt):
-        os.remove(pt)
+    pt = test_output_dir / "testimage.pdf"
+    pt.unlink(missing_ok=True)
 
     RendererServer.svg_to_pdf(dwg, pt)
 
-    assert os.path.isfile(pt)
-
-    os.remove(pt)
+    assert pt.is_file()
+    pt.unlink()

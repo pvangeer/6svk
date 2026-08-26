@@ -23,8 +23,6 @@ from pydantic import model_validator, PrivateAttr
 from svk.data import StormSurgeBarrierResearchQuestion, Label
 from svgwrite import Drawing
 from svk.visualization.elements._title_element import TitleElement
-from svk.visualization.helpers._measuretext import measure_text
-from svk.visualization.helpers._wrappedtext import wrapped_lines, wrapped_text
 from svk.visualization.elements._wrapped_bullet_list import WrappedBulletListElement
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 

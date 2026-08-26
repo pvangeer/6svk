@@ -6,7 +6,7 @@ from test.paths import test_data_dir, test_output_dir
 
 
 def read_database() -> list[SluicesResearchQuestion]:
-    questions = SluicesKnowledgeAgendaDatabase(test_data_dir + "/example_sp.xlsx")
+    questions = SluicesKnowledgeAgendaDatabase(test_data_dir / "example_sp.xlsx")
     questions.read()
 
     if len(questions.errors) > 0:

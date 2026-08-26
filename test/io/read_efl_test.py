@@ -11,7 +11,7 @@ def test_read_efl_database():
     :return: None
     """
 
-    d = EndOfLifeDatabase(test_data_dir + "/example_1.xlsx")
+    d = EndOfLifeDatabase(test_data_dir / "example_1.xlsx")
     d.read()
     assert d.grid is not None
     assert len(d.grid.cells) > 0
@@ -20,7 +20,7 @@ def test_read_efl_database():
 
 
 def test_first_try_efl_page():
-    d = EndOfLifeDatabase(test_data_dir + "/example_1.xlsx")
+    d = EndOfLifeDatabase(test_data_dir / "example_1.xlsx")
     d.read()
     assert d.grid is not None
 
@@ -34,4 +34,4 @@ def test_first_try_efl_page():
         grid=d.grid,
     )
     dwg = page.draw()
-    svg_to_pdf(dwg, test_output_dir + "/EOL.pdf")
+    svg_to_pdf(dwg, test_output_dir / "EOL.pdf")

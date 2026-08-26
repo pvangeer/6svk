@@ -18,9 +18,10 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-import os, re
+import re
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
+from pathlib import Path
 from collections import defaultdict
 from svk.data import StormSurgeBarrierResearchQuestion, LinksRegister, ResearchLine, Translator, TimeFrame, Label
 from svk.io import svg_to_pdf, merge_pdf_files, add_links
@@ -38,7 +39,7 @@ class Document(BaseModel, ABC):
     links_register: LinksRegister = LinksRegister()
     translator: Translator = Translator(lang="nl")
     pages: list[Page] = []
-    output_dir: str
+    output_dir: Path
     output_file: str
     disclaimer: str | None = None
     disclaimer_links: list[tuple[str, str]] | None = None
@@ -55,28 +56,26 @@ class Document(BaseModel, ABC):
 
         all_files = self._convert_pages_to_pdf()
 
-        no_links_output_file = os.path.join(self.output_dir, self.output_file + " - no links.pdf")
+        no_links_output_file = self.output_dir / (self.output_file + " - no links.pdf")
         merge_pdf_files(all_files, no_links_output_file)
 
         # TODO: This assumes all page numbers are correct.
-        output_file_final = os.path.join(self.output_dir, self.output_file + ".pdf")
+        output_file_final = self.output_dir / (self.output_file + ".pdf")
         add_links(no_links_output_file, output_file_final, self.links_register)
 
         if self.cleanup:
             for file in all_files:
-                if os.path.exists(file):
-                    os.remove(file)
-            if os.path.exists(no_links_output_file):
-                os.remove(no_links_output_file)
+                file.unlink(missing_ok=True)
+            no_links_output_file.unlink(missing_ok=True)
 
         return output_file_final
 
-    def _convert_pages_to_pdf(self) -> list[str]:
-        pages_file_paths: list[str] = []
+    def _convert_pages_to_pdf(self) -> list[Path]:
+        pages_file_paths: list[Path] = []
         for page in sorted(self.pages, key=lambda p: p.page_number):
             safe_title = re.sub(r'[\\/**?:"<>|/]', "_", page.title.translate(self._str_table))
-            target_path = os.path.join(self.output_dir, f"{self.output_file} - {safe_title}.pdf")
-            svg_to_pdf(svg_dwg=page.draw(), pdf_path=target_path)
+            target_path = self.output_dir / (f"{self.output_file} - {safe_title}.pdf")
+            svg_to_pdf(svg_dwg=page.draw(), path=target_path)
             pages_file_paths.append(target_path)
 
         return pages_file_paths

@@ -25,7 +25,7 @@ from test.paths import test_data_dir
 
 
 def test_database_creation_full_database_ssb_delta():
-    d = ImpactPathwayDatabase(test_data_dir + "/example-SSB-2.xlsx")
+    d = ImpactPathwayDatabase(test_data_dir / "example-SSB-2.xlsx")
     d.read()
     if len(d) < 60:
         print("length = " + str(len(d)))

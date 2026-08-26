@@ -1,9 +1,30 @@
+"""
+Copyright (C) Stichting Deltares 2026. All rights reserved.
+
+This file is part of the 6svk toolbox.
+
+This program is free software; you can redistribute it and/or modify it under the terms of
+the GNU Lesser General Public License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this
+program; if not, see <https://www.gnu.org/licenses/>.
+
+All names, logos, and references to "Deltares" are registered trademarks of Stichting
+Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
+"""
+
+from pathlib import Path
 from PyPDF2 import PdfMerger
 from svk.data import LinksRegister
 import fitz
 
 
-def merge_pdf_files(input_files: list[str], output_file: str):
+def merge_pdf_files(input_files: list[Path], output_file: Path):
     merger = PdfMerger()
 
     for pdf in input_files:
@@ -19,7 +40,7 @@ def _scale_coordinates(x: float, y: float, svg_width: float, svg_height: float, 
     return x_pdf, y_pdf
 
 
-def add_links(input_pdf_file: str, output_file: str, links_manager: LinksRegister):
+def add_links(input_pdf_file: Path, output_file: Path, links_manager: LinksRegister):
     doc = fitz.open(input_pdf_file)
     links = links_manager.links
     link_targets = links_manager.link_targets

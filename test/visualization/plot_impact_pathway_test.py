@@ -8,7 +8,7 @@ from test.paths import test_data_dir, test_output_dir
 
 
 def test_plot_pathway():
-    database_path = test_data_dir + "/example-SSB-2.xlsx"
+    database_path = test_data_dir / "example-SSB-2.xlsx"
 
     d = ImpactPathwayDatabase(database_path)
     d.read()

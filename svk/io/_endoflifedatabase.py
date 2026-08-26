@@ -1,9 +1,7 @@
 from pathlib import Path
 from openpyxl import load_workbook
 
-from bisect import bisect_right
 from typing import Any
-from openpyxl.styles.fills import PatternFill
 from svk.io._exceldatabase import DatabaseReadError
 from svk.data import Driver, Function, Color, Grid, GridCell, GridHeader
 from pydantic import BaseModel
@@ -28,7 +26,7 @@ class EndOfLifeDatabase:
     structured way.
     """
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: Path):
         self.errors: list[DatabaseReadError] = []
         """A list of errors that can be filled during import/reading the database file."""
 
@@ -48,13 +46,13 @@ class EndOfLifeDatabase:
         if not self._check_file_path(file_path):
             raise ValueError("Excel file could not be found.")
 
-        self.file_path: str = file_path
+        self.file_path: Path = file_path
         """The file path of the Excel database file."""
 
         self._drivers_dict: dict[int, int] = {}
         self._functions_dict: dict[int, int] = {}
 
-    def _check_file_path(self, file_path: str) -> bool:
+    def _check_file_path(self, p: Path) -> bool:
         """
         Check existance of the Excel file indicated as the database.
 
@@ -64,7 +62,6 @@ class EndOfLifeDatabase:
         :return: True in case the file exists, False if it doesn't exist or is not an Excel file.
         :rtype: bool
         """
-        p = Path(file_path)
         return p.exists() and p.is_file() and p.suffix.lower() in {".xls", ".xlsx", ".xlsm", ".xlsb"}
 
     def read(self):

@@ -1,6 +1,27 @@
+"""
+Copyright (C) Stichting Deltares 2026. All rights reserved.
+
+This file is part of the 6svk toolbox.
+
+This program is free software; you can redistribute it and/or modify it under the terms of
+the GNU Lesser General Public License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this
+program; if not, see <https://www.gnu.org/licenses/>.
+
+All names, logos, and references to "Deltares" are registered trademarks of Stichting
+Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
+"""
+
 import pytest
 from typing import cast
 from datetime import datetime
+from pathlib import Path
 
 from svk.data import StormSurgeBarrier, Translator, StormSurgeBarrierResearchQuestion, ImpactPathwayResearchQuestion, TimeFrame, Grid
 from svk.io import KnowledgeAgendaDatabase, ImpactPathwayDatabase, EndOfLifeDatabase
@@ -13,26 +34,28 @@ from svk.visualization import (
 )
 
 # TODO: Move to the paths.py file and use that instead of hard coded paths.
-base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK"
-hv_dir = base_dir + "/03 HV/01 Uitwerking"
-mlk_dir = base_dir + "/05 MLK/01 Uitwerking"
-hk_dir = base_dir + "/06 HK/01 Uitwerking"
-rp_dir = base_dir + "/07 RP/01 Uitwerking"
-hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
-esb_dir = base_dir + "/04 OSK/01 Uitwerking"
-allsvk_dir = base_dir + "/08 6SVK"
-ssb_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/11212142 - NWO SSB Delta/General/C. Report - advise/Impact pathway and research agenda"
+base_dir = Path("C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK")
+hv_dir = base_dir / "03 HV/01 Uitwerking"
+mlk_dir = base_dir / "05 MLK/01 Uitwerking"
+hk_dir = base_dir / "06 HK/01 Uitwerking"
+rp_dir = base_dir / "07 RP/01 Uitwerking"
+hijk_dir = base_dir / "02 HIJK/01 Uitwerking"
+esb_dir = base_dir / "04 OSK/01 Uitwerking"
+allsvk_dir = base_dir / "08 6SVK"
+ssb_dir = Path(
+    "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/11212142 - NWO SSB Delta/General/C. Report - advise/Impact pathway and research agenda"
+)
 
-hv_database_path = hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
-mlk_database_path = mlk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK MLK.xlsx"
-hk_database_path = hk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HK.xlsx"
-rp_database_path = rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx"
-hijk_database_path = hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx"
-esb_database_path = esb_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK OSK.xlsx"
-ssb_database_path = ssb_dir + "/SSB-delta_impact-pathway-database.xlsx"
+hv_database_path = hv_dir / "Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
+mlk_database_path = mlk_dir / "Concept Eerste toepassing methodiek kennisvragen SVK MLK.xlsx"
+hk_database_path = hk_dir / "Concept Eerste toepassing methodiek kennisvragen SVK HK.xlsx"
+rp_database_path = rp_dir / "Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx"
+hijk_database_path = hijk_dir / "Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx"
+esb_database_path = esb_dir / "Concept Eerste toepassing methodiek kennisvragen SVK OSK.xlsx"
+ssb_database_path = ssb_dir / "SSB-delta_impact-pathway-database.xlsx"
 
 
-def get_output_path(barrier: StormSurgeBarrier) -> str:
+def get_output_path(barrier: StormSurgeBarrier) -> Path:
     match barrier:
         case StormSurgeBarrier.MaeslantBarrier:
             return mlk_dir
@@ -50,7 +73,7 @@ def get_output_path(barrier: StormSurgeBarrier) -> str:
             raise
 
 
-def get_database_path(barrier: StormSurgeBarrier) -> str:
+def get_database_path(barrier: StormSurgeBarrier) -> Path:
     match barrier:
         case StormSurgeBarrier.MaeslantBarrier:
             return mlk_database_path

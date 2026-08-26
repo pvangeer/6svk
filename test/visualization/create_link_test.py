@@ -24,4 +24,4 @@ def test_create_internal_link():
     link.add(link_rect)
     link.add(link_text)
 
-    svg_to_pdf(dwg, test_output_dir + "/internal_link.pdf")
+    svg_to_pdf(dwg, test_output_dir / "internal_link.pdf")

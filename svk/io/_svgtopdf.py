@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from playwright.sync_api import sync_playwright, Page, Browser, Playwright
 from svgwrite import Drawing
 from html import escape
-import os
+from pathlib import Path
 
 
 class RendererNotStartedError(Exception):
@@ -57,7 +57,7 @@ class RendererServer:
                 """)
 
     @classmethod
-    def svg_to_pdf(cls, dwg: Drawing, file_name: str):
+    def svg_to_pdf(cls, dwg: Drawing, path: Path):
         """
         Save an svgwrite.Drawing object to PDF with all effects and links preserved.
 
@@ -87,7 +87,7 @@ class RendererServer:
         width = str(dwg.attribs.get("width")) if "width" in dwg.attribs else "800px"
         height = str(dwg.attribs.get("height")) if "height" in dwg.attribs else "600px"
 
-        cls._page.pdf(path=file_name, width=width, height=height, print_background=True)
+        cls._page.pdf(path=path, width=width, height=height, print_background=True)
 
     @classmethod
     def measure_text(
@@ -138,7 +138,7 @@ class RendererServer:
             cls._playwright = None
 
 
-def svg_to_pdf(svg_dwg: Drawing, pdf_path: str):
+def svg_to_pdf(svg_dwg: Drawing, path: Path):
     """
     Save an svgwrite.Drawing object to PDF with all effects and links preserved.
 
@@ -149,4 +149,4 @@ def svg_to_pdf(svg_dwg: Drawing, pdf_path: str):
     pdf_path : str
         Path to the output PDF file.
     """
-    RendererServer.svg_to_pdf(svg_dwg, pdf_path)
+    RendererServer.svg_to_pdf(svg_dwg, path)

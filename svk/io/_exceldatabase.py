@@ -45,7 +45,7 @@ class DatabaseReadError(Exception):
 
 
 class ExcelDatabase(ABC):
-    def __init__(self, file_path: str, sheet_name: str = "Database", first_data_row: int = 3, last_data_row: int | None = None):
+    def __init__(self, file_path: Path, sheet_name: str = "Database", first_data_row: int = 3, last_data_row: int | None = None):
         self.errors: list[DatabaseReadError] = []
         """A list of errors that can be filled during import/reading the database file."""
 
@@ -58,10 +58,10 @@ class ExcelDatabase(ABC):
         """The first datarow to search for records."""
         self.last_data_row: int | None = last_data_row
         """The last datarow to search for records. If None, all rows will be searched."""
-        self.file_path: str = file_path
+        self.file_path: Path = file_path
         """The file path of the Excel database file."""
 
-    def _check_file_path(self, file_path: str) -> bool:
+    def _check_file_path(self, p: Path) -> bool:
         """
         Check existance of the Excel file indicated as the database.
 
@@ -71,7 +71,6 @@ class ExcelDatabase(ABC):
         :return: True in case the file exists, False if it doesn't exist or is not an Excel file.
         :rtype: bool
         """
-        p = Path(file_path)
         return p.exists() and p.is_file() and p.suffix.lower() in {".xls", ".xlsx", ".xlsm", ".xlsb"}
 
     def read(self):

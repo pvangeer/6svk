@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from abc import ABC, abstractmethod
-from pydantic import BaseModel, PrivateAttr
+from pydantic import BaseModel
 from svgwrite import Drawing
 
 from svk.data import StormSurgeBarrier, LinksRegister, Translator

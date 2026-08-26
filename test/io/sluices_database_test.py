@@ -8,7 +8,7 @@ def test_read_sluices_database():
     Test function for the sluices database. It reads the database file and prints the data.
     """
 
-    d = SluicesKnowledgeAgendaDatabase(test_data_dir + "/example_sp.xlsx")
+    d = SluicesKnowledgeAgendaDatabase(test_data_dir / "example_sp.xlsx")
     d.read()
     assert d is not None
     assert len(d) > 65

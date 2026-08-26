@@ -20,6 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 import pytest
 from datetime import datetime
+from pathlib import Path
 
 from svk.data import TimeFrame, StormSurgeBarrierResearchQuestion, Translator
 from svk.io import KnowledgeAgendaDatabase, EndOfLifeDatabase, svg_to_pdf
@@ -29,23 +30,23 @@ from svk.data import StormSurgeBarrier, Translator, LinksRegister
 from test.paths import test_output_dir
 
 # TODO: Move to the paths.py file and use that instead of hard coded paths.
-base_dir = "C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK"
-hv_dir = base_dir + "/03 HV/01 Uitwerking"
-mlk_dir = base_dir + "/05 MLK/01 Uitwerking"
-hk_dir = base_dir + "/06 HK/01 Uitwerking"
-rp_dir = base_dir + "/07 RP/01 Uitwerking"
-hijk_dir = base_dir + "/02 HIJK/01 Uitwerking"
-esb_dir = base_dir + "/04 OSK/01 Uitwerking"
+base_dir = Path("C:/Users/geer/OneDrive - Stichting Deltares/Projecten/Kennisvragen SVK")
+hv_dir = base_dir / "03 HV/01 Uitwerking"
+mlk_dir = base_dir / "05 MLK/01 Uitwerking"
+hk_dir = base_dir / "06 HK/01 Uitwerking"
+rp_dir = base_dir / "07 RP/01 Uitwerking"
+hijk_dir = base_dir / "02 HIJK/01 Uitwerking"
+esb_dir = base_dir / "04 OSK/01 Uitwerking"
 
-hv_database_path = hv_dir + "/Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
-mlk_database_path = mlk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK MLK.xlsx"
-hk_database_path = hk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HK.xlsx"
-rp_database_path = rp_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx"
-hijk_database_path = hijk_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx"
-esb_database_path = esb_dir + "/Concept Eerste toepassing methodiek kennisvragen SVK OSK.xlsx"
+hv_database_path = hv_dir / "Eerste toepassing methodiek kennisvragen SVK HV_Concept.xlsx"
+mlk_database_path = mlk_dir / "Concept Eerste toepassing methodiek kennisvragen SVK MLK.xlsx"
+hk_database_path = hk_dir / "Concept Eerste toepassing methodiek kennisvragen SVK HK.xlsx"
+rp_database_path = rp_dir / "Concept Eerste toepassing methodiek kennisvragen SVK RP.xlsx"
+hijk_database_path = hijk_dir / "Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx"
+esb_database_path = esb_dir / "Concept Eerste toepassing methodiek kennisvragen SVK OSK.xlsx"
 
 
-def get_database_path(barrier: StormSurgeBarrier) -> str:
+def get_database_path(barrier: StormSurgeBarrier) -> Path:
     match barrier:
         case StormSurgeBarrier.MaeslantBarrier:
             return mlk_database_path
@@ -72,6 +73,7 @@ def read_database(barrier: StormSurgeBarrier) -> list[StormSurgeBarrierResearchQ
     return [q for q in questions if q.time_frame != TimeFrame.NotRelevant]
 
 
+@pytest.mark.product
 def test_create_hv():
     barrier: StormSurgeBarrier = StormSurgeBarrier.HaringvlietBarrier
     questions = read_database(barrier)
@@ -88,6 +90,7 @@ def test_create_hv():
     calendar.build()
 
 
+@pytest.mark.product
 @pytest.mark.parametrize(
     "barrier,row_header_column,row_header_categories_column",
     [
@@ -119,9 +122,10 @@ def test_create_efl(barrier: StormSurgeBarrier, row_header_column: int, row_head
         grid=d.grid,
     )
     dwg = page.draw()
-    svg_to_pdf(dwg, test_output_dir + "/" + output_file + ".pdf")
+    svg_to_pdf(dwg, test_output_dir / (output_file + ".pdf"))
 
 
+@pytest.mark.product
 @pytest.mark.parametrize(
     "barrier",
     [
@@ -154,9 +158,10 @@ def test_create_etl(barrier: StormSurgeBarrier):
         grid=d.grid,
     )
     dwg = page.draw()
-    svg_to_pdf(dwg, test_output_dir + "/" + output_file + ".pdf")
+    svg_to_pdf(dwg, test_output_dir / (output_file + ".pdf"))
 
 
+@pytest.mark.product
 def test_create_mlk():
     barrier = StormSurgeBarrier.MaeslantBarrier
     questions = read_database(barrier)
@@ -174,6 +179,7 @@ def test_create_mlk():
     calendar.build()
 
 
+@pytest.mark.product
 def test_create_hk():
     barrier = StormSurgeBarrier.HartelBarrier
     questions = read_database(barrier)
@@ -190,6 +196,7 @@ def test_create_hk():
     calendar.build()
 
 
+@pytest.mark.product
 def test_create_rp():
     barrier = StormSurgeBarrier.Ramspol
     questions = read_database(barrier)
@@ -207,6 +214,7 @@ def test_create_rp():
     calendar.build()
 
 
+@pytest.mark.product
 def test_create_hijk():
     barrier = StormSurgeBarrier.HollandseIJsselBarrier
     questions = read_database(barrier)
@@ -224,6 +232,7 @@ def test_create_hijk():
     calendar.build()
 
 
+@pytest.mark.product
 def test_create_esb():
     barrier = StormSurgeBarrier.EasternScheldtBarrier
     questions = read_database(barrier)
@@ -241,6 +250,7 @@ def test_create_esb():
     calendar.build()
 
 
+@pytest.mark.product
 def test_create_complete_list():
     questions = (
         read_database(StormSurgeBarrier.HaringvlietBarrier)
