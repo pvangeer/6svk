@@ -82,7 +82,7 @@ class Document(BaseModel, ABC):
 
 
 class ResearchQuestionsDocument(Document):
-    questions: list[StormSurgeBarrierResearchQuestion]
+    questions: tuple[StormSurgeBarrierResearchQuestion, ...]
 
     def create_pages(self) -> list[Page]:
         return self.create_detailes_pages(current_page_number=1)
