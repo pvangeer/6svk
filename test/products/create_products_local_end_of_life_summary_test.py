@@ -28,7 +28,7 @@ from test.utils.database_reader import read_end_of_life_database
 from test.paths import test_output_dir
 
 
-@pytest.mark.product
+@pytest.mark.localproduct
 def test_create_end_of_life_time_summary():
     pages = []
     page_count = 0

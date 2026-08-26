@@ -25,10 +25,10 @@ from test.paths import test_output_dir
 from test.utils.database_reader import read_ssb_pathway_database
 
 
-@pytest.mark.product
+@pytest.mark.localproduct
 def test_create_impact_pathway():
     questions = read_ssb_pathway_database()
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Impact pathway SSB-delta"
 
-    pathway = ImpactPathwayDocument(questions=questions, output_dir=test_output_dir, output_file=output_file, cleanup=False)
+    pathway = ImpactPathwayDocument(questions=questions, output_dir=test_output_dir, output_file=output_file, cleanup=True)
     pathway.build()

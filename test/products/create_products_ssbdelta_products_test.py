@@ -30,5 +30,5 @@ def test_create_impact_pathway():
     questions = read_ssb_pathway_database()
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Impact pathway SSB-delta"
 
-    pathway = ImpactPathwayDocument(questions=questions, output_dir=ssb_dir, output_file=output_file, cleanup=False)
+    pathway = ImpactPathwayDocument(questions=questions, output_dir=ssb_dir, output_file=output_file, cleanup=True)
     pathway.build()

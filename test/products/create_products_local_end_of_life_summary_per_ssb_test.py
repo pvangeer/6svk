@@ -28,7 +28,7 @@ from test.utils.database_reader import read_end_of_life_database
 from test.paths import test_output_dir
 
 
-@pytest.mark.product
+@pytest.mark.localproduct
 @pytest.mark.parametrize(
     "barrier",
     [
@@ -40,7 +40,7 @@ from test.paths import test_output_dir
         pytest.param(StormSurgeBarrier.Ramspol, id=StormSurgeBarrier.Ramspol.title.value[0]),
     ],
 )
-@pytest.mark.product
+@pytest.mark.localproduct
 def test_create_end_of_life_analysis_document(barrier: StormSurgeBarrier):
     efl = read_end_of_life_database(
         barrier=barrier,

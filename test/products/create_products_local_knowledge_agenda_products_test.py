@@ -37,7 +37,7 @@ def get_knowledge_calendar_output_file(barrier: StormSurgeBarrier, add: str | No
     return name
 
 
-@pytest.mark.product
+@pytest.mark.localproduct
 @pytest.mark.parametrize(
     "barrier",
     [
@@ -59,7 +59,7 @@ def test_create_knowledge_calendar_per_ssb(barrier: StormSurgeBarrier):
     calendar_document.build()
 
 
-@pytest.mark.product
+@pytest.mark.localproduct
 def test_create_6svk():
     all_questions = (
         read_knowledge_agenda_database(StormSurgeBarrier.HartelBarrier)
@@ -80,7 +80,7 @@ def test_create_6svk():
     calendar.build()
 
 
-@pytest.mark.product
+@pytest.mark.localproduct
 def test_create_all():
     calendar = KnowledgeCalendarDocument(
         output_dir=test_output_dir,

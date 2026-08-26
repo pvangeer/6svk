@@ -18,5 +18,6 @@ testpaths = ["test"]
 
 markers = [
     "product: tests that generate products",
+    "localproduct: tests that generate products locally",
     "wip: work in progress",
     ]

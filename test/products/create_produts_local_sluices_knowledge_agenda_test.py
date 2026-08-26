@@ -37,7 +37,7 @@ def read_database() -> list[SluicesResearchQuestion]:
     return [q for q in questions if q.time_frame != TimeFrame.NotRelevant]
 
 
-@pytest.mark.product
+@pytest.mark.localproduct
 def test_create_sluices_overview():
     questions = read_database()
     t = Translator(lang="nl")
