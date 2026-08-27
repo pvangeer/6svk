@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 import pytest
 from datetime import datetime
 
-from svk.data import StormSurgeBarrier
+from svk.data import StormSurgeBarrier, IconProvider
 from svk.visualization import CustomPagesDocument, LifeTimeAnalysisPage
 
 from test.utils.database_reader import read_end_of_life_database
@@ -51,6 +51,9 @@ def test_create_end_of_life_time_summary():
             row_header_categories_column=1,
             sheet_name="EFL",
         )
+        icon = IconProvider.create_icon(barrier)
+        assert icon is not None
+
         pages.append(
             LifeTimeAnalysisPage(
                 page_number=page_count,
@@ -58,7 +61,7 @@ def test_create_end_of_life_time_summary():
                 layout_configuration=document.layout_configuration,
                 links_register=document.links_register,
                 translator=document.translator,
-                icon=barrier,
+                icon=icon,
                 disclaimer=document.disclaimer,
                 disclaimer_links=document.disclaimer_links,
                 grid=efl,
@@ -78,7 +81,7 @@ def test_create_end_of_life_time_summary():
                 layout_configuration=document.layout_configuration,
                 links_register=document.links_register,
                 translator=document.translator,
-                icon=barrier,
+                icon=icon,
                 disclaimer=document.disclaimer,
                 disclaimer_links=document.disclaimer_links,
                 grid=etl,

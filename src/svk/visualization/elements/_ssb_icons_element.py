@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
-from svk.data import StormSurgeBarrier
+from svk.data import StormSurgeBarrier, IconProvider
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 
@@ -58,9 +58,13 @@ class SsbIconsElement(VisualElementsContainer):
         x_icon_current = x + self.layout_configuration.small_margin
         y_icon_current = y + self.layout_configuration.small_margin
         for barrier in self.storm_surge_barriers:
+            icon = IconProvider.create_icon(barrier=barrier)
+            if icon is None:
+                continue
+
             draw_scaled_icon(
                 dwg=dwg,
-                storm_surge_barrier=barrier,
+                icon=icon,
                 insert=(
                     x_icon_current,
                     y_icon_current,

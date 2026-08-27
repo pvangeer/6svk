@@ -1,5 +1,5 @@
 from collections import defaultdict
-from svk.data import TimeFrame, ResearchLine, StormSurgeBarrier
+from svk.data import TimeFrame, ResearchLine, StormSurgeBarrier, IconProvider
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers._measuretext import measure_text
@@ -41,7 +41,7 @@ class SluicesDocument(Document):
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            icon=StormSurgeBarrier.SluicePanheel,
+            icon=IconProvider.create_sluice_panheel_icon(),
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
         )

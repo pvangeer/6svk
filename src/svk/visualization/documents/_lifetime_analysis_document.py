@@ -1,4 +1,4 @@
-from svk.data import StormSurgeBarrier, Grid
+from svk.data import StormSurgeBarrier, Grid, IconProvider
 from svk.visualization.pages._lifetime_analysis_page import LifeTimeAnalysisPage
 from svk.visualization.documents._document import Document
 from svk.visualization.pages._page import Page
@@ -24,7 +24,7 @@ class LifeTimeAnalysDocument(Document):
                 layout_configuration=self.layout_configuration,
                 links_register=self.links_register,
                 translator=self.translator,
-                icon=self.storm_surge_barrier,
+                icon=IconProvider.create_icon(self.storm_surge_barrier),
                 disclaimer=self.disclaimer,
                 disclaimer_links=self.disclaimer_links,
                 grid=self.functional_lifetime_grid,
@@ -35,7 +35,7 @@ class LifeTimeAnalysDocument(Document):
                 layout_configuration=self.layout_configuration,
                 links_register=self.links_register,
                 translator=self.translator,
-                icon=self.storm_surge_barrier,
+                icon=IconProvider.create_icon(self.storm_surge_barrier),
                 disclaimer=self.disclaimer,
                 disclaimer_links=self.disclaimer_links,
                 grid=self.technical_lifetime_grid,

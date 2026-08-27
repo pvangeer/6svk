@@ -1,6 +1,6 @@
 from svk.io import EndOfLifeDatabase, svg_to_pdf
 from svk.visualization import LifeTimeAnalysisPage, LayoutConfiguration
-from svk.data import StormSurgeBarrier, LinksRegister, Translator
+from svk.data import IconProvider, LinksRegister, Translator
 from test.paths import test_data_dir, test_output_dir
 
 
@@ -27,7 +27,7 @@ def test_first_try_efl_page():
     page = LifeTimeAnalysisPage(
         page_number=2,
         title="EOL",
-        icon=StormSurgeBarrier.HaringvlietBarrier,
+        icon=IconProvider.create_haringvliet_sluices_icon(),
         layout_configuration=LayoutConfiguration(),
         links_register=LinksRegister(),
         translator=Translator(),

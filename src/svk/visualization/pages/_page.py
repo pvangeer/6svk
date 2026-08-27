@@ -22,7 +22,7 @@ from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from svgwrite import Drawing
 
-from svk.data import StormSurgeBarrier, LinksRegister, Translator
+from svk.data import LinksRegister, Translator, Icon
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
@@ -36,7 +36,7 @@ class Page(BaseModel, ABC):
     # TODO: Include the page number somewhere on the page as well?
     page_number: int
     """The page number"""
-    icon: StormSurgeBarrier | None = None  # TODO: this should be an icon class that provides the info to build an icon.
+    icon: Icon | None = None
     """The icon of this page."""
     title_link_target: str | None = None
     """Optional link target to the title of the page."""
@@ -132,7 +132,7 @@ class Page(BaseModel, ABC):
             )
             draw_scaled_icon(
                 dwg=dwg,
-                storm_surge_barrier=self.icon,
+                icon=self.icon,
                 insert=(
                     self.layout_configuration.paper_margin + self.layout_configuration.arrow_depth + 2,
                     self.layout_configuration.paper_margin + 2,

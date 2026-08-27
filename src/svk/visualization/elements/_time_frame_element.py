@@ -21,9 +21,9 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
-from svk.data import TimeFrame
+from svk.data import TimeFrame, IconProvider
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
-from svk.visualization.helpers._draw_scaled_icon import Symbol, Path, accent_fill
+from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 
 
 class TimeFrameElement(VisualElementsContainer):
@@ -55,36 +55,16 @@ class TimeFrameElement(VisualElementsContainer):
         return self._width
 
     def draw(self, dwg: Drawing, x: float, y: float):
-        time_frame_ico = Symbol(id=self.time_frame.name)
-
-        match self.time_frame:
-            case TimeFrame.Now:
-                time_frame_ico.objects = [
-                    Path(
-                        d="m 52.550102,189.38019 153.669208,-0.19083 0.1952,72.93908 m 47.44872,-40.78067 -46.99687,40.47311 m -45.43164,-40.73769 44.67828,41.15982"
-                    ),
-                ]
-            case TimeFrame.NearFuture:
-                time_frame_ico.objects = [
-                    Path(
-                        d="m 58.082886,173.69718 179.530904,0.30091 m -40.78067,-47.44872 40.47311,46.99687 m -40.73769,45.43164 41.15982,-44.67828"
-                    ),
-                ]
-            case TimeFrame.Future:
-                time_frame_ico.objects = [
-                    Path(
-                        d="M 34.048204,170.95036 C 95.440663,82.251406 178.95804,105.79218 237.61379,173.99809 m 0.42164,-42.29843 -0.7292,41.84658 m -44.17122,0.45245 44.59335,0.30091"
-                    ),
-                    Path(d="M 67.960734,174 H 85.128362", stroke_width=10, stroke=accent_fill),
-                    Path(d="m 112.3865,174 h 17.16763", stroke_width=10, stroke=accent_fill),
-                    Path(d="m 154.78043,174 h 17.16763", stroke_width=10, stroke=accent_fill),
-                ]
+        icon = IconProvider.create_time_frame_icon(self.time_frame)
+        if icon is None:
+            raise ValueError("IconProvider could not construct an icon for this time frame. None will be drawn.")
 
         x_icon_current = x + self.layout_configuration.small_margin
         y_icon_current = y + self.layout_configuration.small_margin
 
-        time_frame_ico.add_to_dwg(
+        draw_scaled_icon(
             dwg=dwg,
+            icon=icon,
             insert=(
                 x_icon_current,
                 y_icon_current,

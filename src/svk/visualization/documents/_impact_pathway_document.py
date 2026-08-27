@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from collections import defaultdict
 from typing import cast
-from svk.data import ImpactPathwayResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine, ImpactCategory, Translator
+from svk.data import ImpactPathwayResearchQuestion, TimeFrame, ResearchLine, ImpactCategory, Translator, IconProvider
 from svk.data.helpers import color_toward_grey
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers._measuretext import measure_text
@@ -63,7 +63,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            icon=StormSurgeBarrier.All,
+            icon=IconProvider.create_6svk_icon(),
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
         )
@@ -175,7 +175,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            icon=StormSurgeBarrier.All,
+            icon=IconProvider.create_6svk_icon(),
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
         )

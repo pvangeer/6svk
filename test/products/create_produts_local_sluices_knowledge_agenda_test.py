@@ -40,7 +40,6 @@ def read_database() -> list[SluicesResearchQuestion]:
 @pytest.mark.localproduct
 def test_create_sluices_overview():
     questions = read_database()
-    t = Translator(lang="nl")
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda Sluis Panheel"
 
     calendar = SluicesDocument(

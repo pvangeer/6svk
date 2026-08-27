@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from collections import defaultdict
 from typing import DefaultDict
 
-from svk.data import StormSurgeBarrierResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine
+from svk.data import StormSurgeBarrierResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine, IconProvider
 from svk.visualization.helpers._measuretext import measure_text
 from svk.data.helpers import color_toward_grey
 from svk.visualization.helpers import _calendar_helper as helper
@@ -68,7 +68,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            icon=self.storm_surge_barrier,
+            icon=IconProvider.create_icon(self.storm_surge_barrier),
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
         )

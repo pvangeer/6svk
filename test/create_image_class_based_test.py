@@ -29,6 +29,7 @@ from svk.data import (
     StormSurgeBarrier,
     LinksRegister,
     Translator,
+    IconProvider,
 )
 from svk.io import svg_to_pdf
 from test.paths import test_output_dir
@@ -66,7 +67,7 @@ def test_create_image():
         links_register=links_register,
         translator=translator,
         title="Test-image",
-        icon=StormSurgeBarrier.All,
+        icon=IconProvider.create_6svk_icon(),
     )
     cluster = Cluster(layout_configuration=config, links_register=links_register, translator=translator, color=(132, 243, 124))
     fig.clusters.append(cluster)
