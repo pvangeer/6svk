@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svk.data import StormSurgeBarrierResearchQuestion, Label
+from svk.data import StormSurgeBarrierResearchQuestion, Label, IconProvider
 from svk.data.helpers import color_toward_grey
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
@@ -32,7 +32,7 @@ from svk.visualization.elements._question_priority_details_element import Questi
 from svk.visualization.elements._priority_icon_element import PriorityIconElement
 from svk.visualization.elements._id_element import IdElement
 from svk.visualization.elements._question_analysis_details_element import QuestionAnalysisDetailsElement
-from svk.visualization.elements._ssb_icons_element import SsbIconsElement
+from svk.visualization.elements._icons_element import IconsElement
 
 
 class QuestionDetailsElement(VisualElementsContainer):
@@ -108,11 +108,11 @@ class QuestionDetailsElement(VisualElementsContainer):
             is_link_target=True,
             page_number=self.page_number,
         )
-        self._ssb_icons_element = SsbIconsElement(
+        self._ssb_icons_element = IconsElement(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            storm_surge_barriers=self.research_question.storm_surge_barriers,
+            icons=tuple(icon for b in self.research_question.storm_surge_barriers if (icon := IconProvider.create_icon(b)) is not None),
         )
 
         self._width = (

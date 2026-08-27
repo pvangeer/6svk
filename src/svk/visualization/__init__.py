@@ -36,6 +36,6 @@ from .elements._group import Group
 from .elements._question_summary_element import QuestionSummaryElement
 from .elements._question_details_element import QuestionDetailsElement
 from .elements._question_analysis_details_element import QuestionAnalysisDetailsElement
-from .elements._ssb_icons_element import SsbIconsElement
+from .elements._icons_element import IconsElement
 
 # TODO: Expose all elements

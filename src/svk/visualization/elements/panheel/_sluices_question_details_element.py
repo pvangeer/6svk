@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svk.data import SluicesResearchQuestion, Label, StormSurgeBarrier
+from svk.data import SluicesResearchQuestion, Label, StormSurgeBarrier, IconProvider
 from svk.data.helpers import color_toward_grey
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
@@ -31,7 +31,7 @@ from svk.visualization.elements.panheel._sluices_question_priority_details_eleme
 from svk.visualization.elements._time_frame_element import TimeFrameElement
 from svk.visualization.elements._priority_icon_element import PriorityIconElement
 from svk.visualization.elements._id_element import IdElement
-from svk.visualization.elements._ssb_icons_element import SsbIconsElement
+from svk.visualization.elements._icons_element import IconsElement
 from svk.visualization.elements.panheel._sluices_current_research_element import CurrentResearchDetailsElement
 
 
@@ -85,11 +85,11 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             research_question=self.research_question,
             color=self._color,
         )
-        self._ssb_icons_element = SsbIconsElement(
+        self._ssb_icons_element = IconsElement(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            storm_surge_barriers=[StormSurgeBarrier.SluicePanheel],
+            icons=tuple([IconProvider.create_sluice_panheel_icon()]),
         )
 
         self._time_frame_element = TimeFrameElement(

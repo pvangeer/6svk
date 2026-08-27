@@ -21,25 +21,25 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
-from svk.data import StormSurgeBarrier, IconProvider
+from svk.data import Icon
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 
 
-class SsbIconsElement(VisualElementsContainer):
+class IconsElement(VisualElementsContainer):
     """A container for the storm surge barrier icons."""
 
-    storm_surge_barriers: list[StormSurgeBarrier]
+    icons: tuple[Icon, ...]
     """The storm surge barriers to display icons for."""
 
     _height: float = PrivateAttr()
     _width: float = PrivateAttr()
 
     @model_validator(mode="after")
-    def validate(self) -> SsbIconsElement:
+    def validate(self) -> IconsElement:
 
         self._width = (self.layout_configuration.small_margin + self.layout_configuration.icon_width_small) * len(
-            self.storm_surge_barriers
+            self.icons
         ) + self.layout_configuration.small_margin
         self._height = (
             self.layout_configuration.small_margin + self.layout_configuration.icon_width_small + self.layout_configuration.small_margin
@@ -57,11 +57,7 @@ class SsbIconsElement(VisualElementsContainer):
     def draw(self, dwg: Drawing, x: float, y: float):
         x_icon_current = x + self.layout_configuration.small_margin
         y_icon_current = y + self.layout_configuration.small_margin
-        for barrier in self.storm_surge_barriers:
-            icon = IconProvider.create_icon(barrier=barrier)
-            if icon is None:
-                continue
-
+        for icon in self.icons:
             draw_scaled_icon(
                 dwg=dwg,
                 icon=icon,
