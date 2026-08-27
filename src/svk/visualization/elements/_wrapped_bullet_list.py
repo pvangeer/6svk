@@ -38,7 +38,7 @@ class WrappedBulletListElement(VisualElement):
         for bullet in self.bullet_list:
             lines = wrapped_lines(
                 bullet,
-                max_width=self.max_width - self.layout_configuration.bullet_list_indent,
+                max_width=self.max_width - self.layout_configuration.bullet_list_indent - 2 * self.layout_configuration.small_margin,
                 font_size=self.layout_configuration.font_size,
             )
             self._height += len(lines) * self.layout_configuration.font_size * 1.2
@@ -80,7 +80,7 @@ class WrappedBulletListElement(VisualElement):
 
             lines = wrapped_lines(
                 bullet,
-                max_width=self.max_width - self.layout_configuration.bullet_list_indent,
+                max_width=self.max_width - self.layout_configuration.bullet_list_indent - 2 * self.layout_configuration.small_margin,
                 font_size=self.layout_configuration.font_size,
             )
             dwg.add(
