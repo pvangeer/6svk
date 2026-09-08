@@ -167,7 +167,8 @@ class SluicesDocument(Document):
             pages.append(
                 self.create_details_page(
                     page_number=current_page_number,
-                    title=str(research_line.number) + ". " + self.translator.get_label(research_line.title),
+                    title="Details kennisagenda Sluis Panheel",
+                    subtitle=str(research_line.number) + ". " + self.translator.get_label(research_line.title),
                     link_target=research_line.id,
                     questions=grouped_questions[research_line],
                 )
@@ -178,7 +179,8 @@ class SluicesDocument(Document):
             pages.append(
                 self.create_details_page(
                     page_number=current_page_number,
-                    title=self.translator.get_label(Label.D_NoResearchLine),
+                    title="Details kennisagenda Sluis Panheel",
+                    subtitle=self.translator.get_label(Label.D_NoResearchLine),
                     link_target="",
                     questions=non_grouped,
                 )
@@ -192,10 +194,12 @@ class SluicesDocument(Document):
         title: str,
         link_target: str,
         questions: list[SluicesResearchQuestion],
+        subtitle: str | None = None,
     ) -> Page:
         dwg_details_page = SluicesQuestionDetailsPage(
             page_number=page_number,
             title=title,
+            subtitle=subtitle,
             title_link_target=link_target,
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
