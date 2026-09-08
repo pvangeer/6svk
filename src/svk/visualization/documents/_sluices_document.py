@@ -1,5 +1,5 @@
 from collections import defaultdict
-from svk.data import TimeFrame, ResearchLine, StormSurgeBarrier, IconProvider
+from svk.data import TimeFrame, ResearchLine, IconProvider, SluicesResearchLineFactory
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers._measuretext import measure_text
@@ -11,7 +11,7 @@ from svk.visualization.elements._cluster import Cluster
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.elements.panheel._sluices_question_details_element import SluicesQuestionDetailsElement
 
-from svk.data import SluicesResearchQuestion, TimeFrame, Label
+from svk.data import SluicesResearchQuestion, TimeFrame, Label, SluicesResearchLines
 from svk.visualization.documents._document import Document
 from svk.visualization.pages._page import Page
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
@@ -23,12 +23,43 @@ class SluicesDocument(Document):
     questions: list[SluicesResearchQuestion]
 
     def create_pages(self) -> list[Page]:
-        return [self._create_overview_page(page_number=0)] + self.create_detailed_sluice_question_pages(current_page_number=1)
+        return [
+            self._create_overview_page(
+                page_number=0,
+                research_lines=[
+                    SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.TechnicalLifeTimeCivilParts),
+                    SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.TechnicalLifeTimeInstallations),
+                    SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.InspectionsMonitoringAndData),
+                ],
+                subtitle="Onderhoudsvragen",
+            ),
+            self._create_overview_page(
+                page_number=1,
+                research_lines=[
+                    SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.WaterSafety),
+                    SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.WaterSystemAndAvailability),
+                    SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.EcologyAndWaterQuality),
+                    SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.Functions),
+                    SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.Operation),
+                    SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.Robustness),
+                    SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.Strategy),
+                    SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.EnvironmentalImpact),
+                ],
+                subtitle="Voldoen aan de eisen van vandaag en morgen",
+            ),
+            self._create_overview_page(
+                page_number=2,
+                research_lines=[SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.Organizational)],
+                subtitle="Bedrijfskundige optimalisatie",
+            ),
+        ] + self.create_detailed_sluice_question_pages(current_page_number=3)
 
-    # TODO: CReate shared methods over all overview pages.
+    # TODO: Create shared methods over all overview pages.
     def _create_overview_page(
         self,
         page_number: int,
+        research_lines: list[ResearchLine],
+        subtitle: str,
     ) -> TimeLineOverviewPage:
         self.layout_configuration.question_id_box_width = (
             max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in self.questions])
@@ -37,7 +68,8 @@ class SluicesDocument(Document):
 
         fig = TimeLineOverviewPage(
             page_number=page_number,
-            title="Kennisvragen Sluis Panheel",
+            title="Overzicht kennisagenda Sluis Panheel",
+            subtitle=subtitle,
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
@@ -49,7 +81,9 @@ class SluicesDocument(Document):
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Now, number=0)
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=1)
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=2)
-        self.add_clusters_per_research_line(fig=fig, questions=self.questions, page_number=page_number)
+        self.add_clusters_per_research_line(
+            fig=fig, questions=[q for q in self.questions if q.research_line in research_lines], page_number=page_number
+        )
         return fig
 
     def add_time_frame_column(self, fig: TimeLineOverviewPage, time_frame: TimeFrame, number: int):

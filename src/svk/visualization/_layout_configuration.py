@@ -32,14 +32,14 @@ class LayoutConfiguration(BaseModel):
     small_margin: float = 5.0
 
     # Font sizes
-    page_title_font_size: int = 64
+    page_title_font_size: int = 32
+    page_subtitle_font_size: int = 24
     column_header_font_size: int = 18
     group_title_font_size: int = 14
     font_size: int = 12
     disclamer_font_size: int = 8
 
     # Sizes
-    page_title_height: float = 80
     column_header_height: float = 60
     group_header_height: float = 30
 

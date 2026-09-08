@@ -33,6 +33,16 @@ from svk.visualization.elements._question_details_element import QuestionDetails
 from svk.visualization.pages._page import Page
 from svk.visualization.elements._column import Column
 
+INVALID_CHARS = '<>:"/\\|?*. '
+translation = str.maketrans({c: "_" for c in INVALID_CHARS})
+
+
+def safe_filename(filename: str) -> str:
+    """
+    Returns a safe filename by replacing unsafe characters with underscores.
+    """
+    return filename.translate(translation).strip("_").replace("__", "_").replace("__", "_")
+
 
 class Document(BaseModel, ABC):
     layout_configuration: LayoutConfiguration = LayoutConfiguration()
@@ -45,7 +55,7 @@ class Document(BaseModel, ABC):
     disclaimer_links: list[tuple[str, str]] | None = None
     cleanup: bool = True
     """When set to false, intermediate files are left in the output dir."""
-    _str_table = str.maketrans({".": "-", " ": "-"})
+    _str_table = str.maketrans({".": "-", " ": "_"})
 
     @abstractmethod
     def create_pages(self) -> list[Page]:
@@ -73,7 +83,7 @@ class Document(BaseModel, ABC):
     def _convert_pages_to_pdf(self) -> list[Path]:
         pages_file_paths: list[Path] = []
         for page in sorted(self.pages, key=lambda p: p.page_number):
-            safe_title = re.sub(r'[\\/**?:"<>|/]', "_", page.title.translate(self._str_table))
+            safe_title = safe_filename(page.title) + (("_" + safe_filename(page.subtitle)) if page.subtitle is not None else "")
             target_path = self.output_dir / (f"{self.output_file} - {safe_title}.pdf")
             svg_to_pdf(svg_dwg=page.draw(), path=target_path)
             pages_file_paths.append(target_path)

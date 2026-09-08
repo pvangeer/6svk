@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from datetime import datetime
-from svk.data import SluicesResearchQuestion, TimeFrame, Translator
+from svk.data import SluicesResearchQuestion, TimeFrame
 from svk.io import SluicesKnowledgeAgendaDatabase
 from svk.visualization import SluicesDocument
 from test.paths import test_data_dir, test_output_dir
@@ -28,7 +28,7 @@ import pytest
 
 
 def read_database() -> list[SluicesResearchQuestion]:
-    questions = SluicesKnowledgeAgendaDatabase(test_data_dir / "example_sp.xlsx")
+    questions = SluicesKnowledgeAgendaDatabase(test_data_dir / "example_sp_2.xlsx")
     questions.read()
 
     if len(questions.errors) > 0:
@@ -46,6 +46,7 @@ def test_create_sluices_overview():
         output_dir=test_output_dir,
         output_file=output_file,
         questions=questions,
+        cleanup=True,
     )
 
     calendar.build()

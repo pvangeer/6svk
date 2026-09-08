@@ -33,6 +33,8 @@ from svk.visualization.helpers._measuretext import measure_text_chromium
 class Page(BaseModel, ABC):
     title: str
     """The title of this page."""
+    subtitle: str | None = None
+    """An optional subtitle of this page."""
     # TODO: Include the page number somewhere on the page as well?
     page_number: int
     """The page number"""
@@ -52,6 +54,7 @@ class Page(BaseModel, ABC):
     """The translator that should be used for this page."""
 
     _title_width: float = 0.0
+    _title_height: float = 0.0
 
     @abstractmethod
     def get_content_size(self) -> tuple[float, float]:
@@ -63,38 +66,39 @@ class Page(BaseModel, ABC):
 
     def get_size(self) -> tuple[float, float]:
         content_size = self.get_content_size()
-        title_height = (
-            self.layout_configuration.paper_margin + self.layout_configuration.page_title_height + self.layout_configuration.large_margin
+        self._title_height = (
+            self.layout_configuration.page_title_font_size
+            if self.subtitle is None
+            else self.layout_configuration.page_title_font_size
+            + self.layout_configuration.small_margin
+            + self.layout_configuration.page_subtitle_font_size
         )
         disclaimer_height = (
             (self.layout_configuration.large_margin + 1.2 * self.layout_configuration.disclamer_font_size)
             if self.disclaimer is not None
             else 0.0
         )
+        _title_text_width = (
+            self.layout_configuration.paper_margin
+            + measure_text_chromium(
+                self.title, font_size=self.layout_configuration.page_title_font_size, font_weight="bold", font_family="Arial"
+            )[0]
+            + self.layout_configuration.paper_margin
+        )
         self._title_width = (
-            (
-                self.layout_configuration.paper_margin
-                + self.layout_configuration.arrow_depth
-                + self.layout_configuration.page_title_height
-                + self.layout_configuration.paper_margin
-                + measure_text_chromium(
-                    self.title, font_size=self.layout_configuration.page_title_font_size, font_weight="bold", font_family="Arial"
-                )[
-                    0
-                ]  # TODO: This all is expensive Maybe consider caching the bowser in an object that is created once to speed things up?
-                + self.layout_configuration.paper_margin
-            )
+            (self.layout_configuration.paper_margin + self.layout_configuration.arrow_depth + self._title_height + _title_text_width)
             if self.icon is not None
-            else (
-                self.layout_configuration.paper_margin
-                + measure_text_chromium(
-                    self.title, font_size=self.layout_configuration.page_title_font_size, font_weight="bold", font_family="Arial"
-                )[0]
-                + self.layout_configuration.paper_margin
-            )
+            else _title_text_width
         )
         page_width = max([content_size[0] + 2 * self.layout_configuration.paper_margin, self._title_width])
-        page_height = title_height + content_size[1] + disclaimer_height + self.layout_configuration.paper_margin
+        page_height = (
+            self.layout_configuration.paper_margin
+            + self._title_height
+            + self.layout_configuration.large_margin
+            + content_size[1]
+            + disclaimer_height
+            + self.layout_configuration.paper_margin
+        )
         return (page_width, page_height)
 
     def draw(self) -> Drawing:
@@ -113,9 +117,7 @@ class Page(BaseModel, ABC):
         self.draw_content(
             dwg=dwg,
             left=x_left,
-            top=self.layout_configuration.paper_margin
-            + self.layout_configuration.page_title_height
-            + self.layout_configuration.large_margin,
+            top=self.layout_configuration.paper_margin + self._title_height + self.layout_configuration.large_margin,
         )
 
         self.draw_disclaimer(dwg=dwg)
@@ -125,7 +127,7 @@ class Page(BaseModel, ABC):
     def draw_title(self, dwg: Drawing):
         left_title = self.layout_configuration.paper_margin
         if self.icon is not None:
-            icon_size = self.layout_configuration.page_title_height
+            icon_size = self._title_height
             icon_width = icon_size + self.layout_configuration.arrow_depth
             draw_callout(
                 dwg, self.layout_configuration.paper_margin, self.layout_configuration.paper_margin, icon_width, icon_size, "#000000"
@@ -141,29 +143,48 @@ class Page(BaseModel, ABC):
             )
             left_title = 2 * self.layout_configuration.paper_margin + icon_width
 
+        bottom_title = (
+            self.layout_configuration.paper_margin + self._title_height
+            if self.subtitle is None
+            else self.layout_configuration.paper_margin
+            + self._title_height
+            - self.layout_configuration.page_subtitle_font_size
+            - self.layout_configuration.small_margin
+        )
         dwg.add(
             dwg.text(
                 self.title,
                 insert=(
                     left_title,
-                    self.layout_configuration.paper_margin + self.layout_configuration.page_title_height / 2,
+                    bottom_title,
                 ),
                 font_size=self.layout_configuration.page_title_font_size,
                 font_family="Arial",
                 font_weight="bold",
                 text_anchor="start",
-                dominant_baseline="middle",
+                dominant_baseline="text-bottom",
             )
         )
+
+        if self.subtitle is not None:
+            dwg.add(
+                dwg.text(
+                    self.subtitle,
+                    insert=(left_title, self.layout_configuration.paper_margin + self._title_height),
+                    font_size=self.layout_configuration.page_subtitle_font_size,
+                    font_family="Arial",
+                    font_weight="normal",
+                    text_anchor="start",
+                    dominant_baseline="text-bottom",
+                )
+            )
 
         if self.title_link_target is not None:
             self.links_register.register_link_target(
                 self.title_link_target,
                 self.page_number,
                 left_title,
-                self.layout_configuration.paper_margin
-                + self.layout_configuration.page_title_height / 2
-                - self.layout_configuration.page_title_font_size * 1.2 / 2,
+                self.layout_configuration.paper_margin,
             )
 
     def draw_disclaimer(self, dwg: Drawing):
