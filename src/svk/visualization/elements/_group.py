@@ -21,6 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from svgwrite import Drawing
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.helpers._draw_callout import draw_callout
+from svk.visualization.helpers._measuretext import measure_text_chromium
 from svk.visualization.helpers._wrappedtext import wrapped_lines, wrapped_text
 from svk.visualization.elements._visual_element import VisualElement
 
@@ -47,6 +48,10 @@ class Group(GroupBase):
     """The title of the group"""
     color: str
     """The color of the group"""
+    page_number: int | None = None
+    """The page number of the page this group is on"""
+    link_target_id: str | None = None
+    """The ID of the link target for the group"""
 
     questions: list[QuestionSummaryElement] = []
     """The questions in this group"""
@@ -84,7 +89,7 @@ class Group(GroupBase):
         :type width: float
         """
 
-        self.draw_header(dwg, x, y, self.width)
+        self.draw_header(dwg, x, y, self.width, target_id=self.link_target_id)
 
         current_y = y + self.layout_configuration.group_header_height + self.layout_configuration.small_margin
         for question in self.questions:
@@ -96,7 +101,7 @@ class Group(GroupBase):
             current_y += self.layout_configuration.small_margin + question.height
             pass
 
-    def draw_header(self, dwg: Drawing, x: float, y: float, width: float):
+    def draw_header(self, dwg: Drawing, x: float, y: float, width: float, target_id: str | None = None):
         """
         Draws the groups header
 
@@ -125,6 +130,18 @@ class Group(GroupBase):
                 dominant_baseline="middle",
             )
         )
+        _wh = measure_text_chromium(
+            text=self.title, font_size=self.layout_configuration.group_title_font_size, font_family="Arial", font_weight="bold"
+        )
+        if self.page_number is not None and target_id is not None:
+            self.links_register.register_link(
+                target_id,
+                page_number=self.page_number,
+                x=x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin,
+                y=y + self.layout_configuration.group_header_height / 2 - _wh[1] / 2,
+                width=_wh[0],
+                height=_wh[1],
+            )
 
 
 class PlainTextGroup(GroupBase):

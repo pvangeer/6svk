@@ -1,22 +1,34 @@
 from collections import defaultdict
-from svk.data import TimeFrame, ResearchLine, IconProvider, SluicesResearchLineFactory
+from svk.data import (
+    TimeFrame,
+    ResearchLine,
+    IconProvider,
+    SluicesResearchLineFactory,
+    Translator,
+    SluicesResearchQuestion,
+    Label,
+    SluicesResearchLines,
+)
+from svk.data.helpers import color_toward_grey
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers._measuretext import measure_text
-from svk.data.helpers._greyfraction import color_toward_grey
+from svk.visualization.pages._page import Page
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
+from svk.visualization.pages._sluices_question_details_page import SluicesQuestionDetailsPage
 from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group
 from svk.visualization.elements._cluster import Cluster
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.elements.panheel._sluices_question_details_element import SluicesQuestionDetailsElement
-
-from svk.data import SluicesResearchQuestion, TimeFrame, Label, SluicesResearchLines
 from svk.visualization.documents._document import Document
-from svk.visualization.pages._page import Page
-from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
-from svk.visualization.pages._sluices_question_details_page import SluicesQuestionDetailsPage
-from svk.visualization.helpers._measuretext import measure_text
+
+
+def _get_research_line_title(translator: Translator, research_line: ResearchLine | None) -> str:
+    if research_line is None:
+        return translator.get_label(Label.D_NoResearchLine)
+    else:
+        return str(research_line.number) + ". " + translator.get_label(research_line.title)
 
 
 class SluicesDocument(Document):
@@ -54,7 +66,6 @@ class SluicesDocument(Document):
             ),
         ] + self.create_detailed_sluice_question_pages(current_page_number=3)
 
-    # TODO: Create shared methods over all overview pages.
     def _create_overview_page(
         self,
         page_number: int,
@@ -133,7 +144,9 @@ class SluicesDocument(Document):
                 layout_configuration=self.layout_configuration,
                 links_register=self.links_register,
                 translator=self.translator,
-                title=self.translator.get_label(current_research_line.title),
+                page_number=page_number,
+                link_target_id=current_research_line.id,
+                title=_get_research_line_title(self.translator, current_research_line),
                 color=color_toward_grey(current_research_line.base_color, current_time_frame.grey_fraction),
             )
 
@@ -168,7 +181,7 @@ class SluicesDocument(Document):
                 self.create_details_page(
                     page_number=current_page_number,
                     title="Details kennisagenda Sluis Panheel",
-                    subtitle=str(research_line.number) + ". " + self.translator.get_label(research_line.title),
+                    subtitle=_get_research_line_title(self.translator, research_line),
                     link_target=research_line.id,
                     questions=grouped_questions[research_line],
                 )
@@ -180,7 +193,7 @@ class SluicesDocument(Document):
                 self.create_details_page(
                     page_number=current_page_number,
                     title="Details kennisagenda Sluis Panheel",
-                    subtitle=self.translator.get_label(Label.D_NoResearchLine),
+                    subtitle=_get_research_line_title(self.translator, None),
                     link_target="",
                     questions=non_grouped,
                 )
