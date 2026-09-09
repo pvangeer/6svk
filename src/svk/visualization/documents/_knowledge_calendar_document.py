@@ -87,7 +87,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
             translator=self.translator,
             header_title=self.translator.get_label(time_frame.description),
             header_subtitle=helper.get_subtitle(time_frame),
-            header_color=helper.get_header_color(time_frame),
+            header_color=helper.get_color(layout_configuration=self.layout_configuration, time_frame=time_frame),
             number=number,
         )
 

@@ -10,6 +10,7 @@ from svk.data import (
     SluicesResearchLines,
 )
 from svk.data.helpers import color_toward_grey
+from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers._measuretext import measure_text
@@ -33,6 +34,7 @@ def _get_research_line_title(translator: Translator, research_line: ResearchLine
 
 class SluicesDocument(Document):
     questions: list[SluicesResearchQuestion]
+    layout_configuration: LayoutConfiguration = LayoutConfiguration(use_rijkswaterstaat_colors=True)
 
     def create_pages(self) -> list[Page]:
         return [
@@ -89,22 +91,22 @@ class SluicesDocument(Document):
             disclaimer_links=self.disclaimer_links,
         )
 
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Now, number=0)
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=1)
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=2)
+        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Now, number=0, color_group=research_lines[0].cluster)
+        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=1, color_group=research_lines[0].cluster)
+        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=2, color_group=research_lines[0].cluster)
         self.add_clusters_per_research_line(
             fig=fig, questions=[q for q in self.questions if q.research_line in research_lines], page_number=page_number
         )
         return fig
 
-    def add_time_frame_column(self, fig: TimeLineOverviewPage, time_frame: TimeFrame, number: int):
+    def add_time_frame_column(self, fig: TimeLineOverviewPage, time_frame: TimeFrame, number: int, color_group: int):
         column = Column(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
             header_title=self.translator.get_label(time_frame.description),
             header_subtitle=helper.get_subtitle(time_frame),
-            header_color=helper.get_header_color(time_frame),
+            header_color=helper.get_color(self.layout_configuration, time_frame, research_line_group=color_group),
             number=number,
         )
 
@@ -147,7 +149,7 @@ class SluicesDocument(Document):
                 page_number=page_number,
                 link_target_id=current_research_line.id,
                 title=_get_research_line_title(self.translator, current_research_line),
-                color=color_toward_grey(current_research_line.base_color, current_time_frame.grey_fraction),
+                color=helper.get_color(self.layout_configuration, current_time_frame, research_line_group=current_research_line.cluster),
             )
 
             cluster.groups[time_frame_column_numbers[current_time_frame]].append(new_group)

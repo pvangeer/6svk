@@ -25,6 +25,7 @@ from svk.data import ResearchQuestion
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer, Alignment
 from svk.visualization.elements._question_details_element import IdElement, PriorityIconElement
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
+from svk.visualization.helpers import _calendar_helper as helper
 
 
 class QuestionSummaryElement(VisualElementsContainer):
@@ -84,8 +85,14 @@ class QuestionSummaryElement(VisualElementsContainer):
         return self._width
 
     @property
-    def _color(self):
-        return self.research_question.color
+    def _color(self) -> str:
+        return (
+            self.research_question.color
+            if not self.layout_configuration.use_rijkswaterstaat_colors or not self.research_question.research_line
+            else helper.color_to_string(
+                helper.get_rijkswaterstaat_style_color(self.research_question.time_frame, self.research_question.research_line.cluster)
+            )
+        )
 
     def draw(self, dwg: Drawing, x: float, y: float):
         dwg.add(
