@@ -24,6 +24,8 @@ from svgwrite import Drawing
 from svk.data import TimeFrame, IconProvider
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
+from svk.visualization.helpers._calendar_helper import get_time_frame_string
+from svk.visualization.helpers._measuretext import measure_text
 
 
 class TimeFrameElement(VisualElementsContainer):
@@ -38,11 +40,17 @@ class TimeFrameElement(VisualElementsContainer):
     @model_validator(mode="after")
     def validate(self) -> TimeFrameElement:
 
+        _text_width = measure_text(get_time_frame_string(self.time_frame), self.layout_configuration.font_size)[0]
         self._width = (
-            self.layout_configuration.small_margin + self.layout_configuration.icon_width_small + self.layout_configuration.small_margin
+            self.layout_configuration.small_margin
+            + max([self.layout_configuration.icon_width_small, _text_width])
+            + self.layout_configuration.small_margin
         )
         self._height = (
-            self.layout_configuration.small_margin + self.layout_configuration.icon_width_small + self.layout_configuration.small_margin
+            self.layout_configuration.small_margin
+            + self.layout_configuration.icon_width_small
+            + self.layout_configuration.font_size * 1.2
+            + self.layout_configuration.small_margin
         )
         return self
 
@@ -59,15 +67,23 @@ class TimeFrameElement(VisualElementsContainer):
         if icon is None:
             raise ValueError("IconProvider could not construct an icon for this time frame. None will be drawn.")
 
-        x_icon_current = x + self.layout_configuration.small_margin
-        y_icon_current = y + self.layout_configuration.small_margin
-
         draw_scaled_icon(
             dwg=dwg,
             icon=icon,
             insert=(
-                x_icon_current,
-                y_icon_current,
+                x + self.width / 2.0 - self.layout_configuration.icon_width_small / 2.0,
+                y + self.layout_configuration.small_margin,
             ),
             size=(self.layout_configuration.icon_width_small, self.layout_configuration.icon_width_small),
+        )
+        _time_frame_text = get_time_frame_string(self.time_frame)
+        dwg.add(
+            dwg.text(
+                _time_frame_text,
+                insert=(x + self.width / 2.0, y + self.layout_configuration.small_margin + self.layout_configuration.icon_width_small),
+                font_size=self.layout_configuration.font_size,
+                text_anchor="middle",
+                dominant_baseline="hanging",
+                fill="black",
+            )
         )

@@ -27,6 +27,10 @@ class SluicesQuestionDetailsPage(Page):
     questions: list[SluicesQuestionDetailsElement] = []
 
     def get_content_size(self) -> tuple[float, float]:
+        _preferred_first_column_width = max([q.get_first_column_width() for q in self.questions])
+        for q in self.questions:
+            q.set_preferred_first_column_width(_preferred_first_column_width)
+
         return (
             max([q.width for q in self.questions]),
             sum([q.height + self.layout_configuration.intermediate_margin for q in self.questions])

@@ -40,6 +40,22 @@ def get_priority_2(question: ImpactPathwayResearchQuestion) -> int:
     return 1
 
 
+def get_time_frame_string(time_frame: TimeFrame) -> str:
+    match time_frame:
+        case TimeFrame.Now:
+            return "2027 - 2032"
+        case TimeFrame.NearFuture:
+            return "2033 - 2040"
+        case TimeFrame.Future:
+            return ">2040"
+        case TimeFrame.NotRelevant:
+            return "-"
+        case TimeFrame.Unknown:
+            return "?"
+        case _:
+            raise ValueError("Unknown time frame")
+
+
 def get_subtitle(time_frame: TimeFrame) -> str:
     match time_frame:
         case TimeFrame.Now:
