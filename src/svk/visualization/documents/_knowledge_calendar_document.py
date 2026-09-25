@@ -25,6 +25,7 @@ from svk.data import StormSurgeBarrierResearchQuestion, StormSurgeBarrier, TimeF
 from svk.visualization.helpers._measuretext import measure_text
 from svk.data.helpers import color_toward_grey
 from svk.visualization.helpers import _calendar_helper as helper
+from svk.visualization.helpers import _color_helper as colorhelper
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group
@@ -87,7 +88,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
             translator=self.translator,
             header_title=self.translator.get_label(time_frame.description),
             header_subtitle=helper.get_subtitle(time_frame),
-            header_color=helper.get_color(layout_configuration=self.layout_configuration, time_frame=time_frame),
+            header_color=colorhelper.get_color(layout_configuration=self.layout_configuration, time_frame=time_frame),
             number=number,
         )
 

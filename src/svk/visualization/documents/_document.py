@@ -18,7 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-import re
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -26,6 +25,7 @@ from collections import defaultdict
 from svk.data import StormSurgeBarrierResearchQuestion, LinksRegister, ResearchLine, Translator, TimeFrame, Label
 from svk.io import svg_to_pdf, merge_pdf_files, add_links
 from svk.visualization.helpers import _calendar_helper as helper
+from svk.visualization.helpers import _color_helper as colorhelper
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization.pages._question_details_page import QuestionDetailsPage
@@ -140,7 +140,7 @@ class ResearchQuestionsDocument(Document):
             translator=self.translator,
             header_title=self.translator.get_label(time_frame.description),
             header_subtitle=helper.get_subtitle(time_frame),
-            header_color=helper.get_color_toward_grey(time_frame),  # TODO: Make this also styleable with Rijkswaterstaat colors?
+            header_color=colorhelper.get_color_toward_grey(time_frame),  # TODO: Make this also styleable with Rijkswaterstaat colors?
             number=number,
         )
 

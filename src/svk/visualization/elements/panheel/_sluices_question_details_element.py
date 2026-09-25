@@ -33,7 +33,7 @@ from svk.visualization.elements._priority_icon_element import PriorityIconElemen
 from svk.visualization.elements._id_element import IdElement
 from svk.visualization.elements._icons_element import IconsElement
 from svk.visualization.elements.panheel._sluices_current_research_element import CurrentResearchDetailsElement
-from svk.visualization.helpers import _calendar_helper as helper
+from svk.visualization.helpers import _color_helper as colorhelper
 
 
 class SluicesQuestionDetailsElement(VisualElementsContainer):
@@ -77,8 +77,8 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
         return (
             self.research_question.color
             if not self.layout_configuration.use_rijkswaterstaat_colors or not self.research_question.research_line
-            else helper.color_to_string(
-                helper.get_rijkswaterstaat_style_color(self.research_question.time_frame, self.research_question.research_line.cluster)
+            else colorhelper.color_to_string(
+                colorhelper.get_rijkswaterstaat_style_color(self.research_question.time_frame, self.research_question.research_line.cluster)
             )
         )
 

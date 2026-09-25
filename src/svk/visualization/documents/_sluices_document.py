@@ -13,6 +13,7 @@ from svk.data.helpers import color_toward_grey
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
+from svk.visualization.helpers import _color_helper as colorhelper
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.pages._page import Page
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
@@ -106,7 +107,7 @@ class SluicesDocument(Document):
             translator=self.translator,
             header_title=self.translator.get_label(time_frame.description),
             header_subtitle=helper.get_subtitle(time_frame),
-            header_color=helper.get_color(self.layout_configuration, time_frame, research_line_group=color_group),
+            header_color=colorhelper.get_color(self.layout_configuration, time_frame, research_line_group=color_group),
             number=number,
         )
 
@@ -149,7 +150,9 @@ class SluicesDocument(Document):
                 page_number=page_number,
                 link_target_id=current_research_line.id,
                 title=_get_research_line_title(self.translator, current_research_line),
-                color=helper.get_color(self.layout_configuration, current_time_frame, research_line_group=current_research_line.cluster),
+                color=colorhelper.get_color(
+                    self.layout_configuration, current_time_frame, research_line_group=current_research_line.cluster
+                ),
             )
 
             cluster.groups[time_frame_column_numbers[current_time_frame]].append(new_group)

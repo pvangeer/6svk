@@ -24,6 +24,7 @@ from svk.visualization.helpers._draw_callout import draw_callout
 from svk.visualization.helpers._measuretext import measure_text_chromium
 from svk.visualization.helpers._wrappedtext import wrapped_lines, wrapped_text
 from svk.visualization.elements._visual_element import VisualElement
+from svk.visualization.helpers._color_helper import get_contrast_color, rgb_string_to_tuple, color_to_string
 
 
 class GroupBase(VisualElement):
@@ -123,6 +124,7 @@ class Group(GroupBase):
                     x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin,
                     y + self.layout_configuration.group_header_height / 2,
                 ),
+                fill=color_to_string(get_contrast_color(rgb_string_to_tuple(self.color))),
                 font_size=self.layout_configuration.group_title_font_size,
                 font_family="Arial",
                 font_weight="bold",
