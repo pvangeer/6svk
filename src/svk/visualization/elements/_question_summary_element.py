@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
 
-from svk.data import ResearchQuestion
+from svk.data import ResearchQuestion, Color
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer, Alignment
 from svk.visualization.elements._question_details_element import IdElement, PriorityIconElement
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
@@ -85,12 +85,12 @@ class QuestionSummaryElement(VisualElementsContainer):
         return self._width
 
     @property
-    def _color(self) -> str:
+    def _color(self) -> Color:
         return (
             self.research_question.color
             if not self.layout_configuration.use_rijkswaterstaat_colors or not self.research_question.research_line
-            else colorhelper.color_to_string(
-                colorhelper.get_rijkswaterstaat_style_color(self.research_question.time_frame, self.research_question.research_line.cluster)
+            else colorhelper.get_rijkswaterstaat_style_color(
+                self.research_question.time_frame, self.research_question.research_line.cluster
             )
         )
 

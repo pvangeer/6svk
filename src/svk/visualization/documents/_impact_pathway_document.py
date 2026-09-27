@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from collections import defaultdict
 from typing import cast
-from svk.data import ImpactPathwayResearchQuestion, TimeFrame, ResearchLine, ImpactCategory, Translator, IconProvider
+from svk.data import ImpactPathwayResearchQuestion, TimeFrame, ResearchLine, ImpactCategory, Translator, IconProvider, Color, KnownColors
 from svk.data.helpers import color_toward_grey
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers._measuretext import measure_text
@@ -77,7 +77,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                 translator=self.translator,
                 header_title="",
                 header_subtitle="",
-                header_color="",
+                header_color=KnownColors.Blue,
                 number=2,
             )
         )
@@ -116,7 +116,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
                     translator=self.translator,
-                    color=(180, 180, 180),
+                    color=Color(r=180, g=180, b=180),
                 )
 
             cluster = clusters[current_impact_category.number]

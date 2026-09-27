@@ -21,10 +21,11 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from pydantic import BaseModel
 from svk.data._research_line import ResearchLine
 from svk.data._ssb_research_lines import StormSurgeBarrierResearchLines
+from svk.data._color import Color
 
-orange = (233, 113, 50)
-light_green = (142, 178, 30)
-dark_green = (25, 107, 36)
+orange = Color(r=233, g=113, b=50)
+light_green = Color(r=142, g=178, b=30)
+dark_green = Color(r=25, g=107, b=36)
 
 
 class StormSurgeBarrierResearchLineFactory(BaseModel):
@@ -78,7 +79,7 @@ class StormSurgeBarrierResearchLineFactory(BaseModel):
         )
 
     @staticmethod
-    def get_base_color(cluster) -> tuple[int, int, int]:
+    def get_base_color(cluster) -> Color:
         """
         Returns the R, G and B values of the color associated to the color group of the research line. R,G and B are integers ranging from 0 - 256.
 

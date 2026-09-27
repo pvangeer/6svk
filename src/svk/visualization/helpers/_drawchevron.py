@@ -20,6 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from svgwrite import Drawing
 from uuid import uuid4
+from svk.data import Color, KnownColors
 from svk.visualization.helpers._radial_gradient import create_radial_gradient
 
 
@@ -30,7 +31,7 @@ def draw_half_chevron(
     width: float,
     height: float,
     arrow_depth: float = 20,
-    color: str = "blue",
+    color: Color = KnownColors.Blue,
     stroke_width: float = 0.5,
     header_size: float = 30,
     add_to_dwg: bool = True,

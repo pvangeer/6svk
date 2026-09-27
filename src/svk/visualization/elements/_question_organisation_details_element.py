@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
-from svk.data import StormSurgeBarrierResearchQuestion, Label, ResearchLine, StormSurgeBarrierResearchLines
+from svk.data import StormSurgeBarrierResearchQuestion, Label, ResearchLine, StormSurgeBarrierResearchLines, Color
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
@@ -30,7 +30,7 @@ from svk.visualization.elements._visual_elements_container import VisualElements
 class QuestionOrganisationDetailsElement(VisualElementsContainer):
     research_question: StormSurgeBarrierResearchQuestion
     """The research question"""
-    color: str
+    color: Color
     page_number: int
 
     _width: float = PrivateAttr()

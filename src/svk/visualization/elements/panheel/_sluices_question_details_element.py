@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svk.data import SluicesResearchQuestion, Label, StormSurgeBarrier, IconProvider
+from svk.data import SluicesResearchQuestion, Label, Color, IconProvider
 from svk.data.helpers import color_toward_grey
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
@@ -73,12 +73,12 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
         return self
 
     @property
-    def _color(self):
+    def _color(self) -> Color:
         return (
             self.research_question.color
             if not self.layout_configuration.use_rijkswaterstaat_colors or not self.research_question.research_line
-            else colorhelper.color_to_string(
-                colorhelper.get_rijkswaterstaat_style_color(self.research_question.time_frame, self.research_question.research_line.cluster)
+            else colorhelper.get_rijkswaterstaat_style_color(
+                self.research_question.time_frame, self.research_question.research_line.cluster
             )
         )
 

@@ -26,10 +26,11 @@ from svk.data.helpers import color_toward_grey
 from svgwrite import Drawing
 from uuid import uuid4
 from collections import defaultdict
+from svk.data import Color
 
 
 class Cluster(VisualElement):
-    color: tuple[int, int, int]
+    color: Color
     """Base color of the cluster (background)"""
     groups: defaultdict[int, list[GroupBase]] = defaultdict(list[GroupBase])
     """A list of groups per column index (zero based)."""
@@ -64,7 +65,7 @@ class Cluster(VisualElement):
         )
         fill_radial_grad.add_stop_color(0, "white")
         fill_radial_grad.add_stop_color(0.6, "white")
-        fill_radial_grad.add_stop_color(1, color_toward_grey(self.color, 0.5, grey=(250, 250, 250)))
+        fill_radial_grad.add_stop_color(1, color_toward_grey(self.color, 0.5, grey=Color(r=250, g=250, b=250)))
         fill_radial_grad["gradientTransform"] = f"scale({x_scale},1)"
 
         stroke_gradient_id = f"gradient_{str(uuid4())}"

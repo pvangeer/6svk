@@ -21,8 +21,10 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from uuid import uuid4
 from svgwrite import Drawing
 
+from svk.data import Color
 
-def create_radial_gradient(dwg: Drawing, x: float, y: float, width: float, height: float, color: str) -> str:
+
+def create_radial_gradient(dwg: Drawing, x: float, y: float, width: float, height: float, color: Color) -> str:
     gradient_id = f"gradient_group_header_{str(uuid4())}"
     x_scale = width / (height)
     radial_grad = dwg.radialGradient(

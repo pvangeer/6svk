@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
-from svk.data import SluicesResearchQuestion, Label
+from svk.data import SluicesResearchQuestion, Label, Color
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer, Alignment
@@ -31,7 +31,7 @@ from svk.visualization.elements._wrapped_text_element import WrappedTextElement
 class CurrentResearchDetailsElement(VisualElementsContainer):
     research_question: SluicesResearchQuestion
     """The research question"""
-    color: str
+    color: Color
 
     _width: float = PrivateAttr()
     _height: float = PrivateAttr()

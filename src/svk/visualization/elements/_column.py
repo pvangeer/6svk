@@ -18,8 +18,9 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.visualization.elements._visual_element import VisualElement
 from svgwrite import Drawing
+from svk.data import Color
+from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._drawchevron import draw_half_chevron
 
 
@@ -32,7 +33,7 @@ class Column(VisualElement):
     """Header/title of the column"""
     header_subtitle: str
     """Subtitle of the columns header."""
-    header_color: str
+    header_color: Color
     """Color of the column (used as shading and as stroke color)"""
     number: int
 

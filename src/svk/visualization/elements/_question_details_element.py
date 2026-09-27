@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svk.data import StormSurgeBarrierResearchQuestion, Label, IconProvider
+from svk.data import StormSurgeBarrierResearchQuestion, Label, IconProvider, Color
 from svk.data.helpers import color_toward_grey
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
@@ -176,7 +176,7 @@ class QuestionDetailsElement(VisualElementsContainer):
         return self
 
     @property
-    def _color(self):
+    def _color(self) -> Color:
         research_line = self.research_question.research_line
         return (
             color_toward_grey(
@@ -184,7 +184,7 @@ class QuestionDetailsElement(VisualElementsContainer):
                 self.research_question.time_frame.grey_fraction,
             )
             if research_line is not None
-            else "rgb(120,120,120)"
+            else Color(r=120, g=120, b=120)
         )
 
     def draw(self, dwg: Drawing, x: float, y: float):

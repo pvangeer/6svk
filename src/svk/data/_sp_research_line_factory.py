@@ -21,10 +21,11 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from pydantic import BaseModel
 from svk.data._research_line import ResearchLine
 from svk.data._sp_research_lines import SluicesResearchLines
+from svk.data._color import Color
 
-darkblue = (16, 49, 86)
-sandy = (107, 96, 3)
-grey = (127, 127, 127)
+darkblue = Color(r=16, g=49, b=86)
+sandy = Color(r=107, g=96, b=3)
+grey = Color(r=127, g=127, b=127)
 
 
 class SluicesResearchLineFactory(BaseModel):
@@ -122,7 +123,7 @@ class SluicesResearchLineFactory(BaseModel):
         )
 
     @staticmethod
-    def get_base_color(cluster) -> tuple[int, int, int]:
+    def get_base_color(cluster) -> Color:
         """
         Returns the R, G and B values of the color associated to the color group of the research line. R,G and B are integers ranging from 0 - 256.
 

@@ -31,6 +31,7 @@ from svk.data import (
     LinksRegister,
     Translator,
     IconProvider,
+    Color,
 )
 from svk.io import svg_to_pdf
 from test.paths import test_output_dir
@@ -70,11 +71,11 @@ def test_create_image():
         title="Test-image",
         icon=IconProvider.create_6svk_icon(),
     )
-    cluster = Cluster(layout_configuration=config, links_register=links_register, translator=translator, color=(132, 243, 124))
+    cluster = Cluster(layout_configuration=config, links_register=links_register, translator=translator, color=Color(r=132, g=243, b=124))
     fig.clusters.append(cluster)
 
     adaptation_now = Group(
-        layout_configuration=config, links_register=links_register, translator=translator, title="test", color=str(KnownColors.Black)
+        layout_configuration=config, links_register=links_register, translator=translator, title="test", color=KnownColors.Black
     )
     adaptation_now.questions.append(
         QuestionSummaryElement(
@@ -121,7 +122,7 @@ def test_create_image():
         translator=translator,
         header_title="test",
         header_subtitle="sub 1",
-        header_color="#07583753",
+        header_color=Color(a=7, r=88, g=55, b=83),
         number=0,
     )
 
@@ -133,7 +134,7 @@ def test_create_image():
         links_register=links_register,
         translator=translator,
         title="test",
-        color=str(KnownColors.Blue),
+        color=KnownColors.Blue,
     )
     cyber_near.questions.append(
         QuestionSummaryElement(
@@ -180,7 +181,7 @@ def test_create_image():
         translator=translator,
         header_title="test",
         header_subtitle="sub 1",
-        header_color="#478956",
+        header_color=Color.from_hex("#478956"),
         number=1,
     )
 
@@ -192,7 +193,7 @@ def test_create_image():
         links_register=links_register,
         translator=translator,
         title="test",
-        color=str(KnownColors.Blue),
+        color=KnownColors.Blue,
     )
     adaptation_near.questions.append(
         QuestionSummaryElement(

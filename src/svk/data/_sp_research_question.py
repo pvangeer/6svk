@@ -21,6 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from svk.data._research_question import ResearchQuestion
 from svk.data._priority import Priority
+from svk.data._color import Color
 from svk.data.helpers._greyfraction import color_toward_grey
 
 
@@ -49,7 +50,7 @@ class SluicesResearchQuestion(ResearchQuestion):
     """Indicates whether the answer to this question contributes to standardisation of sluices."""
 
     @property
-    def color(self) -> str:
+    def color(self) -> Color:
         research_line = self.research_line
         return (
             color_toward_grey(
@@ -57,7 +58,7 @@ class SluicesResearchQuestion(ResearchQuestion):
                 self.time_frame.grey_fraction,
             )
             if research_line is not None
-            else "rgb(120,120,120)"
+            else Color(r=120, g=120, b=120)
         )
 
     @property

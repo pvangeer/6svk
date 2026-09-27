@@ -1,7 +1,7 @@
 from pydantic import model_validator, PrivateAttr
 from uuid import uuid4
 from svgwrite import Drawing
-from svk.data import Grid
+from svk.data import Grid, Color
 from svk.data.helpers import color_toward_grey
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.elements._grid_cell_element import GridCellElement
@@ -115,7 +115,7 @@ class GridElement(VisualElementsContainer):
             height = self.height
             left = x + self._category_info[category][0]
             top = y
-            color = (70, 80, 90)
+            color = Color(r=70, g=80, b=90)
 
             fill_gradient_id = f"gradient_{str(uuid4())}"
             fill_gradient = dwg.linearGradient(
@@ -123,8 +123,8 @@ class GridElement(VisualElementsContainer):
                 end=(0, 1),
                 id=fill_gradient_id,
             )
-            fill_gradient.add_stop_color(0, color_toward_grey(color, 0.5, grey=(250, 250, 250)))
-            fill_gradient.add_stop_color(0.4, color_toward_grey(color, 0.8, grey=(250, 250, 250)))
+            fill_gradient.add_stop_color(0, color_toward_grey(color, 0.5, grey=Color(r=250, g=250, b=250)))
+            fill_gradient.add_stop_color(0.4, color_toward_grey(color, 0.8, grey=Color(r=250, g=250, b=250)))
             fill_gradient.add_stop_color(1, "white")
 
             stroke_gradient_id = f"gradient_{str(uuid4())}"
@@ -134,7 +134,7 @@ class GridElement(VisualElementsContainer):
                 id=stroke_gradient_id,
             )
             stroke_gradient.add_stop_color(0, color_toward_grey(color, 0.0))
-            fill_gradient.add_stop_color(0.4, color_toward_grey(color, 0.8, grey=(250, 250, 250)))
+            fill_gradient.add_stop_color(0.4, color_toward_grey(color, 0.8, grey=Color(r=250, g=250, b=250)))
             stroke_gradient.add_stop_color(1, "white")
 
             dwg.defs.add(fill_gradient)
@@ -154,7 +154,7 @@ class GridElement(VisualElementsContainer):
                 x=left,
                 y=y + self.layout_configuration.font_size * 1.2 + 2 * self.layout_configuration.small_margin,
                 element_width=self._category_info[category][1],
-                color="#708090",
+                color=Color(r=112, g=128, b=144),
             )
             dwg.add(
                 dwg.text(

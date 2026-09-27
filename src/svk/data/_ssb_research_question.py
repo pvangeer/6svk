@@ -25,6 +25,7 @@ from svk.data._research_line import ResearchLine
 from svk.data._research_question import ResearchQuestion
 from svk.data._stormsurgebarrier import StormSurgeBarrier
 from svk.data.helpers._greyfraction import color_toward_grey
+from svk.data._color import Color
 
 
 class StormSurgeBarrierResearchQuestion(ResearchQuestion):
@@ -64,7 +65,7 @@ class StormSurgeBarrierResearchQuestion(ResearchQuestion):
     """The components related to this question."""
 
     @property
-    def color(self) -> str:
+    def color(self) -> Color:
         research_line = self.research_line
         return (
             color_toward_grey(
@@ -72,7 +73,7 @@ class StormSurgeBarrierResearchQuestion(ResearchQuestion):
                 self.time_frame.grey_fraction,
             )
             if research_line is not None
-            else "rgb(120,120,120)"
+            else Color(r=120, g=120, b=120)
         )
 
     @property

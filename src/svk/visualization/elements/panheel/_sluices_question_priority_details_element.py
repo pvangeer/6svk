@@ -20,18 +20,17 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svk.data import SluicesResearchQuestion, Priority, Label
+from svk.data import SluicesResearchQuestion, Priority, Label, Color
 from svgwrite import Drawing
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
-from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 
 
 class SluicesQuestionPriorityDetailsElement(VisualElementsContainer):
     research_question: SluicesResearchQuestion
     """The research question"""
-    color: str
+    color: Color
     dotradius: float = 5
 
     _width: float = PrivateAttr()

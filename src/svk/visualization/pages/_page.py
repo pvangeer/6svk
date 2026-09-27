@@ -22,7 +22,7 @@ from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from svgwrite import Drawing
 
-from svk.data import LinksRegister, Translator, Icon
+from svk.data import LinksRegister, Translator, Icon, KnownColors
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
@@ -130,7 +130,12 @@ class Page(BaseModel, ABC):
             icon_size = self._title_height
             icon_width = icon_size + self.layout_configuration.arrow_depth
             draw_callout(
-                dwg, self.layout_configuration.paper_margin, self.layout_configuration.paper_margin, icon_width, icon_size, "#000000"
+                dwg,
+                self.layout_configuration.paper_margin,
+                self.layout_configuration.paper_margin,
+                icon_width,
+                icon_size,
+                KnownColors.Black,
             )
             draw_scaled_icon(
                 dwg=dwg,
