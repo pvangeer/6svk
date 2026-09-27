@@ -33,6 +33,7 @@ class Color(BaseModel):
     """
 
     model_config = ConfigDict(frozen=True)
+    no_color: bool = Field(default=False)
     include_hash: bool = Field(default=True)
     a: int = Field(ge=0, le=255, default=255)
     r: int = Field(ge=0, le=255)
@@ -46,6 +47,9 @@ class Color(BaseModel):
         Returns:
             str: The string representation of the color.
         """
+        if self.no_color:
+            return "none"
+
         return f"rgb({self.r},{self.g},{self.b})"
 
     def to_hex(self, include_alpha: bool = False) -> str:
@@ -55,6 +59,9 @@ class Color(BaseModel):
         Returns:
             str: The hexadecimal representation of the color in 'RRGGBB' format.
         """
+        if self.no_color:
+            raise ValueError("Color components must be set to convert to hex.")
+
         value = f"{self.a:02X}{self.r:02X}{self.g:02X}{self.b:02X}" if include_alpha else f"{self.r:02X}{self.g:02X}{self.b:02X}"
         return f"#{value}" if self.include_hash else value
 
@@ -99,3 +106,5 @@ class KnownColors:
     Green = Color(r=0, g=255, b=0)
     Yellow = Color(r=255, g=255, b=102)
     Orange = Color(r=255, g=192, b=0)
+    GrayAccent = Color(r=167, g=167, b=167)
+    NoneColor = Color(no_color=True, r=0, g=0, b=0)

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
+from svk.data._color import Color, KnownColors
 
 
 class IconElementType(Enum):
@@ -16,11 +17,11 @@ class PathIconElement(IconElement):
 
     d: str
     """The path definition (definition of strokes)"""
-    fill: str = "none"
+    fill: Color = KnownColors.NoneColor
     """The fill color to be used"""
     transform: str | None = None
     """Any transformation to be applied."""
-    stroke: str = "black"
+    stroke: Color = KnownColors.Black
     """The stroke color to be used."""
     stroke_linecap: str = "round"
     """Stroke linecap to be used"""
@@ -41,7 +42,7 @@ class RectIconElement(IconElement):
     """Width of the Rect"""
     height: float
     """Height of the Rect"""
-    stroke: str = "#000000"
+    stroke: Color = KnownColors.Black
     """Stroke color to be used"""
     stroke_width: float = 20
     """Stroke width to be used"""
@@ -49,7 +50,7 @@ class RectIconElement(IconElement):
     """Stroke linejoin to be used"""
     stroke_linecap: str = "round"
     """Stroke linecap to be used"""
-    fill: str = "#000000"
+    fill: Color = KnownColors.Black
     """Fill color to be used"""
 
 

@@ -105,8 +105,8 @@ class Path(SvgObject):
         if self.path_data.transform is None:
             return dwg.path(
                 d=self.path_data.d,
-                fill=self.path_data.fill,
-                stroke=self.path_data.stroke,
+                fill=str(self.path_data.fill),
+                stroke=str(self.path_data.stroke),
                 stroke_linecap=self.path_data.stroke_linecap,
                 stroke_linejoin=self.path_data.stroke_linejoin,
                 stroke_width=self.path_data.stroke_width,
@@ -114,8 +114,8 @@ class Path(SvgObject):
         else:
             return dwg.path(
                 d=self.path_data.d,
-                fill=self.path_data.fill,
-                stroke="black",
+                fill=str(self.path_data.fill),
+                stroke=str(self.path_data.stroke),
                 stroke_linecap=self.path_data.stroke_linecap,
                 stroke_linejoin=self.path_data.stroke_linejoin,
                 stroke_width=self.path_data.stroke_width,
@@ -140,8 +140,8 @@ class Rect(SvgObject):
         return dwg.rect(
             insert=(self.rect_data.x, self.rect_data.y),
             size=(self.rect_data.width, self.rect_data.height),
-            fill=self.rect_data.fill,
-            stroke=self.rect_data.stroke,
+            fill=str(self.rect_data.fill),
+            stroke=str(self.rect_data.stroke),
             stroke_width=self.rect_data.stroke_width,
             stroke_linecap=self.rect_data.stroke_linecap,
             stroke_linejoin=self.rect_data.strok_linejoin,
