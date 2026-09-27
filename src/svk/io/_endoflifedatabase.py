@@ -3,7 +3,7 @@ from openpyxl import load_workbook
 
 from typing import Any
 from svk.io._exceldatabase import DatabaseReadError
-from svk.data import Driver, Function, Color, Grid, GridCell, GridHeader
+from svk.data import Driver, Function, Color, KnownColors, Grid, GridCell, GridHeader
 from pydantic import BaseModel
 
 
@@ -127,7 +127,7 @@ class EndOfLifeDatabase:
                         i_row=i_row_grid + 1,
                         i_column=i_col_grid + 1,
                         content=str(_data_cell.value),
-                        color=self.fill_to_rgb(_data_cell.fill),
+                        color=self.fill_to_color(_data_cell.fill),
                     )
                 )
 
@@ -142,24 +142,15 @@ class EndOfLifeDatabase:
         )
 
     @staticmethod
-    def fill_to_rgb(fill: Any) -> Color:
+    def fill_to_color(fill: Any) -> Color:
         if not hasattr(fill, "fgColor"):
-            return Color.White
+            return KnownColors.White
 
-        color = fill.fgColor
+        excel_color = fill.fgColor
 
-        rgb = "FFFFFF"
-        if color.type == "rgb" and color.rgb:
-            rgb = color.rgb[2:] if len(color.rgb) == 8 else color.rgb
+        if excel_color.type == "rgb" and excel_color.rgb:
+            excepted_colors = [KnownColors.White, KnownColors.Yellow, KnownColors.Orange, KnownColors.Red]
+            if Color.from_hex(excel_color.rgb) in excepted_colors:
+                return Color.from_hex(excel_color.rgb)
 
-        match rgb:
-            case Color.White.value:
-                return Color.White
-            case Color.Yellow.value:
-                return Color.Yellow
-            case Color.Orange.value:
-                return Color.Orange
-            case Color.Red.value:
-                return Color.Red
-            case _:
-                return Color.White
+        return KnownColors.White

@@ -1,11 +1,11 @@
 from svgwrite import Drawing
 from pydantic import PrivateAttr, model_validator
-from svk.io._endoflifedatabase import Color
+from svk.data._color import Color, KnownColors
 from svk.visualization.elements._visual_element import VisualElement
 
 
 class GridCellElement(VisualElement):
-    fill: Color = Color.White
+    fill: Color = KnownColors.White
     i_row: int
     i_column: int
     _width: float = PrivateAttr()
@@ -32,9 +32,9 @@ class GridCellElement(VisualElement):
                 size=(self.width, self.height),
                 rx=10,  # horizontal corner radius TODO: move to layout_configuration
                 ry=10,  # vertical corner radius
-                fill="#" + self.fill.value,
-                fill_opacity=0.2 if self.fill == Color.White else 0.7,
-                stroke="#" + self.fill.value,
+                fill=str(self.fill),
+                fill_opacity=0.2 if self.fill == KnownColors.White else 0.7,
+                stroke=str(self.fill),
                 stroke_width=1,
             )
         )

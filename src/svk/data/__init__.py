@@ -34,7 +34,7 @@ from ._impactcategory import ImpactCategory
 from ._translator import Translator, Label
 from ._function import Function
 from ._driver import Driver
-from ._color import Color
+from ._color import Color, KnownColors
 from ._grid import Grid, GridCell, GridHeader
 from ._icon import Icon, PathIconElement, RectIconElement, IconElementType, IconElement
 from .helpers._icon_provider import IconProvider, accent_fill  # TODO: How to expose data seperate from factory methods

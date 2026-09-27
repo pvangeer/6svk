@@ -18,6 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+from svk.data import KnownColors
 from svk.visualization import LayoutConfiguration, TimeLineOverviewPage, QuestionSummaryElement, Group, Column, Cluster
 from svk.data import (
     TimeFrame,
@@ -72,7 +73,9 @@ def test_create_image():
     cluster = Cluster(layout_configuration=config, links_register=links_register, translator=translator, color=(132, 243, 124))
     fig.clusters.append(cluster)
 
-    adaptation_now = Group(layout_configuration=config, links_register=links_register, translator=translator, title="test", color="black")
+    adaptation_now = Group(
+        layout_configuration=config, links_register=links_register, translator=translator, title="test", color=str(KnownColors.Black)
+    )
     adaptation_now.questions.append(
         QuestionSummaryElement(
             layout_configuration=config,
@@ -130,7 +133,7 @@ def test_create_image():
         links_register=links_register,
         translator=translator,
         title="test",
-        color="blue",
+        color=str(KnownColors.Blue),
     )
     cyber_near.questions.append(
         QuestionSummaryElement(
@@ -189,7 +192,7 @@ def test_create_image():
         links_register=links_register,
         translator=translator,
         title="test",
-        color="blue",
+        color=str(KnownColors.Blue),
     )
     adaptation_near.questions.append(
         QuestionSummaryElement(

@@ -2,6 +2,7 @@ from svk.data._stormsurgebarrier import StormSurgeBarrier
 from svk.data._icon import Icon, PathIconElement, RectIconElement
 from svk.data._timeframe import TimeFrame
 
+# TODO: Change to Color
 accent_fill = "#a7a7a7"
 
 
