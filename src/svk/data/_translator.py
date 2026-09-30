@@ -10,6 +10,7 @@ class Label(Enum):
     TFUnknown = ("Onbekend", "Unknown")
 
     D_NoResearchLine = ("Zonder onderzoekslijn", "No research line")
+    D_TitlePrefix = ("Details kennisagenda", "Details knowledge agenda")
 
     RL_ConstructiveAspects = ("Constructieve aspecten", "Structural aspects")
     RL_OperatingSystem = ("Besturingssystemen / IA", "Control systems / Industrial automation")

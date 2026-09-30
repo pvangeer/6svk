@@ -49,11 +49,14 @@ def get_knowledge_calendar_output_file(barrier: StormSurgeBarrier, add: str | No
     ],
 )
 def test_create_knowledge_calendar_per_ssb(barrier: StormSurgeBarrier):
+    translator = Translator(lang="en")
     calendar_document = KnowledgeCalendarDocument(
+        translator=translator,
         output_dir=get_database_dir(barrier=barrier),
         output_file=get_knowledge_calendar_output_file(barrier=barrier),
         questions=read_knowledge_agenda_database(barrier=barrier),
         storm_surge_barrier=barrier,
+        topic=translator.get_label(barrier.title),
     )
     calendar_document.build()
 
@@ -70,18 +73,23 @@ def test_create_6svk():
         + read_ssb_pathway_database()
     )
     six_svk_questions = tuple(q for q in all_questions if StormSurgeBarrier.All in q.storm_surge_barriers)
+    translator = Translator(lang="nl")
     calendar = KnowledgeCalendarDocument(
+        translator=translator,
         output_dir=allsvk_dir,
         output_file=get_knowledge_calendar_output_file(StormSurgeBarrier.All),
         questions=six_svk_questions,
         storm_surge_barrier=StormSurgeBarrier.All,
+        topic=translator.get_label(StormSurgeBarrier.All.title),
     )
     calendar.build()
 
 
 @pytest.mark.product
 def test_create_all():
+    translator = Translator(lang="nl")
     calendar = KnowledgeCalendarDocument(
+        translator=translator,
         output_dir=allsvk_dir,
         output_file=get_knowledge_calendar_output_file(StormSurgeBarrier.All, "alle vragen"),
         questions=read_knowledge_agenda_database(StormSurgeBarrier.HartelBarrier)
@@ -92,5 +100,6 @@ def test_create_all():
         + read_knowledge_agenda_database(StormSurgeBarrier.EasternScheldtBarrier)
         + read_ssb_pathway_database(),
         storm_surge_barrier=StormSurgeBarrier.All,
+        topic=translator.get_label(StormSurgeBarrier.All.title),
     )
     calendar.build()

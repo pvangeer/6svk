@@ -72,7 +72,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
 
         fig = TimeLineOverviewPage(
             page_number=page_number,
-            title=self.translator.get_label(self.storm_surge_barrier.title),
+            title=f"Overzicht kennisagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,

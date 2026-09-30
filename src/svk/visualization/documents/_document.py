@@ -22,7 +22,7 @@ from pydantic import BaseModel
 from abc import ABC, abstractmethod
 from pathlib import Path
 from collections import defaultdict
-from svk.data import StormSurgeBarrierResearchQuestion, LinksRegister, ResearchLine, Translator, TimeFrame, Label
+from svk.data import StormSurgeBarrierResearchQuestion, LinksRegister, ResearchLine, Translator, TimeFrame, Label, StormSurgeBarrier
 from svk.io import svg_to_pdf, merge_pdf_files, add_links
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers import _color_helper as colorhelper
@@ -93,6 +93,7 @@ class Document(BaseModel, ABC):
 
 class ResearchQuestionsDocument(Document):
     questions: tuple[StormSurgeBarrierResearchQuestion, ...]
+    topic: str
 
     def create_pages(self) -> list[Page]:
         return self.create_detailes_pages(current_page_number=1)
@@ -114,7 +115,8 @@ class ResearchQuestionsDocument(Document):
             pages.append(
                 self.create_details_page(
                     page_number=current_page_number,
-                    title=str(research_line.number) + ". " + self.translator.get_label(research_line.title),
+                    title=f"{self.translator.get_label(Label.D_TitlePrefix)} {self.topic}",
+                    subtitle=str(research_line.number) + ". " + self.translator.get_label(research_line.title),
                     link_target=research_line.id,
                     questions=grouped_questions[research_line],
                 )
@@ -125,7 +127,8 @@ class ResearchQuestionsDocument(Document):
             pages.append(
                 self.create_details_page(
                     page_number=current_page_number,
-                    title=self.translator.get_label(Label.D_NoResearchLine),
+                    title=f"{self.translator.get_label(Label.D_TitlePrefix)} {self.topic}",
+                    subtitle=self.translator.get_label(Label.D_NoResearchLine),
                     link_target="",
                     questions=non_grouped,
                 )
@@ -152,10 +155,12 @@ class ResearchQuestionsDocument(Document):
         title: str,
         link_target: str,
         questions: list[StormSurgeBarrierResearchQuestion],
+        subtitle: str | None = None,
     ) -> Page:
         dwg_details_page = QuestionDetailsPage(
             page_number=page_number,
             title=title,
+            subtitle=subtitle,
             title_link_target=link_target,
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
