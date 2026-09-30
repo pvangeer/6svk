@@ -21,11 +21,10 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 import pytest
 from datetime import datetime
 
-from svk.data import Translator
-from svk.visualization import KnowledgeCalendarDocument
 from svk.data import StormSurgeBarrier, Translator
+from svk.visualization import KnowledgeCalendarDocument
 
-from test.utils.database_reader import read_knowledge_agenda_database, read_ssb_pathway_database
+from test.utils.database_reader import read_knowledge_agenda_database, read_ssb_pathway_database, read_end_of_life_database
 from test.paths import test_output_dir
 
 
@@ -51,12 +50,26 @@ def get_knowledge_calendar_output_file(barrier: StormSurgeBarrier, add: str | No
 )
 def test_create_knowledge_calendar_per_ssb(barrier: StormSurgeBarrier):
     translator = Translator(lang="nl")
+    efl = read_end_of_life_database(
+        barrier=barrier,
+        row_header_column=2 if barrier == StormSurgeBarrier.HaringvlietBarrier else 1,
+        row_header_categories_column=1,
+        sheet_name="EFL",
+    )
+    etl = read_end_of_life_database(
+        barrier=barrier,
+        row_header_column=1,
+        row_header_categories_column=1,
+        sheet_name="ETL",
+    )
     calendar_document = KnowledgeCalendarDocument(
         translator=translator,
         output_dir=test_output_dir,
         output_file=get_knowledge_calendar_output_file(barrier=barrier),
         questions=read_knowledge_agenda_database(barrier=barrier),
         storm_surge_barrier=barrier,
+        efl_grid=efl,
+        etl_grid=etl,
         topic=translator.get_label(barrier.title),
     )
     calendar_document.build()

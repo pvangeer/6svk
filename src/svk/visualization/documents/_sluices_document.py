@@ -120,16 +120,16 @@ class SluicesDocument(Document):
             TimeFrame.NearFuture: 1,
             TimeFrame.Future: 2,
         }
-        grouped_quenstions_lists: defaultdict[tuple[TimeFrame, ResearchLine], list[SluicesResearchQuestion]] = defaultdict(
+        grouped_questions_lists: defaultdict[tuple[TimeFrame, ResearchLine], list[SluicesResearchQuestion]] = defaultdict(
             list[SluicesResearchQuestion]
         )
 
         for question in questions:
             if question.research_line is None or question.time_frame not in time_frame_column_numbers:
                 continue
-            grouped_quenstions_lists[(question.time_frame, question.research_line)].append(question)
+            grouped_questions_lists[(question.time_frame, question.research_line)].append(question)
 
-        for questions_list_key in sorted(grouped_quenstions_lists, key=lambda kv: (kv[1].number, time_frame_column_numbers[kv[0]])):
+        for questions_list_key in sorted(grouped_questions_lists, key=lambda kv: (kv[1].number, time_frame_column_numbers[kv[0]])):
             current_time_frame = questions_list_key[0]
             current_research_line = questions_list_key[1]
 
@@ -157,7 +157,7 @@ class SluicesDocument(Document):
             )
 
             cluster.groups[time_frame_column_numbers[current_time_frame]].append(new_group)
-            for question in sorted(grouped_quenstions_lists[questions_list_key], key=lambda q: q.priority, reverse=True):
+            for question in sorted(grouped_questions_lists[questions_list_key], key=lambda q: q.priority, reverse=True):
                 new_group.questions.append(
                     QuestionSummaryElement(
                         layout_configuration=self.layout_configuration,
