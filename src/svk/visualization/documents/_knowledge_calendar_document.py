@@ -92,43 +92,42 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
             number=number,
         )
 
-        if len(questions) > 0:
-            now_questions_groups: DefaultDict[ResearchLine, list[StormSurgeBarrierResearchQuestion]] = defaultdict(list)
-            for q in questions:
-                if q.research_line is None:
-                    # TODO: This should not occur here. Look at impact pathway for solution (build rows instead of columns)
-                    continue
-                now_questions_groups[q.research_line].append(q)
+        now_questions_groups: DefaultDict[ResearchLine, list[StormSurgeBarrierResearchQuestion]] = defaultdict(list)
+        for q in questions:
+            if q.research_line is None:
+                # TODO: This should not occur here. Look at impact pathway for solution (build rows instead of columns)
+                continue
+            now_questions_groups[q.research_line].append(q)
 
-            for research_line in sorted(now_questions_groups.keys(), key=lambda g: g.number):
-                if research_line.cluster not in self._clusters:
-                    cluster = Cluster(
-                        layout_configuration=self.layout_configuration,
-                        links_register=self.links_register,
-                        translator=self.translator,
-                        color=research_line.base_color,
-                    )
-                    self._clusters[research_line.cluster] = cluster
-                else:
-                    cluster = self._clusters[research_line.cluster]
-
-                new_group = Group(
+        for research_line in sorted(now_questions_groups.keys(), key=lambda g: g.number):
+            if research_line.cluster not in self._clusters:
+                cluster = Cluster(
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
                     translator=self.translator,
-                    title=self.translator.get_label(research_line.title),
-                    color=color_toward_grey(research_line.base_color, time_frame.grey_fraction),
+                    color=research_line.base_color,
                 )
-                cluster.groups[column.number].append(new_group)
-                for question in sorted(now_questions_groups[research_line], key=lambda q: q.priority, reverse=True):
-                    new_group.questions.append(
-                        QuestionSummaryElement(
-                            layout_configuration=self.layout_configuration,
-                            links_register=self.links_register,
-                            translator=self.translator,
-                            research_question=question,
-                            page_number=0,
-                        )
-                    )
+                self._clusters[research_line.cluster] = cluster
+            else:
+                cluster = self._clusters[research_line.cluster]
 
-            fig.columns.append(column)
+            new_group = Group(
+                layout_configuration=self.layout_configuration,
+                links_register=self.links_register,
+                translator=self.translator,
+                title=self.translator.get_label(research_line.title),
+                color=color_toward_grey(research_line.base_color, time_frame.grey_fraction),
+            )
+            cluster.groups[column.number].append(new_group)
+            for question in sorted(now_questions_groups[research_line], key=lambda q: q.priority, reverse=True):
+                new_group.questions.append(
+                    QuestionSummaryElement(
+                        layout_configuration=self.layout_configuration,
+                        links_register=self.links_register,
+                        translator=self.translator,
+                        research_question=question,
+                        page_number=0,
+                    )
+                )
+
+        fig.columns.append(column)
