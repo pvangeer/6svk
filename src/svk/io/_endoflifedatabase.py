@@ -150,7 +150,7 @@ class EndOfLifeDatabase:
 
         if excel_color.type == "rgb" and excel_color.rgb:
             excepted_colors = [KnownColors.White, KnownColors.Yellow, KnownColors.Orange, KnownColors.Red]
-            if Color.from_hex(excel_color.rgb) in excepted_colors:
-                return Color.from_hex(excel_color.rgb)
+            if Color.from_str(excel_color.rgb) in excepted_colors:
+                return Color.from_str(excel_color.rgb)
 
         return KnownColors.White

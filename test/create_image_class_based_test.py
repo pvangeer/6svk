@@ -181,7 +181,7 @@ def test_create_image():
         translator=translator,
         header_title="test",
         header_subtitle="sub 1",
-        header_color=Color.from_hex("#478956"),
+        header_color=Color.from_str("#478956"),
         number=1,
     )
 

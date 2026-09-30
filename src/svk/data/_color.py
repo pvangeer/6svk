@@ -19,6 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
+import re
 from pydantic import BaseModel, Field, ConfigDict
 
 
@@ -47,6 +48,15 @@ class Color(BaseModel):
         Returns:
             str: The string representation of the color.
         """
+        return self.to_rgb()
+
+    def to_rgb(self) -> str:
+        """
+        Returns the string representation of the color in 'rgb(r,g,b)' format.
+
+        Returns:
+            str: The string representation of the color.
+        """
         if self.no_color:
             return "none"
 
@@ -66,36 +76,132 @@ class Color(BaseModel):
         return f"#{value}" if self.include_hash else value
 
     @classmethod
-    def from_hex(cls, value: str) -> Color:
+    def from_str(cls, value: str) -> Color:
         """
-        Creates a Color from:
+        Creates a Color from one of the following formats:
 
-        RRGGBB
-        #RRGGBB
-        AARRGGBB
-        #AARRGGBB
+            none
+            RRGGBB
+            #RRGGBB
+            AARRGGBB
+            #AARRGGBB
+            rgb(r, g, b)
+            rgba(r, g, b, alpha)
 
-        The alpha channel, when present, is ignored.
+        Eight-digit hexadecimal values use the AARRGGBB format.
+
+        The alpha component in rgba() may be:
+            - A floating-point value from 0.0 to 1.0
+            - An integer from 0 to 255
+            - A percentage from 0% to 100%
         """
-        value = value.strip().lstrip("#")
+        if not isinstance(value, str):
+            raise TypeError(f"Color value must be a string, not {type(value).__name__}.")
 
-        if len(value) == 6:
+        value = value.strip()
+
+        if value.casefold() == "none":
+            return cls(no_color=True, r=0, g=0, b=0)
+
+        # Hex: RRGGBB or AARRGGBB
+        hex_match = re.fullmatch(
+            r"#?([0-9a-fA-F]{6}|[0-9a-fA-F]{8})",
+            value,
+        )
+
+        if hex_match:
+            hex_value = hex_match.group(1)
+
+            if len(hex_value) == 6:
+                return cls(
+                    a=255,
+                    r=int(hex_value[0:2], 16),
+                    g=int(hex_value[2:4], 16),
+                    b=int(hex_value[4:6], 16),
+                )
+
             return cls(
-                a=0,
-                r=int(value[0:2], 16),
-                g=int(value[2:4], 16),
-                b=int(value[4:6], 16),
+                a=int(hex_value[0:2], 16),
+                r=int(hex_value[2:4], 16),
+                g=int(hex_value[4:6], 16),
+                b=int(hex_value[6:8], 16),
             )
 
-        if len(value) == 8:
+        # RGB: rgb(r, g, b)
+        rgb_match = re.fullmatch(
+            r"rgb\s*\(\s*" r"(\d{1,3})\s*,\s*" r"(\d{1,3})\s*,\s*" r"(\d{1,3})" r"\s*\)",
+            value,
+            re.IGNORECASE,
+        )
+
+        if rgb_match:
+            r, g, b = map(int, rgb_match.groups())
+
+            cls._validate_rgb_components(r, g, b, value)
+
             return cls(
-                a=int(value[0:2], 16),
-                r=int(value[2:4], 16),
-                g=int(value[4:6], 16),
-                b=int(value[6:8], 16),
+                a=255,
+                r=r,
+                g=g,
+                b=b,
             )
 
-        raise ValueError(f"Invalid colour value: {value}")
+        # RGBA: rgba(r, g, b, alpha)
+        rgba_match = re.fullmatch(
+            r"rgba\s*\(\s*" r"(\d{1,3})\s*,\s*" r"(\d{1,3})\s*,\s*" r"(\d{1,3})\s*,\s*" r"(\d+(?:\.\d+)?%?)" r"\s*\)",
+            value,
+            re.IGNORECASE,
+        )
+
+        if rgba_match:
+            r = int(rgba_match.group(1))
+            g = int(rgba_match.group(2))
+            b = int(rgba_match.group(3))
+            alpha_value = rgba_match.group(4)
+
+            cls._validate_rgb_components(r, g, b, value)
+
+            if alpha_value.endswith("%"):
+                percentage = float(alpha_value[:-1])
+
+                if not 0 <= percentage <= 100:
+                    raise ValueError(f"Alpha percentage must be between 0% and 100%: " f"{alpha_value}")
+
+                a = round(percentage * 255 / 100)
+
+            elif "." in alpha_value:
+                opacity = float(alpha_value)
+
+                if not 0.0 <= opacity <= 1.0:
+                    raise ValueError(f"A decimal alpha value must be between 0.0 and 1.0: " f"{alpha_value}")
+
+                a = round(opacity * 255)
+
+            else:
+                a = int(alpha_value)
+
+                if not 0 <= a <= 255:
+                    raise ValueError(f"An integer alpha value must be between 0 and 255: " f"{alpha_value}")
+
+            return cls(
+                a=a,
+                r=r,
+                g=g,
+                b=b,
+            )
+
+        raise ValueError(f"Invalid colour value: {value!r}")
+
+    @staticmethod
+    def _validate_rgb_components(
+        r: int,
+        g: int,
+        b: int,
+        original_value: str,
+    ) -> None:
+        for name, component in (("r", r), ("g", g), ("b", b)):
+            if not 0 <= component <= 255:
+                raise ValueError(f"Component {name} must be between 0 and 255 in " f"{original_value!r}; received {component}.")
 
 
 class KnownColors:

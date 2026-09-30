@@ -42,47 +42,39 @@ def get_contrast_color(background_rgb: Color) -> Color:
     return KnownColors.White if contrast_white > contrast_black else KnownColors.Black
 
 
-def get_text_color(time_frame: TimeFrame, research_line_group: int | None = None) -> str:
-    if research_line_group is None:
-        return "black"
-    else:
-        match time_frame:
-            case TimeFrame.Now:
-                return "white"
-            case _:
-                return "black"
-
-
 def get_color(layout_configuration: LayoutConfiguration, time_frame: TimeFrame, research_line_group: int | None = None) -> Color:
     if layout_configuration.use_rijkswaterstaat_colors and research_line_group is not None:
         return get_rijkswaterstaat_style_color(time_frame, research_line_group)
     else:
-        return get_color_toward_grey(time_frame)
+        return get_blue_toward_grey(time_frame)
 
 
-def get_color_toward_grey(time_frame: TimeFrame) -> Color:
-    return color_toward_grey(Color(r=18, g=103, b=221), grey_fraction=time_frame.grey_fraction)
+def get_blue_toward_grey(time_frame: TimeFrame) -> Color:
+    return color_toward_grey(Color.from_str("#1267DD"), grey_fraction=time_frame.grey_fraction)
 
 
 def get_rijkswaterstaat_style_color(time_frame: TimeFrame, research_line_group: int) -> Color:
     match (time_frame, research_line_group):
         case (TimeFrame.Now, 1):
-            return Color(r=16, g=49, b=86)
+            return Color.from_str("#103156")  # rgb(16, 49, 86)
         case (TimeFrame.Now, 2):
-            return Color(r=107, g=96, b=3)
+            return Color.from_str("#6B6003")  # rgb(107, 96, 3)
         case (TimeFrame.Now, 3):
-            return Color(r=127, g=127, b=127)
+            return Color.from_str("#7F7F7F")  # rgb(127, 127, 127)
+
         case (TimeFrame.NearFuture, 1):
-            return Color(r=65, g=139, b=220)
+            return Color.from_str("#418BDC")  # rgb(65, 139, 220)
         case (TimeFrame.NearFuture, 2):
-            return Color(r=204, g=183, b=5)
+            return Color.from_str("#CCB705")  # rgb(204, 183, 5)
         case (TimeFrame.NearFuture, 3):
-            return Color(r=191, g=191, b=191)
+            return Color.from_str("#BFBFBF")  # rgb(191, 191, 191)
+
         case (TimeFrame.Future, 1):
-            return Color(r=192, g=216, b=243)
+            return Color.from_str("#C0D8F3")  # rgb(192, 216, 243)
         case (TimeFrame.Future, 2):
-            return Color(r=253, g=243, b=165)
+            return Color.from_str("#FDF3A5")  # rgb(253, 243, 165)
         case (TimeFrame.Future, 3):
-            return Color(r=242, g=242, b=242)
+            return Color.from_str("#F2F2F2")  # rgb(242, 242, 242)
+
         case _:
-            return Color(r=18, g=103, b=221)
+            return Color.from_str("#1267DD")  # rgb(18, 103, 221)
