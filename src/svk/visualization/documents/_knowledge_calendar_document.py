@@ -21,7 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from collections import defaultdict
 from typing import DefaultDict
 
-from svk.data import StormSurgeBarrierResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine, IconProvider
+from svk.data import StormSurgeBarrierResearchQuestion, StormSurgeBarrier, TimeFrame, ResearchLine, IconProvider, Translator, Label
 from svk.visualization.helpers._measuretext import measure_text
 from svk.data.helpers import color_toward_grey
 from svk.visualization.helpers import _calendar_helper as helper
@@ -33,6 +33,13 @@ from svk.visualization.elements._cluster import Cluster
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.documents._document import ResearchQuestionsDocument
 from svk.visualization.pages._page import Page
+
+
+def _get_research_line_title(translator: Translator, research_line: ResearchLine | None) -> str:
+    if research_line is None:
+        return translator.get_label(Label.D_NoResearchLine)
+    else:
+        return str(research_line.number) + ". " + translator.get_label(research_line.title)
 
 
 class KnowledgeCalendarDocument(ResearchQuestionsDocument):
@@ -73,14 +80,25 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
         )
-        self.add_time_frame_column(fig=fig, questions=time_groups[TimeFrame.Now], time_frame=TimeFrame.Now, number=0)
-        self.add_time_frame_column(fig=fig, questions=time_groups[TimeFrame.NearFuture], time_frame=TimeFrame.NearFuture, number=1)
-        self.add_time_frame_column(fig=fig, questions=time_groups[TimeFrame.Future], time_frame=TimeFrame.Future, number=2)
+        self.add_time_frame_column(
+            fig=fig, questions=time_groups[TimeFrame.Now], time_frame=TimeFrame.Now, number=0, page_number=page_number
+        )
+        self.add_time_frame_column(
+            fig=fig, questions=time_groups[TimeFrame.NearFuture], time_frame=TimeFrame.NearFuture, number=1, page_number=page_number
+        )
+        self.add_time_frame_column(
+            fig=fig, questions=time_groups[TimeFrame.Future], time_frame=TimeFrame.Future, number=2, page_number=page_number
+        )
         fig.clusters = list(self._clusters.values())
         return fig
 
     def add_time_frame_column(
-        self, fig: TimeLineOverviewPage, questions: list[StormSurgeBarrierResearchQuestion], time_frame: TimeFrame, number: int
+        self,
+        fig: TimeLineOverviewPage,
+        questions: list[StormSurgeBarrierResearchQuestion],
+        time_frame: TimeFrame,
+        number: int,
+        page_number: int,
     ):
         column = Column(
             layout_configuration=self.layout_configuration,
@@ -115,7 +133,9 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
                 layout_configuration=self.layout_configuration,
                 links_register=self.links_register,
                 translator=self.translator,
-                title=self.translator.get_label(research_line.title),
+                page_number=page_number,
+                link_target_id=research_line.id,
+                title=_get_research_line_title(translator=self.translator, research_line=research_line),
                 color=color_toward_grey(research_line.base_color, time_frame.grey_fraction),
             )
             cluster.groups[column.number].append(new_group)
