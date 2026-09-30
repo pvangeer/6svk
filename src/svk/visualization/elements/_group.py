@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from svk.data import Color
+from svk.data import Color, KnownColors
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.helpers._draw_callout import draw_callout
 from svk.visualization.helpers._measuretext import measure_text_chromium
@@ -54,6 +54,8 @@ class Group(GroupBase):
     """The page number of the page this group is on"""
     link_target_id: str | None = None
     """The ID of the link target for the group"""
+    use_contrast_color: bool = False
+    """Indicates whether the title should choose a color with mist contrast or just use black"""
 
     questions: list[QuestionSummaryElement] = []
     """The questions in this group"""
@@ -125,7 +127,7 @@ class Group(GroupBase):
                     x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin,
                     y + self.layout_configuration.group_header_height / 2,
                 ),
-                fill=str(get_contrast_color(self.color)),
+                fill=str(get_contrast_color(self.color) if self.use_contrast_color else str(KnownColors.Black)),
                 font_size=self.layout_configuration.group_title_font_size,
                 font_family="Arial",
                 font_weight="bold",

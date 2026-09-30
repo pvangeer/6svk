@@ -153,6 +153,7 @@ class SluicesDocument(Document):
                 color=colorhelper.get_color(
                     self.layout_configuration, current_time_frame, research_line_group=current_research_line.cluster
                 ),
+                use_contrast_color=True,
             )
 
             cluster.groups[time_frame_column_numbers[current_time_frame]].append(new_group)
