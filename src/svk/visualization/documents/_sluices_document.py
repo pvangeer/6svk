@@ -9,7 +9,6 @@ from svk.data import (
     Label,
     SluicesResearchLines,
 )
-from svk.data.helpers import color_toward_grey
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers import _calendar_helper as helper
@@ -46,7 +45,7 @@ class SluicesDocument(Document):
                     SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.TechnicalLifeTimeInstallations),
                     SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.InspectionsMonitoringAndData),
                 ],
-                subtitle="Onderhoudsvragen",
+                subtitle=self.translator.get_label(Label.RLG_Maintenance),
             ),
             self._create_overview_page(
                 page_number=1,
@@ -60,12 +59,12 @@ class SluicesDocument(Document):
                     SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.Strategy),
                     SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.EnvironmentalImpact),
                 ],
-                subtitle="Voldoen aan de eisen van vandaag en morgen",
+                subtitle=self.translator.get_label(Label.RLG_Requirements),
             ),
             self._create_overview_page(
                 page_number=2,
                 research_lines=[SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.Organizational)],
-                subtitle="Bedrijfskundige optimalisatie",
+                subtitle=self.translator.get_label(Label.RLG_Operational),
             ),
         ] + self.create_detailed_sluice_question_pages(current_page_number=3)
 

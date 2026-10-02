@@ -75,7 +75,7 @@ def draw_half_chevron(
     ]
     fill = str(color)
 
-    if not use_gradients:
+    if use_gradients:
         if gradient_center > 1 or gradient_center < 0:
             raise ValueError
 
@@ -83,9 +83,9 @@ def draw_half_chevron(
             dwg=dwg, x=x + gradient_center * width, y=y, width=(1 - gradient_center) * width * 2, height=header_size * 2, color=color
         )
 
-        f"url(#{gradient_id})"
+        fill = f"url(#{gradient_id})"
 
-    polygon = dwg.polygon(points=points, stroke=color, fill=fill, stroke_width=stroke_width, id=str(uuid4()))
+    polygon = dwg.polygon(points=points, stroke=str(color), fill=fill, stroke_width=stroke_width, id=str(uuid4()))
 
     if add_to_dwg:
         dwg.add(polygon)

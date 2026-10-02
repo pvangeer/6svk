@@ -89,7 +89,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
                     StormSurgeBarrierResearchLineFactory.get_research_line_from_ssb_enum(StormSurgeBarrierResearchLines.Maintenance),
                 ],
                 title=f"Overzicht kennisagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
-                subtitle="Onderhoudsvragen",
+                subtitle=self.translator.get_label(Label.RLG_Maintenance),
             ),
             self._create_overview_page(
                 page_number=2,
@@ -102,7 +102,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
                     StormSurgeBarrierResearchLineFactory.get_research_line_from_ssb_enum(StormSurgeBarrierResearchLines.Adaptation),
                 ],
                 title=f"Overzicht kennisagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
-                subtitle="Voldoen aan de eisen van vandaag en morgen",
+                subtitle=self.translator.get_label(Label.RLG_Requirements),
             ),
             self._create_overview_page(
                 page_number=3,
@@ -111,7 +111,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
                     StormSurgeBarrierResearchLineFactory.get_research_line_from_ssb_enum(StormSurgeBarrierResearchLines.Lifespan),
                 ],
                 title=f"Overzicht kennisagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
-                subtitle="Bedrijfskundige optimalisatie",
+                subtitle=self.translator.get_label(Label.RLG_Operational),
             ),
         ] + self.create_detailes_pages(current_page_number=4)
 

@@ -84,5 +84,5 @@ def draw_callout(
             (x + width, y + arrow_height),
             (x + arrow_depth, y + arrow_height),
         ]
+        dwg.add(dwg.polygon(points=points, stroke=str(color), fill=str(KnownColors.White), stroke_width=stroke_width))
         dwg.add(dwg.polygon(points=points_color, stroke="none", fill=str(color), stroke_width=0))
-        dwg.add(dwg.polygon(points=points, stroke=color, fill=f"none", stroke_width=stroke_width))

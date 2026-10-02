@@ -1,27 +1,27 @@
 from svgwrite import Drawing
 from pydantic import model_validator, PrivateAttr
 
+from svk.data import KnownColors
 from svk.visualization.pages._page import Page
-from svk.visualization.elements._grid_element import GridElement, Grid
+from svk.visualization.elements.panheel._legend_element import LegendElement
 
 
-class LifeTimeAnalysisPage(Page):
-    grid: Grid
-    _grid_element: GridElement = PrivateAttr()
+class LegendPage(Page):
+    _legend_element: LegendElement = PrivateAttr()
 
     @model_validator(mode="after")
     def validate(self):
-        self._grid_element = GridElement(
+        self._legend_element = LegendElement(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            grid=self.grid,
+            color=KnownColors.GrayAccent,
+            use_contrast_color=True,
         )
-
         return self
 
     def get_content_size(self) -> tuple[float, float]:
-        return (self._grid_element.width, self._grid_element.height)
+        return (self._legend_element.width, self._legend_element.height)
 
     def draw_content(self, dwg: Drawing, left: float, top: float):
-        self._grid_element.draw(dwg=dwg, x=left, y=top)
+        self._legend_element.draw(dwg=dwg, x=left, y=top)

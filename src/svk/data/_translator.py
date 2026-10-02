@@ -9,6 +9,10 @@ class Label(Enum):
     TFFuture = ("Toekomst", "Future")
     TFUnknown = ("Onbekend", "Unknown")
 
+    LegendTitle = ("Legenda", "Legend")
+    LegendHighPriority = ("Hoge prioriteit", "High priority")
+    LegendLowPriority = ("Lage prioriteit", "Low priority")
+
     D_NoResearchLine = ("Zonder onderzoekslijn", "No research line")
     D_TitlePrefix = ("Details kennisagenda", "Details knowledge agenda")
 
@@ -22,6 +26,10 @@ class Label(Enum):
     RL_Adaptation = ("Adaptatie stormvloedkeringen", "System-level adaptation")
     RL_Organizational = ("Organisatorische aspecten", "Organisational aspects")
     RL_Lifespan = ("Restlevensduur huidige objecten", "Remaining lifetime")
+
+    RLG_Maintenance = ("Onderhoudsvragen", "Maintenance questions")
+    RLG_Requirements = ("Voldoen aan de eisen van vandaag en morgen", "Meeting today's requirements and tomorrow's challenges")
+    RLG_Operational = ("Bedrijfskundige optimalisatie", "Operational optimization")
 
     RL_TechnicalLifeTimeCivilParts = ("Technische levensduur civiele delen", "Technische levensduur - civiele delen")
     RL_TechnicalLifeTimeInstallations = ("Technische levensduur installaties", "Technische levensduur - installaties")
