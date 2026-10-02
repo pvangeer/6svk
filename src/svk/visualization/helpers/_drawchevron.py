@@ -36,6 +36,7 @@ def draw_half_chevron(
     header_size: float = 30,
     add_to_dwg: bool = True,
     gradient_center: float = 0.3,
+    use_gradients: bool = True,
 ):
     """
     Draws a chevron inside an svgwrite.Drawing object.
@@ -64,13 +65,6 @@ def draw_half_chevron(
     :type gradient_center: float
     """
 
-    if gradient_center > 1 or gradient_center < 0:
-        raise ValueError
-
-    gradient_id = create_radial_gradient(
-        dwg=dwg, x=x + gradient_center * width, y=y, width=(1 - gradient_center) * width * 2, height=header_size * 2, color=color
-    )
-
     points = [
         (x, y),
         (x + width - arrow_depth, y),
@@ -79,7 +73,19 @@ def draw_half_chevron(
         (x + arrow_depth, y + height),
         (x + arrow_depth, y + height / 2),
     ]
-    polygon = dwg.polygon(points=points, stroke=color, fill=f"url(#{gradient_id})", stroke_width=stroke_width, id=str(uuid4()))
+    fill = str(color)
+
+    if not use_gradients:
+        if gradient_center > 1 or gradient_center < 0:
+            raise ValueError
+
+        gradient_id = create_radial_gradient(
+            dwg=dwg, x=x + gradient_center * width, y=y, width=(1 - gradient_center) * width * 2, height=header_size * 2, color=color
+        )
+
+        f"url(#{gradient_id})"
+
+    polygon = dwg.polygon(points=points, stroke=color, fill=fill, stroke_width=stroke_width, id=str(uuid4()))
 
     if add_to_dwg:
         dwg.add(polygon)

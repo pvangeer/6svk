@@ -53,59 +53,62 @@ class Cluster(VisualElement):
         width = self.width
         height = self.height
 
-        gradient_id = f"gradient_{str(uuid4())}"
         x_scale = width / height
         gradient_center = ((left + width / 2) / x_scale, top)
         radius = height * 1.2
-        fill_radial_grad = dwg.radialGradient(
-            center=gradient_center,
-            r=radius,
-            gradientUnits="userSpaceOnUse",
-            id=gradient_id,
-        )
-        fill_radial_grad.add_stop_color(0, "white")
-        fill_radial_grad.add_stop_color(0.6, "white")
-        fill_radial_grad.add_stop_color(1, color_toward_grey(self.color, 0.5, grey=Color(r=250, g=250, b=250)))
-        fill_radial_grad["gradientTransform"] = f"scale({x_scale},1)"
 
-        stroke_gradient_id = f"gradient_{str(uuid4())}"
-        stroke_radial_grad = dwg.radialGradient(
-            center=gradient_center,
-            r=radius,
-            gradientUnits="userSpaceOnUse",
-            id=stroke_gradient_id,
-        )
-        stroke_radial_grad.add_stop_color(0, "white")
-        stroke_radial_grad.add_stop_color(0.6, "white")
-        stroke_radial_grad.add_stop_color(1, color_toward_grey(self.color, 0.0))
-        stroke_radial_grad["gradientTransform"] = f"scale({x_scale},1)"
-
-        dwg.defs.add(fill_radial_grad)
-        dwg.defs.add(stroke_radial_grad)
-
-        dwg.add(
-            dwg.rect(
-                insert=(
-                    left,
-                    top,
-                ),
-                size=(width, height),
-                fill=f"url(#{gradient_id})",
-                stroke="none",
+        if self.layout_configuration.use_gradients:
+            gradient_id = f"gradient_{str(uuid4())}"
+            fill_radial_grad = dwg.radialGradient(
+                center=gradient_center,
+                r=radius,
+                gradientUnits="userSpaceOnUse",
+                id=gradient_id,
             )
-        )
-        dwg.add(
-            dwg.rect(
-                insert=(
-                    left,
-                    top,
-                ),
-                size=(width, height),
-                fill="none",
-                stroke=f"url(#{stroke_gradient_id})",
-                stroke_widht=3,
+            fill_radial_grad.add_stop_color(0, "white")
+            fill_radial_grad.add_stop_color(0.6, "white")
+            fill_radial_grad.add_stop_color(1, color_toward_grey(self.color, 0.5, grey=Color(r=250, g=250, b=250)))
+            fill_radial_grad["gradientTransform"] = f"scale({x_scale},1)"
+            dwg.defs.add(fill_radial_grad)
+
+            dwg.add(
+                dwg.rect(
+                    insert=(
+                        left,
+                        top,
+                    ),
+                    size=(width, height),
+                    fill=f"url(#{gradient_id})",
+                    stroke="none",
+                )
             )
-        )
+
+            stroke_gradient_id = f"gradient_{str(uuid4())}"
+            stroke_radial_grad = dwg.radialGradient(
+                center=gradient_center,
+                r=radius,
+                gradientUnits="userSpaceOnUse",
+                id=stroke_gradient_id,
+            )
+            stroke_radial_grad.add_stop_color(0, "white")
+            stroke_radial_grad.add_stop_color(0.6, "white")
+            stroke_radial_grad.add_stop_color(1, color_toward_grey(self.color, 0.0))
+            stroke_radial_grad["gradientTransform"] = f"scale({x_scale},1)"
+
+            dwg.defs.add(stroke_radial_grad)
+
+            dwg.add(
+                dwg.rect(
+                    insert=(
+                        left,
+                        top,
+                    ),
+                    size=(width, height),
+                    fill="none",
+                    stroke=f"url(#{stroke_gradient_id})",
+                    stroke_widht=3,
+                )
+            )
 
         for i_column in self.groups:
             y_current = top

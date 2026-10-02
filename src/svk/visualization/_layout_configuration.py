@@ -24,6 +24,8 @@ from pydantic import BaseModel
 class LayoutConfiguration(BaseModel):
     bullet_character: str = "\u25e6"
     use_rijkswaterstaat_colors: bool = False
+    use_gradients: bool = True
+
     bullet_list_indent: float = 12.0
 
     # Margins

@@ -19,9 +19,10 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from svk.data import Color
+from svk.data import Color, KnownColors
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._drawchevron import draw_half_chevron
+from svk.visualization.helpers._color_helper import get_contrast_color
 
 
 class Column(VisualElement):
@@ -67,10 +68,12 @@ class Column(VisualElement):
                 y=y,
                 width=self.width,
                 height=self.height,
+                use_gradients=self.layout_configuration.use_gradients,
                 color=self.header_color,
             )
         )
         y_column_header_text = y + self.layout_configuration.column_header_height / 2
+        text_fill = str(KnownColors.Black) if self.layout_configuration.use_gradients else str(get_contrast_color(self.header_color))
         dwg.add(
             dwg.text(
                 self.header_title,
@@ -78,6 +81,7 @@ class Column(VisualElement):
                 font_size=self.layout_configuration.column_header_font_size,
                 font_family="Arial",
                 font_weight="bold",
+                fill=text_fill,
                 text_anchor="start",
                 dominant_baseline="middle",
             )
@@ -88,9 +92,10 @@ class Column(VisualElement):
                     self.header_subtitle,
                     insert=(x + self.layout_configuration.column_width - self.layout_configuration.arrow_depth, y_column_header_text),
                     font_family="Arial",
-                    text_anchor="end",
-                    dominant_baseline="middle",
                     font_size=self.layout_configuration.column_header_font_size,
                     font_weight="normal",
+                    fill=text_fill,
+                    text_anchor="end",
+                    dominant_baseline="middle",
                 )
             )

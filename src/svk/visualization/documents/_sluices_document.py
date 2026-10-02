@@ -35,7 +35,7 @@ def _get_research_line_title(translator: Translator, research_line: ResearchLine
 
 class SluicesDocument(Document):
     questions: list[SluicesResearchQuestion]
-    layout_configuration: LayoutConfiguration = LayoutConfiguration(use_rijkswaterstaat_colors=True)
+    layout_configuration: LayoutConfiguration = LayoutConfiguration(use_rijkswaterstaat_colors=True, use_gradients=False)
 
     def create_pages(self) -> list[Page]:
         return [

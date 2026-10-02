@@ -71,8 +71,8 @@ class Group(GroupBase):
         return (
             self.layout_configuration.group_header_height
             + sum([question.height for question in self.questions])
-            + self.layout_configuration.small_margin * len(self.questions)
-            + self.layout_configuration.intermediate_margin
+            + self.layout_configuration.small_margin * (len(self.questions) - 1)
+            + 2 * self.layout_configuration.intermediate_margin
         )
 
     @property
@@ -93,9 +93,9 @@ class Group(GroupBase):
         :type width: float
         """
 
-        self.draw_header(dwg, x, y, self.width, target_id=self.link_target_id)
+        self.draw_header(dwg, x, y)
 
-        current_y = y + self.layout_configuration.group_header_height + self.layout_configuration.small_margin
+        current_y = y + self.layout_configuration.group_header_height + self.layout_configuration.intermediate_margin
         for question in self.questions:
             question.draw(
                 dwg,
@@ -105,7 +105,7 @@ class Group(GroupBase):
             current_y += self.layout_configuration.small_margin + question.height
             pass
 
-    def draw_header(self, dwg: Drawing, x: float, y: float, width: float, target_id: str | None = None):
+    def draw_header(self, dwg: Drawing, x: float, y: float):
         """
         Draws the groups header
 
@@ -118,8 +118,13 @@ class Group(GroupBase):
         :param width: The width of the header
         :type width: float
         """
-        draw_callout(dwg, x, y, width, self.height, self.color)
+        draw_callout(dwg, x, y, self.width, self.height, self.color, use_gradients=self.layout_configuration.use_gradients)
 
+        text_fill = (
+            str(get_contrast_color(self.color))
+            if self.use_contrast_color or not self.layout_configuration.use_gradients
+            else str(KnownColors.Black)
+        )
         dwg.add(
             dwg.text(
                 self.title,
@@ -127,7 +132,7 @@ class Group(GroupBase):
                     x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin,
                     y + self.layout_configuration.group_header_height / 2,
                 ),
-                fill=str(get_contrast_color(self.color) if self.use_contrast_color else str(KnownColors.Black)),
+                fill=text_fill,
                 font_size=self.layout_configuration.group_title_font_size,
                 font_family="Arial",
                 font_weight="bold",
@@ -138,9 +143,9 @@ class Group(GroupBase):
         _wh = measure_text_chromium(
             text=self.title, font_size=self.layout_configuration.group_title_font_size, font_family="Arial", font_weight="bold"
         )
-        if self.page_number is not None and target_id is not None:
+        if self.page_number is not None and self.link_target_id is not None:
             self.links_register.register_link(
-                target_id,
+                self.link_target_id,
                 page_number=self.page_number,
                 x=x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin,
                 y=y + self.layout_configuration.group_header_height / 2 - _wh[1] / 2,

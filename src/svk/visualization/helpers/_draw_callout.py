@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from svk.data import Color
+from svk.data import Color, KnownColors
 from svk.visualization.helpers._radial_gradient import create_radial_gradient
 
 
@@ -33,6 +33,7 @@ def draw_callout(
     stroke_width: float = 0.5,
     arrow_height: float = 30.0,
     arrow_depth: float = 20,
+    use_gradients: bool = True,
     gradient_center: float = 0.3,
 ):
     """
@@ -60,13 +61,6 @@ def draw_callout(
     :type gradient_center: float
     """
 
-    if gradient_center > 1 or gradient_center < 0:
-        raise ValueError
-
-    gradient_id = create_radial_gradient(
-        dwg=dwg, x=x + gradient_center * width, y=y, width=(1 - gradient_center) * width * 2, height=arrow_height * 2, color=color
-    )
-
     points = [
         (x, y),
         (x + width, y),
@@ -75,5 +69,20 @@ def draw_callout(
         (x + arrow_depth, y + arrow_height),
     ]
 
-    polygon = dwg.polygon(points=points, stroke=color, fill=f"url(#{gradient_id})", stroke_width=stroke_width)
-    dwg.add(polygon)
+    if use_gradients:
+        if gradient_center > 1 or gradient_center < 0:
+            raise ValueError
+
+        gradient_id = create_radial_gradient(
+            dwg=dwg, x=x + gradient_center * width, y=y, width=(1 - gradient_center) * width * 2, height=arrow_height * 2, color=color
+        )
+        dwg.add(dwg.polygon(points=points, stroke=color, fill=f"url(#{gradient_id})", stroke_width=stroke_width))
+    else:
+        points_color = [
+            (x, y),
+            (x + width, y),
+            (x + width, y + arrow_height),
+            (x + arrow_depth, y + arrow_height),
+        ]
+        dwg.add(dwg.polygon(points=points_color, stroke="none", fill=str(color), stroke_width=0))
+        dwg.add(dwg.polygon(points=points, stroke=color, fill=f"none", stroke_width=stroke_width))

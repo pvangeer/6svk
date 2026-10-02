@@ -18,24 +18,12 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from datetime import datetime
-from svk.visualization import SluicesDocument
 from test.paths import test_output_dir
-from test.utils.database_reader import read_ph_database
+from test.products._create_products_sluices import create_sluices_overview
 
 import pytest
 
 
 @pytest.mark.localproduct
 def test_create_sluices_overview():
-    questions = read_ph_database()
-    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda Sluis Panheel"
-
-    calendar = SluicesDocument(
-        output_dir=test_output_dir,
-        output_file=output_file,
-        questions=questions,
-        cleanup=True,
-    )
-
-    calendar.build()
+    create_sluices_overview(output_dir=test_output_dir)

@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from svk.data import PathIconElement, RectIconElement, IconElement, Icon, IconElementType
+from svk.data import PathIconElement, RectIconElement, IconElement, Icon
 from uuid import uuid4
 from pydantic import BaseModel
 from abc import ABC, abstractmethod

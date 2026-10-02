@@ -21,7 +21,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svk.data import SluicesResearchQuestion, Label, Color, IconProvider
-from svk.data.helpers import color_toward_grey
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
@@ -92,9 +91,9 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
                 insert=(x, y),
                 size=(self.width, self.height),
                 stroke_width=0.5,
-                fill=self._color,
+                fill=str(self._color),
                 fill_opacity=0.3,
-                stroke=self._color,
+                stroke=str(self._color),
             )
         )
 
