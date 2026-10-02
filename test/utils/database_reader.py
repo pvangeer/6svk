@@ -59,12 +59,44 @@ def read_ssb_pathway_database() -> tuple[ImpactPathwayResearchQuestion, ...]:
 
 @cache
 def read_end_of_life_database(
-    barrier: StormSurgeBarrier, row_header_column: int, row_header_categories_column: int, sheet_name: str
+    barrier: StormSurgeBarrier,
+    sheet_name: str,
 ) -> Grid:
+    first_data_column = get_first_header_row(barrier=barrier, sheet_name=sheet_name)
+    row_header_column = get_row_header_column(barrier=barrier, sheet_name=sheet_name)
+    row_header_categories_column = get_row_header_categories_column(barrier=barrier, sheet_name=sheet_name)
+
     d = EndOfLifeDatabase(file_path=get_database_path(barrier=barrier))
     d.sheet_name = sheet_name
+    d.first_data_column = first_data_column
     d.row_header_column = row_header_column
     d.row_header_categories_column = row_header_categories_column
     d.read()
     assert d.grid is not None
     return d.grid
+
+
+def get_row_header_categories_column(barrier: StormSurgeBarrier, sheet_name: str) -> str | None:
+    match (barrier, sheet_name):
+        case StormSurgeBarrier.HaringvlietBarrier, "EFL":
+            return "A"
+        case _, _:
+            return None
+
+
+def get_row_header_column(barrier: StormSurgeBarrier, sheet_name: str) -> str:
+    match (barrier, sheet_name):
+        case StormSurgeBarrier.HaringvlietBarrier, "EFL":
+            return "B"
+        case _, _:
+            return "A"
+
+
+def get_first_header_row(barrier: StormSurgeBarrier, sheet_name: str) -> str:
+    match (barrier, sheet_name):
+        case StormSurgeBarrier.HaringvlietBarrier, "ETL":
+            return "C"
+        case StormSurgeBarrier.HaringvlietBarrier, "EFL":
+            return "D"
+        case _, _:
+            return "C"

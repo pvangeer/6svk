@@ -47,8 +47,6 @@ def test_create_end_of_life_time_summary():
     ]:
         efl = read_end_of_life_database(
             barrier=barrier,
-            row_header_column=2 if barrier == StormSurgeBarrier.HaringvlietBarrier else 1,
-            row_header_categories_column=1,
             sheet_name="EFL",
         )
         icon = IconProvider.create_icon(barrier)
@@ -69,8 +67,6 @@ def test_create_end_of_life_time_summary():
         )
         etl = read_end_of_life_database(
             barrier=barrier,
-            row_header_column=1,
-            row_header_categories_column=1,
             sheet_name="ETL",
         )
         page_count += 1

@@ -2,7 +2,7 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 from typing import Any
-from svk.io._exceldatabase import DatabaseReadError
+from svk.io._exceldatabase import DatabaseReadError, ExcelDatabase
 from svk.data import Driver, Function, Color, KnownColors, Grid, GridCell, GridHeader
 from pydantic import BaseModel
 
@@ -30,11 +30,11 @@ class EndOfLifeDatabase:
         self.errors: list[DatabaseReadError] = []
         """A list of errors that can be filled during import/reading the database file."""
 
-        self.row_header_categories_column: int | None = 1
-        self.row_header_column: int = 2
+        self.row_header_categories_column: str | None = None
+        self.row_header_column: str = "B"
         self.column_header_categories_row: int = 1
         self.column_header_row: int = 2
-        self.first_data_column: int = 4
+        self.first_data_column: str = "C"
         self.first_data_row: int = 4
         self.columns_to_ignore: list[str] = ["Drivers"]
 
@@ -79,7 +79,7 @@ class EndOfLifeDatabase:
         _row_headers: dict[int, tuple[str, str]] = {}
 
         _current_column_header_category: str = "Autonome situatie"
-        for i_col in range(self.first_data_column, sheet.max_column + 1):
+        for i_col in range(ExcelDatabase._string_to_column_index(self.first_data_column) + 1, sheet.max_column + 1):
             header_category_cell = sheet.cell(row=self.column_header_categories_row, column=i_col)
             header_cell = sheet.cell(row=self.column_header_row, column=i_col)
             if header_category_cell.value is not None and isinstance(header_category_cell.value, str):
@@ -95,11 +95,13 @@ class EndOfLifeDatabase:
         _current_row_header_category: str = "Onbekend"
         for i_row in range(self.first_data_row, sheet.max_row + 1):
             if self.row_header_categories_column is not None:
-                header_category_cell = sheet.cell(row=i_row, column=self.row_header_categories_column)
+                header_category_cell = sheet.cell(
+                    row=i_row, column=ExcelDatabase._string_to_column_index(self.row_header_categories_column) + 1
+                )
                 if header_category_cell.value is not None and isinstance(header_category_cell.value, str):
                     _current_row_header_category = str(header_category_cell.value)
 
-            header_cell = sheet.cell(row=i_row, column=self.row_header_column)
+            header_cell = sheet.cell(row=i_row, column=ExcelDatabase._string_to_column_index(self.row_header_column) + 1)
             if (
                 header_cell.value is not None
                 and isinstance(header_cell.value, str)

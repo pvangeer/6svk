@@ -1,11 +1,8 @@
 from svk.data import (
     Priority,
-    ResearchLine,
     TimeFrame,
     StormSurgeBarrier,
 )
-
-from svk.data import StormSurgeBarrierResearchLineFactory
 
 from pathlib import Path
 from abc import ABC, abstractmethod

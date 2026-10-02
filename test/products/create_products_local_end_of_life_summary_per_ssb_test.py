@@ -44,14 +44,10 @@ from test.paths import test_output_dir
 def test_create_end_of_life_analysis_document(barrier: StormSurgeBarrier):
     efl = read_end_of_life_database(
         barrier=barrier,
-        row_header_column=2 if barrier == StormSurgeBarrier.HaringvlietBarrier else 1,
-        row_header_categories_column=1,
         sheet_name="EFL",
     )
     etl = read_end_of_life_database(
         barrier=barrier,
-        row_header_column=1,
-        row_header_categories_column=1,
         sheet_name="ETL",
     )
     document = LifeTimeAnalysDocument(
@@ -59,6 +55,6 @@ def test_create_end_of_life_analysis_document(barrier: StormSurgeBarrier):
         functional_lifetime_grid=efl,
         technical_lifetime_grid=etl,
         output_dir=test_output_dir,
-        output_file=f"{datetime.now().strftime("%Y-%m-%d")} - Einde levensduur analyse {Translator(lang="nl").get_label(barrier.title)}",
+        output_file=f"{datetime.now().strftime('%Y-%m-%d')} - Einde levensduur analyse {Translator(lang='nl').get_label(barrier.title)}",
     )
     document.build()

@@ -43,14 +43,10 @@ from test.utils.database_reader import read_end_of_life_database, get_database_d
 def test_create_end_of_life_analysis_document(barrier: StormSurgeBarrier):
     efl = read_end_of_life_database(
         barrier=barrier,
-        row_header_column=2 if barrier == StormSurgeBarrier.HaringvlietBarrier else 1,
-        row_header_categories_column=1,
         sheet_name="EFL",
     )
     etl = read_end_of_life_database(
         barrier=barrier,
-        row_header_column=1,
-        row_header_categories_column=1,
         sheet_name="ETL",
     )
     document = LifeTimeAnalysDocument(

@@ -24,7 +24,12 @@ from datetime import datetime
 from svk.data import StormSurgeBarrier, Translator
 from svk.visualization import KnowledgeCalendarDocument
 
-from test.utils.database_reader import read_ssb_pathway_database, read_knowledge_agenda_database, get_database_dir, read_end_of_life_database
+from test.utils.database_reader import (
+    read_ssb_pathway_database,
+    read_knowledge_agenda_database,
+    get_database_dir,
+    read_end_of_life_database,
+)
 from test.paths import allsvk_dir
 
 
@@ -52,14 +57,10 @@ def test_create_knowledge_calendar_per_ssb(barrier: StormSurgeBarrier):
     translator = Translator(lang="nl")
     efl = read_end_of_life_database(
         barrier=barrier,
-        row_header_column=2 if barrier == StormSurgeBarrier.HaringvlietBarrier else 1,
-        row_header_categories_column=1,
         sheet_name="EFL",
     )
     etl = read_end_of_life_database(
         barrier=barrier,
-        row_header_column=1,
-        row_header_categories_column=1,
         sheet_name="ETL",
     )
     calendar_document = KnowledgeCalendarDocument(
