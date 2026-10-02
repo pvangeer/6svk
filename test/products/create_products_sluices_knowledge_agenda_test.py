@@ -20,19 +20,20 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from datetime import datetime
 from svk.visualization import SluicesDocument
-from test.paths import test_output_dir
+from test.paths import ph_base_dir
 from test.utils.database_reader import read_ph_database
 
 import pytest
 
 
-@pytest.mark.localproduct
+# TODO: This duplicates code. Consider a shared logic function and call with different output_dir for local and product tests.
+@pytest.mark.product
 def test_create_sluices_overview():
     questions = read_ph_database()
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda Sluis Panheel"
 
     calendar = SluicesDocument(
-        output_dir=test_output_dir,
+        output_dir=ph_base_dir,
         output_file=output_file,
         questions=questions,
         cleanup=True,

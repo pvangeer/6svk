@@ -1,7 +1,14 @@
 from pathlib import Path
 from functools import cache
-from svk.data import StormSurgeBarrier, StormSurgeBarrierResearchQuestion, ImpactPathwayResearchQuestion, TimeFrame, Grid
-from svk.io import KnowledgeAgendaDatabase, EndOfLifeDatabase, ImpactPathwayDatabase
+from svk.data import (
+    StormSurgeBarrier,
+    StormSurgeBarrierResearchQuestion,
+    ImpactPathwayResearchQuestion,
+    TimeFrame,
+    Grid,
+    SluicesResearchQuestion,
+)
+from svk.io import KnowledgeAgendaDatabase, EndOfLifeDatabase, ImpactPathwayDatabase, SluicesKnowledgeAgendaDatabase
 
 from test.paths import (
     mlk_database_path,
@@ -11,6 +18,7 @@ from test.paths import (
     hv_database_path,
     esb_database_path,
     ssb_database_path,
+    ph_database_path,
 )
 
 
@@ -55,6 +63,16 @@ def read_ssb_pathway_database() -> tuple[ImpactPathwayResearchQuestion, ...]:
         for e in d.errors:
             print(e)
     return tuple(q for q in d if q.action_holder != "Not included")
+
+
+def read_ph_database() -> list[SluicesResearchQuestion]:
+    questions = SluicesKnowledgeAgendaDatabase(ph_database_path)
+    questions.read()
+
+    if len(questions.errors) > 0:
+        for e in questions.errors:
+            print(e)
+    return [q for q in questions if q.time_frame != TimeFrame.NotRelevant]
 
 
 @cache
