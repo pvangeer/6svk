@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import datetime
 from svk.data import (
     TimeFrame,
     ResearchLine,
@@ -35,6 +36,12 @@ def _get_research_line_title(translator: Translator, research_line: ResearchLine
 class SluicesDocument(Document):
     questions: list[SluicesResearchQuestion]
     layout_configuration: LayoutConfiguration = LayoutConfiguration(use_rijkswaterstaat_colors=True, use_gradients=False)
+    disclaimer: str | None = (
+        f"Deze agenda is ontstaan in samenwerking met het asset management teams van sluis Panheel. Het weerspiegelt de kennisvragen op het moment van opstellen ({datetime.now().strftime("%Y-%m-%d")}). Voor vragen, neem contact op met Meinard Tiessen."
+    )
+    disclaimer_links: list[tuple[str, str]] | None = [
+        ("Meinard Tiessen", "mailto:meinard.tiessen@deltares.nl"),
+    ]
 
     def create_pages(self) -> list[Page]:
         return [
