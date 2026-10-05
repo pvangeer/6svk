@@ -29,12 +29,15 @@ def draw_callout(
     y: float,
     width: float,
     height: float,
-    color: Color,
+    stroke: Color,
+    fill: Color,
+    header_fill: Color,
     stroke_width: float = 0.5,
     arrow_height: float = 30.0,
     arrow_depth: float = 20,
     use_gradients: bool = True,
     gradient_center: float = 0.3,
+    use_header_fill: bool = True,
 ):
     """
     Draws a callout object and adds it to the drawing.
@@ -74,15 +77,21 @@ def draw_callout(
             raise ValueError
 
         gradient_id = create_radial_gradient(
-            dwg=dwg, x=x + gradient_center * width, y=y, width=(1 - gradient_center) * width * 2, height=arrow_height * 2, color=color
+            dwg=dwg,
+            x=x + gradient_center * width,
+            y=y,
+            width=(1 - gradient_center) * width * 2,
+            height=arrow_height * 2,
+            color=header_fill,
         )
-        dwg.add(dwg.polygon(points=points, stroke=color, fill=f"url(#{gradient_id})", stroke_width=stroke_width))
+        dwg.add(dwg.polygon(points=points, stroke=stroke, fill=f"url(#{gradient_id})", stroke_width=stroke_width))
     else:
-        points_color = [
-            (x, y),
-            (x + width, y),
-            (x + width, y + arrow_height),
-            (x + arrow_depth, y + arrow_height),
-        ]
-        dwg.add(dwg.polygon(points=points, stroke=str(color), fill=str(KnownColors.White), stroke_width=stroke_width))
-        dwg.add(dwg.polygon(points=points_color, stroke="none", fill=str(color), stroke_width=0))
+        dwg.add(dwg.polygon(points=points, stroke=str(stroke), fill=str(fill), stroke_width=stroke_width))
+        if use_header_fill:
+            points_color = [
+                (x, y),
+                (x + width, y),
+                (x + width, y + arrow_height),
+                (x + arrow_depth, y + arrow_height),
+            ]
+            dwg.add(dwg.polygon(points=points_color, stroke="none", fill=str(header_fill), stroke_width=0))

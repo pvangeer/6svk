@@ -86,7 +86,7 @@ class SluicesDocument(Document):
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            icon=IconProvider.create_sluice_panheel_icon(),
+            icon=IconProvider.create_rws_sluice_icon(),
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
         )

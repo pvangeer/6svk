@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from svk.data import PathIconElement, RectIconElement, IconElement, Icon
+from svk.data import PathIconElement, RectIconElement, CircleIconElement, IconElement, Icon, ClipPath
 from uuid import uuid4
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
@@ -46,7 +46,7 @@ class Symbol(SvgObject):
     This object can be used to add an svg symbol to the svgwrite.Drawing.
     """
 
-    id: str = f"#{uuid4()}"
+    id: str = f"{uuid4()}"
     """id of the symbol"""
     width: float = 300
     """Width of the symbol"""
@@ -54,6 +54,10 @@ class Symbol(SvgObject):
     """Height of the symbol"""
     objects: list[SvgObject] = []
     """A list of svg objects that form the symbol"""
+    clip_path: ClipPath | None = None
+    """An optional clip path"""
+    margin: float = 0
+    """Margin that should always be plotted around the icon"""
 
     def create(self, dwg: Drawing):
         """
@@ -62,13 +66,29 @@ class Symbol(SvgObject):
         :param dwg: The svgwrite.Drawing that should be used to create the symbol.
         :type dwg: Drawing
         """
+
         for element in dwg.defs.elements:
             if element.get_id() == self.id:
                 return element
 
-        icon_symbol = dwg.symbol(id=self.id, viewBox=f"0 0 {self.width} {self.height}")
+        clip_path_data = self.clip_path
+        if clip_path_data is None:
+            clip_path_data = ClipPath(x=0, y=0, width=self.width, height=self.height)
+        clip_id = f"{self.id}_clip_path"
+        clip_path = dwg.clipPath(id=clip_id)
+        clip_path.add(dwg.rect(insert=(clip_path_data.x, clip_path_data.y), size=(clip_path_data.width, clip_path_data.height)))
+        dwg.defs.add(clip_path)
+
+        icon_symbol = dwg.symbol(
+            id=self.id,
+            viewBox=f"{clip_path_data.x-self.margin} {clip_path_data.y-self.margin} {clip_path_data.width+self.margin * 2} {clip_path_data.height+self.margin * 2}",
+        )
+        group = dwg.g(clip_path=f"url(#{clip_id})")
+
         for svg_object in self.objects:
-            icon_symbol.add(svg_object.create(dwg))
+            group.add(svg_object.create(dwg))
+
+        icon_symbol.add(group)
         dwg.defs.add(icon_symbol)
 
         return icon_symbol
@@ -144,11 +164,33 @@ class Rect(SvgObject):
             stroke=str(self.rect_data.stroke),
             stroke_width=self.rect_data.stroke_width,
             stroke_linecap=self.rect_data.stroke_linecap,
-            stroke_linejoin=self.rect_data.strok_linejoin,
+            stroke_linejoin=self.rect_data.stroke_linejoin,
         )
 
 
-# TODO: This should be a separate module? This requires knowledge of the StormSurgeBarrier enum.
+class Circle(SvgObject):
+    """
+    An svg Rect object (used to draw symbols/icons)
+    """
+
+    circle_data: CircleIconElement
+
+    def create(self, dwg: Drawing):
+        """
+        Creates an svg Rect element that can be added to a symbol or directly added to an svgwrite.Drawing.
+
+        :param dwg: The svgwrite.Drawing object to add this Path to.
+        :type dwg: Drawing
+        """
+        return dwg.circle(
+            center=(self.circle_data.cx, self.circle_data.cy),
+            r=self.circle_data.r,
+            fill=str(self.circle_data.fill),
+            stroke=str(self.circle_data.stroke),
+            stroke_width=self.circle_data.stroke_width,
+        )
+
+
 def draw_scaled_icon(dwg: Drawing, icon: Icon, insert: tuple[float, float], size: tuple[float, float] = (24, 24)):
     """
     This method adds and uses a symbol to represent a StormSurgeBarrier in an svgwrite.Drawing.
@@ -162,7 +204,7 @@ def draw_scaled_icon(dwg: Drawing, icon: Icon, insert: tuple[float, float], size
     :param size: The size (width and height) of the desired icon
     :type size: tuple[float, float]
     """
-    ico = Symbol(id=icon.id)
+    ico = Symbol(id=icon.id, clip_path=icon.clip_path, margin=icon.margin)
     ico.objects = [_create_icon_object(e) for e in icon.elements]
     ico.add_to_dwg(dwg=dwg, insert=insert, size=size)
 
@@ -173,5 +215,8 @@ def _create_icon_object(element: IconElement) -> SvgObject:
 
     if isinstance(element, RectIconElement):
         return Rect(rect_data=element)
+
+    if isinstance(element, CircleIconElement):
+        return Circle(circle_data=element)
 
     raise TypeError(f"Unsupported element type: {type(element)}")

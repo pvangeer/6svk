@@ -182,12 +182,14 @@ class LegendElement(VisualElementsContainer):
 
     def draw(self, dwg: Drawing, x: float, y: float):
         draw_callout(
-            dwg,
-            x,
-            y,
-            self.width,
-            self.height,
-            color=KnownColors.GrayAccent,
+            dwg=dwg,
+            x=x,
+            y=y,
+            width=self.width,
+            height=self.height,
+            stroke=KnownColors.GreyAccent,
+            fill=KnownColors.White,
+            header_fill=KnownColors.GreyAccent,
             stroke_width=1.0,
             arrow_height=30.0,
             arrow_depth=20.0,

@@ -33,4 +33,5 @@ def test_draw_icon():
     draw_scaled_icon(dwg, icon=IconProvider.create_hartel_barrier_icon(), insert=(10, 70), size=(35, 35))
     draw_scaled_icon(dwg, icon=IconProvider.create_eastern_scheldt_barrier_icon(), insert=(40, 60), size=(24, 24))
     draw_scaled_icon(dwg, icon=IconProvider.create_hollandse_ijssel_barrier_icon(), insert=(80, 80), size=(16, 16))
+    draw_scaled_icon(dwg, icon=IconProvider.create_rws_sluice_icon(), insert=(10, 40), size=(20, 20))
     svg_to_pdf(dwg, test_output_dir / "icon.pdf")

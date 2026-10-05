@@ -15,7 +15,7 @@ class LegendPage(Page):
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            color=KnownColors.GrayAccent,
+            color=KnownColors.GreyAccent,
             use_contrast_color=True,
         )
         return self

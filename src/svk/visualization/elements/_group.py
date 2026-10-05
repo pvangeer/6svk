@@ -118,7 +118,17 @@ class Group(GroupBase):
         :param width: The width of the header
         :type width: float
         """
-        draw_callout(dwg, x, y, self.width, self.height, self.color, use_gradients=self.layout_configuration.use_gradients)
+        draw_callout(
+            dwg=dwg,
+            x=x,
+            y=y,
+            width=self.width,
+            height=self.height,
+            stroke=self.color,
+            fill=KnownColors.White,
+            header_fill=self.color,
+            use_gradients=self.layout_configuration.use_gradients,
+        )
 
         text_fill = (
             str(get_contrast_color(self.color))

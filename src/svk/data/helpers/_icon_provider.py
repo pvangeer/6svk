@@ -1,9 +1,9 @@
 from svk.data._stormsurgebarrier import StormSurgeBarrier
-from svk.data._icon import Icon, PathIconElement, RectIconElement
+from svk.data._icon import Icon, PathIconElement, RectIconElement, CircleIconElement, ClipPath
 from svk.data._timeframe import TimeFrame
 from svk.data._color import KnownColors
 
-accent_fill = KnownColors.GrayAccent
+accent_fill = KnownColors.GreyAccent
 
 
 class IconProvider:
@@ -25,12 +25,46 @@ class IconProvider:
             case StormSurgeBarrier.All:
                 return IconProvider.create_6svk_icon()
             case StormSurgeBarrier.SluicePanheel:
-                return IconProvider.create_sluice_panheel_icon()
+                return IconProvider.create_rws_sluice_icon()
             case _:
                 return None
 
     @staticmethod
-    def create_maeslant_barrier_icon():
+    def create_rws_sluice_icon() -> Icon:
+        return Icon(
+            id="RwsSluice",
+            elements=(
+                RectIconElement(x=5.0033898, y=117.68813, width=10.840678, height=99.789833, stroke_linejoin="miter", stroke_width=10),
+                RectIconElement(x=225.5966, y=117.68813, width=10.840678, height=99.789833, stroke_linejoin="miter", stroke_width=10),
+                CircleIconElement(cx=104, cy=192, r=7, fill=KnownColors.Black),
+                CircleIconElement(cx=139, cy=192, r=7, fill=KnownColors.Black),
+                PathIconElement(d="m 123.13898,136.0339 -56.427116,35.30169 27.796611,55.03729", stroke_width=10),
+                PathIconElement(d="m 151.35932,226.45084 25.85085,-55.59323 -53.36948,-34.74574 -0.42374,82.2", stroke_width=10),
+                PathIconElement(d="m 75.61865,164.09659 v -36.42002 l 93.92879,-0.24776 -0.27955,36.66778", stroke_width=10),
+                PathIconElement(d="M 88.949153,126.58305 V 94.616949 h 66.989827 l 0.27797,31.410171", stroke_width=10),
+                RectIconElement(x=15.844068, y=9.2813559, width=11.39661, height=217.92543, stroke_linejoin="round", stroke_width=10),
+                RectIconElement(x=216.02373, y=9.2813559, width=11.39661, height=217.92543, stroke_linejoin="round", stroke_width=10),
+                PathIconElement(
+                    d="m -7,225 c 11,-6 18,-6 29,0 10,6 18,6 29,0 10,-6 18,-6 29,0 10,6 18,6 29,0 10,-6 18,-6 29,0 10,6 18,6 29,0 10,-6 18,-6 29,0 10,6 18,6 29,0 10,-6 18,-6 29,0",
+                    stroke_width=15,
+                    stroke_linecap="round",
+                    stroke=accent_fill,
+                ),
+                RectIconElement(x=44.64407, y=31.349152, width=155.38306, height=34.189831, stroke_linejoin="miter", stroke_width=10),
+                PathIconElement(
+                    d="m -6.7220339,231.60339 c 11,-6 17.9999999,-6 28.9999999,0 10,6 18,6 29,0 10,-6 18,-6 29,0 10,6 18,6 28.999994,0 10,-6 18,-6 29,0 10,6 18,6 29,0 10,-6 18,-6 29,0 10,6 18,6 29,0 10,-6 18,-6 29,0",
+                    stroke_width=13,
+                    stroke_linecap="round",
+                    stroke=KnownColors.Black,
+                ),
+                RectIconElement(x=4.7254238, y=0.27796611, width=231.54578, height=16.122034, stroke_linejoin="miter", stroke_width=10),
+            ),
+            clip_path=ClipPath(x=0, y=0, width=241, height=246),
+            margin=20,
+        )
+
+    @staticmethod
+    def create_maeslant_barrier_icon() -> Icon:
         return Icon(
             id=StormSurgeBarrier.MaeslantBarrier.name,
             elements=(
@@ -45,7 +79,7 @@ class IconProvider:
         )
 
     @staticmethod
-    def create_hartel_barrier_icon():
+    def create_hartel_barrier_icon() -> Icon:
         return Icon(
             id=StormSurgeBarrier.HartelBarrier.name,
             elements=(
@@ -69,7 +103,7 @@ class IconProvider:
         )
 
     @staticmethod
-    def create_ramspol_icon():
+    def create_ramspol_icon() -> Icon:
         return Icon(
             id=StormSurgeBarrier.Ramspol.name,
             elements=(
@@ -80,7 +114,7 @@ class IconProvider:
         )
 
     @staticmethod
-    def create_eastern_scheldt_barrier_icon():
+    def create_eastern_scheldt_barrier_icon() -> Icon:
         return Icon(
             id=StormSurgeBarrier.EasternScheldtBarrier.name,
             elements=(
@@ -115,7 +149,7 @@ class IconProvider:
         )
 
     @staticmethod
-    def create_hollandse_ijssel_barrier_icon():
+    def create_hollandse_ijssel_barrier_icon() -> Icon:
         return Icon(
             id=StormSurgeBarrier.HollandseIJsselBarrier.name,
             elements=(
@@ -137,7 +171,7 @@ class IconProvider:
         )
 
     @staticmethod
-    def create_6svk_icon():
+    def create_6svk_icon() -> Icon:
         return Icon(
             id=StormSurgeBarrier.All.name,
             elements=tuple(
@@ -152,7 +186,7 @@ class IconProvider:
         )
 
     @staticmethod
-    def create_sluice_panheel_icon():
+    def create_sluice_panheel_icon() -> Icon:
         return Icon(
             id=StormSurgeBarrier.SluicePanheel.name,
             elements=(
@@ -185,7 +219,7 @@ class IconProvider:
         )
 
     @staticmethod
-    def create_haringvliet_sluices_icon():
+    def create_haringvliet_sluices_icon() -> Icon:
         return Icon(
             id=StormSurgeBarrier.HaringvlietBarrier.name,
             elements=(
@@ -205,7 +239,7 @@ class IconProvider:
         )
 
     @staticmethod
-    def create_time_frame_now_icon():
+    def create_time_frame_now_icon() -> Icon:
         return Icon(
             id=TimeFrame.Now.name,
             elements=tuple(
@@ -218,7 +252,7 @@ class IconProvider:
         )
 
     @staticmethod
-    def create_time_frame_near_future_icon():
+    def create_time_frame_near_future_icon() -> Icon:
         return Icon(
             id=TimeFrame.NearFuture.name,
             elements=tuple(
@@ -231,7 +265,7 @@ class IconProvider:
         )
 
     @staticmethod
-    def create_time_frame_future_icon():
+    def create_time_frame_future_icon() -> Icon:
         return Icon(
             id=TimeFrame.Future.name,
             elements=tuple(

@@ -6,6 +6,7 @@ from svk.data._color import Color, KnownColors
 class IconElementType(Enum):
     Path = 0
     Rect = 1
+    Circle = 2
 
 
 class IconElement(BaseModel):
@@ -46,7 +47,7 @@ class RectIconElement(IconElement):
     """Stroke color to be used"""
     stroke_width: float = 20
     """Stroke width to be used"""
-    strok_linejoin: str = "round"
+    stroke_linejoin: str = "round"
     """Stroke linejoin to be used"""
     stroke_linecap: str = "round"
     """Stroke linecap to be used"""
@@ -54,6 +55,35 @@ class RectIconElement(IconElement):
     """Fill color to be used"""
 
 
+class CircleIconElement(IconElement):
+    type: IconElementType = IconElementType.Circle
+
+    cx: float
+    """x-position of the centre of the circle"""
+    cy: float
+    """y-position of the centre of the circle"""
+    r: float
+    """radius of the circle"""
+    fill: Color = KnownColors.Black
+    """Fill color to be used"""
+    stroke: Color = KnownColors.Black
+    """Stroke color"""
+    stroke_width: float = 0
+
+
+class ClipPath(BaseModel):
+    x: float
+    """x-position of the Rect"""
+    y: float
+    """y-position of the Rect"""
+    width: float
+    """Width of the Rect"""
+    height: float
+    """Height of the Rect"""
+
+
 class Icon(BaseModel):
     id: str
     elements: tuple[IconElement, ...]
+    clip_path: ClipPath | None = None
+    margin: float = 0

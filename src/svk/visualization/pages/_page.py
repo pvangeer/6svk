@@ -130,12 +130,16 @@ class Page(BaseModel, ABC):
             icon_size = self._title_height
             icon_width = icon_size + self.layout_configuration.arrow_depth
             draw_callout(
-                dwg,
-                self.layout_configuration.paper_margin,
-                self.layout_configuration.paper_margin,
-                icon_width,
-                icon_size,
-                KnownColors.Black,
+                dwg=dwg,
+                x=self.layout_configuration.paper_margin,
+                y=self.layout_configuration.paper_margin,
+                width=icon_width,
+                height=icon_size,
+                use_gradients=self.layout_configuration.use_gradients,
+                stroke=KnownColors.Black,
+                fill=KnownColors.White,
+                header_fill=KnownColors.Black,
+                use_header_fill=self.layout_configuration.use_gradients,
             )
             draw_scaled_icon(
                 dwg=dwg,

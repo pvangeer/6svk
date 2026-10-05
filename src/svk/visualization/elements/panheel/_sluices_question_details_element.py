@@ -259,7 +259,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            icons=tuple([IconProvider.create_sluice_panheel_icon()]),
+            icons=tuple([IconProvider.create_rws_sluice_icon()]),
         )
 
         self._time_frame_element = TimeFrameElement(

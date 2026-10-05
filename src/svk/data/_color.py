@@ -212,5 +212,6 @@ class KnownColors:
     Green = Color(r=0, g=255, b=0)
     Yellow = Color(r=255, g=255, b=102)
     Orange = Color(r=255, g=192, b=0)
-    GrayAccent = Color(r=167, g=167, b=167)
+    GreyAccent = Color(r=167, g=167, b=167)
+    LightGrey = Color(r=210, g=210, b=210)
     NoneColor = Color(no_color=True, r=0, g=0, b=0)

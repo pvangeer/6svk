@@ -36,6 +36,6 @@ from ._function import Function
 from ._driver import Driver
 from ._color import Color, KnownColors
 from ._grid import Grid, GridCell, GridHeader
-from ._icon import Icon, PathIconElement, RectIconElement, IconElementType, IconElement
+from ._icon import Icon, PathIconElement, RectIconElement, CircleIconElement, IconElementType, IconElement, ClipPath
 from .helpers._icon_provider import IconProvider, accent_fill  # TODO: How to expose data seperate from factory methods
 from ._sp_research_lines import SluicesResearchLines
