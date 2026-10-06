@@ -38,6 +38,7 @@ from .elements._question_summary_element import QuestionSummaryElement
 from .elements._question_details_element import QuestionDetailsElement
 from .elements._question_analysis_details_element import QuestionAnalysisDetailsElement
 from .elements._icons_element import IconsElement
-from .elements.panheel._legend_element import LegendElement
+
+from .elements.panheel.legend._legend_element import LegendElement
 
 # TODO: Expose all elements

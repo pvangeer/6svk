@@ -3,7 +3,7 @@ from pydantic import model_validator, PrivateAttr
 
 from svk.data import KnownColors
 from svk.visualization.pages._page import Page
-from svk.visualization.elements.panheel._legend_element import LegendElement
+from svk.visualization.elements.panheel.legend._legend_element import LegendElement
 
 
 class LegendPage(Page):
