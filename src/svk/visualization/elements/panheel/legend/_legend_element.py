@@ -21,15 +21,13 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
-from svk.data import Label, Color, KnownColors, TimeFrame
-from svk.visualization.elements._priority_icon_element import PriorityIconElement
-from svk.visualization.elements._text_element import TextElement
-from svk.visualization.elements._time_frame_element import TimeFrameElement
+from svk.data import Label, Color, KnownColors
 from svk.visualization.elements._visual_elements_container import Alignment, VisualElementsContainer
 from svk.visualization.elements.panheel.legend._color_table_legend_element import ColorTableLegendElement
-from svk.visualization.helpers._color_helper import get_contrast_color, get_color
+from svk.visualization.elements.panheel.legend._priority_legend_element import PriorityLegendElement
+from svk.visualization.elements.panheel.legend._code_explanation_legend_element import CodeExplanationLegendElement
+from svk.visualization.helpers._color_helper import get_contrast_color
 from svk.visualization.helpers._draw_callout import draw_callout
-from svk.visualization.helpers._measuretext import measure_text
 
 
 class LegendElement(VisualElementsContainer):
@@ -39,22 +37,11 @@ class LegendElement(VisualElementsContainer):
     """Indicates whether the title should choose a color with mist contrast or just use black"""
 
     _color_table_element: ColorTableLegendElement = PrivateAttr()
+    _priority_element: PriorityLegendElement = PrivateAttr()
+    _code_explanation_element: CodeExplanationLegendElement = PrivateAttr()
+    _content_height: float = PrivateAttr()
     _width: float = PrivateAttr()
     _height: float = PrivateAttr()
-    _priority_width: float = PrivateAttr()
-    _priority_height: float = PrivateAttr()
-    _code_explanation_height: float = PrivateAttr()
-
-    _code_explanation_lines: tuple[tuple[str, str, str], ...] = (
-        ("Verklaring codes (SP_XX##)", "", ""),
-        ("SP", "Vraag gesteld bij sessie met Sluizencomplex Panheel", ""),
-        ("XX", "Code die aangeeft wat de herkomst is van de vraag:", ""),
-        ("", "C", "Vraag afkomstig uit inventarisatie componenten."),
-        ("", "ET", "Vraag afkomstig uit einde technische levenstuur analyse."),
-        ("", "EF", "Vraag afkomstig uit einde functionele levenstuur analyse."),
-        ("", "A", "Algemeen geldende kennisvraag"),
-        ("##", "Volgnummer van de vraag.", ""),
-    )
 
     @property
     def width(self) -> float:
@@ -69,110 +56,88 @@ class LegendElement(VisualElementsContainer):
         self._color_table_element = ColorTableLegendElement(
             translator=self.translator, layout_configuration=self.layout_configuration, links_register=self.links_register, color=self.color
         )
-        self._high_priority_icon_element = PriorityIconElement(
-            translator=self.translator, layout_configuration=self.layout_configuration, links_register=self.links_register, priority=1
+        self._priority_element = PriorityLegendElement(
+            translator=self.translator, layout_configuration=self.layout_configuration, links_register=self.links_register, color=self.color
         )
-        self._low_priority_icon_element = PriorityIconElement(
-            translator=self.translator, layout_configuration=self.layout_configuration, links_register=self.links_register, priority=0
-        )
-        self._high_priority_text_element = TextElement(
-            translator=self.translator,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            text=self.translator.get_label(Label.LegendHighPriority),
-        )
-        self._low_priority_text_element = TextElement(
-            translator=self.translator,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            text=self.translator.get_label(Label.LegendLowPriority),
+        self._code_explanation_element = CodeExplanationLegendElement(
+            translator=self.translator, layout_configuration=self.layout_configuration, links_register=self.links_register, color=self.color
         )
 
-        self._priority_width = (
-            max([self._high_priority_icon_element.width, self._low_priority_icon_element.width])
-            + self.layout_configuration.small_margin
-            + max([self._high_priority_text_element.width, self._low_priority_text_element.width])
-            + 2 * self.layout_configuration.small_margin
-        )
-        self._priority_height = max([self._high_priority_icon_element.height, self._high_priority_text_element.height]) + max(
-            [self._low_priority_icon_element.height, self._low_priority_text_element.height]
-        )
-
-        self._code_explanation_height = len(self._code_explanation_lines) * 1.2 * self.layout_configuration.font_size
-
-        # This assumes the code explanation is less wide that the table and priority explanation
         self._width = (
             self.layout_configuration.arrow_depth
             + self.layout_configuration.intermediate_margin
             + self._color_table_element.width
             + self.layout_configuration.intermediate_margin * 2.0
-            + self._priority_width
+            + self._code_explanation_element.width
+            + self.layout_configuration.intermediate_margin * 2.0
+            + self._priority_element.width
             + self.layout_configuration.intermediate_margin
         )
 
+        self._content_height = max([self._color_table_element.height, self._code_explanation_element.height, self._priority_element.height])
         self._height = (
             self.layout_configuration.group_header_height
             + self.layout_configuration.intermediate_margin
-            + max([self._color_table_element.height, self._priority_height])
-            + self.layout_configuration.intermediate_margin
-            + self._code_explanation_height
+            + self._content_height
             + self.layout_configuration.intermediate_margin
         )
         return self
 
     def draw(self, dwg: Drawing, x: float, y: float):
         self._draw_container(dwg=dwg, x=x, y=y)
-        _x_left_table = x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin
-        _y_top = y + self.layout_configuration.group_header_height + self.layout_configuration.intermediate_margin
+        _x_left_content = x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin
+        _y_top_content = y + self.layout_configuration.group_header_height + self.layout_configuration.intermediate_margin
         self._draw_table(
             dwg=dwg,
-            x_left=_x_left_table,
-            y_top=_y_top,
+            x_left=_x_left_content,
+            y_top=_y_top_content,
         )
         self.draw_vertical_separator(
             dwg=dwg,
-            x=_x_left_table + self._color_table_element.width + self.layout_configuration.intermediate_margin,
-            y=_y_top,
-            element_height=max([self._color_table_element.height, self._priority_height]),
+            x=_x_left_content + self._color_table_element.width + self.layout_configuration.intermediate_margin,
+            y=_y_top_content,
+            element_height=self._content_height,
             color=self.color,
         )
-
+        _x_left_code_explanation = _x_left_content + self._color_table_element.width + 2 * self.layout_configuration.intermediate_margin
+        self._draw_code_explanation(dwg=dwg, x_left=_x_left_code_explanation, y_top=_y_top_content)
+        self.draw_vertical_separator(
+            dwg=dwg,
+            x=_x_left_code_explanation + self._code_explanation_element.width + self.layout_configuration.intermediate_margin,
+            y=_y_top_content,
+            element_height=self._content_height,
+            color=self.color,
+        )
+        _x_left_priority = (
+            _x_left_code_explanation + self._code_explanation_element.width + 2 * self.layout_configuration.intermediate_margin
+        )
         self._draw_priority_explanation(
             dwg=dwg,
-            x_left=_x_left_table + self._color_table_element.width + 2 * self.layout_configuration.intermediate_margin,
-            y_top=_y_top,
+            x_left=_x_left_priority,
+            y_top=_y_top_content,
         )
 
-        _y_code_explanation = (
-            _y_top + max([self._color_table_element.height, self._priority_height]) + self.layout_configuration.intermediate_margin * 2
-        )
-        self.draw_horizontal_separator(
+    def _draw_priority_explanation(self, dwg: Drawing, x_left: float, y_top: float):
+        self.draw_element(
             dwg=dwg,
-            x=_x_left_table,
-            y=_y_code_explanation - self.layout_configuration.intermediate_margin,
-            element_width=self.width - self.layout_configuration.arrow_depth - self.layout_configuration.intermediate_margin * 2.0,
-            color=self.color,
+            element=self._priority_element,
+            x_container=x_left,
+            y_container=y_top,
+            height_container=self._content_height,
+            width_container=self._priority_element.width,
+            alignment=Alignment.MiddleCenter,
         )
-        self._draw_code_explanation(dwg=dwg, x_left=_x_left_table, y_top=_y_code_explanation)
 
     def _draw_code_explanation(self, dwg: Drawing, x_left: float, y_top: float):
-        code_style = dict(font_size=self.layout_configuration.font_size, font_family="Arial", font_wreight="bold")
-
-        text_style = dict(font_size=self.layout_configuration.font_size, font_family="Arial", font_wreight="normal")
-
-        y_current = y_top
-        for l in self._code_explanation_lines:
-            text = dwg.text("", insert=(x_left, y_current))
-            if l[0] is not "":
-                text.add(dwg.tspan(l[0], **code_style))
-            if l[1] is not "":
-                style = text_style if l[0] != "" else code_style
-                text.add(dwg.tspan(l[1], dx=[20], **style))
-            if l[2] is not "":
-                text.add(dwg.tspan(l[2], dx=[40], **text_style))
-
-            dwg.add(text)
-            y_current += self.layout_configuration.font_size * 1.2
+        self.draw_element(
+            dwg=dwg,
+            element=self._code_explanation_element,
+            x_container=x_left,
+            y_container=y_top,
+            height_container=self._content_height,
+            width_container=self._code_explanation_element.width,
+            alignment=Alignment.MiddleCenter,
+        )
 
     def _draw_container(self, dwg: Drawing, x: float, y: float):
         draw_callout(
@@ -218,48 +183,7 @@ class LegendElement(VisualElementsContainer):
             element=self._color_table_element,
             x_container=x_left,
             y_container=y_top,
-            height_container=self._color_table_element.height,
+            height_container=self._content_height,
             width_container=self._color_table_element.width,
-            alignment=Alignment.TopLeft,
-        )
-
-    def _draw_priority_explanation(self, dwg: Drawing, x_left: float, y_top: float):
-        y_current = y_top
-        self.draw_element(
-            dwg=dwg,
-            element=self._high_priority_icon_element,
-            x_container=x_left,
-            y_container=y_current,
-            height_container=max([self._high_priority_icon_element.height, self._high_priority_text_element.height]),
-            width_container=self.width,
-            alignment=Alignment.MiddleLeft,
-        )
-        self.draw_element(
-            dwg=dwg,
-            element=self._high_priority_text_element,
-            x_container=x_left + self._high_priority_icon_element.width + self.layout_configuration.small_margin,
-            y_container=y_current,
-            height_container=max([self._high_priority_icon_element.height, self._high_priority_text_element.height]),
-            width_container=self.width,
-            alignment=Alignment.MiddleLeft,
-        )
-
-        y_current += max([self._high_priority_icon_element.height, self._high_priority_text_element.height])
-        self.draw_element(
-            dwg=dwg,
-            element=self._low_priority_icon_element,
-            x_container=x_left,
-            y_container=y_current,
-            height_container=max([self._high_priority_icon_element.height, self._high_priority_text_element.height]),
-            width_container=self.width,
-            alignment=Alignment.MiddleLeft,
-        )
-        self.draw_element(
-            dwg=dwg,
-            element=self._low_priority_text_element,
-            x_container=x_left + self._high_priority_icon_element.width + self.layout_configuration.small_margin,
-            y_container=y_current,
-            height_container=max([self._high_priority_icon_element.height, self._high_priority_text_element.height]),
-            width_container=self.width,
-            alignment=Alignment.MiddleLeft,
+            alignment=Alignment.MiddleCenter,
         )

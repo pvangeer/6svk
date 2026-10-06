@@ -56,25 +56,25 @@ def get_blue_toward_grey(time_frame: TimeFrame) -> Color:
 def get_rijkswaterstaat_style_color(time_frame: TimeFrame, research_line_group: int) -> Color:
     match (time_frame, research_line_group):
         case (TimeFrame.Now, 1):
-            return Color.from_str("#103156")  # rgb(16, 49, 86)
+            return KnownColors.RWSBlue1
         case (TimeFrame.Now, 2):
-            return Color.from_str("#6B6003")  # rgb(107, 96, 3)
+            return KnownColors.RWSYellow1
         case (TimeFrame.Now, 3):
-            return Color.from_str("#7F7F7F")  # rgb(127, 127, 127)
+            return KnownColors.RWSGrey1
 
         case (TimeFrame.NearFuture, 1):
-            return Color.from_str("#418BDC")  # rgb(65, 139, 220)
+            return KnownColors.RWSBlue2
         case (TimeFrame.NearFuture, 2):
-            return Color.from_str("#CCB705")  # rgb(204, 183, 5)
+            return KnownColors.RWSYellow2
         case (TimeFrame.NearFuture, 3):
-            return Color.from_str("#BFBFBF")  # rgb(191, 191, 191)
+            return KnownColors.RWSGrey2
 
         case (TimeFrame.Future, 1):
-            return Color.from_str("#C0D8F3")  # rgb(192, 216, 243)
+            return KnownColors.RWSBlue3
         case (TimeFrame.Future, 2):
-            return Color.from_str("#FDF3A5")  # rgb(253, 243, 165)
+            return KnownColors.RWSYellow3
         case (TimeFrame.Future, 3):
-            return Color.from_str("#F2F2F2")  # rgb(242, 242, 242)
+            return KnownColors.RWSGrey3
 
         case _:
             return Color.from_str("#1267DD")  # rgb(18, 103, 221)

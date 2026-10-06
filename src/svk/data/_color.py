@@ -215,3 +215,13 @@ class KnownColors:
     GreyAccent = Color(r=167, g=167, b=167)
     LightGrey = Color(r=210, g=210, b=210)
     NoneColor = Color(no_color=True, r=0, g=0, b=0)
+
+    RWSBlue1 = Color.from_str("#103156")  # rgb(16, 49, 86)
+    RWSBlue2 = Color.from_str("#418BDC")  # rgb(65, 139, 220)
+    RWSBlue3 = Color.from_str("#C0D8F3")  # rgb(192, 216, 243)
+    RWSYellow1 = Color.from_str("#6B6003")  # rgb(107, 96, 3)
+    RWSYellow2 = Color.from_str("#CCB705")  # rgb(204, 183, 5)
+    RWSYellow3 = Color.from_str("#FDF3A5")  # rgb(253, 243, 165)
+    RWSGrey1 = Color.from_str("#7F7F7F")  # rgb(127, 127, 127)
+    RWSGrey2 = Color.from_str("#BFBFBF")  # rgb(191, 191, 191)
+    RWSGrey3 = Color.from_str("#F2F2F2")  # rgb(242, 242, 242)

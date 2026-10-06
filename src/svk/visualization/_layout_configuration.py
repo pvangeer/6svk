@@ -41,6 +41,7 @@ class LayoutConfiguration(BaseModel):
     group_title_font_size: int = 14
     font_size: int = 12
     disclamer_font_size: int = 8
+    font_family: str = "Arial"
 
     # Sizes
     column_header_height: float = 60

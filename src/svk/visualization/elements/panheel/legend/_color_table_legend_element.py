@@ -31,8 +31,6 @@ from svk.visualization.helpers._color_helper import get_color
 class ColorTableLegendElement(VisualElementsContainer):
     color: Color
     """The color of the group"""
-    use_contrast_color: bool = False
-    """Indicates whether the title should choose a color with mist contrast or just use black"""
 
     _width: float = PrivateAttr()
     _height: float = PrivateAttr()
@@ -41,8 +39,6 @@ class ColorTableLegendElement(VisualElementsContainer):
     _operational_text_element: TextElement = PrivateAttr()
     _table_column_width: float = PrivateAttr()
     _row_height: float = PrivateAttr()
-    _table_width: float = PrivateAttr()
-    _table_height: float = PrivateAttr()
     _now_icon_element: TimeFrameElement = PrivateAttr()
     _near_future_icon_element: TimeFrameElement = PrivateAttr()
     _future_icon_element: TimeFrameElement = PrivateAttr()
@@ -114,7 +110,6 @@ class ColorTableLegendElement(VisualElementsContainer):
         self._table_first_row_height = (
             max(
                 [
-                    self.layout_configuration.small_margin,
                     self._now_icon_element.height,
                     self._near_future_icon_element.height,
                     self._future_icon_element.height,
@@ -123,30 +118,25 @@ class ColorTableLegendElement(VisualElementsContainer):
             + 2 * self.layout_configuration.small_margin
         )
 
-        self._table_width = (
-            +self._table_first_column_width
-            + self._table_column_width * 3
-            + self.layout_configuration.small_margin * 2
-            + self.layout_configuration.intermediate_margin
-        )
-
-        self._width = self._table_width
+        self._width = self._table_first_column_width + self._table_column_width * 3
 
         self._row_height = (
             max([self._requirements_text_element.height, self._maintenance_text_element.height, self._operational_text_element.height])
             + 2 * self.layout_configuration.small_margin
         )
-        self._table_height = self._table_first_row_height + 3 * self._row_height
-        self._height = self._table_height
+        self._height = self._table_first_row_height + 3 * self._row_height
         return self
 
     def draw(self, dwg: Drawing, x: float, y: float):
         y_r1 = y + self._table_first_row_height
+        y_r2 = y_r1 + self._row_height
+        y_r3 = y_r2 + self._row_height
+        width_horizontal_separator = self._table_first_column_width + self._table_column_width * 3
         self.draw_horizontal_separator(
             dwg=dwg,
             x=x,
             y=y_r1,
-            element_width=self._table_first_column_width + 3 * self._table_column_width,
+            element_width=width_horizontal_separator,
             color=self.color,
         )
         self._draw_research_line_group_element(
@@ -158,12 +148,11 @@ class ColorTableLegendElement(VisualElementsContainer):
         self.draw_horizontal_separator(
             dwg=dwg,
             x=x,
-            y=y_r1 + self._row_height,
-            element_width=self._table_first_column_width + 3 * self._table_column_width,
+            y=y_r2,
+            element_width=width_horizontal_separator,
             color=self.color,
         )
 
-        y_r2 = y_r1 + self._row_height
         self._draw_research_line_group_element(
             dwg=dwg,
             element=self._requirements_text_element,
@@ -173,12 +162,11 @@ class ColorTableLegendElement(VisualElementsContainer):
         self.draw_horizontal_separator(
             dwg=dwg,
             x=x,
-            y=y_r2 + self._row_height,
-            element_width=self._table_first_column_width + 3 * self._table_column_width,
+            y=y_r3,
+            element_width=width_horizontal_separator,
             color=self.color,
         )
 
-        y_r3 = y_r2 + self._row_height
         self._draw_research_line_group_element(
             dwg=dwg,
             element=self._operational_text_element,
@@ -187,14 +175,14 @@ class ColorTableLegendElement(VisualElementsContainer):
         )
 
         x_c1 = x + self._table_first_column_width
+        x_c2 = x_c1 + self._table_column_width
+        x_c3 = x_c2 + self._table_column_width
         self.draw_vertical_separator(dwg=dwg, x=x_c1, y=y, element_height=self._table_first_row_height, color=self.color)
         self._draw_time_frame_element(dwg=dwg, element=self._now_icon_element, x_container=x_c1, y_container=y)
 
-        x_c2 = x_c1 + self._table_column_width
         self.draw_vertical_separator(dwg=dwg, x=x_c2, y=y, element_height=self._table_first_row_height, color=self.color)
         self._draw_time_frame_element(dwg=dwg, element=self._near_future_icon_element, x_container=x_c2, y_container=y)
 
-        x_c3 = x_c2 + self._table_column_width
         self.draw_vertical_separator(dwg=dwg, x=x_c3, y=y, element_height=self._table_first_row_height, color=self.color)
         self._draw_time_frame_element(dwg=dwg, element=self._future_icon_element, x_container=x_c3, y_container=y)
 
