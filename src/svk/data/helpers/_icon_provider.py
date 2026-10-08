@@ -22,8 +22,6 @@ class IconProvider:
                 return IconProvider.create_hartel_barrier_icon()
             case StormSurgeBarrier.All:
                 return IconProvider.create_6svk_icon()
-            case StormSurgeBarrier.SluicePanheel:
-                return IconProvider.create_rws_sluice_icon()
             case _:
                 return None
 
@@ -188,7 +186,7 @@ class IconProvider:
     @staticmethod
     def create_sluice_panheel_icon() -> Icon:
         return Icon(
-            id=StormSurgeBarrier.SluicePanheel.name,
+            id="SluicePanheel",
             elements=(
                 PathIconElement(
                     d="m 100.96279,14.957051 c 38.18384,36.720631 21.52963,46.708333 42.27413,64.100509 17.33351,14.532393 69.26412,64.1233 87.26681,78.47597 21.87696,17.44143 40.15819,18.93845 56.94203,33.1776"
