@@ -14,7 +14,7 @@ def test_read_sluices_database():
     assert len(d) > 65
     q = d[0]
     assert q.id == "SP_C1"
-    assert q.sluice == "SP"  # TODO: Adjust to sluices
+    assert q.sluice == "SP"
     assert q.question.startswith("Hoe bepaal je de kwaliteit en variabiliteit van het historische")
     assert q.prio_water_safety == Priority.Low
     assert q.prio_water_availability == Priority.Medium

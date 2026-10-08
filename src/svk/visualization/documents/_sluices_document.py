@@ -24,6 +24,7 @@ from svk.visualization.elements._cluster import Cluster
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.elements.panheel._sluices_question_details_element import SluicesQuestionDetailsElement
 from svk.visualization.documents._document import Document
+from svk.visualization.pages._legend_page import LegendPage
 
 
 def _get_research_line_title(translator: Translator, research_line: ResearchLine | None) -> str:
@@ -37,14 +38,14 @@ class SluicesDocument(Document):
     questions: list[SluicesResearchQuestion]
     layout_configuration: LayoutConfiguration = LayoutConfiguration(use_rijkswaterstaat_colors=True, use_gradients=False)
     disclaimer: str | None = (
-        f"Deze agenda is ontstaan in samenwerking met het asset management teams van sluis Panheel. Het weerspiegelt de kennisvragen op het moment van opstellen ({datetime.now().strftime("%Y-%m-%d")}). Voor vragen, neem contact op met Meinard Tiessen."
+        f"Deze agenda is opgesteld op {datetime.now().strftime("%Y-%m-%d")} in samenwerking met het asset management team van sluis Panheel. Voor vragen, neem contact op met Meinard Tiessen."
     )
     disclaimer_links: list[tuple[str, str]] | None = [
         ("Meinard Tiessen", "mailto:meinard.tiessen@deltares.nl"),
     ]
 
     def create_pages(self) -> list[Page]:
-        return [
+        pages = [
             self._create_overview_page(
                 page_number=0,
                 research_lines=[
@@ -73,7 +74,10 @@ class SluicesDocument(Document):
                 research_lines=[SluicesResearchLineFactory.get_research_line_from_ssb_enum(SluicesResearchLines.Organizational)],
                 subtitle=self.translator.get_label(Label.RLG_Operational),
             ),
-        ] + self.create_detailed_sluice_question_pages(current_page_number=3)
+        ] + self._create_detailed_sluice_question_pages(current_page_number=3)
+        pages += [self._create_legend_page(page_number=len(pages))]
+
+        return pages
 
     def _create_overview_page(
         self,
@@ -96,6 +100,7 @@ class SluicesDocument(Document):
             icon=IconProvider.create_rws_sluice_icon(),
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
+            include_legend_link=True,
         )
 
         self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Now, number=0, color_group=research_lines[0].cluster)
@@ -177,7 +182,7 @@ class SluicesDocument(Document):
 
         fig.clusters = list(clusters.values())
 
-    def create_detailed_sluice_question_pages(self, current_page_number: int) -> list[Page]:
+    def _create_detailed_sluice_question_pages(self, current_page_number: int) -> list[Page]:
         pages: list[Page] = []
 
         grouped_questions: defaultdict[ResearchLine, list[SluicesResearchQuestion]] = defaultdict(list[SluicesResearchQuestion])
@@ -231,6 +236,7 @@ class SluicesDocument(Document):
             translator=self.translator,
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
+            include_legend_link=True,
         )
         for question in sorted(questions, key=lambda q: q.id):
             dwg_details_page.questions.append(
@@ -244,3 +250,16 @@ class SluicesDocument(Document):
             )
 
         return dwg_details_page
+
+    def _create_legend_page(self, page_number: int) -> Page:
+        page = LegendPage(
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator,
+            title="Verklaring",
+            subtitle="Gebruikte symbolen en kleuren en vraagcodes",
+            page_number=page_number,
+            disclaimer=self.disclaimer,
+            disclaimer_links=self.disclaimer_links,
+        )
+        return page

@@ -26,7 +26,7 @@ from svgwrite import Drawing
 
 class TimeLineOverviewPage(Page):
     """
-    The overview page of the "kennisagenda"
+    The overview page of the "Research agenda"
     """
 
     columns: list[Column] = []

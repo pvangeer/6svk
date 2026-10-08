@@ -237,5 +237,5 @@ def test_create_image():
     cluster.groups[1].append(adaptation_near)
     dwg = fig.draw()
 
-    pt = test_output_dir / "Kennisagenda_auto.pdf"
+    pt = test_output_dir / "Onderzoeksagenda_auto.pdf"
     svg_to_pdf(dwg, pt)

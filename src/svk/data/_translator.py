@@ -14,7 +14,7 @@ class Label(Enum):
     LegendLowPriority = ("Lage prioriteit", "Low priority")
 
     D_NoResearchLine = ("Zonder onderzoekslijn", "No research line")
-    D_TitlePrefix = ("Details kennisagenda", "Details knowledge agenda")
+    D_TitlePrefix = ("Details onderzoeksagenda", "Details research agenda")
 
     RL_ConstructiveAspects = ("Constructieve aspecten", "Structural aspects")
     RL_OperatingSystem = ("Besturingssystemen / IA", "Control systems / Industrial automation")

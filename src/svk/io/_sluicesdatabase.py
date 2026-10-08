@@ -28,7 +28,6 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
     Class that wraps a list[ResearchQuestion] to allow additional logic to read an convert a database file stored in Excel.
     """
 
-    # TODO: Change barrier icon to sluice icon and use that.
     i_sluice = "A"
     """A - Hard coded column number for the sluice"""
     i_id = "B"
@@ -75,7 +74,7 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
                 id=ExcelDatabase._get_as_str(row, ExcelDatabase._string_to_column_index(self.i_id)),
                 question=ExcelDatabase._get_as_str(row, ExcelDatabase._string_to_column_index(self.i_question)),
                 explanation=ExcelDatabase._get_str_optional(row, ExcelDatabase._string_to_column_index(self.i_explanation)),
-                sluice=ExcelDatabase._get_as_str(row, ExcelDatabase._string_to_column_index(self.i_sluice)),  # TODO: Change to sluices
+                sluice=ExcelDatabase._get_as_str(row, ExcelDatabase._string_to_column_index(self.i_sluice)),
                 research_line=SluicesKnowledgeAgendaDatabase._get_research_line_optional(
                     row, ExcelDatabase._string_to_column_index(self.i_research_line)
                 ),

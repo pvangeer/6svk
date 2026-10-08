@@ -22,7 +22,7 @@ from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from svgwrite import Drawing
 
-from svk.data import LinksRegister, Translator, Icon, KnownColors
+from svk.data import LinksRegister, Translator, Icon, KnownColors, Label
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
@@ -52,6 +52,7 @@ class Page(BaseModel, ABC):
     """The links register shared across all elements of a document."""
     translator: Translator
     """The translator that should be used for this page."""
+    include_legend_link: bool = False
 
     _title_width: float = 0.0
     _title_height: float = 0.0
@@ -121,6 +122,7 @@ class Page(BaseModel, ABC):
         )
 
         self.draw_disclaimer(dwg=dwg)
+        self.draw_legend_link(dwg=dwg)
 
         return dwg
 
@@ -210,4 +212,31 @@ class Page(BaseModel, ABC):
                 text_anchor="start",
                 font_size=self.layout_configuration.disclamer_font_size,
                 links=self.disclaimer_links if self.disclaimer_links is not None else [],
+            )
+
+    def draw_legend_link(self, dwg: Drawing):
+        if self.include_legend_link:
+            page_width, page_height = self.get_size()
+            legend_label = self.translator.get_label(label=Label.LegendTitle)
+            label_size = measure_text_chromium(text=legend_label, font_size=self.layout_configuration.disclamer_font_size)
+            x_end = page_width - self.layout_configuration.paper_margin
+            y_top = page_height - self.layout_configuration.paper_margin - self.layout_configuration.disclamer_font_size * 1.2
+            dwg.add(
+                dwg.text(
+                    legend_label,
+                    insert=(x_end, y_top),
+                    dominant_baseline="hanging",
+                    text_anchor="end",
+                    fill="blue",
+                    text_decoration="underline",
+                    font_size=self.layout_configuration.disclamer_font_size,
+                )
+            )
+            self.links_register.register_link(
+                link_target="#legend_page",
+                x=x_end - label_size[0],
+                y=y_top,
+                width=label_size[0],
+                height=label_size[1],
+                page_number=self.page_number,
             )

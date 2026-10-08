@@ -46,7 +46,7 @@ def get_database_path(barrier: StormSurgeBarrier) -> Path:
 
 
 @cache
-def read_knowledge_agenda_database(barrier: StormSurgeBarrier) -> tuple[StormSurgeBarrierResearchQuestion, ...]:
+def read_research_agenda_database(barrier: StormSurgeBarrier) -> tuple[StormSurgeBarrierResearchQuestion, ...]:
     questions = KnowledgeAgendaDatabase(get_database_path(barrier=barrier))
     questions.read()
     if len(questions.errors) > 0:

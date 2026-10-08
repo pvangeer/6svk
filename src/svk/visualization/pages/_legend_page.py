@@ -8,6 +8,7 @@ from svk.visualization.elements.panheel.legend._legend_element import LegendElem
 
 class LegendPage(Page):
     _legend_element: LegendElement = PrivateAttr()
+    title_link_target: str | None = "#legend_page"
 
     @model_validator(mode="after")
     def validate(self):

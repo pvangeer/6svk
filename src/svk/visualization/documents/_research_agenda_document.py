@@ -54,7 +54,7 @@ def _get_research_line_title(translator: Translator, research_line: ResearchLine
         return str(research_line.number) + ". " + translator.get_label(research_line.title)
 
 
-class KnowledgeCalendarDocument(ResearchQuestionsDocument):
+class ResearchAgendaDocument(ResearchQuestionsDocument):
     storm_surge_barrier: StormSurgeBarrier
     _clusters: dict[int, Cluster] = {}
     disclaimer: str | None = (
@@ -75,7 +75,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
         pages = [
             self._create_overview_page(
                 page_number=0,
-                title=f"Kennisagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
+                title=f"Onderzoeksagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
                 subtitle="Algemeen overzicht",
             ),
             self._create_overview_page(
@@ -88,7 +88,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
                     StormSurgeBarrierResearchLineFactory.get_research_line_from_ssb_enum(StormSurgeBarrierResearchLines.Facilities),
                     StormSurgeBarrierResearchLineFactory.get_research_line_from_ssb_enum(StormSurgeBarrierResearchLines.Maintenance),
                 ],
-                title=f"Overzicht kennisagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
+                title=f"Overzicht onderzoeksagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
                 subtitle=self.translator.get_label(Label.RLG_Maintenance),
             ),
             self._create_overview_page(
@@ -101,7 +101,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
                     ),
                     StormSurgeBarrierResearchLineFactory.get_research_line_from_ssb_enum(StormSurgeBarrierResearchLines.Adaptation),
                 ],
-                title=f"Overzicht kennisagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
+                title=f"Overzicht onderzoeksagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
                 subtitle=self.translator.get_label(Label.RLG_Requirements),
             ),
             self._create_overview_page(
@@ -110,7 +110,7 @@ class KnowledgeCalendarDocument(ResearchQuestionsDocument):
                     StormSurgeBarrierResearchLineFactory.get_research_line_from_ssb_enum(StormSurgeBarrierResearchLines.Organizational),
                     StormSurgeBarrierResearchLineFactory.get_research_line_from_ssb_enum(StormSurgeBarrierResearchLines.Lifespan),
                 ],
-                title=f"Overzicht kennisagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
+                title=f"Overzicht onderzoeksagenda {self.translator.get_label(self.storm_surge_barrier.title)}",
                 subtitle=self.translator.get_label(Label.RLG_Operational),
             ),
         ] + self.create_detailes_pages(current_page_number=4)

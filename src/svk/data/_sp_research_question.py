@@ -38,7 +38,7 @@ class SluicesResearchQuestion(ResearchQuestion):
     """Priority of this question related to maintenance of the barrier."""
     prio_operation: Priority
     """Priority of this question related to operation of the barrier."""
-    sluice: str  # TODO: Make this an enum that can be translated to an icon?
+    sluice: str
     """The sluice this question is related to."""
     research_program: str | None = None
     """The research program this question is associated with."""

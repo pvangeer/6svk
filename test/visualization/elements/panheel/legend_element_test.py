@@ -30,8 +30,8 @@ def test_draw_legend_page():
         layout_configuration=LayoutConfiguration(use_rijkswaterstaat_colors=True),
         links_register=LinksRegister(),
         translator=Translator(),
-        title="Legend Page",
-        subtitle="Test Subtitle",
+        title="Legenda",
+        subtitle="Verklaring van gebruikte symbolen en kleuren",
         page_number=1,
     )
 

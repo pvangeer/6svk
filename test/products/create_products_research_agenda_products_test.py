@@ -22,21 +22,26 @@ import pytest
 from datetime import datetime
 
 from svk.data import StormSurgeBarrier, Translator
-from svk.visualization import KnowledgeCalendarDocument
+from svk.visualization import ResearchAgendaDocument
 
-from test.utils.database_reader import read_knowledge_agenda_database, read_ssb_pathway_database, read_end_of_life_database
-from test.paths import test_output_dir
+from test.utils.database_reader import (
+    read_ssb_pathway_database,
+    read_research_agenda_database,
+    get_database_dir,
+    read_end_of_life_database,
+)
+from test.paths import allsvk_dir
 
 
-def get_knowledge_calendar_output_file(barrier: StormSurgeBarrier, add: str | None = None) -> str:
+def get_research_agenda_output_file(barrier: StormSurgeBarrier, add: str | None = None) -> str:
     t = Translator(lang="nl")
-    name = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda {t.get_label(barrier.title)}"
+    name = f"{datetime.now().strftime("%Y-%m-%d")} - Onderzoeksagenda {t.get_label(barrier.title)}"
     if add is not None and add != "":
         name += f" - {add}"
     return name
 
 
-@pytest.mark.localproduct
+@pytest.mark.product
 @pytest.mark.parametrize(
     "barrier",
     [
@@ -48,7 +53,7 @@ def get_knowledge_calendar_output_file(barrier: StormSurgeBarrier, add: str | No
         pytest.param(StormSurgeBarrier.Ramspol, id=StormSurgeBarrier.Ramspol.title.value[0]),
     ],
 )
-def test_create_knowledge_calendar_per_ssb(barrier: StormSurgeBarrier):
+def test_create_research_calendar_per_ssb(barrier: StormSurgeBarrier):
     translator = Translator(lang="nl")
     efl = read_end_of_life_database(
         barrier=barrier,
@@ -58,11 +63,11 @@ def test_create_knowledge_calendar_per_ssb(barrier: StormSurgeBarrier):
         barrier=barrier,
         sheet_name="ETL",
     )
-    calendar_document = KnowledgeCalendarDocument(
+    calendar_document = ResearchAgendaDocument(
         translator=translator,
-        output_dir=test_output_dir,
-        output_file=get_knowledge_calendar_output_file(barrier=barrier),
-        questions=read_knowledge_agenda_database(barrier=barrier),
+        output_dir=get_database_dir(barrier=barrier),
+        output_file=get_research_agenda_output_file(barrier=barrier),
+        questions=read_research_agenda_database(barrier=barrier),
         storm_surge_barrier=barrier,
         efl_grid=efl,
         etl_grid=etl,
@@ -71,23 +76,23 @@ def test_create_knowledge_calendar_per_ssb(barrier: StormSurgeBarrier):
     calendar_document.build()
 
 
-@pytest.mark.localproduct
+@pytest.mark.product
 def test_create_6svk():
-    translator = Translator(lang="nl")
     all_questions = (
-        read_knowledge_agenda_database(StormSurgeBarrier.HartelBarrier)
-        + read_knowledge_agenda_database(StormSurgeBarrier.HollandseIJsselBarrier)
-        + read_knowledge_agenda_database(StormSurgeBarrier.HaringvlietBarrier)
-        + read_knowledge_agenda_database(StormSurgeBarrier.MaeslantBarrier)
-        + read_knowledge_agenda_database(StormSurgeBarrier.Ramspol)
-        + read_knowledge_agenda_database(StormSurgeBarrier.EasternScheldtBarrier)
+        read_research_agenda_database(StormSurgeBarrier.HartelBarrier)
+        + read_research_agenda_database(StormSurgeBarrier.HollandseIJsselBarrier)
+        + read_research_agenda_database(StormSurgeBarrier.HaringvlietBarrier)
+        + read_research_agenda_database(StormSurgeBarrier.MaeslantBarrier)
+        + read_research_agenda_database(StormSurgeBarrier.Ramspol)
+        + read_research_agenda_database(StormSurgeBarrier.EasternScheldtBarrier)
         + read_ssb_pathway_database()
     )
     six_svk_questions = tuple(q for q in all_questions if StormSurgeBarrier.All in q.storm_surge_barriers)
-    calendar = KnowledgeCalendarDocument(
+    translator = Translator(lang="nl")
+    calendar = ResearchAgendaDocument(
         translator=translator,
-        output_dir=test_output_dir,
-        output_file=get_knowledge_calendar_output_file(StormSurgeBarrier.All),
+        output_dir=allsvk_dir,
+        output_file=get_research_agenda_output_file(StormSurgeBarrier.All),
         questions=six_svk_questions,
         storm_surge_barrier=StormSurgeBarrier.All,
         topic=translator.get_label(StormSurgeBarrier.All.title),
@@ -95,19 +100,19 @@ def test_create_6svk():
     calendar.build()
 
 
-@pytest.mark.localproduct
+@pytest.mark.product
 def test_create_all():
     translator = Translator(lang="nl")
-    calendar = KnowledgeCalendarDocument(
+    calendar = ResearchAgendaDocument(
         translator=translator,
-        output_dir=test_output_dir,
-        output_file=get_knowledge_calendar_output_file(StormSurgeBarrier.All, "alle vragen"),
-        questions=read_knowledge_agenda_database(StormSurgeBarrier.HartelBarrier)
-        + read_knowledge_agenda_database(StormSurgeBarrier.HollandseIJsselBarrier)
-        + read_knowledge_agenda_database(StormSurgeBarrier.HaringvlietBarrier)
-        + read_knowledge_agenda_database(StormSurgeBarrier.MaeslantBarrier)
-        + read_knowledge_agenda_database(StormSurgeBarrier.Ramspol)
-        + read_knowledge_agenda_database(StormSurgeBarrier.EasternScheldtBarrier)
+        output_dir=allsvk_dir,
+        output_file=get_research_agenda_output_file(StormSurgeBarrier.All, "alle vragen"),
+        questions=read_research_agenda_database(StormSurgeBarrier.HartelBarrier)
+        + read_research_agenda_database(StormSurgeBarrier.HollandseIJsselBarrier)
+        + read_research_agenda_database(StormSurgeBarrier.HaringvlietBarrier)
+        + read_research_agenda_database(StormSurgeBarrier.MaeslantBarrier)
+        + read_research_agenda_database(StormSurgeBarrier.Ramspol)
+        + read_research_agenda_database(StormSurgeBarrier.EasternScheldtBarrier)
         + read_ssb_pathway_database(),
         storm_surge_barrier=StormSurgeBarrier.All,
         topic=translator.get_label(StormSurgeBarrier.All.title),
