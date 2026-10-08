@@ -50,7 +50,6 @@ class StormSurgeBarrierResearchQuestion(ResearchQuestion):
 
     research_line_secondary: ResearchLine | None = None
     """An optional secondary research line this question is associated with."""
-    # TODO: research line explanation
 
     action_holder: str | None = None
     """The organisation that is most likely to be responsible or leading in answering this research question."""

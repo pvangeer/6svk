@@ -43,7 +43,6 @@ class ResearchQuestion(ABC, BaseModel):
 
     time_frame: TimeFrame
     """The time frame this question is associated with."""
-    # TODO: Time frame explanation
 
     research_line: ResearchLine | None
     """The primary research line this question is associated with."""

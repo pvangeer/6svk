@@ -3,8 +3,6 @@ from svk.data._icon import Icon, PathIconElement, RectIconElement, CircleIconEle
 from svk.data._timeframe import TimeFrame
 from svk.data._color import KnownColors
 
-accent_fill = KnownColors.GreyAccent
-
 
 class IconProvider:
     @staticmethod
@@ -48,7 +46,7 @@ class IconProvider:
                     d="m -7,225 c 11,-6 18,-6 29,0 10,6 18,6 29,0 10,-6 18,-6 29,0 10,6 18,6 29,0 10,-6 18,-6 29,0 10,6 18,6 29,0 10,-6 18,-6 29,0 10,6 18,6 29,0 10,-6 18,-6 29,0",
                     stroke_width=15,
                     stroke_linecap="round",
-                    stroke=accent_fill,
+                    stroke=KnownColors.GreyAccent,
                 ),
                 RectIconElement(x=44.64407, y=31.349152, width=155.38306, height=34.189831, stroke_linejoin="miter", stroke_width=10),
                 PathIconElement(
@@ -86,7 +84,7 @@ class IconProvider:
                 PathIconElement(
                     d="M 32.719705,119.49805 C 142.37679,26.445768 215.95329,38.323024 259.62374,39.121386 v 88.200944 c -68.85629,51.38753 -147.47737,63.81212 -228.32663,69.7072 z",
                     stroke_width=10,
-                    fill=accent_fill,
+                    fill=KnownColors.GreyAccent,
                 ),
                 PathIconElement(d="M 30.154808,260.33504 V 119.49805"),
                 PathIconElement(d="M 258.25088,182.1445 V 41.307507"),
@@ -107,7 +105,9 @@ class IconProvider:
         return Icon(
             id=StormSurgeBarrier.Ramspol.name,
             elements=(
-                PathIconElement(d="m 108.51657,222.68539 c -35.403564,-269.85873 267.57095,-92.02657 31.28754,-0.0425", fill=accent_fill),
+                PathIconElement(
+                    d="m 108.51657,222.68539 c -35.403564,-269.85873 267.57095,-92.02657 31.28754,-0.0425", fill=KnownColors.GreyAccent
+                ),
                 PathIconElement(d="M 8.2382951,105.06773 116.74205,104.72071", stroke_width=10),
                 PathIconElement(d="m 226.25716,166.70787 64.74651,0.1839", stroke_width=10),
             ),
@@ -123,7 +123,7 @@ class IconProvider:
                     y=180.31404,
                     width=168.57761,
                     height=51.213451,
-                    fill=accent_fill,
+                    fill=KnownColors.GreyAccent,
                     stroke_width=10.0,
                 ),
                 RectIconElement(
@@ -144,7 +144,7 @@ class IconProvider:
                 PathIconElement(d="M 71.974039,121.32186 71.618389,56.9494", stroke_width=10.0),
                 PathIconElement(d="M 231.11045,121.32186 230.7548,56.949399", stroke_width=10.0),
                 PathIconElement(d="M 257.52939,121.32186 257.17374,56.9494", stroke_width=10.0),
-                PathIconElement(d="m 64.727389,161.1493 173.202481,-0.0806 v 0", fill=accent_fill),
+                PathIconElement(d="m 64.727389,161.1493 173.202481,-0.0806 v 0", fill=KnownColors.GreyAccent),
             ),
         )
 
@@ -156,14 +156,14 @@ class IconProvider:
                 PathIconElement(
                     d="M 44.405365,174.76525 196.62312,119.63966 196.97877,71.271404 42.982775,124.61875 Z",
                     stroke_width=10,
-                    fill=accent_fill,
+                    fill=KnownColors.GreyAccent,
                 ),
                 PathIconElement(d="M 40.062225,216.37618 V 75.539194"),
                 PathIconElement(d="M 196.3172,174.10619 V 33.269194"),
                 PathIconElement(
                     d="m 101.35995,235.79526 152.21776,-55.12559 0.35565,-48.36826 -153.996003,53.34735 z",
                     stroke_width=10,
-                    fill=accent_fill,
+                    fill=KnownColors.GreyAccent,
                 ),
                 PathIconElement(d="M 97.016813,277.40619 V 136.5692"),
                 PathIconElement(d="M 253.27179,235.1362 V 94.299203"),
@@ -199,7 +199,7 @@ class IconProvider:
                 PathIconElement(
                     d="m 55.623121,75.880925 c 12.459902,10.857716 28.280115,27.062905 28.280115,27.062905 l 2.964971,21.69317 81.031213,71.41732 29.52833,2.06013 c 0,0 35.62137,28.18535 54.59306,42.91907 C 274.42032,258.42934 219.87316,184.52591 205.32486,172.363 174.46481,146.56288 130.84074,105.2633 114.67977,92.705201 105.80174,85.806409 10.676736,36.714079 55.623121,75.880925 Z",
                     stroke_width=15,
-                    fill=accent_fill,
+                    fill=KnownColors.GreyAccent,
                 ),
                 PathIconElement(
                     d="m 141.80463,136.65433 c 33.34311,29.43249 13.04739,46.00925 13.04739,46.00925 -26.0331,-21.30902 -39.95993,-34.38747 -59.056645,-51.50289 0,0 18.467815,-18.81761 46.009255,5.49364 z",
@@ -211,10 +211,18 @@ class IconProvider:
                     stroke_width=10,
                     fill=KnownColors.White,
                 ),
-                PathIconElement(d="m 197.42774,163.09249 17.16763,-1.03006 1.03006,-16.13758", stroke_width=10, stroke=accent_fill),
-                PathIconElement(d="m 117.04189,90.220097 17.16763,-1.03006 1.03006,-16.13758", stroke_width=10, stroke=accent_fill),
-                PathIconElement(d="m 68.899876,141.78761 17.16763,-1.03006 1.03006,-16.13758", stroke_width=10, stroke=accent_fill),
-                PathIconElement(d="m 144.30821,210.49849 17.16763,-1.03006 1.03006,-16.13758", stroke_width=10, stroke=accent_fill),
+                PathIconElement(
+                    d="m 197.42774,163.09249 17.16763,-1.03006 1.03006,-16.13758", stroke_width=10, stroke=KnownColors.GreyAccent
+                ),
+                PathIconElement(
+                    d="m 117.04189,90.220097 17.16763,-1.03006 1.03006,-16.13758", stroke_width=10, stroke=KnownColors.GreyAccent
+                ),
+                PathIconElement(
+                    d="m 68.899876,141.78761 17.16763,-1.03006 1.03006,-16.13758", stroke_width=10, stroke=KnownColors.GreyAccent
+                ),
+                PathIconElement(
+                    d="m 144.30821,210.49849 17.16763,-1.03006 1.03006,-16.13758", stroke_width=10, stroke=KnownColors.GreyAccent
+                ),
             ),
         )
 
@@ -232,7 +240,7 @@ class IconProvider:
                 PathIconElement(
                     d="m 45.322541,84.464738 -29.249338,-50.06664 -29.24934,-50.066643 57.983651,-0.29735 57.983656,-0.29735 -28.734314,50.36399 z",
                     stroke_width=10,
-                    fill=accent_fill,
+                    fill=KnownColors.GreyAccent,
                     transform="matrix(0.75456845,0,0,0.56407441,110.91278,121.99129)",
                 ),
             ),
@@ -273,9 +281,9 @@ class IconProvider:
                     PathIconElement(
                         d="M 34.048204,170.95036 C 95.440663,82.251406 178.95804,105.79218 237.61379,173.99809 m 0.42164,-42.29843 -0.7292,41.84658 m -44.17122,0.45245 44.59335,0.30091"
                     ),
-                    PathIconElement(d="M 67.960734,174 H 85.128362", stroke_width=10, stroke=accent_fill),
-                    PathIconElement(d="m 112.3865,174 h 17.16763", stroke_width=10, stroke=accent_fill),
-                    PathIconElement(d="m 154.78043,174 h 17.16763", stroke_width=10, stroke=accent_fill),
+                    PathIconElement(d="M 67.960734,174 H 85.128362", stroke_width=10, stroke=KnownColors.GreyAccent),
+                    PathIconElement(d="m 112.3865,174 h 17.16763", stroke_width=10, stroke=KnownColors.GreyAccent),
+                    PathIconElement(d="m 154.78043,174 h 17.16763", stroke_width=10, stroke=KnownColors.GreyAccent),
                 ]
             ),
         )
