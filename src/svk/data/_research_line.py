@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from pydantic import BaseModel, ConfigDict
-from svk.data._translator import Label
+from svk.data._label import Label
 from svk.data._color import Color
 
 

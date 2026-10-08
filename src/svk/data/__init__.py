@@ -31,7 +31,8 @@ from ._priority import Priority
 from ._stormsurgebarrier import StormSurgeBarrier
 from ._linksregister import LinksRegister
 from ._impactcategory import ImpactCategory
-from ._translator import Translator, Label
+from ._label import Label
+from ._translator import Translator
 from ._function import Function
 from ._driver import Driver
 from ._color import Color, KnownColors

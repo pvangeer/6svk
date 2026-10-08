@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from enum import Enum
-from svk.data._translator import Label
+from svk.data._label import Label
 
 
 class SluicesResearchLines(Enum):
