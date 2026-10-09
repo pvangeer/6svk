@@ -32,18 +32,15 @@ class TimeFrame(Enum):
     - Unknown (onbekend)
 
     After initiation, the enum class has two properties that express:
-    [description] - The Dutch description of the time frame.
-    [grey_fraction] - The grey fraction associated to the specified time frame (a percentage expressed as a float between 0 and 1 that is used when generating colors during visualization)
+    [description] - The description of the time frame in terms of a translatable label.
     """
 
-    NotRelevant = (Label.TFNotRelevant, 1)
-    Now = (Label.TFNow, 0.0)
-    NearFuture = (Label.TFNearFuture, 0.5)
-    Future = (Label.TFFuture, 0.7)
-    Unknown = (Label.TFUnknown, 0)
+    NotRelevant = Label.TFNotRelevant
+    Now = Label.TFNow
+    NearFuture = Label.TFNearFuture
+    Future = Label.TFFuture
+    Unknown = Label.TFUnknown
 
-    def __init__(self, description: Label, grey_fraction: float):
+    def __init__(self, description: Label):
         self.description: Label = description
         """The Dutch description of the time frame."""
-        self.grey_fraction: float = grey_fraction
-        """The grey fraction for this time frame (a percentage expressed as a float between 0 and 1)"""

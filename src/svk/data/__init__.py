@@ -21,8 +21,8 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from ._research_question import ResearchQuestion
 from ._ssb_research_question import StormSurgeBarrierResearchQuestion
 from ._ssbd_research_question import ImpactPathwayResearchQuestion
-from ._sp_research_question import SluicesResearchQuestion
-from ._sp_research_line_factory import SluicesResearchLineFactory
+from ._sluices_research_question import SluicesResearchQuestion
+from ._sluices_research_line_factory import SluicesResearchLineFactory
 from ._research_line import ResearchLine
 from ._ssb_research_lines import StormSurgeBarrierResearchLines
 from ._ssb_research_line_factory import StormSurgeBarrierResearchLineFactory
@@ -39,4 +39,4 @@ from ._color import Color, KnownColors
 from ._grid import Grid, GridCell, GridHeader
 from ._icon import Icon, PathIconElement, RectIconElement, CircleIconElement, IconElementType, IconElement, ClipPath
 from .helpers._icon_provider import IconProvider
-from ._sp_research_lines import SluicesResearchLines
+from ._sluices_research_lines import SluicesResearchLines

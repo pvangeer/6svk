@@ -20,12 +20,12 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from pydantic import BaseModel
 from svk.data._research_line import ResearchLine
-from svk.data._sp_research_lines import SluicesResearchLines
-from svk.data._color import Color
+from svk.data._sluices_research_lines import SluicesResearchLines
+from svk.data._color import Color, KnownColors
 
-darkblue = Color(r=16, g=49, b=86)
-sandy = Color(r=107, g=96, b=3)
-grey = Color(r=127, g=127, b=127)
+darkblue = KnownColors.RWSBlue1
+sandy = KnownColors.RWSYellow1
+grey = KnownColors.RWSGrey1
 
 
 class SluicesResearchLineFactory(BaseModel):

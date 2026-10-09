@@ -142,7 +142,9 @@ class ResearchQuestionsDocument(Document):
             translator=self.translator,
             header_title=self.translator.get_label(time_frame.description),
             header_subtitle=helper.get_subtitle(time_frame),
-            header_color=colorhelper.get_blue_toward_grey(time_frame),  # TODO: Make this also styleable with Rijkswaterstaat colors?
+            header_color=colorhelper.get_default_style_color(
+                time_frame=time_frame
+            ),  # TODO: Make this also styleable with Rijkswaterstaat colors?
             number=number,
         )
 

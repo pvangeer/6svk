@@ -22,7 +22,7 @@ from __future__ import annotations
 from svk.data._research_question import ResearchQuestion
 from svk.data._priority import Priority
 from svk.data._color import Color
-from svk.data.helpers._greyfraction import color_toward_grey
+from svk.data.helpers._greyfraction import color_toward_grey, get_grey_fraction
 
 
 class SluicesResearchQuestion(ResearchQuestion):
@@ -55,7 +55,7 @@ class SluicesResearchQuestion(ResearchQuestion):
         return (
             color_toward_grey(
                 research_line.base_color,
-                self.time_frame.grey_fraction,
+                get_grey_fraction(self.time_frame),
             )
             if research_line is not None
             else Color(r=120, g=120, b=120)

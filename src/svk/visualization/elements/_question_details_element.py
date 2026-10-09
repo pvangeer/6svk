@@ -25,6 +25,7 @@ from svk.data.helpers import color_toward_grey
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
+from svk.visualization.helpers import _color_helper as colorhelper
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer, Alignment
 from svk.visualization.elements._question_organisation_details_element import QuestionOrganisationDetailsElement
@@ -181,7 +182,7 @@ class QuestionDetailsElement(VisualElementsContainer):
         return (
             color_toward_grey(
                 research_line.base_color,
-                self.research_question.time_frame.grey_fraction,
+                colorhelper.get_grey_fraction(self.research_question.time_frame),
             )
             if research_line is not None
             else Color(r=120, g=120, b=120)

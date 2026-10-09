@@ -24,7 +24,7 @@ from svk.data._priority import Priority
 from svk.data._research_line import ResearchLine
 from svk.data._research_question import ResearchQuestion
 from svk.data._stormsurgebarrier import StormSurgeBarrier
-from svk.data.helpers._greyfraction import color_toward_grey
+from svk.data.helpers._greyfraction import color_toward_grey, get_grey_fraction
 from svk.data._color import Color
 
 
@@ -69,7 +69,7 @@ class StormSurgeBarrierResearchQuestion(ResearchQuestion):
         return (
             color_toward_grey(
                 research_line.base_color,
-                self.time_frame.grey_fraction,
+                get_grey_fraction(self.time_frame),
             )
             if research_line is not None
             else Color(r=120, g=120, b=120)

@@ -19,6 +19,23 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svk.data._color import Color
+from svk.data._timeframe import TimeFrame  # tEmporarily, because we still need colors in data
+
+
+def get_grey_fraction(time_frame: TimeFrame) -> float:
+    match time_frame:
+        case TimeFrame.NotRelevant:
+            return 1
+        case TimeFrame.Now:
+            return 0.0
+        case TimeFrame.NearFuture:
+            return 0.5
+        case TimeFrame.Future:
+            return 0.7
+        case TimeFrame.Unknown:
+            return 0
+        case _:
+            return 1
 
 
 def color_toward_grey(color: Color, grey_fraction: float = 0.5, grey: Color = Color(r=210, g=190, b=210)) -> Color:

@@ -33,9 +33,9 @@ class HeaderOrientation(Enum):
 
 class GridHeaderElement(VisualElement):
     label: str
-    color: str | None = None  # TODO: Also include a background and include color in drawing/size?
     orientation: HeaderOrientation
     i_position: int
+    color: str | None = None  # TODO: Also include a background and include color in drawing/size?
 
     _height: float = PrivateAttr()
     _width: float = PrivateAttr()

@@ -242,7 +242,7 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
                             page_number=page_number,
                             link_target_id=research_line.id,
                             title=_get_research_line_title(self.translator, research_line),
-                            color=color_toward_grey(research_line.base_color, time_frame.grey_fraction),
+                            color=color_toward_grey(research_line.base_color, colorhelper.get_grey_fraction(time_frame)),
                             use_contrast_color=True,
                             questions=question_elements,
                         )

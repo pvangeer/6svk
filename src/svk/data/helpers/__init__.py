@@ -18,4 +18,4 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from ._greyfraction import color_toward_grey
+from ._greyfraction import color_toward_grey, get_grey_fraction

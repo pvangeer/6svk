@@ -46,15 +46,45 @@ def get_color(layout_configuration: LayoutConfiguration, time_frame: TimeFrame, 
     if layout_configuration.use_rijkswaterstaat_colors and research_line_group is not None:
         return get_rijkswaterstaat_style_color(time_frame, research_line_group)
     else:
-        return get_blue_toward_grey(time_frame)
+        return get_default_style_color(time_frame, research_line_group)
 
 
 def get_blue_toward_grey(time_frame: TimeFrame) -> Color:
-    return color_toward_grey(Color.from_str("#1267DD"), grey_fraction=time_frame.grey_fraction)
+    return color_toward_grey(Color.from_str("#1267DD"), grey_fraction=get_grey_fraction(time_frame=time_frame))
 
 
-def get_rijkswaterstaat_style_color(time_frame: TimeFrame, research_line_group: int) -> Color:
-    match (time_frame, research_line_group):
+def get_grey_fraction(time_frame: TimeFrame) -> float:
+    match time_frame:
+        case TimeFrame.NotRelevant:
+            return 1
+        case TimeFrame.Now:
+            return 0.0
+        case TimeFrame.NearFuture:
+            return 0.5
+        case TimeFrame.Future:
+            return 0.7
+        case TimeFrame.Unknown:
+            return 0
+        case _:
+            return 1
+
+
+def get_default_style_color(time_frame: TimeFrame, research_line_cluster: int | None = None) -> Color:
+    match research_line_cluster:
+        case 1:
+            base_color = KnownColors.Orange
+        case 2:
+            base_color = KnownColors.LightGreen
+        case 3:
+            base_color = KnownColors.DarkGreen
+        case _:
+            base_color = Color.from_str("#1267DD")
+
+    return color_toward_grey(base_color, get_grey_fraction(time_frame))
+
+
+def get_rijkswaterstaat_style_color(time_frame: TimeFrame, research_line_cluster: int) -> Color:
+    match (time_frame, research_line_cluster):
         case (TimeFrame.Now, 1):
             return KnownColors.RWSBlue1
         case (TimeFrame.Now, 2):

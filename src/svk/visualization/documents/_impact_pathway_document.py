@@ -24,6 +24,7 @@ from svk.data import ImpactPathwayResearchQuestion, TimeFrame, ResearchLine, Imp
 from svk.data.helpers import color_toward_grey
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers._measuretext import measure_text
+from svk.visualization.helpers._color_helper import get_grey_fraction
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group, PlainTextGroup
@@ -142,7 +143,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                             page_number=page_number,
                             link_target_id=research_line.id,
                             title=self.translator.get_label(research_line.title),
-                            color=color_toward_grey(research_line.base_color, time_frame.grey_fraction),
+                            color=color_toward_grey(research_line.base_color, get_grey_fraction(time_frame)),
                             use_contrast_color=True,
                             questions=question_elements,
                         )
@@ -262,7 +263,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                             page_number=page_number,
                             link_target_id=research_line.id,
                             title=self.translator.get_label(research_line.title),
-                            color=color_toward_grey(research_line.base_color, time_frame.grey_fraction),
+                            color=color_toward_grey(research_line.base_color, get_grey_fraction(time_frame)),
                             use_contrast_color=True,
                             questions=question_elements,
                         )

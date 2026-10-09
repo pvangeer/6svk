@@ -209,12 +209,17 @@ class KnownColors:
     Black = Color(r=0, g=0, b=0)
     Red = Color(r=255, g=0, b=0)
     Blue = Color(r=0, g=0, b=255)
+    DefaultBlue = Color(r=18, g=103, b=221)
     Green = Color(r=0, g=255, b=0)
     Yellow = Color(r=255, g=255, b=102)
     Orange = Color(r=255, g=192, b=0)
     GreyAccent = Color(r=167, g=167, b=167)
     LightGrey = Color(r=210, g=210, b=210)
     NoneColor = Color(no_color=True, r=0, g=0, b=0)
+
+    Orange = Color(r=233, g=113, b=50)
+    LightGreen = Color(r=142, g=178, b=30)
+    DarkGreen = Color(r=25, g=107, b=36)
 
     RWSBlue1 = Color.from_str("#103156")  # rgb(16, 49, 86)
     RWSBlue2 = Color.from_str("#418BDC")  # rgb(65, 139, 220)
