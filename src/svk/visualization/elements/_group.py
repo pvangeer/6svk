@@ -18,7 +18,9 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+from __future__ import annotations
 from svgwrite import Drawing
+from pydantic import ConfigDict, model_validator, PrivateAttr
 from svk.data import Color, KnownColors
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.helpers._draw_callout import draw_callout
@@ -46,6 +48,8 @@ class Group(GroupBase):
     A group of items (as part of a column)
     """
 
+    model_config = ConfigDict(frozen=True)
+
     title: str
     """The title of the group"""
     color: Color
@@ -57,8 +61,7 @@ class Group(GroupBase):
     use_contrast_color: bool = False
     """Indicates whether the title should choose a color with mist contrast or just use black"""
 
-    questions: list[QuestionSummaryElement] = []
-    # TODO: Change to tuple and seal this class
+    questions: tuple[QuestionSummaryElement, ...]
     """The questions in this group"""
 
     @property
@@ -166,28 +169,32 @@ class Group(GroupBase):
 
 
 class PlainTextGroup(GroupBase):
+    model_config = ConfigDict(frozen=True)
     text: str
-    _lines: list[str] | None = None
+    _lines: list[str] = PrivateAttr()
+    _width: float = PrivateAttr()
+    _height: float = PrivateAttr()
+
+    @model_validator(mode="after")
+    def validate(self) -> PlainTextGroup:
+        self._width = self.layout_configuration.column_width
+        self._lines = wrapped_lines(self.text, self.layout_configuration.column_width, self.layout_configuration.font_size)
+        self._height = self.layout_configuration.font_size * len(self._lines) * 1.2 + self.layout_configuration.small_margin
+        return self
 
     @property
     def width(self) -> float:
-        return self.layout_configuration.column_width
+        return self._width
 
     @property
     def height(self) -> float:
-        return self.layout_configuration.font_size * len(self._compute_lines()) * 1.2 + self.layout_configuration.small_margin
-
-    def _compute_lines(self) -> list[str]:
-        if self._lines is None:
-            self._lines = wrapped_lines(self.text, self.layout_configuration.column_width, self.layout_configuration.font_size)
-
-        return self._lines
+        return self._height
 
     def draw(self, dwg: Drawing, x: float, y: float):
         dwg.add(
             wrapped_text(
                 dwg=dwg,
-                lines=self._compute_lines(),
+                lines=self._lines,
                 insert=(x, y),
                 font_size=self.layout_configuration.font_size,
                 dominant_baseline="text-before-edge",

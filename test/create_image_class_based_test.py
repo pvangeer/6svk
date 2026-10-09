@@ -69,41 +69,43 @@ def test_create_image():
         translator=translator,
         title="test",
         color=KnownColors.Black,
-        questions=[
-            QuestionSummaryElement(
-                layout_configuration=config,
-                links_register=links_register,
-                translator=translator,
-                research_question=generate_research_question(
-                    question="This is my first question",
-                    time_frame=TimeFrame.Now,
-                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+        questions=tuple(
+            [
+                QuestionSummaryElement(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    research_question=generate_research_question(
+                        question="This is my first question",
+                        time_frame=TimeFrame.Now,
+                        research_line=StormSurgeBarrierResearchLines.Adaptation,
+                    ),
+                    page_number=0,
                 ),
-                page_number=0,
-            ),
-            QuestionSummaryElement(
-                layout_configuration=config,
-                links_register=links_register,
-                translator=translator,
-                research_question=generate_research_question(
-                    question="This is my second question",
-                    time_frame=TimeFrame.Now,
-                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+                QuestionSummaryElement(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    research_question=generate_research_question(
+                        question="This is my second question",
+                        time_frame=TimeFrame.Now,
+                        research_line=StormSurgeBarrierResearchLines.Adaptation,
+                    ),
+                    page_number=0,
                 ),
-                page_number=0,
-            ),
-            QuestionSummaryElement(
-                layout_configuration=config,
-                links_register=links_register,
-                translator=translator,
-                research_question=generate_research_question(
-                    question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
-                    time_frame=TimeFrame.Now,
-                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+                QuestionSummaryElement(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    research_question=generate_research_question(
+                        question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
+                        time_frame=TimeFrame.Now,
+                        research_line=StormSurgeBarrierResearchLines.Adaptation,
+                    ),
+                    page_number=0,
                 ),
-                page_number=0,
-            ),
-        ],
+            ]
+        ),
     )
 
     cyber_near_group = Group(
@@ -112,41 +114,43 @@ def test_create_image():
         translator=translator,
         title="test",
         color=KnownColors.Blue,
-        questions=[
-            QuestionSummaryElement(
-                layout_configuration=config,
-                links_register=links_register,
-                translator=translator,
-                research_question=generate_research_question(
-                    question="This is my first question",
-                    time_frame=TimeFrame.NearFuture,
-                    research_line=StormSurgeBarrierResearchLines.Cyber,
+        questions=tuple(
+            [
+                QuestionSummaryElement(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    research_question=generate_research_question(
+                        question="This is my first question",
+                        time_frame=TimeFrame.NearFuture,
+                        research_line=StormSurgeBarrierResearchLines.Cyber,
+                    ),
+                    page_number=0,
                 ),
-                page_number=0,
-            ),
-            QuestionSummaryElement(
-                layout_configuration=config,
-                links_register=links_register,
-                translator=translator,
-                research_question=generate_research_question(
-                    question="This is my second question",
-                    time_frame=TimeFrame.NearFuture,
-                    research_line=StormSurgeBarrierResearchLines.Cyber,
+                QuestionSummaryElement(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    research_question=generate_research_question(
+                        question="This is my second question",
+                        time_frame=TimeFrame.NearFuture,
+                        research_line=StormSurgeBarrierResearchLines.Cyber,
+                    ),
+                    page_number=0,
                 ),
-                page_number=0,
-            ),
-            QuestionSummaryElement(
-                layout_configuration=config,
-                links_register=links_register,
-                translator=translator,
-                research_question=generate_research_question(
-                    question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
-                    time_frame=TimeFrame.NearFuture,
-                    research_line=StormSurgeBarrierResearchLines.Cyber,
+                QuestionSummaryElement(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    research_question=generate_research_question(
+                        question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
+                        time_frame=TimeFrame.NearFuture,
+                        research_line=StormSurgeBarrierResearchLines.Cyber,
+                    ),
+                    page_number=0,
                 ),
-                page_number=0,
-            ),
-        ],
+            ]
+        ),
     )
 
     adaptation_near_group = Group(
@@ -155,41 +159,43 @@ def test_create_image():
         translator=translator,
         title="test",
         color=KnownColors.Blue,
-        questions=[
-            QuestionSummaryElement(
-                layout_configuration=config,
-                links_register=links_register,
-                translator=translator,
-                research_question=generate_research_question(
-                    question="This is my first question",
-                    time_frame=TimeFrame.NearFuture,
-                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+        questions=tuple(
+            [
+                QuestionSummaryElement(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    research_question=generate_research_question(
+                        question="This is my first question",
+                        time_frame=TimeFrame.NearFuture,
+                        research_line=StormSurgeBarrierResearchLines.Adaptation,
+                    ),
+                    page_number=0,
                 ),
-                page_number=0,
-            ),
-            QuestionSummaryElement(
-                layout_configuration=config,
-                links_register=links_register,
-                translator=translator,
-                research_question=generate_research_question(
-                    question="This is my second question",
-                    time_frame=TimeFrame.NearFuture,
-                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+                QuestionSummaryElement(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    research_question=generate_research_question(
+                        question="This is my second question",
+                        time_frame=TimeFrame.NearFuture,
+                        research_line=StormSurgeBarrierResearchLines.Adaptation,
+                    ),
+                    page_number=0,
                 ),
-                page_number=0,
-            ),
-            QuestionSummaryElement(
-                layout_configuration=config,
-                links_register=links_register,
-                translator=translator,
-                research_question=generate_research_question(
-                    question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
-                    time_frame=TimeFrame.NearFuture,
-                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+                QuestionSummaryElement(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    research_question=generate_research_question(
+                        question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
+                        time_frame=TimeFrame.NearFuture,
+                        research_line=StormSurgeBarrierResearchLines.Adaptation,
+                    ),
+                    page_number=0,
                 ),
-                page_number=0,
-            ),
-        ],
+            ]
+        ),
     )
 
     fig = TimeLineOverviewPage(
@@ -221,20 +227,22 @@ def test_create_image():
                 ),
             ]
         ),
-        clusters=[
-            Cluster(
-                layout_configuration=config,
-                links_register=links_register,
-                translator=translator,
-                color=Color(r=132, g=243, b=124),
-                group_column=tuple(
-                    [
-                        ClusterColumn(column_number=0, groups=tuple([adaptation_now_group])),
-                        ClusterColumn(column_number=1, groups=tuple([cyber_near_group, adaptation_near_group])),
-                    ]
-                ),
-            )
-        ],
+        clusters=tuple(
+            [
+                Cluster(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    color=Color(r=132, g=243, b=124),
+                    columns=tuple(
+                        [
+                            ClusterColumn(column_number=0, groups=tuple([adaptation_now_group])),
+                            ClusterColumn(column_number=1, groups=tuple([cyber_near_group, adaptation_near_group])),
+                        ]
+                    ),
+                )
+            ]
+        ),
     )
 
     dwg = fig.draw()

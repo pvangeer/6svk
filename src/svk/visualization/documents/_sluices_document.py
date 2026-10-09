@@ -110,9 +110,7 @@ class SluicesDocument(Document):
                     self.get_time_frame_column(time_frame=TimeFrame.Future, number=2, color_group=research_lines[0].cluster),
                 ]
             ),
-            clusters=list(
-                self.get_clusters(questions=[q for q in self.questions if q.research_line in research_lines], page_number=page_number)
-            ),
+            clusters=self.get_clusters(questions=[q for q in self.questions if q.research_line in research_lines], page_number=page_number),
         )
 
         return fig
@@ -161,17 +159,19 @@ class SluicesDocument(Document):
 
                 column_groups: list[Group] = []
                 for research_line in questions_per_group_in_column:
-                    question_elements = [
-                        QuestionSummaryElement(
-                            layout_configuration=self.layout_configuration,
-                            links_register=self.links_register,
-                            translator=self.translator,
-                            research_question=q,
-                            page_number=page_number,
-                            show_priority=True,
-                        )
-                        for q in questions_per_group_in_column[research_line]
-                    ]
+                    question_elements = tuple(
+                        [
+                            QuestionSummaryElement(
+                                layout_configuration=self.layout_configuration,
+                                links_register=self.links_register,
+                                translator=self.translator,
+                                research_question=q,
+                                page_number=page_number,
+                                show_priority=True,
+                            )
+                            for q in questions_per_group_in_column[research_line]
+                        ]
+                    )
                     time_frame = questions_per_group_in_column[research_line][0].time_frame
                     column_groups.append(
                         Group(
@@ -195,7 +195,7 @@ class SluicesDocument(Document):
                     links_register=self.links_register,
                     translator=self.translator,
                     color=base_color,
-                    group_column=tuple(columns),
+                    columns=tuple(columns),
                 )
             )
 

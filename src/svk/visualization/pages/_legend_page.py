@@ -1,5 +1,5 @@
 from svgwrite import Drawing
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 
 from svk.data import KnownColors
 from svk.visualization.pages._page import Page

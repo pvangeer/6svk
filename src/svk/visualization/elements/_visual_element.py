@@ -26,6 +26,7 @@ from abc import ABC, abstractmethod
 
 
 class VisualElement(BaseModel, ABC):
+    # TODO: combine these three into one object? They are always passed alongside each other.
     layout_configuration: LayoutConfiguration
     """The layout configuration shared across all elements of a document."""
     links_register: LinksRegister

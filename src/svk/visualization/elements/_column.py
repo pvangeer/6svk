@@ -19,6 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
+from pydantic import ConfigDict
 from svk.data import Color, KnownColors
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._drawchevron import draw_half_chevron
@@ -29,6 +30,8 @@ class Column(VisualElement):
     """
     Class that represents a Column.
     """
+
+    model_config = ConfigDict(frozen=True)
 
     header_title: str
     """Header/title of the column"""

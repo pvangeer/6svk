@@ -18,6 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+from pydantic import ConfigDict
 from svk.visualization.elements._column import Column
 from svk.visualization.elements._cluster import Cluster
 from svk.visualization.pages._page import Page
@@ -29,9 +30,10 @@ class TimeLineOverviewPage(Page):
     The overview page of the "Research agenda"
     """
 
+    model_config = ConfigDict(frozen=True)
     columns: tuple[Column, ...]
     """The columns included in this overview page (that all hold groups and questions)"""
-    clusters: list[Cluster] = []
+    clusters: tuple[Cluster, ...]
 
     def get_content_size(self) -> tuple[float, float]:
         self.layout_configuration.n_columns = len(self.columns)

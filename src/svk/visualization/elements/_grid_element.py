@@ -11,50 +11,56 @@ from svk.visualization.elements._grid_header_element import GridHeaderElement, H
 class GridElement(VisualElementsContainer):
     grid: Grid
 
-    _row_header_elements: list[GridHeaderElement] = PrivateAttr()
-    _column_header_elements: list[GridHeaderElement] = PrivateAttr()
-    _cell_elements: list[GridCellElement] = PrivateAttr()
+    _row_header_elements: tuple[GridHeaderElement, ...] = PrivateAttr()
+    _column_header_elements: tuple[GridHeaderElement, ...] = PrivateAttr()
+    _cell_elements: tuple[GridCellElement, ...] = PrivateAttr()
 
     @model_validator(mode="after")
     def validate(self):
         self._categories = list(dict.fromkeys(header.category for header in self.grid.column_headers))
-        self._cell_elements = [
-            GridCellElement(
-                layout_configuration=self.layout_configuration,
-                translator=self.translator,
-                links_register=self.links_register,
-                fill=c.color,
-                i_row=c.i_row,
-                i_column=c.i_column,
-            )
-            for c in self.grid.cells
-        ]
+        self._cell_elements = tuple(
+            [
+                GridCellElement(
+                    layout_configuration=self.layout_configuration,
+                    translator=self.translator,
+                    links_register=self.links_register,
+                    fill=c.color,
+                    i_row=c.i_row,
+                    i_column=c.i_column,
+                )
+                for c in self.grid.cells
+            ]
+        )
 
-        self._row_header_elements = [
-            GridHeaderElement(
-                layout_configuration=self.layout_configuration,
-                translator=self.translator,
-                links_register=self.links_register,
-                label=r.label,
-                orientation=HeaderOrientation.Horizontal,
-                i_position=r.i_position,
-            )
-            for r in self.grid.row_headers
-            if r.label is not None
-        ]
+        self._row_header_elements = tuple(
+            [
+                GridHeaderElement(
+                    layout_configuration=self.layout_configuration,
+                    translator=self.translator,
+                    links_register=self.links_register,
+                    label=r.label,
+                    orientation=HeaderOrientation.Horizontal,
+                    i_position=r.i_position,
+                )
+                for r in self.grid.row_headers
+                if r.label is not None
+            ]
+        )
 
-        self._column_header_elements = [
-            GridHeaderElement(
-                layout_configuration=self.layout_configuration,
-                translator=self.translator,
-                links_register=self.links_register,
-                label=c.label,
-                orientation=HeaderOrientation.Vertical,
-                i_position=c.i_position,
-            )
-            for c in self.grid.column_headers
-            if c.label is not None
-        ]
+        self._column_header_elements = tuple(
+            [
+                GridHeaderElement(
+                    layout_configuration=self.layout_configuration,
+                    translator=self.translator,
+                    links_register=self.links_register,
+                    label=c.label,
+                    orientation=HeaderOrientation.Vertical,
+                    i_position=c.i_position,
+                )
+                for c in self.grid.column_headers
+                if c.label is not None
+            ]
+        )
 
         self._cell_width = max(
             [(c.width + 2 * self.layout_configuration.grid_cell_margin) for c in self._column_header_elements]

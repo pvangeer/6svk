@@ -22,7 +22,6 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, model_validator, PrivateAttr
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.elements._group import GroupBase
-from svk.visualization.elements._column import Column
 from svk.data.helpers import color_toward_grey
 
 from svgwrite import Drawing
@@ -37,10 +36,11 @@ class ClusterColumn(BaseModel):
 
 
 class Cluster(VisualElement):
+    model_config = ConfigDict(frozen=True)
     color: Color
     """Base color of the cluster (background)"""
-    group_column: tuple[ClusterColumn, ...]
-    """A list of groups per column index (zero based)."""
+    columns: tuple[ClusterColumn, ...]
+    """A list of ClusterColumns"""
 
     _width: float = PrivateAttr()
     _height: float = PrivateAttr()
@@ -48,7 +48,7 @@ class Cluster(VisualElement):
     @model_validator(mode="after")
     def validate(self) -> Cluster:
         self._width = self.layout_configuration.overview_page_width - 2 * self.layout_configuration.paper_margin
-        self._height = max([self._get_height_for_column(c) for c in self.group_column])
+        self._height = max([self._get_height_for_column(c) for c in self.columns])
         return self
 
     @property
@@ -120,7 +120,7 @@ class Cluster(VisualElement):
                 )
             )
 
-        for groups_column in self.group_column:
+        for groups_column in self.columns:
             y_current = top
             for group in groups_column.groups:
                 group.draw(

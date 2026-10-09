@@ -81,10 +81,8 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                     ),
                 ]
             ),
-            clusters=list(
-                self.get_clusters_per_impact_category(
-                    questions=cast(list[ImpactPathwayResearchQuestion], self.questions), page_number=page_number
-                )
+            clusters=self.get_clusters_per_impact_category(
+                questions=cast(list[ImpactPathwayResearchQuestion], self.questions), page_number=page_number
             ),
         )
         return fig
@@ -122,17 +120,19 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
 
                 column_groups: list[Group] = []
                 for research_line in questions_per_group_in_column:
-                    question_elements = [
-                        QuestionSummaryElement(
-                            layout_configuration=self.layout_configuration,
-                            links_register=self.links_register,
-                            translator=self.translator,
-                            research_question=q,
-                            page_number=page_number,
-                            show_priority=True,
-                        )
-                        for q in questions_per_group_in_column[research_line]
-                    ]
+                    question_elements = tuple(
+                        [
+                            QuestionSummaryElement(
+                                layout_configuration=self.layout_configuration,
+                                links_register=self.links_register,
+                                translator=self.translator,
+                                research_question=q,
+                                page_number=page_number,
+                                show_priority=True,
+                            )
+                            for q in questions_per_group_in_column[research_line]
+                        ]
+                    )
                     time_frame = questions_per_group_in_column[research_line][0].time_frame
                     column_groups.append(
                         Group(
@@ -170,7 +170,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                     links_register=self.links_register,
                     translator=self.translator,
                     color=Color(r=180, g=180, b=180),
-                    group_column=tuple(columns),
+                    columns=tuple(columns),
                 )
             )
 
@@ -200,7 +200,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                     self.get_time_frame_column(time_frame=TimeFrame.Future, number=1),
                 ]
             ),
-            clusters=list(self.get_clusters(questions=cast(list[ImpactPathwayResearchQuestion], self.questions), page_number=page_number)),
+            clusters=self.get_clusters(questions=cast(list[ImpactPathwayResearchQuestion], self.questions), page_number=page_number),
         )
 
         self.get_clusters(questions=cast(list[ImpactPathwayResearchQuestion], self.questions), page_number=page_number)
@@ -240,17 +240,19 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
 
                 column_groups: list[Group] = []
                 for research_line in questions_per_group_in_column:
-                    question_elements = [
-                        QuestionSummaryElement(
-                            layout_configuration=self.layout_configuration,
-                            links_register=self.links_register,
-                            translator=self.translator,
-                            research_question=q,
-                            page_number=page_number,
-                            show_priority=True,
-                        )
-                        for q in questions_per_group_in_column[research_line]
-                    ]
+                    question_elements = tuple(
+                        [
+                            QuestionSummaryElement(
+                                layout_configuration=self.layout_configuration,
+                                links_register=self.links_register,
+                                translator=self.translator,
+                                research_question=q,
+                                page_number=page_number,
+                                show_priority=True,
+                            )
+                            for q in questions_per_group_in_column[research_line]
+                        ]
+                    )
                     time_frame = questions_per_group_in_column[research_line][0].time_frame
                     column_groups.append(
                         Group(
@@ -274,7 +276,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                     links_register=self.links_register,
                     translator=self.translator,
                     color=base_color,
-                    group_column=tuple(columns),
+                    columns=tuple(columns),
                 )
             )
 
