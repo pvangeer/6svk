@@ -69,7 +69,6 @@ class Document(BaseModel, ABC):
         no_links_output_file = self.output_dir / (self.output_file + " - no links.pdf")
         merge_pdf_files(all_files, no_links_output_file)
 
-        # TODO: This assumes all page numbers are correct.
         output_file_final = self.output_dir / (self.output_file + ".pdf")
         add_links(no_links_output_file, output_file_final, self.links_register)
 
@@ -136,8 +135,8 @@ class ResearchQuestionsDocument(Document):
 
         return pages
 
-    def add_time_frame_column(self, fig: TimeLineOverviewPage, time_frame: TimeFrame, number: int):
-        column = Column(
+    def get_time_frame_column(self, time_frame: TimeFrame, number: int) -> Column:
+        return Column(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
@@ -146,8 +145,6 @@ class ResearchQuestionsDocument(Document):
             header_color=colorhelper.get_blue_toward_grey(time_frame),  # TODO: Make this also styleable with Rijkswaterstaat colors?
             number=number,
         )
-
-        fig.columns.append(column)
 
     def create_details_page(
         self,
@@ -167,9 +164,7 @@ class ResearchQuestionsDocument(Document):
             translator=self.translator,
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
-        )
-        for question in sorted(questions, key=lambda q: q.id):
-            dwg_details_page.questions.append(
+            questions=tuple(
                 QuestionDetailsElement(
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
@@ -177,7 +172,9 @@ class ResearchQuestionsDocument(Document):
                     research_question=question,
                     page_number=page_number,
                 )
-            )
+                for question in questions
+            ),
+        )
 
         return dwg_details_page
 

@@ -18,8 +18,9 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+from __future__ import annotations
 from abc import ABC, abstractmethod
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator, PrivateAttr, ConfigDict
 from svgwrite import Drawing
 
 from svk.data import LinksRegister, Translator, Icon, KnownColors, Label
@@ -31,6 +32,15 @@ from svk.visualization.helpers._measuretext import measure_text_chromium
 
 
 class Page(BaseModel, ABC):
+    model_config = ConfigDict(frozen=True)
+
+    layout_configuration: LayoutConfiguration
+    """The layout configuration shared across all elements of a document."""
+    links_register: LinksRegister
+    """The links register shared across all elements of a document."""
+    translator: Translator
+    """The translator that should be used for this page."""
+
     title: str
     """The title of this page."""
     subtitle: str | None = None
@@ -46,26 +56,25 @@ class Page(BaseModel, ABC):
     """An optional disclaimer text, placed at the bottom of the page."""
     disclaimer_links: list[tuple[str, str]] | None = None
     """A list of strings and link replacements in the disclaimer text."""
-    layout_configuration: LayoutConfiguration
-    """The layout configuration shared across all elements of a document."""
-    links_register: LinksRegister
-    """The links register shared across all elements of a document."""
-    translator: Translator
-    """The translator that should be used for this page."""
     include_legend_link: bool = False
 
     _title_width: float = 0.0
     _title_height: float = 0.0
 
-    @abstractmethod
-    def get_content_size(self) -> tuple[float, float]:
-        pass
+    _width: float = PrivateAttr()
+    _height: float = PrivateAttr()
 
-    @abstractmethod
-    def draw_content(self, dwg: Drawing, left: float, top: float):
-        pass
+    @property
+    def width(self) -> float:
+        return self._width
 
-    def get_size(self) -> tuple[float, float]:
+    @property
+    def height(self) -> float:
+        return self._height
+
+    @model_validator(mode="after")
+    def validate(self) -> Page:
+        self.initialize()
         content_size = self.get_content_size()
         self._title_height = (
             self.layout_configuration.page_title_font_size
@@ -91,8 +100,8 @@ class Page(BaseModel, ABC):
             if self.icon is not None
             else _title_text_width
         )
-        page_width = max([content_size[0] + 2 * self.layout_configuration.paper_margin, self._title_width])
-        page_height = (
+        self._width = max([content_size[0] + 2 * self.layout_configuration.paper_margin, self._title_width])
+        self._height = (
             self.layout_configuration.paper_margin
             + self._title_height
             + self.layout_configuration.large_margin
@@ -100,13 +109,26 @@ class Page(BaseModel, ABC):
             + disclaimer_height
             + self.layout_configuration.paper_margin
         )
-        return (page_width, page_height)
+        return self
+
+    def initialize(self) -> None:
+        """Method that allows derived classes to initialize before calculating the dimensions."""
+        pass
+
+    @abstractmethod
+    def get_content_size(self) -> tuple[float, float]:
+        """This method calculates the width and height of the content of the page in pixels."""
+
+    @abstractmethod
+    def draw_content(self, dwg: Drawing, left: float, top: float) -> None:
+        """This method takes care of drawing the content of the page."""
+        pass
 
     def draw(self) -> Drawing:
-        page_width, page_height = self.get_size()
+        """Draws the entire page."""
 
-        dwg = Drawing(size=(f"{page_width}px", f"{page_height}px"), debug=False)
-        self.links_register.register_page(self.page_number, page_width, page_height)
+        dwg = Drawing(size=(f"{self._width}px", f"{self._height}px"), debug=False)
+        self.links_register.register_page(self.page_number, self._width, self._height)
 
         self.draw_title(dwg=dwg)
 
@@ -200,13 +222,12 @@ class Page(BaseModel, ABC):
 
     def draw_disclaimer(self, dwg: Drawing):
         if self.disclaimer is not None:
-            _, page_height = self.get_size()
             draw_disclaimer(
                 dwg=dwg,
                 disclaimer_text=self.disclaimer,
                 insert=(
                     self.layout_configuration.paper_margin,
-                    page_height - self.layout_configuration.paper_margin - self.layout_configuration.disclamer_font_size * 1.2,
+                    self._height - self.layout_configuration.paper_margin - self.layout_configuration.disclamer_font_size * 1.2,
                 ),
                 dominant_baseline="hanging",
                 text_anchor="start",
@@ -216,11 +237,10 @@ class Page(BaseModel, ABC):
 
     def draw_legend_link(self, dwg: Drawing):
         if self.include_legend_link:
-            page_width, page_height = self.get_size()
             legend_label = self.translator.get_label(label=Label.LegendTitle)
             label_size = measure_text_chromium(text=legend_label, font_size=self.layout_configuration.disclamer_font_size)
-            x_end = page_width - self.layout_configuration.paper_margin
-            y_top = page_height - self.layout_configuration.paper_margin - self.layout_configuration.disclamer_font_size * 1.2
+            x_end = self._width - self.layout_configuration.paper_margin
+            y_top = self._height - self.layout_configuration.paper_margin - self.layout_configuration.disclamer_font_size * 1.2
             dwg.add(
                 dwg.text(
                     legend_label,

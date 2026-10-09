@@ -10,8 +10,7 @@ class LegendPage(Page):
     _legend_element: LegendElement = PrivateAttr()
     title_link_target: str | None = "#legend_page"
 
-    @model_validator(mode="after")
-    def validate(self):
+    def initialize(self):
         self._legend_element = LegendElement(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,

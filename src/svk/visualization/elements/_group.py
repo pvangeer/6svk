@@ -58,6 +58,7 @@ class Group(GroupBase):
     """Indicates whether the title should choose a color with mist contrast or just use black"""
 
     questions: list[QuestionSummaryElement] = []
+    # TODO: Change to tuple and seal this class
     """The questions in this group"""
 
     @property

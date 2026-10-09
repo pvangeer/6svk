@@ -34,7 +34,7 @@ class ImpactPathwayDatabase(ExcelDatabase, list[ImpactPathwayResearchQuestion]):
     i_prio_explanation = 12
     """Hard coded column number for the priority explanation"""
     i_outcome_category = 13
-    # TODO: Implement outcomes.
+
     i_impact_category = 15
     """Hard coded column number for the impact category"""
     i_time_frame = 17

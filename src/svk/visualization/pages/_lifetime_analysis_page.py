@@ -9,8 +9,7 @@ class LifeTimeAnalysisPage(Page):
     grid: Grid
     _grid_element: GridElement = PrivateAttr()
 
-    @model_validator(mode="after")
-    def validate(self):
+    def initialize(self):
         self._grid_element = GridElement(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,

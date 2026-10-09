@@ -18,6 +18,8 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+from __future__ import annotations
+from pydantic import BaseModel, ConfigDict, model_validator, PrivateAttr
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.elements._group import GroupBase
 from svk.visualization.elements._column import Column
@@ -25,29 +27,37 @@ from svk.data.helpers import color_toward_grey
 
 from svgwrite import Drawing
 from uuid import uuid4
-from collections import defaultdict
 from svk.data import Color
+
+
+class ClusterColumn(BaseModel):
+    model_config = ConfigDict(frozen=True)
+    column_number: int
+    groups: tuple[GroupBase, ...]
 
 
 class Cluster(VisualElement):
     color: Color
     """Base color of the cluster (background)"""
-    groups: defaultdict[int, list[GroupBase]] = defaultdict(list[GroupBase])
+    group_column: tuple[ClusterColumn, ...]
     """A list of groups per column index (zero based)."""
+
+    _width: float = PrivateAttr()
+    _height: float = PrivateAttr()
+
+    @model_validator(mode="after")
+    def validate(self) -> Cluster:
+        self._width = self.layout_configuration.overview_page_width - 2 * self.layout_configuration.paper_margin
+        self._height = max([self._get_height_for_column(c) for c in self.group_column])
+        return self
 
     @property
     def width(self) -> float:
-        return self.layout_configuration.overview_page_width - 2 * self.layout_configuration.paper_margin
+        return self._width
 
     @property
     def height(self) -> float:
-        return self.get_height()
-
-    def get_height(self, column: Column | None = None):
-        if column is None:
-            return max([self._get_height_for_column(c) for c in self.groups])
-        else:
-            return self._get_height_for_column(column.number) if column.number in self.groups else 0.0
+        return self._height
 
     def draw(self, dwg: Drawing, left: float, top: float):
         width = self.width
@@ -110,17 +120,19 @@ class Cluster(VisualElement):
                 )
             )
 
-        for i_column in self.groups:
+        for groups_column in self.group_column:
             y_current = top
-            for group in self.groups[i_column]:
+            for group in groups_column.groups:
                 group.draw(
-                    dwg=dwg, x=self.layout_configuration.paper_margin + i_column * self.layout_configuration.column_width, y=y_current
+                    dwg=dwg,
+                    x=self.layout_configuration.paper_margin + groups_column.column_number * self.layout_configuration.column_width,
+                    y=y_current,
                 )
                 y_current += group.height + self.layout_configuration.intermediate_margin
 
-    def _get_height_for_column(self, i_column: int):
+    def _get_height_for_column(self, groups_column: ClusterColumn):
         return (
-            sum([g.height + self.layout_configuration.intermediate_margin for g in self.groups[i_column]])
+            sum([g.height + self.layout_configuration.intermediate_margin for g in groups_column.groups])
             + self.layout_configuration.intermediate_margin
             - self.layout_configuration.small_margin
         )

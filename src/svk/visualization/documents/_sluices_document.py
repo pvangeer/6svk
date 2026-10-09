@@ -9,6 +9,8 @@ from svk.data import (
     SluicesResearchQuestion,
     Label,
     SluicesResearchLines,
+    Color,  # TODO: Move base_color from research_line to some factory and do not pass colors around related to research lines.
+    KnownColors,
 )
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.pages._page import Page
@@ -20,7 +22,7 @@ from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPag
 from svk.visualization.pages._sluices_question_details_page import SluicesQuestionDetailsPage
 from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group
-from svk.visualization.elements._cluster import Cluster
+from svk.visualization.elements._cluster import Cluster, ClusterColumn
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.elements.panheel._sluices_question_details_element import SluicesQuestionDetailsElement
 from svk.visualization.documents._document import Document
@@ -101,18 +103,22 @@ class SluicesDocument(Document):
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
             include_legend_link=True,
+            columns=tuple(
+                [
+                    self.get_time_frame_column(time_frame=TimeFrame.Now, number=0, color_group=research_lines[0].cluster),
+                    self.get_time_frame_column(time_frame=TimeFrame.NearFuture, number=1, color_group=research_lines[0].cluster),
+                    self.get_time_frame_column(time_frame=TimeFrame.Future, number=2, color_group=research_lines[0].cluster),
+                ]
+            ),
+            clusters=list(
+                self.get_clusters(questions=[q for q in self.questions if q.research_line in research_lines], page_number=page_number)
+            ),
         )
 
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Now, number=0, color_group=research_lines[0].cluster)
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=1, color_group=research_lines[0].cluster)
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=2, color_group=research_lines[0].cluster)
-        self.add_clusters_per_research_line(
-            fig=fig, questions=[q for q in self.questions if q.research_line in research_lines], page_number=page_number
-        )
         return fig
 
-    def add_time_frame_column(self, fig: TimeLineOverviewPage, time_frame: TimeFrame, number: int, color_group: int):
-        column = Column(
+    def get_time_frame_column(self, time_frame: TimeFrame, number: int, color_group: int) -> Column:
+        return Column(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
@@ -122,65 +128,78 @@ class SluicesDocument(Document):
             number=number,
         )
 
-        fig.columns.append(column)
-
-    def add_clusters_per_research_line(self, fig: TimeLineOverviewPage, questions: list[SluicesResearchQuestion], page_number: int):
-        clusters: dict[int, Cluster] = {}
+    def get_clusters(self, questions: list[SluicesResearchQuestion], page_number: int) -> tuple[Cluster, ...]:
         time_frame_column_numbers: dict[TimeFrame, int] = {
             TimeFrame.Now: 0,
             TimeFrame.NearFuture: 1,
             TimeFrame.Future: 2,
         }
-        grouped_questions_lists: defaultdict[tuple[TimeFrame, ResearchLine], list[SluicesResearchQuestion]] = defaultdict(
-            list[SluicesResearchQuestion]
-        )
 
+        questions_by_cluster: defaultdict[int, list[SluicesResearchQuestion]] = defaultdict(list[SluicesResearchQuestion])
         for question in questions:
-            if question.research_line is None or question.time_frame not in time_frame_column_numbers:
-                continue
-            grouped_questions_lists[(question.time_frame, question.research_line)].append(question)
+            if question.research_line is not None:
+                questions_by_cluster[question.research_line.cluster].append(question)
 
-        for questions_list_key in sorted(grouped_questions_lists, key=lambda kv: (kv[1].number, time_frame_column_numbers[kv[0]])):
-            current_time_frame = questions_list_key[0]
-            current_research_line = questions_list_key[1]
+        clusters: list[Cluster] = []
+        for i_cluster in questions_by_cluster:
+            questions_per_time_frame_column: defaultdict[int, list[SluicesResearchQuestion]] = defaultdict(list[SluicesResearchQuestion])
+            for question in questions_by_cluster[i_cluster]:
+                if question.time_frame in time_frame_column_numbers:
+                    questions_per_time_frame_column[time_frame_column_numbers[question.time_frame]].append(question)
 
-            if current_research_line.cluster not in clusters:
-                clusters[current_research_line.cluster] = Cluster(
+            columns: list[ClusterColumn] = []
+            for i_column in questions_per_time_frame_column:
+                questions_per_group_in_column: defaultdict[ResearchLine, list[SluicesResearchQuestion]] = defaultdict(
+                    list[SluicesResearchQuestion]
+                )
+
+                base_color: Color = KnownColors.White
+                for question in questions_per_time_frame_column[i_column]:
+                    if question.research_line is not None:
+                        base_color = question.research_line.base_color
+                        questions_per_group_in_column[question.research_line].append(question)
+
+                column_groups: list[Group] = []
+                for research_line in questions_per_group_in_column:
+                    question_elements = [
+                        QuestionSummaryElement(
+                            layout_configuration=self.layout_configuration,
+                            links_register=self.links_register,
+                            translator=self.translator,
+                            research_question=q,
+                            page_number=page_number,
+                            show_priority=True,
+                        )
+                        for q in questions_per_group_in_column[research_line]
+                    ]
+                    time_frame = questions_per_group_in_column[research_line][0].time_frame
+                    column_groups.append(
+                        Group(
+                            layout_configuration=self.layout_configuration,
+                            links_register=self.links_register,
+                            translator=self.translator,
+                            page_number=page_number,
+                            link_target_id=research_line.id,
+                            title=_get_research_line_title(self.translator, research_line),
+                            color=colorhelper.get_color(self.layout_configuration, time_frame, research_line_group=research_line.cluster),
+                            use_contrast_color=True,
+                            questions=question_elements,
+                        )
+                    )
+
+                columns.append(ClusterColumn(column_number=i_column, groups=tuple(column_groups)))
+
+            clusters.append(
+                Cluster(
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
                     translator=self.translator,
-                    color=current_research_line.base_color,
+                    color=base_color,
+                    group_column=tuple(columns),
                 )
-
-            cluster = clusters[current_research_line.cluster]
-
-            new_group = Group(
-                layout_configuration=self.layout_configuration,
-                links_register=self.links_register,
-                translator=self.translator,
-                page_number=page_number,
-                link_target_id=current_research_line.id,
-                title=_get_research_line_title(self.translator, current_research_line),
-                color=colorhelper.get_color(
-                    self.layout_configuration, current_time_frame, research_line_group=current_research_line.cluster
-                ),
-                use_contrast_color=True,
             )
 
-            cluster.groups[time_frame_column_numbers[current_time_frame]].append(new_group)
-            for question in sorted(grouped_questions_lists[questions_list_key], key=lambda q: q.priority, reverse=True):
-                new_group.questions.append(
-                    QuestionSummaryElement(
-                        layout_configuration=self.layout_configuration,
-                        links_register=self.links_register,
-                        translator=self.translator,
-                        research_question=question,
-                        page_number=page_number,
-                        show_priority=True,
-                    )
-                )
-
-        fig.clusters = list(clusters.values())
+        return tuple(clusters)
 
     def _create_detailed_sluice_question_pages(self, current_page_number: int) -> list[Page]:
         pages: list[Page] = []
@@ -237,9 +256,7 @@ class SluicesDocument(Document):
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
             include_legend_link=True,
-        )
-        for question in sorted(questions, key=lambda q: q.id):
-            dwg_details_page.questions.append(
+            questions=tuple(
                 SluicesQuestionDetailsElement(
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
@@ -247,8 +264,9 @@ class SluicesDocument(Document):
                     research_question=question,
                     page_number=page_number,
                 )
-            )
-
+                for question in questions
+            ),
+        )
         return dwg_details_page
 
     def _create_legend_page(self, page_number: int) -> Page:

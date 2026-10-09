@@ -24,7 +24,7 @@ from svgwrite import Drawing
 
 
 class SluicesQuestionDetailsPage(Page):
-    questions: list[SluicesQuestionDetailsElement] = []
+    questions: tuple[SluicesQuestionDetailsElement, ...]
 
     def get_content_size(self) -> tuple[float, float]:
         _preferred_first_column_width = max([q.get_first_column_width() for q in self.questions])

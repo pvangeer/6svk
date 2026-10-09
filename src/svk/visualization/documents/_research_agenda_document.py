@@ -32,6 +32,8 @@ from svk.data import (
     StormSurgeBarrierResearchLineFactory,
     StormSurgeBarrierResearchLines,
     Grid,
+    Color,  # TODO: Move base color away from research line
+    KnownColors,
 )
 from svk.visualization.helpers._measuretext import measure_text
 from svk.data.helpers import color_toward_grey
@@ -39,7 +41,7 @@ from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers import _color_helper as colorhelper
 from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group
-from svk.visualization.elements._cluster import Cluster
+from svk.visualization.elements._cluster import Cluster, ClusterColumn
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.documents._document import ResearchQuestionsDocument
 from svk.visualization.pages._page import Page
@@ -154,21 +156,24 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
             icon=IconProvider.create_icon(self.storm_surge_barrier),
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
+            columns=tuple(
+                [
+                    self.get_time_frame_column(time_frame=TimeFrame.Now, number=0),
+                    self.get_time_frame_column(time_frame=TimeFrame.NearFuture, number=1),
+                    self.get_time_frame_column(time_frame=TimeFrame.Future, number=2),
+                ]
+            ),
+            clusters=list(self.get_clusters(questions=questions, page_number=page_number)),
         )
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Now, number=0)
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.NearFuture, number=1)
-        self.add_time_frame_column(fig=fig, time_frame=TimeFrame.Future, number=2)
-        self.add_clusters_per_research_line(fig=fig, questions=questions, page_number=page_number)
 
         return fig
 
-    def add_time_frame_column(
+    def get_time_frame_column(
         self,
-        fig: TimeLineOverviewPage,
         time_frame: TimeFrame,
         number: int,
-    ):
-        column = Column(
+    ) -> Column:
+        return Column(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
@@ -177,64 +182,83 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
             header_color=colorhelper.get_color(layout_configuration=self.layout_configuration, time_frame=time_frame),
             number=number,
         )
-        fig.columns.append(column)
 
-    def add_clusters_per_research_line(
-        self, fig: TimeLineOverviewPage, questions: list[StormSurgeBarrierResearchQuestion], page_number: int
-    ):
-        clusters: dict[int, Cluster] = {}
+    def get_clusters(self, questions: list[StormSurgeBarrierResearchQuestion], page_number: int) -> tuple[Cluster, ...]:
         time_frame_column_numbers: dict[TimeFrame, int] = {
             TimeFrame.Now: 0,
             TimeFrame.NearFuture: 1,
             TimeFrame.Future: 2,
         }
 
-        grouped_questions_lists: defaultdict[tuple[TimeFrame, ResearchLine], list[StormSurgeBarrierResearchQuestion]] = defaultdict(
+        questions_by_cluster: defaultdict[int, list[StormSurgeBarrierResearchQuestion]] = defaultdict(
             list[StormSurgeBarrierResearchQuestion]
         )
+        for question in questions:
+            if question.research_line is not None:
+                questions_by_cluster[question.research_line.cluster].append(question)
 
-        for q in questions:
-            if q.research_line is None or q.time_frame not in time_frame_column_numbers.keys():
-                continue
-            grouped_questions_lists[(q.time_frame, q.research_line)].append(q)
+        clusters: list[Cluster] = []
+        for i_cluster in questions_by_cluster:
+            questions_per_time_frame_column: defaultdict[int, list[StormSurgeBarrierResearchQuestion]] = defaultdict(
+                list[StormSurgeBarrierResearchQuestion]
+            )
+            for question in questions_by_cluster[i_cluster]:
+                if question.time_frame in time_frame_column_numbers:
+                    questions_per_time_frame_column[time_frame_column_numbers[question.time_frame]].append(question)
 
-        for questions_list_key in sorted(grouped_questions_lists, key=lambda kv: (kv[1].number, time_frame_column_numbers[kv[0]])):
-            current_time_frame = questions_list_key[0]
-            current_research_line = questions_list_key[1]
+            columns: list[ClusterColumn] = []
+            for i_column in questions_per_time_frame_column:
+                questions_per_group_in_column: defaultdict[ResearchLine, list[StormSurgeBarrierResearchQuestion]] = defaultdict(
+                    list[StormSurgeBarrierResearchQuestion]
+                )
 
-            if current_research_line.cluster not in clusters:
-                clusters[current_research_line.cluster] = Cluster(
+                base_color: Color = KnownColors.White
+                for question in questions_per_time_frame_column[i_column]:
+                    if question.research_line is not None:
+                        base_color = question.research_line.base_color
+                        questions_per_group_in_column[question.research_line].append(question)
+
+                column_groups: list[Group] = []
+                for research_line in questions_per_group_in_column:
+                    question_elements = [
+                        QuestionSummaryElement(
+                            layout_configuration=self.layout_configuration,
+                            links_register=self.links_register,
+                            translator=self.translator,
+                            research_question=q,
+                            page_number=page_number,
+                            show_priority=True,
+                        )
+                        for q in questions_per_group_in_column[research_line]
+                    ]
+                    time_frame = questions_per_group_in_column[research_line][0].time_frame
+                    column_groups.append(
+                        Group(
+                            layout_configuration=self.layout_configuration,
+                            links_register=self.links_register,
+                            translator=self.translator,
+                            page_number=page_number,
+                            link_target_id=research_line.id,
+                            title=_get_research_line_title(self.translator, research_line),
+                            color=color_toward_grey(research_line.base_color, time_frame.grey_fraction),
+                            use_contrast_color=True,
+                            questions=question_elements,
+                        )
+                    )
+
+                columns.append(ClusterColumn(column_number=i_column, groups=tuple(column_groups)))
+
+            clusters.append(
+                Cluster(
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
                     translator=self.translator,
-                    color=current_research_line.base_color,
+                    color=base_color,
+                    group_column=tuple(columns),
                 )
-
-            cluster = clusters[current_research_line.cluster]
-
-            new_group = Group(
-                layout_configuration=self.layout_configuration,
-                links_register=self.links_register,
-                translator=self.translator,
-                page_number=page_number,
-                link_target_id=current_research_line.id,
-                title=_get_research_line_title(translator=self.translator, research_line=current_research_line),
-                color=color_toward_grey(current_research_line.base_color, current_time_frame.grey_fraction),
             )
 
-            cluster.groups[time_frame_column_numbers[current_time_frame]].append(new_group)
-            for question in sorted(grouped_questions_lists[questions_list_key], key=lambda q: q.priority, reverse=True):
-                new_group.questions.append(
-                    QuestionSummaryElement(
-                        layout_configuration=self.layout_configuration,
-                        links_register=self.links_register,
-                        translator=self.translator,
-                        research_question=question,
-                        page_number=0,
-                    )
-                )
-
-        fig.clusters = list(clusters.values())
+        return tuple(clusters)
 
     def _create_lifetime_analysis_page(self, grid: Grid, subtitle: str, page_number: int) -> Page:
         return LifeTimeAnalysisPage(

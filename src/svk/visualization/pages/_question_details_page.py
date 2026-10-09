@@ -24,7 +24,7 @@ from svgwrite import Drawing
 
 
 class QuestionDetailsPage(Page):
-    questions: list[QuestionDetailsElement] = []
+    questions: tuple[QuestionDetailsElement, ...]
 
     def get_content_size(self) -> tuple[float, float]:
         return (
@@ -36,12 +36,6 @@ class QuestionDetailsPage(Page):
     def draw_content(self, dwg: Drawing, top: float, left: float):
         top_current = top
         for question in self.questions:
-            # self.links_register.register_link_target(
-            #     link_target=question.research_question.id,
-            #     page_number=self.page_number,
-            #     x=self.layout_configuration.paper_margin,
-            #     y=top_current,
-            # )
             question.draw(
                 dwg=dwg,
                 x=left,

@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svk.data import KnownColors
-from svk.visualization import LayoutConfiguration, TimeLineOverviewPage, QuestionSummaryElement, Group, Column, Cluster
+from svk.visualization import LayoutConfiguration, TimeLineOverviewPage, QuestionSummaryElement, Group, Column, Cluster, ClusterColumn
 from svk.data import (
     TimeFrame,
     StormSurgeBarrierResearchLineFactory,
@@ -63,6 +63,135 @@ def test_create_image():
     links_register = LinksRegister()
     translator = Translator(lang="nl")
 
+    adaptation_now_group = Group(
+        layout_configuration=config,
+        links_register=links_register,
+        translator=translator,
+        title="test",
+        color=KnownColors.Black,
+        questions=[
+            QuestionSummaryElement(
+                layout_configuration=config,
+                links_register=links_register,
+                translator=translator,
+                research_question=generate_research_question(
+                    question="This is my first question",
+                    time_frame=TimeFrame.Now,
+                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+                ),
+                page_number=0,
+            ),
+            QuestionSummaryElement(
+                layout_configuration=config,
+                links_register=links_register,
+                translator=translator,
+                research_question=generate_research_question(
+                    question="This is my second question",
+                    time_frame=TimeFrame.Now,
+                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+                ),
+                page_number=0,
+            ),
+            QuestionSummaryElement(
+                layout_configuration=config,
+                links_register=links_register,
+                translator=translator,
+                research_question=generate_research_question(
+                    question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
+                    time_frame=TimeFrame.Now,
+                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+                ),
+                page_number=0,
+            ),
+        ],
+    )
+
+    cyber_near_group = Group(
+        layout_configuration=config,
+        links_register=links_register,
+        translator=translator,
+        title="test",
+        color=KnownColors.Blue,
+        questions=[
+            QuestionSummaryElement(
+                layout_configuration=config,
+                links_register=links_register,
+                translator=translator,
+                research_question=generate_research_question(
+                    question="This is my first question",
+                    time_frame=TimeFrame.NearFuture,
+                    research_line=StormSurgeBarrierResearchLines.Cyber,
+                ),
+                page_number=0,
+            ),
+            QuestionSummaryElement(
+                layout_configuration=config,
+                links_register=links_register,
+                translator=translator,
+                research_question=generate_research_question(
+                    question="This is my second question",
+                    time_frame=TimeFrame.NearFuture,
+                    research_line=StormSurgeBarrierResearchLines.Cyber,
+                ),
+                page_number=0,
+            ),
+            QuestionSummaryElement(
+                layout_configuration=config,
+                links_register=links_register,
+                translator=translator,
+                research_question=generate_research_question(
+                    question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
+                    time_frame=TimeFrame.NearFuture,
+                    research_line=StormSurgeBarrierResearchLines.Cyber,
+                ),
+                page_number=0,
+            ),
+        ],
+    )
+
+    adaptation_near_group = Group(
+        layout_configuration=config,
+        links_register=links_register,
+        translator=translator,
+        title="test",
+        color=KnownColors.Blue,
+        questions=[
+            QuestionSummaryElement(
+                layout_configuration=config,
+                links_register=links_register,
+                translator=translator,
+                research_question=generate_research_question(
+                    question="This is my first question",
+                    time_frame=TimeFrame.NearFuture,
+                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+                ),
+                page_number=0,
+            ),
+            QuestionSummaryElement(
+                layout_configuration=config,
+                links_register=links_register,
+                translator=translator,
+                research_question=generate_research_question(
+                    question="This is my second question",
+                    time_frame=TimeFrame.NearFuture,
+                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+                ),
+                page_number=0,
+            ),
+            QuestionSummaryElement(
+                layout_configuration=config,
+                links_register=links_register,
+                translator=translator,
+                research_question=generate_research_question(
+                    question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
+                    time_frame=TimeFrame.NearFuture,
+                    research_line=StormSurgeBarrierResearchLines.Adaptation,
+                ),
+                page_number=0,
+            ),
+        ],
+    )
+
     fig = TimeLineOverviewPage(
         page_number=0,
         layout_configuration=config,
@@ -70,171 +199,44 @@ def test_create_image():
         translator=translator,
         title="Test-image",
         icon=IconProvider.create_6svk_icon(),
-    )
-    cluster = Cluster(layout_configuration=config, links_register=links_register, translator=translator, color=Color(r=132, g=243, b=124))
-    fig.clusters.append(cluster)
-
-    adaptation_now = Group(
-        layout_configuration=config, links_register=links_register, translator=translator, title="test", color=KnownColors.Black
-    )
-    adaptation_now.questions.append(
-        QuestionSummaryElement(
-            layout_configuration=config,
-            links_register=links_register,
-            translator=translator,
-            research_question=generate_research_question(
-                question="This is my first question",
-                time_frame=TimeFrame.Now,
-                research_line=StormSurgeBarrierResearchLines.Adaptation,
-            ),
-            page_number=0,
-        )
-    )
-    adaptation_now.questions.append(
-        QuestionSummaryElement(
-            layout_configuration=config,
-            links_register=links_register,
-            translator=translator,
-            research_question=generate_research_question(
-                question="This is my second question",
-                time_frame=TimeFrame.Now,
-                research_line=StormSurgeBarrierResearchLines.Adaptation,
-            ),
-            page_number=0,
-        )
-    )
-    adaptation_now.questions.append(
-        QuestionSummaryElement(
-            layout_configuration=config,
-            links_register=links_register,
-            translator=translator,
-            research_question=generate_research_question(
-                question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
-                time_frame=TimeFrame.Now,
-                research_line=StormSurgeBarrierResearchLines.Adaptation,
-            ),
-            page_number=0,
-        )
-    )
-    column = Column(
-        layout_configuration=config,
-        links_register=links_register,
-        translator=translator,
-        header_title="test",
-        header_subtitle="sub 1",
-        header_color=Color(a=7, r=88, g=55, b=83),
-        number=0,
+        columns=tuple(
+            [
+                Column(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    header_title="test",
+                    header_subtitle="sub 1",
+                    header_color=Color(a=7, r=88, g=55, b=83),
+                    number=0,
+                ),
+                Column(
+                    layout_configuration=config,
+                    links_register=links_register,
+                    translator=translator,
+                    header_title="test",
+                    header_subtitle="sub 1",
+                    header_color=Color.from_str("#478956"),
+                    number=1,
+                ),
+            ]
+        ),
+        clusters=[
+            Cluster(
+                layout_configuration=config,
+                links_register=links_register,
+                translator=translator,
+                color=Color(r=132, g=243, b=124),
+                group_column=tuple(
+                    [
+                        ClusterColumn(column_number=0, groups=tuple([adaptation_now_group])),
+                        ClusterColumn(column_number=1, groups=tuple([cyber_near_group, adaptation_near_group])),
+                    ]
+                ),
+            )
+        ],
     )
 
-    fig.columns.append(column)
-    cluster.groups[0].append(adaptation_now)
-
-    cyber_near = Group(
-        layout_configuration=config,
-        links_register=links_register,
-        translator=translator,
-        title="test",
-        color=KnownColors.Blue,
-    )
-    cyber_near.questions.append(
-        QuestionSummaryElement(
-            layout_configuration=config,
-            links_register=links_register,
-            translator=translator,
-            research_question=generate_research_question(
-                question="This is my first question",
-                time_frame=TimeFrame.NearFuture,
-                research_line=StormSurgeBarrierResearchLines.Cyber,
-            ),
-            page_number=0,
-        )
-    )
-    cyber_near.questions.append(
-        QuestionSummaryElement(
-            layout_configuration=config,
-            links_register=links_register,
-            translator=translator,
-            research_question=generate_research_question(
-                question="This is my second question",
-                time_frame=TimeFrame.NearFuture,
-                research_line=StormSurgeBarrierResearchLines.Cyber,
-            ),
-            page_number=0,
-        )
-    )
-    cyber_near.questions.append(
-        QuestionSummaryElement(
-            layout_configuration=config,
-            links_register=links_register,
-            translator=translator,
-            research_question=generate_research_question(
-                question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
-                time_frame=TimeFrame.NearFuture,
-                research_line=StormSurgeBarrierResearchLines.Cyber,
-            ),
-            page_number=0,
-        )
-    )
-    column2 = Column(
-        layout_configuration=config,
-        links_register=links_register,
-        translator=translator,
-        header_title="test",
-        header_subtitle="sub 1",
-        header_color=Color.from_str("#478956"),
-        number=1,
-    )
-
-    fig.columns.append(column2)
-    cluster.groups[1].append(cyber_near)
-
-    adaptation_near = Group(
-        layout_configuration=config,
-        links_register=links_register,
-        translator=translator,
-        title="test",
-        color=KnownColors.Blue,
-    )
-    adaptation_near.questions.append(
-        QuestionSummaryElement(
-            layout_configuration=config,
-            links_register=links_register,
-            translator=translator,
-            research_question=generate_research_question(
-                question="This is my first question",
-                time_frame=TimeFrame.NearFuture,
-                research_line=StormSurgeBarrierResearchLines.Adaptation,
-            ),
-            page_number=0,
-        )
-    )
-    adaptation_near.questions.append(
-        QuestionSummaryElement(
-            layout_configuration=config,
-            links_register=links_register,
-            translator=translator,
-            research_question=generate_research_question(
-                question="This is my second question",
-                time_frame=TimeFrame.NearFuture,
-                research_line=StormSurgeBarrierResearchLines.Adaptation,
-            ),
-            page_number=0,
-        )
-    )
-    adaptation_near.questions.append(
-        QuestionSummaryElement(
-            layout_configuration=config,
-            links_register=links_register,
-            translator=translator,
-            research_question=generate_research_question(
-                question="Now we try to pose a rediculous long question to see if outlines still match and all sizes and placement is correct. I will not stop trying until I get this right.",
-                time_frame=TimeFrame.NearFuture,
-                research_line=StormSurgeBarrierResearchLines.Adaptation,
-            ),
-            page_number=0,
-        )
-    )
-    cluster.groups[1].append(adaptation_near)
     dwg = fig.draw()
 
     pt = test_output_dir / "Onderzoeksagenda_auto.pdf"

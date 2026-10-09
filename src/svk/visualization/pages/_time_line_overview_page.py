@@ -29,13 +29,13 @@ class TimeLineOverviewPage(Page):
     The overview page of the "Research agenda"
     """
 
-    columns: list[Column] = []
+    columns: tuple[Column, ...]
     """The columns included in this overview page (that all hold groups and questions)"""
     clusters: list[Cluster] = []
 
     def get_content_size(self) -> tuple[float, float]:
         self.layout_configuration.n_columns = len(self.columns)
-        max_column_height = sum([c.get_height() for c in self.clusters]) + self.layout_configuration.large_margin * (len(self.clusters) - 1)
+        max_column_height = sum([c.height for c in self.clusters]) + self.layout_configuration.large_margin * (len(self.clusters) - 1)
 
         return (
             self.layout_configuration.overview_page_width - self.layout_configuration.paper_margin * 2,
@@ -51,4 +51,4 @@ class TimeLineOverviewPage(Page):
         top_current = top + self.layout_configuration.column_header_height + self.layout_configuration.large_margin
         for cluster in self.clusters:
             cluster.draw(dwg=dwg, left=self.layout_configuration.paper_margin, top=top_current)
-            top_current += cluster.get_height() + self.layout_configuration.large_margin
+            top_current += cluster.height + self.layout_configuration.large_margin
