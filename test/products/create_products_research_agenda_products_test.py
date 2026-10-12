@@ -20,7 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 import pytest
 from datetime import datetime
-
+from pathlib import Path
 from svk.data import StormSurgeBarrier, Translator
 from svk.visualization import ResearchAgendaDocument
 
@@ -30,7 +30,7 @@ from test.utils.database_reader import (
     get_database_dir,
     read_end_of_life_database,
 )
-from test.paths import allsvk_dir
+from test.paths import allsvk_dir, test_output_dir
 
 
 def get_research_agenda_output_file(barrier: StormSurgeBarrier, add: str | None = None) -> str:
@@ -53,7 +53,27 @@ def get_research_agenda_output_file(barrier: StormSurgeBarrier, add: str | None 
         pytest.param(StormSurgeBarrier.Ramspol, id=StormSurgeBarrier.Ramspol.title.value[0]),
     ],
 )
-def test_create_research_calendar_per_ssb(barrier: StormSurgeBarrier):
+def test_create_research_agenda_per_ssb(barrier: StormSurgeBarrier):
+    generate_agenda_document(barrier=barrier, output_path=get_database_dir(barrier=barrier))
+
+
+@pytest.mark.localproduct
+@pytest.mark.parametrize(
+    "barrier",
+    [
+        pytest.param(StormSurgeBarrier.EasternScheldtBarrier, id=StormSurgeBarrier.EasternScheldtBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.MaeslantBarrier, id=StormSurgeBarrier.MaeslantBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.HartelBarrier, id=StormSurgeBarrier.HartelBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.HaringvlietBarrier, id=StormSurgeBarrier.HaringvlietBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.HollandseIJsselBarrier, id=StormSurgeBarrier.HollandseIJsselBarrier.title.value[0]),
+        pytest.param(StormSurgeBarrier.Ramspol, id=StormSurgeBarrier.Ramspol.title.value[0]),
+    ],
+)
+def test_create_research_agenda_per_ssb_local(barrier: StormSurgeBarrier):
+    generate_agenda_document(barrier, test_output_dir)
+
+
+def generate_agenda_document(barrier: StormSurgeBarrier, output_path: Path):
     translator = Translator(lang="nl")
     efl = read_end_of_life_database(
         barrier=barrier,
@@ -65,7 +85,7 @@ def test_create_research_calendar_per_ssb(barrier: StormSurgeBarrier):
     )
     calendar_document = ResearchAgendaDocument(
         translator=translator,
-        output_dir=get_database_dir(barrier=barrier),
+        output_dir=output_path,
         output_file=get_research_agenda_output_file(barrier=barrier),
         questions=read_research_agenda_database(barrier=barrier),
         storm_surge_barrier=barrier,
@@ -78,6 +98,15 @@ def test_create_research_calendar_per_ssb(barrier: StormSurgeBarrier):
 
 @pytest.mark.product
 def test_create_6svk():
+    create_6svk_document(allsvk_dir)
+
+
+@pytest.mark.localproduct
+def test_create_6svk_local():
+    create_6svk_document(test_output_dir)
+
+
+def create_6svk_document(output_dir: Path):
     all_questions = (
         read_research_agenda_database(StormSurgeBarrier.HartelBarrier)
         + read_research_agenda_database(StormSurgeBarrier.HollandseIJsselBarrier)
@@ -91,7 +120,7 @@ def test_create_6svk():
     translator = Translator(lang="nl")
     calendar = ResearchAgendaDocument(
         translator=translator,
-        output_dir=allsvk_dir,
+        output_dir=output_dir,
         output_file=get_research_agenda_output_file(StormSurgeBarrier.All),
         questions=six_svk_questions,
         storm_surge_barrier=StormSurgeBarrier.All,
@@ -102,10 +131,19 @@ def test_create_6svk():
 
 @pytest.mark.product
 def test_create_all():
+    create_all_document(allsvk_dir)
+
+
+@pytest.mark.localproduct
+def test_create_all_local():
+    create_all_document(test_output_dir)
+
+
+def create_all_document(output_dir: Path):
     translator = Translator(lang="nl")
     calendar = ResearchAgendaDocument(
         translator=translator,
-        output_dir=allsvk_dir,
+        output_dir=output_dir,
         output_file=get_research_agenda_output_file(StormSurgeBarrier.All, "alle vragen"),
         questions=read_research_agenda_database(StormSurgeBarrier.HartelBarrier)
         + read_research_agenda_database(StormSurgeBarrier.HollandseIJsselBarrier)

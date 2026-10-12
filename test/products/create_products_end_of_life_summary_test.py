@@ -20,23 +20,33 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 import pytest
 from datetime import datetime
-
+from pathlib import Path
 from svk.data import StormSurgeBarrier, IconProvider
 from svk.visualization import CustomPagesDocument, LifeTimeAnalysisPage
 
 from test.utils.database_reader import read_end_of_life_database
-from test.paths import allsvk_dir
+from test.paths import allsvk_dir, test_output_dir
 
 
 @pytest.mark.product
 def test_create_end_of_life_time_summary():
+    generate_end_of_life_summary(allsvk_dir)
+
+
+@pytest.mark.localproduct
+def test_create_end_of_life_time_summary_local():
+    generate_end_of_life_summary(test_output_dir)
+
+
+def generate_end_of_life_summary(output_dir: Path):
     pages = []
     page_count = 0
     document = CustomPagesDocument(
-        output_dir=allsvk_dir,
+        output_dir=output_dir,
         output_file=f"{datetime.now().strftime("%Y-%m-%d")} - Einde levensduur analyse",
         custom_pages=pages,
     )
+
     for barrier in [
         StormSurgeBarrier.MaeslantBarrier,
         StormSurgeBarrier.HartelBarrier,
@@ -84,5 +94,6 @@ def test_create_end_of_life_time_summary():
             )
         )
         page_count += 1
+
     document.custom_pages = pages
     document.build()

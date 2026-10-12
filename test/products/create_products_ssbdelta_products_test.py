@@ -20,15 +20,25 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 import pytest
 from datetime import datetime
+from pathlib import Path
 from svk.visualization import ImpactPathwayDocument
 from test.utils.database_reader import read_ssb_pathway_database
-from test.paths import ssb_dir
+from test.paths import ssb_dir, test_output_dir
 
 
 @pytest.mark.product
 def test_create_impact_pathway():
+    generate_impact_pathway_document(ssb_dir)
+
+
+@pytest.mark.localproduct
+def test_create_impact_pathway_local():
+    generate_impact_pathway_document(test_output_dir)
+
+
+def generate_impact_pathway_document(output_dir: Path):
     questions = read_ssb_pathway_database()
     output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Impact pathway SSB-delta"
 
-    pathway = ImpactPathwayDocument(questions=questions, output_dir=ssb_dir, output_file=output_file, cleanup=True, topic="SSB-∆")
+    pathway = ImpactPathwayDocument(questions=questions, output_dir=test_output_dir, output_file=output_file, topic="SSB-∆", cleanup=True)
     pathway.build()
