@@ -35,7 +35,8 @@ from ._label import Label
 from ._translator import Translator
 from ._function import Function
 from ._driver import Driver
-from ._color import Color, KnownColors
+from ._color import Color
+from ._known_colors import KnownColors
 from ._grid import Grid, GridCell, GridHeader
 from ._icon import Icon, PathIconElement, RectIconElement, CircleIconElement, IconElementType, IconElement, ClipPath
 from .helpers._icon_provider import IconProvider

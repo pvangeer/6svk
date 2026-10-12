@@ -22,7 +22,7 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, model_validator, PrivateAttr
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.elements._group import GroupBase
-from svk.data.helpers import color_toward_grey
+from svk.visualization.helpers._color_helper import color_toward_grey
 
 from svgwrite import Drawing
 from uuid import uuid4

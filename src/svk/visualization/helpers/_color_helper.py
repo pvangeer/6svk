@@ -18,10 +18,27 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.data import TimeFrame
-from svk.data._color import Color, KnownColors
-from svk.data.helpers import color_toward_grey
+from svk.data import TimeFrame, Color, KnownColors
 from svk.visualization._layout_configuration import LayoutConfiguration
+
+
+def color_toward_grey(color: Color, grey_fraction: float = 0.5, grey: Color = Color(r=210, g=190, b=210)) -> Color:
+    """
+    Creates an rgb-string of a color towards another (grey) color.
+
+    :param color: The initial color
+    :type color: Color
+    :param grey_fraction: The fraction (percentage) of the second color that should be part of the resulting color
+    :type grey_fraction: float
+    :param grey: The second (grey) color
+    :type grey: Color
+    :return: String representation of the resulting color
+    :rtype: str
+    """
+    r_x = round(color.r + (grey.r - color.r) * grey_fraction)
+    g_x = round(color.g + (grey.g - color.g) * grey_fraction)
+    b_x = round(color.b + (grey.b - color.b) * grey_fraction)
+    return Color(r=r_x, g=g_x, b=b_x)
 
 
 def get_contrast_color(background_rgb: Color) -> Color:

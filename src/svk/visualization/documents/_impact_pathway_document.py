@@ -208,7 +208,6 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
             clusters=self.get_clusters(questions=cast(list[ImpactPathwayResearchQuestion], self.questions), page_number=page_number),
         )
 
-        self.get_clusters(questions=cast(list[ImpactPathwayResearchQuestion], self.questions), page_number=page_number)
         return fig
 
     def get_clusters(self, questions: list[ImpactPathwayResearchQuestion], page_number: int) -> tuple[Cluster, ...]:
@@ -224,7 +223,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                 questions_by_cluster[question.research_line.cluster].append(question)
 
         clusters: list[Cluster] = []
-        for i_cluster in questions_by_cluster:
+        for i_cluster in sorted(questions_by_cluster):
             questions_per_time_frame_column: defaultdict[int, list[ImpactPathwayResearchQuestion]] = defaultdict(
                 list[ImpactPathwayResearchQuestion]
             )

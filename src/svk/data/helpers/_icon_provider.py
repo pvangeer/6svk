@@ -1,7 +1,7 @@
 from svk.data._stormsurgebarrier import StormSurgeBarrier
 from svk.data._icon import Icon, PathIconElement, RectIconElement, CircleIconElement, ClipPath
 from svk.data._timeframe import TimeFrame
-from svk.data._color import KnownColors
+from svk.data._known_colors import KnownColors
 
 
 class IconProvider:

@@ -17,5 +17,3 @@ program; if not, see <https://www.gnu.org/licenses/>.
 All names, logos, and references to "Deltares" are registered trademarks of Stichting
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
-
-from ._greyfraction import color_toward_grey, get_grey_fraction

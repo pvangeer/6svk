@@ -139,7 +139,8 @@ class SluicesDocument(Document):
                 questions_by_cluster[question.research_line.cluster].append(question)
 
         clusters: list[Cluster] = []
-        for i_cluster in questions_by_cluster:
+        # TODO: BEcause we already create pages per cluster, this loop doesn't do that much anymore
+        for i_cluster in sorted(questions_by_cluster):
             questions_per_time_frame_column: defaultdict[int, list[SluicesResearchQuestion]] = defaultdict(list[SluicesResearchQuestion])
             for question in questions_by_cluster[i_cluster]:
                 if question.time_frame in time_frame_column_numbers:

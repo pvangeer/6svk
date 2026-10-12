@@ -195,7 +195,7 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
                 questions_by_cluster[question.research_line.cluster].append(question)
 
         clusters: list[Cluster] = []
-        for i_cluster in questions_by_cluster:
+        for i_cluster in sorted(questions_by_cluster):
             questions_per_time_frame_column: defaultdict[int, list[StormSurgeBarrierResearchQuestion]] = defaultdict(
                 list[StormSurgeBarrierResearchQuestion]
             )

@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from enum import Enum
-from svk.data._color import Color, KnownColors
+from svk.data._color import Color
+from svk.data._known_colors import KnownColors
 
 
 class IconElementType(Enum):

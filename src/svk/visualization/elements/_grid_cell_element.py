@@ -1,6 +1,6 @@
 from svgwrite import Drawing
 from pydantic import PrivateAttr, model_validator
-from svk.data._color import Color, KnownColors
+from svk.data import Color, KnownColors
 from svk.visualization.elements._visual_element import VisualElement
 
 
