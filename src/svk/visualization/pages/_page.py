@@ -28,7 +28,7 @@ from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 from svk.visualization.helpers._draw_callout import draw_callout
-from svk.visualization.helpers._measuretext import measure_text_chromium
+from svk.visualization.helpers._measuretext import measure_text
 
 
 class Page(BaseModel, ABC):
@@ -90,7 +90,7 @@ class Page(BaseModel, ABC):
         )
         _title_text_width = (
             self.layout_configuration.paper_margin
-            + measure_text_chromium(
+            + measure_text(
                 self.title, font_size=self.layout_configuration.page_title_font_size, font_weight="bold", font_family="Arial"
             )[0]
             + self.layout_configuration.paper_margin
@@ -238,7 +238,7 @@ class Page(BaseModel, ABC):
     def draw_legend_link(self, dwg: Drawing):
         if self.include_legend_link:
             legend_label = self.translator.get_label(label=Label.LegendTitle)
-            label_size = measure_text_chromium(text=legend_label, font_size=self.layout_configuration.disclamer_font_size)
+            label_size = measure_text(text=legend_label, font_size=self.layout_configuration.disclamer_font_size)
             x_end = self._width - self.layout_configuration.paper_margin
             y_top = self._height - self.layout_configuration.paper_margin - self.layout_configuration.disclamer_font_size * 1.2
             dwg.add(

@@ -124,6 +124,47 @@ class RendererServer:
         return width, height
 
     @classmethod
+    def wrap_text(
+        cls,
+        words: list[str],
+        max_width: float,
+        font_size: int,
+    ) -> list[str]:
+        cls.start()
+        if cls._measure_page is None:
+            raise RendererNotStartedError()
+
+        return cls._measure_page.evaluate(
+            """
+            ([words, maxWidth, fontSize]) => {
+                const el = document.getElementById("measure");
+                el.setAttribute("font-family", "Arial");
+                el.setAttribute("font-size", fontSize + "px");
+                el.setAttribute("font-weight", "normal");
+                el.setAttribute("font-style", "normal");
+
+                const lines = [];
+                let line = "";
+                for (const word of words) {
+                    const candidate = line + word + " ";
+                    el.textContent = candidate;
+                    if (el.getBBox().width > maxWidth) {
+                        lines.push(line);
+                        line = word + " ";
+                    } else {
+                        line = candidate;
+                    }
+                }
+                if (line) {
+                    lines.push(line);
+                }
+                return lines;
+            }
+            """,
+            [words, max_width, font_size],
+        )
+
+    @classmethod
     def stop(cls):
         if cls._page:
             cls._page.close()

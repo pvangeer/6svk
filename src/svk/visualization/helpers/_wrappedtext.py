@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from ._measuretext import measure_text
+from ._measuretext import wrap_text
 
 from svgwrite import Drawing
 from svgwrite.text import Text
@@ -42,20 +42,7 @@ def wrapped_lines(
     :rtype: list[str]
     """
     words = text.split()
-    lines = []
-    line = ""
-    for word in words:
-        test_line = line + word + " "
-        w, _ = measure_text(test_line, font_size)
-        if w > max_width:
-            lines.append(line)
-            line = word + " "
-        else:
-            line = test_line
-    if line:
-        lines.append(line)
-
-    return lines
+    return wrap_text(words=words, max_width=max_width, font_size=font_size)
 
 
 def wrapped_text(

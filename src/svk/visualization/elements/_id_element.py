@@ -22,7 +22,7 @@ from __future__ import annotations
 from pydantic import PrivateAttr, model_validator
 from svgwrite import Drawing
 from svk.visualization.elements._visual_element import VisualElement
-from svk.visualization.helpers._wrappedtext import measure_text
+from svk.visualization.helpers._measuretext import measure_text
 
 
 class IdElement(VisualElement):
