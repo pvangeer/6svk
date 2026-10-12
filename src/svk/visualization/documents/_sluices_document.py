@@ -264,6 +264,13 @@ class SluicesDocument(Document):
                     translator=self.translator,
                     research_question=question,
                     page_number=page_number,
+                    color=(
+                        colorhelper.get_color(
+                            self.layout_configuration, time_frame=question.time_frame, research_line_group=question.research_line.cluster
+                        )
+                        if question.research_line is not None
+                        else KnownColors.RWSGrey1
+                    ),
                 )
                 for question in questions
             ),

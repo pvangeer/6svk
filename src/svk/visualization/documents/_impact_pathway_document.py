@@ -147,7 +147,9 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                             page_number=page_number,
                             link_target_id=research_line.id,
                             title=self.translator.get_label(research_line.title),
-                            color=color_toward_grey(research_line.base_color, get_grey_fraction(time_frame)),
+                            color=colorhelper.get_color(
+                                self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                            ),
                             use_contrast_color=True,
                             questions=question_elements,
                         )
@@ -238,10 +240,8 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                     list[ImpactPathwayResearchQuestion]
                 )
                 time_frame = column_time_frames[i_column]
-                base_color: Color = KnownColors.White
                 for question in questions_per_time_frame_column[i_column]:
                     if question.research_line is not None:
-                        base_color = question.research_line.base_color
                         questions_per_group_in_column[question.research_line].append(question)
 
                 column_groups: list[Group] = []
@@ -270,7 +270,9 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                             page_number=page_number,
                             link_target_id=research_line.id,
                             title=self.translator.get_label(research_line.title),
-                            color=color_toward_grey(research_line.base_color, get_grey_fraction(time_frame)),
+                            color=colorhelper.get_color(
+                                self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                            ),
                             use_contrast_color=True,
                             questions=question_elements,
                         )
@@ -278,12 +280,13 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
 
                 columns.append(ClusterColumn(column_number=i_column, groups=tuple(column_groups)))
 
+            cluster_color = colorhelper.get_color(self.layout_configuration, time_frame=TimeFrame.Now, research_line_group=i_cluster)
             clusters.append(
                 Cluster(
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
                     translator=self.translator,
-                    color=base_color,
+                    color=cluster_color,
                     columns=tuple(columns),
                 )
             )

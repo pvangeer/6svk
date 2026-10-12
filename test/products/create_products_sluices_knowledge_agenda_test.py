@@ -19,10 +19,32 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 import pytest
-from test.paths import ph_base_dir
-from test.products._create_products_sluices import create_sluices_overview
+from test.paths import ph_base_dir, test_output_dir
+from datetime import datetime
+from pathlib import Path
+from svk.visualization import SluicesDocument
+from test.utils.database_reader import read_ph_database
 
 
 @pytest.mark.product
 def test_create_sluices_overview():
     create_sluices_overview(output_dir=ph_base_dir)
+
+
+@pytest.mark.localproduct
+def test_create_sluices_overview_local():
+    create_sluices_overview(output_dir=test_output_dir)
+
+
+def create_sluices_overview(output_dir: Path):
+    questions = read_ph_database()
+    output_file = f"{datetime.now().strftime("%Y-%m-%d")} - Kennisagenda Sluis Panheel"
+
+    calendar = SluicesDocument(
+        output_dir=output_dir,
+        output_file=output_file,
+        questions=questions,
+        cleanup=True,
+    )
+
+    calendar.build()

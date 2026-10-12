@@ -20,7 +20,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from pydantic import BaseModel, ConfigDict
 from svk.data._label import Label
-from svk.data._color import Color
 
 
 class ResearchLine(BaseModel):
@@ -28,7 +27,6 @@ class ResearchLine(BaseModel):
     number: int
     title: Label
     cluster: int
-    base_color: Color
 
     @property
     def id(self) -> str:

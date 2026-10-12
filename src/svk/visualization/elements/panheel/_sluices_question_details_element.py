@@ -39,6 +39,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
     research_question: SluicesResearchQuestion
     """The research question"""
     page_number: int
+    color: Color
 
     _height: float = PrivateAttr()
     _width: float = PrivateAttr()
@@ -71,16 +72,6 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
 
         return self
 
-    @property
-    def _color(self) -> Color:
-        return (
-            self.research_question.color
-            if not self.layout_configuration.use_rijkswaterstaat_colors or not self.research_question.research_line
-            else colorhelper.get_rijkswaterstaat_style_color(
-                self.research_question.time_frame, self.research_question.research_line.cluster
-            )
-        )
-
     def set_preferred_first_column_width(self, width: float):
         self._id_element.set_preferred_width(width)
         self._validate_size()
@@ -91,17 +82,17 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
                 insert=(x, y),
                 size=(self.width, self.height),
                 stroke_width=0.5,
-                fill=str(self._color),
+                fill=str(self.color),
                 fill_opacity=0.3,
-                stroke=str(self._color),
+                stroke=str(self.color),
             )
         )
 
         self.draw_first_line(dwg, x, y)
-        self.draw_horizontal_separator(dwg, x, y + self._h_first_line, self.width, self._color)
+        self.draw_horizontal_separator(dwg, x, y + self._h_first_line, self.width, self.color)
         self.draw_second_line(dwg, x, y + self._h_first_line)
         y_last_line = y + self.height - self._h_last_line
-        self.draw_horizontal_separator(dwg, x, y_last_line, self.width, self._color)
+        self.draw_horizontal_separator(dwg, x, y_last_line, self.width, self.color)
         self.draw_last_lines(dwg, x, y_last_line)
 
     def draw_first_line(self, dwg: Drawing, x: float, y: float):
@@ -114,7 +105,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             height_container=self._h_first_line,
             alignment=Alignment.MiddleCenter,
         )
-        self.draw_vertical_separator(dwg, x + self._width_first_column, y, element_height=self._h_first_line, color=self._color)
+        self.draw_vertical_separator(dwg, x + self._width_first_column, y, element_height=self._h_first_line, color=self.color)
 
         self.draw_element(
             dwg=dwg,
@@ -126,7 +117,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.MiddleLeft,
         )
         self.draw_vertical_separator(
-            dwg, x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self._color
+            dwg, x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self.color
         )
         self.draw_element(
             dwg=dwg,
@@ -152,7 +143,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.MiddleCenter,
         )
         x_current += self._width_first_column
-        self.draw_vertical_separator(dwg, x_current, y, height_container, self._color)
+        self.draw_vertical_separator(dwg, x_current, y, height_container, self.color)
         self.draw_element(
             dwg=dwg,
             element=self._priority_details_element,
@@ -163,7 +154,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.TopLeft,
         )
         x_current += self._priority_details_element.width
-        self.draw_vertical_separator(dwg, x_current, y, height_container, self._color)
+        self.draw_vertical_separator(dwg, x_current, y, height_container, self.color)
         self.draw_element(
             dwg=dwg,
             element=self._current_research_element,
@@ -187,7 +178,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
 
         x_base = x + self._width_first_column
 
-        self.draw_vertical_separator(dwg=dwg, x=x_base, y=y, element_height=self._h_last_line, color=self._color)
+        self.draw_vertical_separator(dwg=dwg, x=x_base, y=y, element_height=self._h_last_line, color=self.color)
 
         label = self.translator.get_label(Label.QD_Related_Questions) + ":"
         if len(self._related_question_elements) == 0:
@@ -253,7 +244,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             links_register=self.links_register,
             translator=self.translator,
             research_question=self.research_question,
-            color=self._color,
+            color=self.color,
         )
         self._ssb_icons_element = IconsElement(
             layout_configuration=self.layout_configuration,
@@ -273,7 +264,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             links_register=self.links_register,
             translator=self.translator,
             research_question=self.research_question,
-            color=self._color,
+            color=self.color,
         )
         self._related_question_elements = [
             IdElement(

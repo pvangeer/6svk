@@ -21,11 +21,9 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svk.data import StormSurgeBarrierResearchQuestion, Label, IconProvider, Color
-from svk.data.helpers import color_toward_grey
 from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
-from svk.visualization.helpers import _color_helper as colorhelper
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer, Alignment
 from svk.visualization.elements._question_organisation_details_element import QuestionOrganisationDetailsElement
@@ -40,6 +38,7 @@ class QuestionDetailsElement(VisualElementsContainer):
     research_question: StormSurgeBarrierResearchQuestion
     """The research question"""
     page_number: int
+    color: Color
 
     _height: float = PrivateAttr()
     _width: float = PrivateAttr()
@@ -83,14 +82,14 @@ class QuestionDetailsElement(VisualElementsContainer):
             links_register=self.links_register,
             translator=self.translator,
             research_question=self.research_question,
-            color=self._color,
+            color=self.color,
         )
         self._organisation_details_element = QuestionOrganisationDetailsElement(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
             research_question=self.research_question,
-            color=self._color,
+            color=self.color,
             page_number=self.page_number,
         )
         self._analysis_element = QuestionAnalysisDetailsElement(
@@ -98,7 +97,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             links_register=self.links_register,
             translator=self.translator,
             research_question=self.research_question,
-            color=self._color,
+            color=self.color,
             page_number=self.page_number,
         )
         self._id_element = IdElement(
@@ -176,35 +175,23 @@ class QuestionDetailsElement(VisualElementsContainer):
 
         return self
 
-    @property
-    def _color(self) -> Color:
-        research_line = self.research_question.research_line
-        return (
-            color_toward_grey(
-                research_line.base_color,
-                colorhelper.get_grey_fraction(self.research_question.time_frame),
-            )
-            if research_line is not None
-            else Color(r=120, g=120, b=120)
-        )
-
     def draw(self, dwg: Drawing, x: float, y: float):
         dwg.add(
             dwg.rect(
                 insert=(x, y),
                 size=(self.width, self.height),
                 stroke_width=0.5,
-                fill=self._color,
+                fill=self.color,
                 fill_opacity=0.3,
-                stroke=self._color,
+                stroke=self.color,
             )
         )
 
         self.draw_first_line(dwg, x, y)
-        self.draw_horizontal_separator(dwg, x, y + self._h_first_line, self.width, self._color)
+        self.draw_horizontal_separator(dwg, x, y + self._h_first_line, self.width, self.color)
         self.draw_second_line(dwg, x, y + self._h_first_line)
         y_last_line = y + self.height - self._h_last_line
-        self.draw_horizontal_separator(dwg, x, y_last_line, self.width, self._color)
+        self.draw_horizontal_separator(dwg, x, y_last_line, self.width, self.color)
         self.draw_last_lines(dwg, x, y_last_line)
 
     def draw_first_line(self, dwg: Drawing, x: float, y: float):
@@ -218,7 +205,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             height_container=self._h_first_line,
             alignment=Alignment.MiddleCenter,
         )
-        self.draw_vertical_separator(dwg, x + width_first_column, y, element_height=self._h_first_line, color=self._color)
+        self.draw_vertical_separator(dwg, x + width_first_column, y, element_height=self._h_first_line, color=self.color)
 
         self.draw_element(
             dwg=dwg,
@@ -230,7 +217,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.MiddleLeft,
         )
         self.draw_vertical_separator(
-            dwg, x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self._color
+            dwg, x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self.color
         )
         self.draw_element(
             dwg=dwg,
@@ -256,7 +243,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.MiddleCenter,
         )
         x_current += width_first_column
-        self.draw_vertical_separator(dwg, x_current, y, height_container, self._color)
+        self.draw_vertical_separator(dwg, x_current, y, height_container, self.color)
         self.draw_element(
             dwg=dwg,
             element=self._question_explanation_element,
@@ -268,7 +255,7 @@ class QuestionDetailsElement(VisualElementsContainer):
         )
 
         x_current += self._question_explanation_element.width
-        self.draw_vertical_separator(dwg, x_current, y, height_container, self._color)
+        self.draw_vertical_separator(dwg, x_current, y, height_container, self.color)
         self.draw_element(
             dwg=dwg,
             element=self._priority_details_element,
@@ -279,7 +266,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.TopLeft,
         )
 
-        self.draw_vertical_separator(dwg, x_current, y, height_container, self._color)
+        self.draw_vertical_separator(dwg, x_current, y, height_container, self.color)
         self.draw_element(
             dwg=dwg,
             element=self._organisation_details_element,
@@ -291,7 +278,7 @@ class QuestionDetailsElement(VisualElementsContainer):
         )
 
         x_current += max([self._organisation_details_element.width, self._priority_details_element.width])
-        self.draw_vertical_separator(dwg, x_current, y, height_container, self._color)
+        self.draw_vertical_separator(dwg, x_current, y, height_container, self.color)
         self.draw_element(
             dwg=dwg,
             element=self._analysis_element,

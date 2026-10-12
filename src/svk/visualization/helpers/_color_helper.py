@@ -43,6 +43,7 @@ def get_contrast_color(background_rgb: Color) -> Color:
 
 
 def get_color(layout_configuration: LayoutConfiguration, time_frame: TimeFrame, research_line_group: int | None = None) -> Color:
+    # TODO: do not pass LayoutConfiguration, only use_rijkswaterstaat_color.
     if layout_configuration.use_rijkswaterstaat_colors and research_line_group is not None:
         return get_rijkswaterstaat_style_color(time_frame, research_line_group)
     else:

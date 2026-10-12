@@ -22,7 +22,6 @@ from __future__ import annotations
 from pydantic import BaseModel, model_validator
 from svk.data._timeframe import TimeFrame
 from svk.data._research_line import ResearchLine
-from svk.data._color import Color
 from abc import ABC, abstractmethod
 
 
@@ -49,11 +48,6 @@ class ResearchQuestion(ABC, BaseModel):
 
     keywords: str | None
     """Keywords associated with this research question. These keywords are used to search for research questions in the database."""
-
-    @property
-    @abstractmethod
-    def color(self) -> Color:
-        pass
 
     @property
     @abstractmethod

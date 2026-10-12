@@ -21,11 +21,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from pydantic import BaseModel
 from svk.data._research_line import ResearchLine
 from svk.data._sluices_research_lines import SluicesResearchLines
-from svk.data._color import Color, KnownColors
-
-darkblue = KnownColors.RWSBlue1
-sandy = KnownColors.RWSYellow1
-grey = KnownColors.RWSGrey1
 
 
 class SluicesResearchLineFactory(BaseModel):
@@ -119,22 +114,4 @@ class SluicesResearchLineFactory(BaseModel):
             number=storm_surge_barrier_research_line.number,
             title=storm_surge_barrier_research_line.title,
             cluster=storm_surge_barrier_research_line.cluster,
-            base_color=SluicesResearchLineFactory.get_base_color(storm_surge_barrier_research_line.cluster),
         )
-
-    @staticmethod
-    def get_base_color(cluster) -> Color:
-        """
-        Returns the R, G and B values of the color associated to the color group of the research line. R,G and B are integers ranging from 0 - 256.
-
-        :return: R,G,B of the associated color.
-        :rtype: tuple[int, int, int]
-        """
-        match cluster:
-            case 1:
-                return darkblue
-            case 2:
-                return sandy
-            case 3:
-                return grey
-        raise ValueError("Unknown color group.")
