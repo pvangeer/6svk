@@ -18,9 +18,12 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+import re
 from svk.data._ssb_research_question import StormSurgeBarrierResearchQuestion
 from svk.data._impactcategory import ImpactCategory
 from svk.data._priority import Priority
+
+_ID_PATTERN = re.compile(r"(\d+)(?:\.(\d+))?_(\d+)([a-zA-Z]?)")
 
 
 class ImpactPathwayResearchQuestion(StormSurgeBarrierResearchQuestion):
@@ -43,3 +46,23 @@ class ImpactPathwayResearchQuestion(StormSurgeBarrierResearchQuestion):
         if n_high_prio > 0 or combined_priority > 8:
             return 1
         return 0
+
+    def _numeric_id_parts(self) -> tuple[int, int, int, int, str]:
+        match = _ID_PATTERN.fullmatch(self.id)
+        if match is None:
+            raise ValueError(f"Invalid impact pathway question ID: {self.id}")
+
+        first, middle, last, suffix = match.groups()
+        return (
+            int(first),
+            int(middle is not None),  # distinguish 1_2 from 1.0_2
+            int(middle or 0),
+            int(last),
+            suffix.casefold(),
+        )
+
+    def id_sort_key(self) -> tuple[int, int, int, int, str]:
+        return self._numeric_id_parts()
+
+    def priority_id_sort_key(self) -> tuple[int, int, int, int, int, str]:
+        return (-self.priority, *self._numeric_id_parts())

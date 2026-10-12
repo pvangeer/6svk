@@ -256,7 +256,9 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                                     self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
                                 ),
                             )
-                            for q in sorted(questions_per_group_in_column[research_line], key=lambda q: q.priority)
+                            for q in sorted(
+                                questions_per_group_in_column[research_line], key=ImpactPathwayResearchQuestion.priority_id_sort_key
+                            )
                         ]
                     )
                     column_groups.append(

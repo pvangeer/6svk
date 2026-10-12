@@ -103,7 +103,7 @@ class ResearchQuestionsDocument(Document):
             list[StormSurgeBarrierResearchQuestion]
         )
         non_grouped: list[StormSurgeBarrierResearchQuestion] = []
-        for question in self.questions:
+        for question in sorted(self.questions, key=StormSurgeBarrierResearchQuestion.id_sort_key):
             if question.research_line is None:
                 non_grouped.append(question)
             else:

@@ -19,6 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
+import re
 from pydantic import BaseModel, model_validator
 from svk.data._timeframe import TimeFrame
 from svk.data._research_line import ResearchLine
@@ -65,3 +66,19 @@ class ResearchQuestion(ABC, BaseModel):
         if self.time_frame not in (TimeFrame.NotRelevant, TimeFrame.Unknown) and self.research_line is None:
             raise ValueError("Research line can only be unknown in case the time frame is either not relevant or unknown.")
         return self
+
+    def priority_id_sort_key(self) -> tuple[int, str, int, str]:
+        match = re.fullmatch(r"(.*?)(\d+)([a-zA-Z]?)", self.id)
+        if match is None:
+            return -self.priority, self.id, 0, ""
+
+        prefix, number, suffix = match.groups()
+        return -self.priority, prefix.casefold(), int(number), suffix.casefold()
+
+    def id_sort_key(self) -> tuple[str, int, str]:
+        match = re.fullmatch(r"(.*?)(\d+)([a-zA-Z]?)", self.id)
+        if match is None:
+            return self.id, 0, ""
+
+        prefix, number, suffix = match.groups()
+        return prefix.casefold(), int(number), suffix.casefold()

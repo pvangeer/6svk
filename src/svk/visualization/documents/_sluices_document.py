@@ -171,7 +171,7 @@ class SluicesDocument(Document):
                                     self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
                                 ),
                             )
-                            for q in sorted(questions_per_group_in_column[research_line], key=lambda q: q.priority)
+                            for q in sorted(questions_per_group_in_column[research_line], key=SluicesResearchQuestion.priority_id_sort_key)
                         ]
                     )
                     column_groups.append(
@@ -207,7 +207,7 @@ class SluicesDocument(Document):
 
         grouped_questions: defaultdict[ResearchLine, list[SluicesResearchQuestion]] = defaultdict(list[SluicesResearchQuestion])
         non_grouped: list[SluicesResearchQuestion] = []
-        for question in self.questions:
+        for question in sorted(self.questions, key=SluicesResearchQuestion.id_sort_key):
             if question.research_line is None:
                 non_grouped.append(question)
             else:
