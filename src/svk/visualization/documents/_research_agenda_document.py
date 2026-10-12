@@ -189,6 +189,7 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
             TimeFrame.NearFuture: 1,
             TimeFrame.Future: 2,
         }
+        column_time_frames: dict[int, TimeFrame] = {v: k for k, v in time_frame_column_numbers.items()}
 
         questions_by_cluster: defaultdict[int, list[StormSurgeBarrierResearchQuestion]] = defaultdict(
             list[StormSurgeBarrierResearchQuestion]
@@ -211,7 +212,7 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
                 questions_per_group_in_column: defaultdict[ResearchLine, list[StormSurgeBarrierResearchQuestion]] = defaultdict(
                     list[StormSurgeBarrierResearchQuestion]
                 )
-
+                time_frame = column_time_frames[i_column]
                 base_color: Color = KnownColors.White
                 for question in questions_per_time_frame_column[i_column]:
                     if question.research_line is not None:
@@ -229,11 +230,13 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
                                 research_question=q,
                                 page_number=page_number,
                                 show_priority=True,
+                                color=colorhelper.get_color(
+                                    self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                                ),
                             )
                             for q in questions_per_group_in_column[research_line]
                         ]
                     )
-                    time_frame = questions_per_group_in_column[research_line][0].time_frame
                     column_groups.append(
                         Group(
                             layout_configuration=self.layout_configuration,

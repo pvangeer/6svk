@@ -81,6 +81,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
                     page_number=0,
+                    color=KnownColors.RWSBlue1,
                 ),
                 QuestionSummaryElement(
                     layout_configuration=config,
@@ -92,6 +93,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
                     page_number=0,
+                    color=KnownColors.RWSBlue1,
                 ),
                 QuestionSummaryElement(
                     layout_configuration=config,
@@ -103,6 +105,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
                     page_number=0,
+                    color=KnownColors.RWSBlue1,
                 ),
             ]
         ),
@@ -126,6 +129,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Cyber,
                     ),
                     page_number=0,
+                    color=KnownColors.RWSBlue2,
                 ),
                 QuestionSummaryElement(
                     layout_configuration=config,
@@ -137,6 +141,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Cyber,
                     ),
                     page_number=0,
+                    color=KnownColors.RWSBlue2,
                 ),
                 QuestionSummaryElement(
                     layout_configuration=config,
@@ -148,6 +153,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Cyber,
                     ),
                     page_number=0,
+                    color=KnownColors.RWSBlue2,
                 ),
             ]
         ),
@@ -171,6 +177,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
                     page_number=0,
+                    color=KnownColors.RWSYellow2,
                 ),
                 QuestionSummaryElement(
                     layout_configuration=config,
@@ -182,6 +189,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
                     page_number=0,
+                    color=KnownColors.RWSYellow2,
                 ),
                 QuestionSummaryElement(
                     layout_configuration=config,
@@ -193,6 +201,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
                     page_number=0,
+                    color=KnownColors.RWSYellow2,
                 ),
             ]
         ),

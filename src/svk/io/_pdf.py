@@ -64,14 +64,14 @@ def add_links(input_pdf_file: Path, output_file: Path, links_manager: LinksRegis
         for link in links_list:
             source_page_index = link[0]
             svg_size = svg_sizes[source_page_index]
-            p = doc[source_page_index]
-            pdf_width, pdf_height = p.rect.width, p.rect.height
+            page = doc[source_page_index]
+            pdf_width, pdf_height = page.rect.width, page.rect.height
             x_left_up, y_left_up = _scale_coordinates(link[1], link[2], svg_size[0], svg_size[1], pdf_width, pdf_height)
             x_right_down, y_right_down = _scale_coordinates(
                 link[1] + link[3], link[2] + link[4], svg_size[0], svg_size[1], pdf_width, pdf_height
             )
             rect = fitz.Rect(x_left_up, y_left_up, x_right_down, y_right_down)
-            doc[source_page_index].insert_link(
+            page.insert_link(
                 {
                     "kind": fitz.LINK_GOTO,
                     "from": rect,

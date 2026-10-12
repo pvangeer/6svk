@@ -72,7 +72,7 @@ def get_grey_fraction(time_frame: TimeFrame) -> float:
 def get_default_style_color(time_frame: TimeFrame, research_line_cluster: int | None = None) -> Color:
     match research_line_cluster:
         case 1:
-            base_color = KnownColors.Orange
+            base_color = KnownColors.DarkOrange
         case 2:
             base_color = KnownColors.LightGreen
         case 3:

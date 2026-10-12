@@ -25,6 +25,7 @@ from svk.data.helpers import color_toward_grey
 from svk.visualization.pages._page import Page
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._color_helper import get_grey_fraction
+from svk.visualization.helpers import _color_helper as colorhelper
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group, PlainTextGroup
@@ -93,6 +94,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
             TimeFrame.NearFuture: 0,
             TimeFrame.Future: 1,
         }
+        column_time_frames: dict[int, TimeFrame] = {v: k for k, v in time_frame_column_numbers.items()}
 
         questions_by_impact_category: defaultdict[ImpactCategory, list[ImpactPathwayResearchQuestion]] = defaultdict(
             list[ImpactPathwayResearchQuestion]
@@ -114,7 +116,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                 questions_per_group_in_column: defaultdict[ResearchLine, list[ImpactPathwayResearchQuestion]] = defaultdict(
                     list[ImpactPathwayResearchQuestion]
                 )
-
+                time_frame = column_time_frames[i_column]
                 for question in questions_per_time_frame_column[i_column]:
                     if question.research_line is not None:
                         questions_per_group_in_column[question.research_line].append(question)
@@ -130,11 +132,13 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                                 research_question=q,
                                 page_number=page_number,
                                 show_priority=True,
+                                color=colorhelper.get_color(
+                                    self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                                ),
                             )
                             for q in questions_per_group_in_column[research_line]
                         ]
                     )
-                    time_frame = questions_per_group_in_column[research_line][0].time_frame
                     column_groups.append(
                         Group(
                             layout_configuration=self.layout_configuration,
@@ -212,6 +216,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
             TimeFrame.NearFuture: 0,
             TimeFrame.Future: 1,
         }
+        column_time_frames: dict[int, TimeFrame] = {v: k for k, v in time_frame_column_numbers.items()}
 
         questions_by_cluster: defaultdict[int, list[ImpactPathwayResearchQuestion]] = defaultdict(list[ImpactPathwayResearchQuestion])
         for question in questions:
@@ -232,7 +237,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                 questions_per_group_in_column: defaultdict[ResearchLine, list[ImpactPathwayResearchQuestion]] = defaultdict(
                     list[ImpactPathwayResearchQuestion]
                 )
-
+                time_frame = column_time_frames[i_column]
                 base_color: Color = KnownColors.White
                 for question in questions_per_time_frame_column[i_column]:
                     if question.research_line is not None:
@@ -250,11 +255,13 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                                 research_question=q,
                                 page_number=page_number,
                                 show_priority=True,
+                                color=colorhelper.get_color(
+                                    self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                                ),
                             )
                             for q in questions_per_group_in_column[research_line]
                         ]
                     )
-                    time_frame = questions_per_group_in_column[research_line][0].time_frame
                     column_groups.append(
                         Group(
                             layout_configuration=self.layout_configuration,

@@ -36,6 +36,7 @@ class QuestionSummaryElement(VisualElementsContainer):
     research_question: ResearchQuestion
     """The research question"""
     page_number: int
+    color: Color
     show_priority: bool = True
 
     _height: float = PrivateAttr()
@@ -84,25 +85,15 @@ class QuestionSummaryElement(VisualElementsContainer):
     def width(self) -> float:
         return self._width
 
-    @property
-    def _color(self) -> Color:
-        return (
-            self.research_question.color
-            if not self.layout_configuration.use_rijkswaterstaat_colors or not self.research_question.research_line
-            else colorhelper.get_rijkswaterstaat_style_color(
-                self.research_question.time_frame, self.research_question.research_line.cluster
-            )
-        )
-
     def draw(self, dwg: Drawing, x: float, y: float):
         dwg.add(
             dwg.rect(
                 insert=(x, y),
                 size=(self.width, self.height),
                 stroke_width=0.5,
-                fill=self._color,
+                fill=self.color,
                 fill_opacity=0.3,
-                stroke=self._color,
+                stroke=self.color,
             )
         )
 
@@ -118,7 +109,7 @@ class QuestionSummaryElement(VisualElementsContainer):
         )
 
         x_current += self._priority_icon_element.width
-        self.draw_vertical_separator(dwg, x_current, y, self.height, self._color)
+        self.draw_vertical_separator(dwg, x_current, y, self.height, self.color)
 
         self.draw_element(
             dwg=dwg,
@@ -131,7 +122,7 @@ class QuestionSummaryElement(VisualElementsContainer):
         )
 
         x_current += self._id_element.width
-        self.draw_vertical_separator(dwg, x_current, y, self.height, self._color)
+        self.draw_vertical_separator(dwg, x_current, y, self.height, self.color)
 
         self.draw_element(
             dwg=dwg,
