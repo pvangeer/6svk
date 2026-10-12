@@ -157,7 +157,7 @@ class SluicesDocument(Document):
                         questions_per_group_in_column[question.research_line].append(question)
 
                 column_groups: list[Group] = []
-                for research_line in questions_per_group_in_column:
+                for research_line in sorted(questions_per_group_in_column, key=lambda l: l.number):
                     question_elements = tuple(
                         [
                             QuestionSummaryElement(
@@ -171,7 +171,7 @@ class SluicesDocument(Document):
                                     self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
                                 ),
                             )
-                            for q in questions_per_group_in_column[research_line]
+                            for q in sorted(questions_per_group_in_column[research_line], key=lambda q: q.priority)
                         ]
                     )
                     column_groups.append(
