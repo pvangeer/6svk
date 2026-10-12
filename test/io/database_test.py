@@ -19,7 +19,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svk.io import ImpactPathwayDatabase
-import sys
 import pytest
 from test.paths import test_data_dir
 

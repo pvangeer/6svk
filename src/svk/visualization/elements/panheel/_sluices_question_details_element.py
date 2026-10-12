@@ -32,7 +32,6 @@ from svk.visualization.elements._priority_icon_element import PriorityIconElemen
 from svk.visualization.elements._id_element import IdElement
 from svk.visualization.elements._icons_element import IconsElement
 from svk.visualization.elements.panheel._sluices_current_research_element import CurrentResearchDetailsElement
-from svk.visualization.helpers import _color_helper as colorhelper
 
 
 class SluicesQuestionDetailsElement(VisualElementsContainer):

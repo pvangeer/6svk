@@ -19,7 +19,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from collections import defaultdict
-from typing import DefaultDict
 
 from svk.data import (
     StormSurgeBarrierResearchQuestion,
@@ -32,11 +31,8 @@ from svk.data import (
     StormSurgeBarrierResearchLineFactory,
     StormSurgeBarrierResearchLines,
     Grid,
-    Color,  # TODO: Move base color away from research line
-    KnownColors,
 )
 from svk.visualization.helpers._measuretext import measure_text
-from svk.data.helpers import color_toward_grey
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers import _color_helper as colorhelper
 from svk.visualization.elements._column import Column

@@ -9,7 +9,6 @@ from svk.data import (
     SluicesResearchQuestion,
     Label,
     SluicesResearchLines,
-    Color,  # TODO: Move base_color from research_line to some factory and do not pass colors around related to research lines.
     KnownColors,
 )
 from svk.visualization._layout_configuration import LayoutConfiguration

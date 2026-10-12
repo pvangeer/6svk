@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svgwrite import Drawing
-from svk.data import Color, KnownColors
+from svk.data import Color
 from svk.visualization.helpers._radial_gradient import create_radial_gradient
 
 

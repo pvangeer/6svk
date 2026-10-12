@@ -25,7 +25,6 @@ from svk.data import ResearchQuestion, Color
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer, Alignment
 from svk.visualization.elements._question_details_element import IdElement, PriorityIconElement
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
-from svk.visualization.helpers import _color_helper as colorhelper
 
 
 class QuestionSummaryElement(VisualElementsContainer):
