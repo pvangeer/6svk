@@ -20,7 +20,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svgwrite import Drawing
 from svk.data import Label, Color, TimeFrame
 from svk.visualization.elements._text_element import TextElement
 from svk.visualization.elements._time_frame_element import TimeFrameElement
@@ -129,26 +128,23 @@ class ColorTableLegendElement(VisualElementsContainer):
         self._height = self._table_first_row_height + 3 * self._row_height
         return self
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         y_r1 = y + self._table_first_row_height
         y_r2 = y_r1 + self._row_height
         y_r3 = y_r2 + self._row_height
         width_horizontal_separator = self._table_first_column_width + self._table_column_width * 3
         self.draw_horizontal_separator(
-            dwg=dwg,
             x=x,
             y=y_r1,
             element_width=width_horizontal_separator,
             color=self.color,
         )
         self._draw_research_line_group_element(
-            dwg=dwg,
             element=self._maintenance_text_element,
             x_container=x + self.layout_configuration.small_margin,
             y_container=y_r1,
         )
         self.draw_horizontal_separator(
-            dwg=dwg,
             x=x,
             y=y_r2,
             element_width=width_horizontal_separator,
@@ -156,13 +152,11 @@ class ColorTableLegendElement(VisualElementsContainer):
         )
 
         self._draw_research_line_group_element(
-            dwg=dwg,
             element=self._requirements_text_element,
             x_container=x + self.layout_configuration.small_margin,
             y_container=y_r2,
         )
         self.draw_horizontal_separator(
-            dwg=dwg,
             x=x,
             y=y_r3,
             element_width=width_horizontal_separator,
@@ -170,7 +164,6 @@ class ColorTableLegendElement(VisualElementsContainer):
         )
 
         self._draw_research_line_group_element(
-            dwg=dwg,
             element=self._operational_text_element,
             x_container=x + self.layout_configuration.small_margin,
             y_container=y_r3,
@@ -179,20 +172,20 @@ class ColorTableLegendElement(VisualElementsContainer):
         x_c1 = x + self._table_first_column_width
         x_c2 = x_c1 + self._table_column_width
         x_c3 = x_c2 + self._table_column_width
-        self.draw_vertical_separator(dwg=dwg, x=x_c1, y=y, element_height=self._table_first_row_height, color=self.color)
-        self._draw_time_frame_element(dwg=dwg, element=self._now_icon_element, x_container=x_c1, y_container=y)
+        self.draw_vertical_separator(x=x_c1, y=y, element_height=self._table_first_row_height, color=self.color)
+        self._draw_time_frame_element(element=self._now_icon_element, x_container=x_c1, y_container=y)
 
-        self.draw_vertical_separator(dwg=dwg, x=x_c2, y=y, element_height=self._table_first_row_height, color=self.color)
-        self._draw_time_frame_element(dwg=dwg, element=self._near_future_icon_element, x_container=x_c2, y_container=y)
+        self.draw_vertical_separator(x=x_c2, y=y, element_height=self._table_first_row_height, color=self.color)
+        self._draw_time_frame_element(element=self._near_future_icon_element, x_container=x_c2, y_container=y)
 
-        self.draw_vertical_separator(dwg=dwg, x=x_c3, y=y, element_height=self._table_first_row_height, color=self.color)
-        self._draw_time_frame_element(dwg=dwg, element=self._future_icon_element, x_container=x_c3, y_container=y)
+        self.draw_vertical_separator(x=x_c3, y=y, element_height=self._table_first_row_height, color=self.color)
+        self._draw_time_frame_element(element=self._future_icon_element, x_container=x_c3, y_container=y)
 
         for i_row, y_r in enumerate([y_r1, y_r2, y_r3]):
             for i_time_frame, x_c in enumerate([x_c1, x_c2, x_c3]):
-                self.draw_vertical_separator(dwg=dwg, x=x_c, y=y_r, element_height=self._row_height, color=self.color)
-                dwg.add(
-                    dwg.rect(
+                self.draw_vertical_separator(x=x_c, y=y_r, element_height=self._row_height, color=self.color)
+                self._dwg.add(
+                    self._dwg.rect(
                         insert=(x_c + self.layout_configuration.small_margin, y_r + self.layout_configuration.small_margin),
                         size=(
                             self._table_column_width - 2 * self.layout_configuration.small_margin,
@@ -202,9 +195,8 @@ class ColorTableLegendElement(VisualElementsContainer):
                     )
                 )
 
-    def _draw_time_frame_element(self, dwg: Drawing, element: TimeFrameElement, x_container: float, y_container: float):
+    def _draw_time_frame_element(self, element: TimeFrameElement, x_container: float, y_container: float):
         self.draw_element(
-            dwg=dwg,
             element=element,
             x_container=x_container,
             y_container=y_container,
@@ -213,9 +205,8 @@ class ColorTableLegendElement(VisualElementsContainer):
             alignment=Alignment.MiddleCenter,
         )
 
-    def _draw_research_line_group_element(self, dwg: Drawing, element: TextElement, x_container: float, y_container: float):
+    def _draw_research_line_group_element(self, element: TextElement, x_container: float, y_container: float):
         self.draw_element(
-            dwg=dwg,
             element=element,
             x_container=x_container,
             y_container=y_container,

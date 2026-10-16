@@ -1,6 +1,5 @@
 from pydantic import model_validator, PrivateAttr
 from uuid import uuid4
-from svgwrite import Drawing
 from svk.data import Grid, Color
 from svk.visualization.helpers._color_helper import color_toward_grey
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
@@ -115,7 +114,7 @@ class GridElement(VisualElementsContainer):
     def height(self) -> float:
         return self._height
 
-    def draw(self, dwg: Drawing, x: float, y: float) -> None:
+    def _draw(self, x: float, y: float) -> None:
         for category in self._category_info.keys():
             width = self._category_info[category][1]
             height = self.height
@@ -124,7 +123,7 @@ class GridElement(VisualElementsContainer):
             color = Color(r=70, g=80, b=90)
 
             fill_gradient_id = f"gradient_{str(uuid4())}"
-            fill_gradient = dwg.linearGradient(
+            fill_gradient = self._dwg.linearGradient(
                 start=(0, 0),
                 end=(0, 1),
                 id=fill_gradient_id,
@@ -134,7 +133,7 @@ class GridElement(VisualElementsContainer):
             fill_gradient.add_stop_color(1, "white")
 
             stroke_gradient_id = f"gradient_{str(uuid4())}"
-            stroke_gradient = dwg.linearGradient(
+            stroke_gradient = self._dwg.linearGradient(
                 start=(0, 0),
                 end=(0, 1),
                 id=stroke_gradient_id,
@@ -143,11 +142,11 @@ class GridElement(VisualElementsContainer):
             fill_gradient.add_stop_color(0.4, color_toward_grey(color, 0.8, grey=Color(r=250, g=250, b=250)))
             stroke_gradient.add_stop_color(1, "white")
 
-            dwg.defs.add(fill_gradient)
-            dwg.defs.add(stroke_gradient)
+            self._dwg.defs.add(fill_gradient)
+            self._dwg.defs.add(stroke_gradient)
 
-            dwg.add(
-                dwg.rect(
+            self._dwg.add(
+                self._dwg.rect(
                     insert=(left, top),
                     size=(width, height),
                     fill=f"url(#{fill_gradient_id})",  # TODO: Relate to categoyr
@@ -156,14 +155,13 @@ class GridElement(VisualElementsContainer):
                 )
             )
             self.draw_horizontal_separator(
-                dwg=dwg,
                 x=left,
                 y=y + self.layout_configuration.font_size * 1.2 + 2 * self.layout_configuration.small_margin,
                 element_width=self._category_info[category][1],
                 color=Color(r=112, g=128, b=144),
             )
-            dwg.add(
-                dwg.text(
+            self._dwg.add(
+                self._dwg.text(
                     category,
                     x=[left + self._category_info[category][1] / 2.0],
                     y=[y + self.layout_configuration.font_size * 0.6 + self.layout_configuration.small_margin],
@@ -180,14 +178,14 @@ class GridElement(VisualElementsContainer):
         category_row_height = 2 * self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2
         for _column_header in self._column_header_elements:
             _column_header.draw(
-                dwg=dwg,
+                dwg=self._dwg,
                 x=x + self._x_column_starts[_column_header.i_position] + self._cell_width / 2.0,
                 y=y + category_row_height + self._top_header_height - self.layout_configuration.small_margin,
             )
 
         for _row_header in self._row_header_elements:
             _row_header.draw(
-                dwg=dwg,
+                dwg=self._dwg,
                 x=x + self._left_header_width - self.layout_configuration.small_margin,
                 y=y
                 + category_row_height
@@ -199,7 +197,7 @@ class GridElement(VisualElementsContainer):
 
         for _cell_element in self._cell_elements:
             _cell_element.draw(
-                dwg=dwg,
+                dwg=self._dwg,
                 x=x + self._x_column_starts[_cell_element.i_column] + (self._cell_width - _cell_element.width) / 2.0,
                 y=y
                 + category_row_height

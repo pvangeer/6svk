@@ -20,7 +20,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svgwrite import Drawing
 from svk.data import StormSurgeBarrierResearchQuestion, Label, ResearchLine, StormSurgeBarrierResearchLines, Color
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
@@ -96,18 +95,18 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
         )
         return self
 
-    def draw(self, dwg: Drawing, x: float, y: float):
-        self._title_element.draw(dwg, x, y)
+    def _draw(self, x: float, y: float):
+        self._title_element.draw(self._dwg, x, y)
 
         y += self._title_element.height
-        self.draw_horizontal_separator(dwg, x, y, self.width, self.color)
+        self.draw_horizontal_separator(x, y, self.width, self.color)
 
         y_current = y + self.layout_configuration.small_margin
         # status = self.research_question.status if self.research_question.status is not None else ""
         # TODO: Read status from database
         status = ""
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self.translator.get_label(Label.QD_Status) + ": " + status,
                 insert=(
                     x + self.layout_configuration.small_margin,
@@ -123,8 +122,8 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
 
         y_current += self.layout_configuration.font_size * 1.2
         action_holder = self.research_question.action_holder if self.research_question.action_holder is not None else ""
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self.translator.get_label(Label.QD_ActionHolder) + ": " + action_holder,
                 insert=(
                     x + self.layout_configuration.small_margin,
@@ -140,7 +139,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
 
         y_current += self.layout_configuration.font_size * 1.2
         self._draw_research_line_link(
-            dwg=dwg,
+
             page_number=self.page_number,
             x_start=x + self.layout_configuration.small_margin,
             y_start=y_current,
@@ -150,7 +149,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
 
         y_current += self.layout_configuration.font_size * 1.2
         self._draw_research_line_link(
-            dwg=dwg,
+
             page_number=self.page_number,
             x_start=x + self.layout_configuration.small_margin,
             y_start=y_current,
@@ -167,11 +166,11 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
         )
 
     def _draw_research_line_link(
-        self, dwg: Drawing, page_number: int, x_start: float, y_start: float, research_line: ResearchLine | None, label: Label
+        self, page_number: int, x_start: float, y_start: float, research_line: ResearchLine | None, label: Label
     ):
         link_text = self.translator.get_label(research_line.title) if research_line is not None else ""
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self.translator.get_label(label) + ": " + link_text,
                 insert=(
                     x_start,

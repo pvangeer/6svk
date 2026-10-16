@@ -1,4 +1,3 @@
-from svgwrite import Drawing
 from pydantic import PrivateAttr, model_validator
 from svk.data import Color, KnownColors
 from svk.visualization.elements._visual_element import VisualElement
@@ -25,9 +24,9 @@ class GridCellElement(VisualElement):
     def height(self) -> float:
         return self._height
 
-    def draw(self, dwg: Drawing, x: float, y: float):
-        dwg.add(
-            dwg.rect(
+    def _draw(self, x: float, y: float):
+        self._dwg.add(
+            self._dwg.rect(
                 insert=(x, y),
                 size=(self.width, self.height),
                 rx=10,  # horizontal corner radius TODO: move to layout_configuration

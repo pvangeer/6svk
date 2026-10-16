@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from pydantic import BaseModel
+from pydantic import BaseModel, PrivateAttr
 from svk.data import LinksRegister, Translator
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svgwrite import Drawing
@@ -31,6 +31,7 @@ class VisualElement(BaseModel, ABC):
     """The layout configuration shared across all elements of a document."""
     links_register: LinksRegister
     translator: Translator
+    _dwg: Drawing = PrivateAttr()
 
     @property
     @abstractmethod
@@ -43,5 +44,9 @@ class VisualElement(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def draw(self, dwg: Drawing, x: float, y: float) -> None:
+    def _draw(self, x: float, y: float) -> None:
         pass
+
+    def draw(self, dwg: Drawing, x: float, y: float) -> None:
+        self._dwg = dwg
+        self._draw(x=x, y=y)

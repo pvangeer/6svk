@@ -52,5 +52,5 @@ class TimeLineOverviewPage(Page):
 
         top_current = top + self.layout_configuration.column_header_height + self.layout_configuration.large_margin
         for cluster in self.clusters:
-            cluster.draw(dwg=dwg, left=self.layout_configuration.paper_margin, top=top_current)
+            cluster.draw(dwg=dwg, x=self.layout_configuration.paper_margin, y=top_current)
             top_current += cluster.height + self.layout_configuration.large_margin

@@ -18,7 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svgwrite import Drawing
 from pydantic import PrivateAttr, model_validator
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
@@ -53,11 +52,11 @@ class WrappedBulletListElement(VisualElement):
     def width(self) -> float:
         return self._width
 
-    def draw(self, dwg: Drawing, x: float, y: float) -> None:
+    def _draw(self, x: float, y: float) -> None:
         y_current = y + self.layout_configuration.small_margin
         if len(self.bullet_list) == 1 and self.bullet_list[0] == "-":
-            dwg.add(
-                dwg.text(
+            self._dwg.add(
+                self._dwg.text(
                     "-",
                     insert=(x + self.layout_configuration.small_margin, y_current),
                     font_size=self.layout_configuration.font_size,
@@ -68,8 +67,8 @@ class WrappedBulletListElement(VisualElement):
             return
 
         for bullet in self.bullet_list:
-            dwg.add(
-                dwg.text(
+            self._dwg.add(
+                self._dwg.text(
                     self.layout_configuration.bullet_character,
                     insert=(x + self.layout_configuration.small_margin, y_current),
                     font_size=self.layout_configuration.font_size,
@@ -83,9 +82,9 @@ class WrappedBulletListElement(VisualElement):
                 max_width=self.max_width - self.layout_configuration.bullet_list_indent - 2 * self.layout_configuration.small_margin,
                 font_size=self.layout_configuration.font_size,
             )
-            dwg.add(
+            self._dwg.add(
                 wrapped_text(
-                    dwg,
+                    self._dwg,
                     lines=lines,
                     insert=(
                         x + self.layout_configuration.bullet_list_indent + self.layout_configuration.small_margin,

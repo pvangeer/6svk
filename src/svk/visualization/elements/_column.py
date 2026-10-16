@@ -18,7 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svgwrite import Drawing
 from pydantic import ConfigDict
 from svk.data import Color, KnownColors
 from svk.visualization.elements._visual_element import VisualElement
@@ -49,12 +48,10 @@ class Column(VisualElement):
     def height(self) -> float:
         return self.layout_configuration.column_header_height
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         """
         Draws the header
 
-        :param dwg: The svgwrite.Drawing object used to draw the header
-        :type dwg: Drawing
         :param x: The x-position of the left upper corner of the header
         :type x: float
         :param y: The y-position of the left upper corner of the header
@@ -64,9 +61,9 @@ class Column(VisualElement):
         if self.header_title == "":
             return
 
-        dwg.add(
+        self._dwg.add(
             draw_half_chevron(
-                dwg,
+                self._dwg,
                 x=x,
                 y=y,
                 width=self.width,
@@ -77,8 +74,8 @@ class Column(VisualElement):
         )
         y_column_header_text = y + self.layout_configuration.column_header_height / 2
         text_fill = str(KnownColors.Black) if self.layout_configuration.use_gradients else str(get_contrast_color(self.header_color))
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self.header_title,
                 insert=(x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin, y_column_header_text),
                 font_size=self.layout_configuration.column_header_font_size,
@@ -90,8 +87,8 @@ class Column(VisualElement):
             )
         )
         if self.header_subtitle != "":
-            dwg.add(
-                dwg.text(
+            self._dwg.add(
+                self._dwg.text(
                     self.header_subtitle,
                     insert=(x + self.layout_configuration.column_width - self.layout_configuration.arrow_depth, y_column_header_text),
                     font_family="Arial",

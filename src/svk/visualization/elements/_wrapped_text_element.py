@@ -18,7 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svgwrite import Drawing
 from pydantic import PrivateAttr, model_validator
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
@@ -53,12 +52,12 @@ class WrappedTextElement(VisualElement):
     def width(self) -> float:
         return self._width
 
-    def draw(self, dwg: Drawing, x: float, y: float) -> None:
+    def _draw(self, x: float, y: float) -> None:
         x = x + self.layout_configuration.small_margin if self.has_margins else x
         y = y + self.layout_configuration.small_margin if self.has_margins else y
-        dwg.add(
+        self._dwg.add(
             wrapped_text(
-                dwg,
+                self._dwg,
                 lines=self._lines,
                 insert=(
                     x,

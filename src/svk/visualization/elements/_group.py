@@ -19,7 +19,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from svgwrite import Drawing
 from pydantic import ConfigDict, model_validator, PrivateAttr
 from svk.data import Color, KnownColors
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
@@ -39,7 +38,7 @@ class GroupBase(VisualElement):
     def width(self) -> float:
         return 0.0
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         pass
 
 
@@ -83,38 +82,32 @@ class Group(GroupBase):
     def width(self) -> float:
         return self.layout_configuration.column_width - self.layout_configuration.arrow_depth
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         """
         Draws the group and its questions
 
-        :param dwg: The svgwrite.Drawing object that should be used.
-        :type dwg: Drawing
         :param x: The x-position of the left upper corner of the group
         :type x: float
         :param y: The y-position of the left upper corner of the group
         :type y: float
-        :param width: The width of the group
-        :type width: float
         """
 
-        self.draw_header(dwg, x, y)
+        self.draw_header(x, y)
 
         current_y = y + self.layout_configuration.group_header_height + self.layout_configuration.intermediate_margin
         for question in self.questions:
             question.draw(
-                dwg,
+                self._dwg,
                 x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin,
                 current_y,
             )
             current_y += self.layout_configuration.small_margin + question.height
             pass
 
-    def draw_header(self, dwg: Drawing, x: float, y: float):
+    def draw_header(self, x: float, y: float):
         """
         Draws the groups header
 
-        :param dwg: The svgwrite.Drawing object to use
-        :type dwg: Drawing
         :param x: The x-position of the upper left corner of the header
         :type x: float
         :param y: The y-position of the upper left corner of the header
@@ -123,7 +116,7 @@ class Group(GroupBase):
         :type width: float
         """
         draw_callout(
-            dwg=dwg,
+            dwg=self._dwg,
             x=x,
             y=y,
             width=self.width,
@@ -139,8 +132,8 @@ class Group(GroupBase):
             if self.use_contrast_color or not self.layout_configuration.use_gradients
             else str(KnownColors.Black)
         )
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self.title,
                 insert=(
                     x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin,
@@ -190,10 +183,10 @@ class PlainTextGroup(GroupBase):
     def height(self) -> float:
         return self._height
 
-    def draw(self, dwg: Drawing, x: float, y: float):
-        dwg.add(
+    def _draw(self, x: float, y: float):
+        self._dwg.add(
             wrapped_text(
-                dwg=dwg,
+                dwg=self._dwg,
                 lines=self._lines,
                 insert=(x, y),
                 font_size=self.layout_configuration.font_size,

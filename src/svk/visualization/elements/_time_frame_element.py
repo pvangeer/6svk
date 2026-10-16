@@ -20,7 +20,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svgwrite import Drawing
 from svk.data import TimeFrame, IconProvider
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
@@ -62,13 +61,13 @@ class TimeFrameElement(VisualElementsContainer):
     def width(self) -> float:
         return self._width
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         icon = IconProvider.create_time_frame_icon(self.time_frame)
         if icon is None:
             raise ValueError("IconProvider could not construct an icon for this time frame. None will be drawn.")
 
         draw_scaled_icon(
-            dwg=dwg,
+            dwg=self._dwg,
             icon=icon,
             insert=(
                 x + self.width / 2.0 - self.layout_configuration.icon_width_small / 2.0,
@@ -77,8 +76,8 @@ class TimeFrameElement(VisualElementsContainer):
             size=(self.layout_configuration.icon_width_small, self.layout_configuration.icon_width_small),
         )
         _time_frame_text = get_time_frame_string(self.time_frame)
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 _time_frame_text,
                 insert=(x + self.width / 2.0, y + self.layout_configuration.small_margin + self.layout_configuration.icon_width_small),
                 font_size=self.layout_configuration.font_size,

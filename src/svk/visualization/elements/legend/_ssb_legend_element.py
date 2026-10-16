@@ -20,7 +20,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svgwrite import Drawing
 from svk.data import Label, Color, KnownColors
 from svk.visualization.elements._visual_elements_container import Alignment, VisualElementsContainer
 from svk.visualization.elements.legend._color_table_legend_element import ColorTableLegendElement
@@ -99,17 +98,17 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
         )
         return self
 
-    def draw(self, dwg: Drawing, x: float, y: float):
-        self._draw_container(dwg=dwg, x=x, y=y)
+    def _draw(self, x: float, y: float):
+        self._draw_container(x=x, y=y)
         _x_left_content = x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin
         _y_top_content = y + self.layout_configuration.group_header_height + self.layout_configuration.intermediate_margin
         self._draw_table(
-            dwg=dwg,
+
             x_left=_x_left_content,
             y_top=_y_top_content,
         )
         self.draw_vertical_separator(
-            dwg=dwg,
+
             x=_x_left_content + self._color_table_legend_element.width + self.layout_configuration.intermediate_margin,
             y=_y_top_content,
             element_height=self._content_height,
@@ -118,9 +117,9 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
         _x_left_code_explanation = (
             _x_left_content + self._color_table_legend_element.width + 2 * self.layout_configuration.intermediate_margin
         )
-        self._draw_code_explanation(dwg=dwg, x_left=_x_left_code_explanation, y_top=_y_top_content)
+        self._draw_code_explanation(x_left=_x_left_code_explanation, y_top=_y_top_content)
         self.draw_vertical_separator(
-            dwg=dwg,
+
             x=_x_left_code_explanation + self._ssb_code_explanation_legend_element.width + self.layout_configuration.intermediate_margin,
             y=_y_top_content,
             element_height=self._content_height,
@@ -130,12 +129,12 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
             _x_left_code_explanation + self._ssb_code_explanation_legend_element.width + 2 * self.layout_configuration.intermediate_margin
         )
         self._draw_priority_explanation(
-            dwg=dwg,
+
             x_left=_x_left_priority,
             y_top=_y_top_content,
         )
         self.draw_vertical_separator(
-            dwg=dwg,
+
             x=_x_left_priority + self._priority_legend_element.width + self.layout_configuration.intermediate_margin,
             y=_y_top_content,
             element_height=self._content_height,
@@ -143,14 +142,13 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
         )
         _x_left_ssb = _x_left_priority + self._priority_legend_element.width + 2 * self.layout_configuration.intermediate_margin
         self._draw_ssb_explanation(
-            dwg=dwg,
+
             x_left=_x_left_ssb,
             y_top=_y_top_content,
         )
 
-    def _draw_priority_explanation(self, dwg: Drawing, x_left: float, y_top: float):
+    def _draw_priority_explanation(self, x_left: float, y_top: float):
         self.draw_element(
-            dwg=dwg,
             element=self._priority_legend_element,
             x_container=x_left,
             y_container=y_top,
@@ -159,9 +157,8 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
             alignment=Alignment.MiddleCenter,
         )
 
-    def _draw_code_explanation(self, dwg: Drawing, x_left: float, y_top: float):
+    def _draw_code_explanation(self, x_left: float, y_top: float):
         self.draw_element(
-            dwg=dwg,
             element=self._ssb_code_explanation_legend_element,
             x_container=x_left,
             y_container=y_top,
@@ -170,9 +167,9 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
             alignment=Alignment.MiddleCenter,
         )
 
-    def _draw_container(self, dwg: Drawing, x: float, y: float):
+    def _draw_container(self, x: float, y: float):
         draw_callout(
-            dwg=dwg,
+            dwg=self._dwg,
             x=x,
             y=y,
             width=self.width,
@@ -192,8 +189,8 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
         )
         x_left = x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin
 
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self.translator.get_label(Label.LegendTitle),
                 insert=(
                     x_left,
@@ -208,9 +205,8 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
             )
         )
 
-    def _draw_table(self, dwg: Drawing, x_left: float, y_top: float):
+    def _draw_table(self, x_left: float, y_top: float):
         self.draw_element(
-            dwg=dwg,
             element=self._color_table_legend_element,
             x_container=x_left,
             y_container=y_top,
@@ -219,9 +215,8 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
             alignment=Alignment.MiddleCenter,
         )
 
-    def _draw_ssb_explanation(self, dwg: Drawing, x_left: float, y_top: float):
+    def _draw_ssb_explanation(self, x_left: float, y_top: float):
         self.draw_element(
-            dwg=dwg,
             element=self._ssb_explanation_legend_element,
             x_container=x_left,
             y_container=y_top,

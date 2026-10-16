@@ -19,7 +19,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from pydantic import model_validator, PrivateAttr
-from svgwrite import Drawing
 
 from svk.data import ResearchQuestion, Color
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer, Alignment
@@ -84,9 +83,9 @@ class QuestionSummaryElement(VisualElementsContainer):
     def width(self) -> float:
         return self._width
 
-    def draw(self, dwg: Drawing, x: float, y: float):
-        dwg.add(
-            dwg.rect(
+    def _draw(self, x: float, y: float):
+        self._dwg.add(
+            self._dwg.rect(
                 insert=(x, y),
                 size=(self.width, self.height),
                 stroke_width=0.5,
@@ -98,7 +97,6 @@ class QuestionSummaryElement(VisualElementsContainer):
 
         x_current = x
         self.draw_element(
-            dwg=dwg,
             element=self._priority_icon_element,
             x_container=x_current,
             y_container=y,
@@ -108,10 +106,9 @@ class QuestionSummaryElement(VisualElementsContainer):
         )
 
         x_current += self._priority_icon_element.width
-        self.draw_vertical_separator(dwg, x_current, y, self.height, self.color)
+        self.draw_vertical_separator(x_current, y, self.height, self.color)
 
         self.draw_element(
-            dwg=dwg,
             element=self._id_element,
             x_container=x_current,
             y_container=y,
@@ -121,10 +118,9 @@ class QuestionSummaryElement(VisualElementsContainer):
         )
 
         x_current += self._id_element.width
-        self.draw_vertical_separator(dwg, x_current, y, self.height, self.color)
+        self.draw_vertical_separator(x_current, y, self.height, self.color)
 
         self.draw_element(
-            dwg=dwg,
             element=self._question_element,
             x_container=x_current,
             y_container=y,

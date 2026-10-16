@@ -21,7 +21,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 import math
 from pydantic import PrivateAttr, model_validator
-from svgwrite import Drawing
 from svk.data import Color, KnownColors
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._measuretext import measure_text
@@ -68,13 +67,13 @@ class SluicesCodeExplanationLegendElement(VisualElement):
         self._height = 8 * self.layout_configuration.font_size * self._line_height_factor + self.layout_configuration.font_size
         return self
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         lh = self.layout_configuration.font_size * self._line_height_factor
         font_size = self.layout_configuration.font_size
 
         # Top text
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self._sp_explanation,
                 insert=(x, y),
                 font_size=font_size,
@@ -87,8 +86,8 @@ class SluicesCodeExplanationLegendElement(VisualElement):
         # Right label
         x_number_text = x + 0.6 * self.width
         y_number_text = y + lh
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self._number_explanation,
                 insert=(x_number_text, y_number_text),
                 font_size=font_size,
@@ -101,7 +100,7 @@ class SluicesCodeExplanationLegendElement(VisualElement):
         x_center = x + 0.5 * self.width
         y_center_text = y + 3 * lh
         # Central code
-        text = dwg.text(
+        text = self._dwg.text(
             "",
             insert=(x_center, y_center_text),
             font_size=font_size,
@@ -110,17 +109,17 @@ class SluicesCodeExplanationLegendElement(VisualElement):
             dominant_baseline="hanging",
         )
 
-        text.add(dwg.tspan("SP", fill=self._sp_code_color))
-        text.add(dwg.tspan("_", fill=KnownColors.Black))
-        text.add(dwg.tspan("XX", fill=self._code_color))
-        text.add(dwg.tspan("##", fill=self._number_color))
+        text.add(self._dwg.tspan("SP", fill=self._sp_code_color))
+        text.add(self._dwg.tspan("_", fill=KnownColors.Black))
+        text.add(self._dwg.tspan("XX", fill=self._code_color))
+        text.add(self._dwg.tspan("##", fill=self._number_color))
 
-        dwg.add(text)
+        self._dwg.add(text)
 
         m = 0.2 * lh
         # Left arrow
         draw_arrow(
-            dwg,
+            self._dwg,
             start=(x_center - self._tw_code_text * 0.3, y_center_text - m),
             end=(x + self.width * 0.2, y + lh),
             color=str(self._sp_code_color),
@@ -128,7 +127,7 @@ class SluicesCodeExplanationLegendElement(VisualElement):
 
         # Right arrow
         draw_arrow(
-            dwg,
+            self._dwg,
             start=(x_center + self._tw_code_text * 0.4, y_center_text - m),
             end=(x_number_text + 0.5 * self._tw_number_explanation, y_number_text + lh),
             color=str(self._number_color),
@@ -136,7 +135,7 @@ class SluicesCodeExplanationLegendElement(VisualElement):
 
         # Downward arrow
         draw_arrow(
-            dwg,
+            self._dwg,
             start=(x_center + 0.1 * self._tw_code_text, y_center_text + lh),
             end=(x_center + 0.1 * self._tw_code_text, y_center_text + 2 * lh - m),
             color=str(self._code_color),
@@ -153,8 +152,8 @@ class SluicesCodeExplanationLegendElement(VisualElement):
         y = y_center_text + 2 * lh
         x_explained_left = x
         for code, text in explanations:
-            dwg.add(
-                dwg.text(
+            self._dwg.add(
+                self._dwg.text(
                     code,
                     insert=(x_explained_left, y),
                     font_size=font_size,
@@ -164,8 +163,8 @@ class SluicesCodeExplanationLegendElement(VisualElement):
                     dominant_baseline="hanging",
                 )
             )
-            dwg.add(
-                dwg.text(
+            self._dwg.add(
+                self._dwg.text(
                     text,
                     insert=(x_explained_left + self._code_explanation_indent, y),
                     font_size=font_size,

@@ -20,7 +20,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import PrivateAttr, model_validator
-from svgwrite import Drawing
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._measuretext import measure_text
 
@@ -58,10 +57,10 @@ class IdElement(VisualElement):
     def set_preferred_width(self, width: float):
         self._width = max(self._width, width)
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         y_top = y + self.layout_configuration.small_margin
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self.id,
                 insert=(x + self.width / 2.0, y_top),
                 font_size=self.layout_configuration.font_size,

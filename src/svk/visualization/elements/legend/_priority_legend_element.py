@@ -20,7 +20,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svgwrite import Drawing
 from svk.data import Label
 from svk.visualization.elements._priority_icon_element import PriorityIconElement
 from svk.visualization.elements._text_element import TextElement
@@ -79,10 +78,9 @@ class PriorityLegendElement(VisualElementsContainer):
 
         return self
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         y_current = y
         self.draw_element(
-            dwg=dwg,
             element=self._high_priority_icon_element,
             x_container=x,
             y_container=y_current,
@@ -91,7 +89,6 @@ class PriorityLegendElement(VisualElementsContainer):
             alignment=Alignment.MiddleLeft,
         )
         self.draw_element(
-            dwg=dwg,
             element=self._high_priority_text_element,
             x_container=x + self._high_priority_icon_element.width + self.layout_configuration.small_margin,
             y_container=y_current,
@@ -102,7 +99,6 @@ class PriorityLegendElement(VisualElementsContainer):
 
         y_current += max([self._high_priority_icon_element.height, self._high_priority_text_element.height])
         self.draw_element(
-            dwg=dwg,
             element=self._low_priority_icon_element,
             x_container=x,
             y_container=y_current,
@@ -111,7 +107,6 @@ class PriorityLegendElement(VisualElementsContainer):
             alignment=Alignment.MiddleLeft,
         )
         self.draw_element(
-            dwg=dwg,
             element=self._low_priority_text_element,
             x_container=x + self._high_priority_icon_element.width + self.layout_configuration.small_margin,
             y_container=y_current,

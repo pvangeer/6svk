@@ -21,7 +21,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svk.data import SluicesResearchQuestion, Label, Color, IconProvider
-from svgwrite import Drawing
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
@@ -75,9 +74,9 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
         self._id_element.set_preferred_width(width)
         self._validate_size()
 
-    def draw(self, dwg: Drawing, x: float, y: float):
-        dwg.add(
-            dwg.rect(
+    def _draw(self, x: float, y: float):
+        self._dwg.add(
+            self._dwg.rect(
                 insert=(x, y),
                 size=(self.width, self.height),
                 stroke_width=0.5,
@@ -87,16 +86,15 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             )
         )
 
-        self.draw_first_line(dwg, x, y)
-        self.draw_horizontal_separator(dwg, x, y + self._h_first_line, self.width, self.color)
-        self.draw_second_line(dwg, x, y + self._h_first_line)
+        self.draw_first_line(x, y)
+        self.draw_horizontal_separator(x, y + self._h_first_line, self.width, self.color)
+        self.draw_second_line(x, y + self._h_first_line)
         y_last_line = y + self.height - self._h_last_line
-        self.draw_horizontal_separator(dwg, x, y_last_line, self.width, self.color)
-        self.draw_last_lines(dwg, x, y_last_line)
+        self.draw_horizontal_separator(x, y_last_line, self.width, self.color)
+        self.draw_last_lines(x, y_last_line)
 
-    def draw_first_line(self, dwg: Drawing, x: float, y: float):
+    def draw_first_line(self, x: float, y: float):
         self.draw_element(
-            dwg=dwg,
             element=self._id_element,
             x_container=x,
             y_container=y,
@@ -104,10 +102,9 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             height_container=self._h_first_line,
             alignment=Alignment.MiddleCenter,
         )
-        self.draw_vertical_separator(dwg, x + self._width_first_column, y, element_height=self._h_first_line, color=self.color)
+        self.draw_vertical_separator(x + self._width_first_column, y, element_height=self._h_first_line, color=self.color)
 
         self.draw_element(
-            dwg=dwg,
             element=self._question_wrapped_text_element,
             x_container=x + self._width_first_column,
             y_container=y,
@@ -116,10 +113,9 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.MiddleLeft,
         )
         self.draw_vertical_separator(
-            dwg, x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self.color
+            x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self.color
         )
         self.draw_element(
-            dwg=dwg,
             element=self._ssb_icons_element,
             x_container=x + self.width - self._ssb_icons_element.width,
             y_container=y,
@@ -128,12 +124,11 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.MiddleCenter,
         )
 
-    def draw_second_line(self, dwg: Drawing, x: float, y: float):
+    def draw_second_line(self, x: float, y: float):
         x_current = x
         height_container = self.height - self._h_first_line - self._h_last_line
 
         self.draw_element(
-            dwg=dwg,
             element=self._priority_icon_element,
             x_container=x_current,
             y_container=y,
@@ -142,9 +137,8 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.MiddleCenter,
         )
         x_current += self._width_first_column
-        self.draw_vertical_separator(dwg, x_current, y, height_container, self.color)
+        self.draw_vertical_separator(x_current, y, height_container, self.color)
         self.draw_element(
-            dwg=dwg,
             element=self._priority_details_element,
             x_container=x_current,
             y_container=y,
@@ -153,9 +147,8 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.TopLeft,
         )
         x_current += self._priority_details_element.width
-        self.draw_vertical_separator(dwg, x_current, y, height_container, self.color)
+        self.draw_vertical_separator(x_current, y, height_container, self.color)
         self.draw_element(
-            dwg=dwg,
             element=self._current_research_element,
             x_container=x_current,
             y_container=y,
@@ -164,9 +157,8 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             alignment=Alignment.TopLeft,
         )
 
-    def draw_last_lines(self, dwg: Drawing, x: float, y: float):
+    def draw_last_lines(self, x: float, y: float):
         self.draw_element(
-            dwg=dwg,
             element=self._time_frame_element,
             x_container=x,
             y_container=y,
@@ -177,13 +169,13 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
 
         x_base = x + self._width_first_column
 
-        self.draw_vertical_separator(dwg=dwg, x=x_base, y=y, element_height=self._h_last_line, color=self.color)
+        self.draw_vertical_separator(x=x_base, y=y, element_height=self._h_last_line, color=self.color)
 
         label = self.translator.get_label(Label.QD_Related_Questions) + ":"
         if len(self._related_question_elements) == 0:
             label += " -"
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 label,
                 insert=(x_base + self.layout_configuration.small_margin, y + self.layout_configuration.small_margin),
                 font_size=self.layout_configuration.font_size,
@@ -196,7 +188,6 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
         x_current = x_base + self.layout_configuration.small_margin + measure_text(label, self.layout_configuration.font_size)[0]
         for related in self._related_question_elements:
             self.draw_element(
-                dwg=dwg,
                 element=related,
                 x_container=x_current,
                 y_container=y,
@@ -206,9 +197,9 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             x_current += related.width + self.layout_configuration.small_margin
 
         y_keywords = y + 2 * self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2
-        dwg.add(
+        self._dwg.add(
             wrapped_text(
-                dwg=dwg,
+                dwg=self._dwg,
                 lines=self._last_line_keywords,
                 insert=(
                     x_base + self.layout_configuration.small_margin,

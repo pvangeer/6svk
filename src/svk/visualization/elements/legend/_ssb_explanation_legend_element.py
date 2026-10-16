@@ -20,7 +20,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svgwrite import Drawing
 from svk.data import StormSurgeBarrier, IconProvider
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
@@ -65,7 +64,7 @@ class StormSurgeBarriersExeplanationLegendElement(VisualElementsContainer):
 
         return self
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         y_top = y
         x_1 = x
         x_2 = x + self._width_first_column
@@ -75,8 +74,8 @@ class StormSurgeBarriersExeplanationLegendElement(VisualElementsContainer):
             if icon is None:
                 continue
 
-            dwg.add(
-                dwg.text(
+            self._dwg.add(
+                self._dwg.text(
                     ssb[1],
                     insert=(x_1 + 0.5 * self._width_first_column, y_top + 0.5 * self._row_height),
                     font_size=self.layout_configuration.font_size,
@@ -89,7 +88,7 @@ class StormSurgeBarriersExeplanationLegendElement(VisualElementsContainer):
             )
 
             draw_scaled_icon(
-                dwg=dwg,
+                dwg=self._dwg,
                 icon=icon,
                 insert=(
                     x_2,
@@ -98,8 +97,8 @@ class StormSurgeBarriersExeplanationLegendElement(VisualElementsContainer):
                 size=(self.layout_configuration.icon_width_small, self.layout_configuration.icon_width_small),
             )
 
-            dwg.add(
-                dwg.text(
+            self._dwg.add(
+                self._dwg.text(
                     self.translator.get_label(ssb[0].title),
                     insert=(x_3, y_top + 0.5 * self._row_height),
                     font_size=self.layout_configuration.font_size,

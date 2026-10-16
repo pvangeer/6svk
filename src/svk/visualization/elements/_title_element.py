@@ -18,7 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svgwrite import Drawing
 from pydantic import PrivateAttr, model_validator
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.elements._visual_element import VisualElement
@@ -51,9 +50,9 @@ class TitleElement(VisualElement):
     def width(self) -> float:
         return self._width
 
-    def draw(self, dwg: Drawing, x: float, y: float) -> None:
-        dwg.add(
-            dwg.text(
+    def _draw(self, x: float, y: float) -> None:
+        self._dwg.add(
+            self._dwg.text(
                 self.translator.get_label(self.title),
                 insert=(x + self.layout_configuration.small_margin, y + self.layout_configuration.small_margin),
                 font_size=self.layout_configuration.font_size,

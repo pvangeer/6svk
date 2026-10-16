@@ -20,7 +20,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svgwrite import Drawing
 from svk.data import Icon
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
@@ -54,12 +53,12 @@ class IconsElement(VisualElementsContainer):
     def width(self) -> float:
         return self._width
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         x_icon_current = x + self.layout_configuration.small_margin
         y_icon_current = y + self.layout_configuration.small_margin
         for icon in self.icons:
             draw_scaled_icon(
-                dwg=dwg,
+                dwg=self._dwg,
                 icon=icon,
                 insert=(
                     x_icon_current,

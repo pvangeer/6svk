@@ -18,7 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svgwrite import Drawing
 from enum import Enum
 from svk.data import Color
 from svk.visualization.elements._visual_element import VisualElement
@@ -37,9 +36,9 @@ class Alignment(Enum):
 
 
 class VisualElementsContainer(VisualElement):
-    def draw_vertical_separator(self, dwg: Drawing, x: float, y: float, element_height: float, color: Color):
-        dwg.add(
-            dwg.line(
+    def draw_vertical_separator(self, x: float, y: float, element_height: float, color: Color):
+        self._dwg.add(
+            self._dwg.line(
                 start=(x, y + self.layout_configuration.small_margin),
                 end=(x, y + element_height - self.layout_configuration.small_margin),
                 stroke_width=0.5,
@@ -47,9 +46,9 @@ class VisualElementsContainer(VisualElement):
             )
         )
 
-    def draw_horizontal_separator(self, dwg: Drawing, x: float, y: float, element_width: float, color: Color):
-        dwg.add(
-            dwg.line(
+    def draw_horizontal_separator(self, x: float, y: float, element_width: float, color: Color):
+        self._dwg.add(
+            self._dwg.line(
                 start=(x + self.layout_configuration.small_margin, y),
                 end=(x + element_width - self.layout_configuration.small_margin, y),
                 stroke_width=0.5,
@@ -59,7 +58,6 @@ class VisualElementsContainer(VisualElement):
 
     def draw_element(
         self,
-        dwg: Drawing,
         element: VisualElement,
         x_container: float,
         y_container: float,
@@ -91,4 +89,4 @@ class VisualElementsContainer(VisualElement):
                 y = y_container + (height_container - element.height)
                 x = x_container + (width_container - element.width)
 
-        element.draw(dwg=dwg, x=x, y=y)
+        element.draw(dwg=self._dwg, x=x, y=y)

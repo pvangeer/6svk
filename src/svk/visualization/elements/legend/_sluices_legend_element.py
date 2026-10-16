@@ -20,7 +20,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svgwrite import Drawing
 from svk.data import Label, Color, KnownColors
 from svk.visualization.elements._visual_elements_container import Alignment, VisualElementsContainer
 from svk.visualization.elements.legend._color_table_legend_element import ColorTableLegendElement
@@ -93,8 +92,8 @@ class SluicesLegendElement(VisualElementsContainer):
         )
         return self
 
-    def draw(self, dwg: Drawing, x: float, y: float):
-        self._draw_container(dwg=dwg, x=x, y=y)
+    def _draw(self, x: float, y: float):
+        self._draw_container(x=x, y=y)
 
         _elements_to_plot = (self._color_table_legend_element, self._sluices_code_explanation_legend_element, self._priority_legend_element)
 
@@ -103,7 +102,6 @@ class SluicesLegendElement(VisualElementsContainer):
 
         for _element in _elements_to_plot:
             self.draw_element(
-                dwg=dwg,
                 element=_element,
                 x_container=_x_left_content,
                 y_container=_y_top_content,
@@ -112,7 +110,7 @@ class SluicesLegendElement(VisualElementsContainer):
                 alignment=Alignment.MiddleCenter,
             )
             self.draw_vertical_separator(
-                dwg=dwg,
+
                 x=_x_left_content + _element.width + self.layout_configuration.intermediate_margin,
                 y=_y_top_content,
                 element_height=self._content_height,
@@ -120,9 +118,9 @@ class SluicesLegendElement(VisualElementsContainer):
             )
             _x_left_content += _element.width + self.layout_configuration.intermediate_margin * 2
 
-    def _draw_container(self, dwg: Drawing, x: float, y: float):
+    def _draw_container(self, x: float, y: float):
         draw_callout(
-            dwg=dwg,
+            dwg=self._dwg,
             x=x,
             y=y,
             width=self.width,
@@ -142,8 +140,8 @@ class SluicesLegendElement(VisualElementsContainer):
         )
         x_left = x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin
 
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self.translator.get_label(Label.LegendTitle),
                 insert=(
                     x_left,

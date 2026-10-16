@@ -3,7 +3,6 @@ from pydantic import PrivateAttr, model_validator
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._measuretext import measure_text
 
-from svgwrite import Drawing
 
 
 class TextElement(VisualElement):
@@ -31,9 +30,9 @@ class TextElement(VisualElement):
     def width(self) -> float:
         return self._width
 
-    def draw(self, dwg: Drawing, x: float, y: float) -> None:
-        dwg.add(
-            dwg.text(
+    def _draw(self, x: float, y: float) -> None:
+        self._dwg.add(
+            self._dwg.text(
                 self.text,
                 insert=(x, y),
                 font_size=self.layout_configuration.font_size,

@@ -21,7 +21,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svk.data import StormSurgeBarrierResearchQuestion, Label, Color
-from svgwrite import Drawing
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.elements._wrapped_bullet_list import WrappedBulletListElement
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
@@ -117,29 +116,29 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
     def width(self) -> float:
         return self._width
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         y_current = self.draw_bulleted_subsection(
-            dwg=dwg,
+
             x=x,
             y=y + self.layout_configuration.small_margin,
             title_element=self._driver_title_element,
             element=self._driver_element,
         )
         y_current = self.draw_bulleted_subsection(
-            dwg=dwg, x=x, y=y_current, title_element=self._function_title_element, element=self._function_element
+            x=x, y=y_current, title_element=self._function_title_element, element=self._function_element
         )
         self.draw_bulleted_subsection(
-            dwg=dwg, x=x, y=y_current, title_element=self._component_title_element, element=self._component_element
+            x=x, y=y_current, title_element=self._component_title_element, element=self._component_element
         )
 
     def draw_bulleted_subsection(
-        self, dwg: Drawing, x: float, y: float, title_element: TitleElement, element: WrappedBulletListElement
+        self, x: float, y: float, title_element: TitleElement, element: WrappedBulletListElement
     ) -> float:
-        title_element.draw(dwg=dwg, x=x, y=y - self.layout_configuration.small_margin)
+        title_element.draw(dwg=self._dwg, x=x, y=y - self.layout_configuration.small_margin)
         y += self.layout_configuration.font_size * 1.2 + self.layout_configuration.small_margin
-        self.draw_horizontal_separator(dwg=dwg, x=x, y=y, element_width=self.width, color=self.color)
+        self.draw_horizontal_separator(x=x, y=y, element_width=self.width, color=self.color)
 
-        element.draw(dwg=dwg, x=x, y=y)
+        element.draw(dwg=self._dwg, x=x, y=y)
 
         y += element.height
         return y

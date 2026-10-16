@@ -24,7 +24,6 @@ from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.elements._group import GroupBase
 from svk.visualization.helpers._color_helper import color_toward_grey
 
-from svgwrite import Drawing
 from uuid import uuid4
 from svk.data import Color
 
@@ -59,17 +58,17 @@ class Cluster(VisualElement):
     def height(self) -> float:
         return self._height
 
-    def draw(self, dwg: Drawing, left: float, top: float):
+    def _draw(self, x: float, y: float):
         width = self.width
         height = self.height
 
         x_scale = width / height
-        gradient_center = ((left + width / 2) / x_scale, top)
+        gradient_center = ((x + width / 2) / x_scale, y)
         radius = height * 1.2
 
         if self.layout_configuration.use_gradients:
             gradient_id = f"gradient_{str(uuid4())}"
-            fill_radial_grad = dwg.radialGradient(
+            fill_radial_grad = self._dwg.radialGradient(
                 center=gradient_center,
                 r=radius,
                 gradientUnits="userSpaceOnUse",
@@ -79,13 +78,13 @@ class Cluster(VisualElement):
             fill_radial_grad.add_stop_color(0.6, "white")
             fill_radial_grad.add_stop_color(1, color_toward_grey(self.color, 0.5, grey=Color(r=250, g=250, b=250)))
             fill_radial_grad["gradientTransform"] = f"scale({x_scale},1)"
-            dwg.defs.add(fill_radial_grad)
+            self._dwg.defs.add(fill_radial_grad)
 
-            dwg.add(
-                dwg.rect(
+            self._dwg.add(
+                self._dwg.rect(
                     insert=(
-                        left,
-                        top,
+                        x,
+                        y,
                     ),
                     size=(width, height),
                     fill=f"url(#{gradient_id})",
@@ -94,7 +93,7 @@ class Cluster(VisualElement):
             )
 
             stroke_gradient_id = f"gradient_{str(uuid4())}"
-            stroke_radial_grad = dwg.radialGradient(
+            stroke_radial_grad = self._dwg.radialGradient(
                 center=gradient_center,
                 r=radius,
                 gradientUnits="userSpaceOnUse",
@@ -105,13 +104,13 @@ class Cluster(VisualElement):
             stroke_radial_grad.add_stop_color(1, color_toward_grey(self.color, 0.0))
             stroke_radial_grad["gradientTransform"] = f"scale({x_scale},1)"
 
-            dwg.defs.add(stroke_radial_grad)
+            self._dwg.defs.add(stroke_radial_grad)
 
-            dwg.add(
-                dwg.rect(
+            self._dwg.add(
+                self._dwg.rect(
                     insert=(
-                        left,
-                        top,
+                        x,
+                        y,
                     ),
                     size=(width, height),
                     fill="none",
@@ -121,10 +120,10 @@ class Cluster(VisualElement):
             )
 
         for groups_column in self.columns:
-            y_current = top
+            y_current = y
             for group in groups_column.groups:
                 group.draw(
-                    dwg=dwg,
+                    dwg=self._dwg,
                     x=self.layout_configuration.paper_margin + groups_column.column_number * self.layout_configuration.column_width,
                     y=y_current,
                 )

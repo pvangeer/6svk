@@ -18,7 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svgwrite import Drawing
 from pydantic import PrivateAttr, model_validator
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_lines, wrapped_text
@@ -63,10 +62,10 @@ class GridHeaderElement(VisualElement):
     def height(self) -> float:
         return self._height
 
-    def draw(self, dwg: Drawing, x: float, y: float):
+    def _draw(self, x: float, y: float):
         if self.orientation == HeaderOrientation.Vertical:
             text_element = wrapped_text(
-                dwg=dwg,
+                dwg=self._dwg,
                 lines=self._lines,
                 insert=(x, y),
                 font_size=self.layout_configuration.font_size,
@@ -76,11 +75,11 @@ class GridHeaderElement(VisualElement):
                 dominant_baseline="middle",
             )
             text_element.rotate(-90, center=(x, y))
-            dwg.add(text_element)
+            self._dwg.add(text_element)
         else:
-            dwg.add(
+            self._dwg.add(
                 wrapped_text(
-                    dwg=dwg,
+                    dwg=self._dwg,
                     lines=self._lines,
                     insert=(x, y),
                     font_size=self.layout_configuration.font_size,

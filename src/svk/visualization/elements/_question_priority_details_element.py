@@ -21,7 +21,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svk.data import StormSurgeBarrierResearchQuestion, Priority, Label, Color
-from svgwrite import Drawing
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
@@ -94,11 +93,11 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
         self._height = max([h_priority_column_fixed_items, h_priority_column_explained_lines])
         return self
 
-    def draw(self, dwg: Drawing, x: float, y: float):
-        self._title_element.draw(dwg, x, y)
+    def _draw(self, x: float, y: float):
+        self._title_element.draw(self._dwg, x, y)
         y_prios_start = y + self._title_element.height
         self.draw_horizontal_separator(
-            dwg,
+
             x,
             y_prios_start,
             self.width,
@@ -117,8 +116,8 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
         x_prio_label = x + self.layout_configuration.small_margin
         x_prio_first = x_prio_label + max_label_width + self.layout_configuration.small_margin
         for prio in prios_translated:
-            dwg.add(
-                dwg.text(
+            self._dwg.add(
+                self._dwg.text(
                     prio[0],
                     insert=(
                         x_prio_label,
@@ -131,11 +130,11 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
                     dominant_baseline="text-before-edge",
                 )
             )
-            self.draw_priority_dots(dwg, x_prio_first, y_prio_current, prio[1])
+            self.draw_priority_dots(x_prio_first, y_prio_current, prio[1])
             y_prio_current += self.layout_configuration.font_size * 1.2
 
         self.draw_vertical_separator(
-            dwg,
+
             x + self._w_priority_metrices_column,
             y_prios_start,
             self.height - self.layout_configuration.small_margin * 2 - self.layout_configuration.font_size * 1.2,
@@ -143,9 +142,9 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
         )
 
         if self._lines_prio_explanation:
-            dwg.add(
+            self._dwg.add(
                 wrapped_text(
-                    dwg=dwg,
+                    dwg=self._dwg,
                     lines=self._lines_prio_explanation,
                     insert=(
                         x + self._w_priority_metrices_column + self.layout_configuration.small_margin,
@@ -156,7 +155,7 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
                 )
             )
 
-    def draw_priority_dots(self, dwg: Drawing, x: float, y_current: float, prio: Priority):
+    def draw_priority_dots(self, x: float, y_current: float, prio: Priority):
         y_center = y_current + self.layout_configuration.font_size - self.dotradius
         x_prio_first = x + self.dotradius
         x_prio_second = x_prio_first + self.dotradius * 2.5
@@ -164,17 +163,17 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
 
         match prio:
             case Priority.High:
-                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=self.dotradius, fill="black"))
-                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=self.dotradius, fill="black"))
-                dwg.add(dwg.circle(center=(x_prio_third, y_center), r=self.dotradius, fill="black"))
+                self._dwg.add(self._dwg.circle(center=(x_prio_first, y_center), r=self.dotradius, fill="black"))
+                self._dwg.add(self._dwg.circle(center=(x_prio_second, y_center), r=self.dotradius, fill="black"))
+                self._dwg.add(self._dwg.circle(center=(x_prio_third, y_center), r=self.dotradius, fill="black"))
             case Priority.Medium:
-                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=self.dotradius, fill="black"))
-                dwg.add(dwg.circle(center=(x_prio_second, y_center), r=self.dotradius, fill="black"))
+                self._dwg.add(self._dwg.circle(center=(x_prio_first, y_center), r=self.dotradius, fill="black"))
+                self._dwg.add(self._dwg.circle(center=(x_prio_second, y_center), r=self.dotradius, fill="black"))
             case Priority.Low:
-                dwg.add(dwg.circle(center=(x_prio_first, y_center), r=self.dotradius, fill="black"))
+                self._dwg.add(self._dwg.circle(center=(x_prio_first, y_center), r=self.dotradius, fill="black"))
             case Priority.No:
-                dwg.add(
-                    dwg.text(
+                self._dwg.add(
+                    self._dwg.text(
                         "-",
                         insert=(x, y_current),
                         font_size=self.layout_configuration.font_size,
@@ -185,8 +184,8 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
                     )
                 )
             case Priority.Unknown:
-                dwg.add(
-                    dwg.text(
+                self._dwg.add(
+                    self._dwg.text(
                         "?",
                         insert=(x, y_current),
                         font_size=self.layout_configuration.font_size,

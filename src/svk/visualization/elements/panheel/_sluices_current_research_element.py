@@ -20,7 +20,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
-from svgwrite import Drawing
 from svk.data import SluicesResearchQuestion, Label, Color
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
@@ -105,15 +104,15 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
         )
         return self
 
-    def draw(self, dwg: Drawing, x: float, y: float):
-        self._title_element.draw(dwg, x, y)
+    def _draw(self, x: float, y: float):
+        self._title_element.draw(self._dwg, x, y)
 
         y += self._title_element.height
-        self.draw_horizontal_separator(dwg, x, y, self.width, self.color)
+        self.draw_horizontal_separator(x, y, self.width, self.color)
 
         y_current = y + self.layout_configuration.small_margin
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self.translator.get_label(Label.QD_AdressedInResearchProject) + ":",
                 insert=(
                     x + self.layout_configuration.small_margin,
@@ -129,7 +128,6 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
 
         y_current += self.layout_configuration.font_size * 1.2
         self.draw_element(
-            dwg=dwg,
             element=self._research_program_element,
             x_container=x + self.layout_configuration.small_margin * 4,
             y_container=y_current,
@@ -139,8 +137,8 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
         )
         y_current += self._research_program_element.height
 
-        dwg.add(
-            dwg.text(
+        self._dwg.add(
+            self._dwg.text(
                 self.translator.get_label(Label.QD_RelatedResearch) + ":",
                 insert=(
                     x + self.layout_configuration.small_margin,
@@ -155,7 +153,6 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
         )
         y_current += self.layout_configuration.font_size * 1.2
         self.draw_element(
-            dwg=dwg,
             element=self._related_research_element,
             x_container=x + self.layout_configuration.small_margin * 4,
             y_container=y_current,
