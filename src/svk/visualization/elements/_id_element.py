@@ -27,16 +27,13 @@ class IdElement(VisualElement):
     id: str
     is_link_target: bool = False
     is_link: bool = False
+    preferred_width: float | None = None
     is_bottom_margin: bool = True
-    is_tight_width: bool = False
     page_number: int | None = None
 
     def measure(self) -> None:
-        self._width = (
-            measure_text(text=self.id, font_size=self.layout_configuration.font_size)[0]
-            if self.is_tight_width
-            else self.layout_configuration.question_id_box_width
-        )
+        _text_width = IdElement.predict_width(text=self.id, font_size=self.layout_configuration.font_size)
+        self._width = _text_width if self.preferred_width is None else max([self.preferred_width, _text_width])
         self._height = (
             2 if self.is_bottom_margin else 1
         ) * self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2
@@ -75,3 +72,7 @@ class IdElement(VisualElement):
 
         if self.is_link_target:
             self.links_register.register_link_target(link_target=self.id, page_number=self.page_number, x=x, y=y)
+
+    @staticmethod
+    def predict_width(text: str, font_size: int, margin: float | None = None):
+        return measure_text(text=text, font_size=font_size)[0] + (2 * margin if margin is not None else 0)

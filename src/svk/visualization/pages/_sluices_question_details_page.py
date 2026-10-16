@@ -32,11 +32,15 @@ class SluicesQuestionDetailsPage(Page):
     _question_elements: tuple[SluicesQuestionDetailsElement, ...] = PrivateAttr()
 
     def initialize(self) -> None:
+        _first_column_width = max(
+            [SluicesQuestionDetailsElement.predict_first_column_width(q, self.layout_configuration) for q in self.questions]
+        )
         self._question_elements = tuple(
             self.create(
                 SluicesQuestionDetailsElement,
                 research_question=q,
                 page_number=self.page_number,
+                first_column_width=_first_column_width,
                 color=(
                     colorhelper.get_color(
                         self.layout_configuration.use_rijkswaterstaat_colors,
@@ -51,10 +55,6 @@ class SluicesQuestionDetailsPage(Page):
         )
 
     def get_content_size(self) -> tuple[float, float]:
-        _preferred_first_column_width = max([q.get_first_column_width() for q in self._question_elements])
-        for q in self._question_elements:
-            q.set_preferred_first_column_width(_preferred_first_column_width)
-
         return (
             max([q.width for q in self._question_elements]),
             sum([q.height + self.layout_configuration.intermediate_margin for q in self._question_elements])

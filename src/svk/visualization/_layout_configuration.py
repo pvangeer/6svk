@@ -55,7 +55,7 @@ class LayoutConfiguration(BaseModel):
     n_columns: int = 3
     summary_question_lines_width: float = 535.0
     priority_arrow_width: float = 15.0
-    question_id_box_width: float = 40.0
+    question_id_box_width: float = 40.0  # TODO: Remove this and all its declarations. It is only used to calculate the column width.
     details_priority_explanation_width: float = 300
     question_explanation_width: float = 600
     analysis_details_width: float = 300
@@ -72,7 +72,7 @@ class LayoutConfiguration(BaseModel):
 
     @property
     def column_width(self) -> float:
-        # tODO: This is not ok. It requires knowleds of the width of a QuestionSummaryElement (and which aspects are included in that). Derive this from the data model (and don;t include it here).
+        # TODO: This is not ok. It requires knowleds of the width of a QuestionSummaryElement (and which aspects are included in that). Derive this from the data model (and don;t include it here).
         return (
             self.summary_question_lines_width
             + self.question_id_box_width

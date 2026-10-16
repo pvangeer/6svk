@@ -81,6 +81,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
                     page_number=0,
+                    id_element_width=40.0,
                     color=KnownColors.RWSBlue1,
                 ),
                 QuestionSummaryElement(
@@ -92,6 +93,7 @@ def test_create_image():
                         time_frame=TimeFrame.Now,
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
+                    id_element_width=40.0,
                     page_number=0,
                     color=KnownColors.RWSBlue1,
                 ),
@@ -105,6 +107,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
                     page_number=0,
+                    id_element_width=40.0,
                     color=KnownColors.RWSBlue1,
                 ),
             ]
@@ -129,6 +132,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Cyber,
                     ),
                     page_number=0,
+                    id_element_width=40.0,
                     color=KnownColors.RWSBlue2,
                 ),
                 QuestionSummaryElement(
@@ -141,6 +145,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Cyber,
                     ),
                     page_number=0,
+                    id_element_width=40.0,
                     color=KnownColors.RWSBlue2,
                 ),
                 QuestionSummaryElement(
@@ -153,6 +158,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Cyber,
                     ),
                     page_number=0,
+                    id_element_width=40.0,
                     color=KnownColors.RWSBlue2,
                 ),
             ]
@@ -177,6 +183,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
                     page_number=0,
+                    id_element_width=40.0,
                     color=KnownColors.RWSYellow2,
                 ),
                 QuestionSummaryElement(
@@ -189,6 +196,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
                     page_number=0,
+                    id_element_width=40.0,
                     color=KnownColors.RWSYellow2,
                 ),
                 QuestionSummaryElement(
@@ -201,6 +209,7 @@ def test_create_image():
                         research_line=StormSurgeBarrierResearchLines.Adaptation,
                     ),
                     page_number=0,
+                    id_element_width=40.0,
                     color=KnownColors.RWSYellow2,
                 ),
             ]

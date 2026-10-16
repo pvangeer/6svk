@@ -31,12 +31,15 @@ from svk.visualization.elements._priority_icon_element import PriorityIconElemen
 from svk.visualization.elements._id_element import IdElement
 from svk.visualization.elements._question_analysis_details_element import QuestionAnalysisDetailsElement
 from svk.visualization.elements._icons_element import IconsElement
+from svk.visualization._layout_configuration import LayoutConfiguration
+from svk.visualization.elements._time_frame_element import TimeFrameElement
 
 
 class QuestionDetailsElement(VisualElementsContainer):
     research_question: StormSurgeBarrierResearchQuestion
     """The research question"""
     page_number: int
+    first_column_width: float
     color: Color
 
     _priority_icon_element: PriorityIconElement = PrivateAttr()
@@ -49,6 +52,16 @@ class QuestionDetailsElement(VisualElementsContainer):
     _h_first_line: float = PrivateAttr()
     _last_line_keywords: list[str] = PrivateAttr()
     _h_last_line: float = PrivateAttr()
+
+    @staticmethod
+    def predict_first_column_width(question: StormSurgeBarrierResearchQuestion, layout_configuration: LayoutConfiguration) -> float:
+        return max(
+            [
+                PriorityIconElement.predict_width(layout_configuration),
+                IdElement.predict_width(question.id, layout_configuration.font_size),
+                TimeFrameElement.predict_width(question.time_frame, layout_configuration=layout_configuration),
+            ]
+        )
 
     def measure(self) -> None:
         self._priority_icon_element = self.create(
@@ -81,6 +94,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             IdElement,
             id=self.research_question.id,
             is_link_target=True,
+            preferred_width=self.first_column_width,
             page_number=self.page_number,
         )
         self._ssb_icons_element = self.create(
@@ -108,7 +122,6 @@ class QuestionDetailsElement(VisualElementsContainer):
                 is_link=True,
                 page_number=self.page_number,
                 is_bottom_margin=True,
-                is_tight_width=True,
             )
             for id in self.research_question.reference_ids
         ]

@@ -35,6 +35,7 @@ class QuestionSummaryElement(VisualElementsContainer):
     """The research question"""
     page_number: int
     color: Color
+    id_element_width: float
     show_priority: bool = True
 
     _id_element: IdElement = PrivateAttr()
@@ -48,6 +49,7 @@ class QuestionSummaryElement(VisualElementsContainer):
             IdElement,
             id=self.research_question.id,
             is_link=True,
+            preferred_width=self.id_element_width,
             page_number=self.page_number,
         )
         self._priority_icon_element = self.create(

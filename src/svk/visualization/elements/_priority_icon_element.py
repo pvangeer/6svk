@@ -19,6 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
+from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
 
@@ -28,9 +29,13 @@ class PriorityIconElement(VisualElement):
     """The research question"""
     show: bool = True
 
+    @staticmethod
+    def predict_width(layout_configuration: LayoutConfiguration) -> float:
+        return layout_configuration.priority_arrow_width + layout_configuration.small_margin * 2
+
     def measure(self) -> None:
         self._height = self.layout_configuration.priority_arrow_width + self.layout_configuration.intermediate_margin * 2
-        self._width = self.layout_configuration.priority_arrow_width + self.layout_configuration.small_margin * 2
+        self._width = PriorityIconElement.predict_width(self.layout_configuration)
 
     def _draw(self, x: float, y: float):
         if not self.show:

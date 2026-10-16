@@ -20,6 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 from svk.data import TimeFrame, IconProvider
+from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 from svk.visualization.helpers._calendar_helper import get_time_frame_string
@@ -32,9 +33,12 @@ class TimeFrameElement(VisualElementsContainer):
     time_frame: TimeFrame
     """The storm surge barriers to display icons for."""
 
-    def measure(self) -> None:
+    @staticmethod
+    def predict_width(time_frame: TimeFrame, layout_configuration: LayoutConfiguration) -> float:
+        return measure_text(get_time_frame_string(time_frame), layout_configuration.font_size)[0]
 
-        _text_width = measure_text(get_time_frame_string(self.time_frame), self.layout_configuration.font_size)[0]
+    def measure(self) -> None:
+        _text_width = TimeFrameElement.predict_width(self.time_frame, self.layout_configuration)
         self._width = (
             self.layout_configuration.small_margin
             + max([self.layout_configuration.icon_width_small, _text_width])

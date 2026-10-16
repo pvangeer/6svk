@@ -39,6 +39,7 @@ from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group
 from svk.visualization.elements._cluster import Cluster, ClusterColumn
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
+from svk.visualization.elements._id_element import IdElement
 from svk.visualization.documents._document import ResearchQuestionsDocument
 from svk.visualization.pages._page import Page
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
@@ -69,6 +70,14 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
         self.layout_configuration.question_id_box_width = (
             max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in self.questions])
             + 2 * self.layout_configuration.small_margin
+        )
+        self._id_width = max(
+            [
+                IdElement.predict_width(
+                    text=q.id, font_size=self.layout_configuration.font_size, margin=self.layout_configuration.small_margin
+                )
+                for q in self.questions
+            ]
         )
         pages = [
             self._create_overview_page(
@@ -226,6 +235,7 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
                                 research_question=q,
                                 page_number=page_number,
                                 show_priority=True,
+                                id_element_width=self._id_width,
                                 color=colorhelper.get_color(
                                     self.layout_configuration.use_rijkswaterstaat_colors,
                                     time_frame=time_frame,

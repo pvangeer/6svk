@@ -21,6 +21,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import PrivateAttr
 from svk.data import SluicesResearchQuestion, Label, Color, IconProvider
+from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
@@ -38,6 +39,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
     """The research question"""
     page_number: int
     color: Color
+    first_column_width: float
 
     _priority_icon_element: PriorityIconElement = PrivateAttr()
     _time_frame_element: TimeFrameElement = PrivateAttr()
@@ -49,16 +51,107 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
     _last_line_keywords: list[str] = PrivateAttr()
     _h_last_line: float = PrivateAttr()
 
-    def get_first_column_width(self) -> float:
-        return self._width_first_column
+    @staticmethod
+    def predict_first_column_width(question: SluicesResearchQuestion, layout_configuration: LayoutConfiguration) -> float:
+        return max(
+            [
+                PriorityIconElement.predict_width(layout_configuration),
+                IdElement.predict_width(question.id, layout_configuration.font_size),
+                TimeFrameElement.predict_width(question.time_frame, layout_configuration=layout_configuration),
+            ]
+        )
+
+    def initialize(self) -> None:
+        self._id_element = self.create(
+            IdElement,
+            id=self.research_question.id,
+            is_link_target=True,
+            preferred_width=self.first_column_width,
+            page_number=self.page_number,
+        )
+        self._priority_icon_element = self.create(
+            PriorityIconElement,
+            priority=self.research_question.priority,
+        )
+
+        self._priority_details_element = self.create(
+            SluicesQuestionPriorityDetailsElement,
+            research_question=self.research_question,
+            color=self.color,
+        )
+        self._ssb_icons_element = self.create(
+            IconsElement,
+            icons=tuple([IconProvider.create_rws_sluice_icon()]),
+        )
+
+        self._time_frame_element = self.create(
+            TimeFrameElement,
+            time_frame=self.research_question.time_frame,
+        )
+        self._current_research_element = self.create(
+            CurrentResearchDetailsElement,
+            research_question=self.research_question,
+            color=self.color,
+        )
+        self._related_question_elements = [
+            self.create(
+                IdElement,
+                id=id,
+                is_link=True,
+                page_number=self.page_number,
+                is_bottom_margin=True,
+            )
+            for id in self.research_question.reference_ids
+        ]
+
+        self._width_first_column = max(
+            [self.first_column_width, self._priority_icon_element.width, self._id_element.width, self._time_frame_element.width]
+        )
+
+        self._width = self._width_first_column + self._priority_details_element.width + self._current_research_element.width
+
+        self._question_wrapped_text_element = self.create(
+            WrappedTextElement,
+            text=self.research_question.question,
+            max_width=self.width - self._id_element.width - self._ssb_icons_element.width - 2 * self.layout_configuration.small_margin,
+        )
+
+        self._h_first_line = max([self._ssb_icons_element.height, self._question_wrapped_text_element.height])
+
+        self._last_line_keywords = wrapped_lines(
+            self.translator.get_label(Label.QD_Keywords)
+            + ": "
+            + (self.research_question.keywords if self.research_question.keywords is not None else "-"),
+            self._width
+            - self._time_frame_element.width
+            - self.layout_configuration.paper_margin * 2.0
+            - self.layout_configuration.small_margin * 2,
+        )
+        self._h_last_line = max(
+            [
+                (
+                    self.layout_configuration.small_margin
+                    + self.layout_configuration.font_size * 1.2
+                    + self.layout_configuration.small_margin
+                    + len(self._last_line_keywords) * 1.2 * self.layout_configuration.font_size
+                    + self.layout_configuration.small_margin
+                ),
+                self._time_frame_element.height,
+            ]
+        )
 
     def measure(self) -> None:
-        self._initialize_elements()
-        self._validate_size()
-
-    def set_preferred_first_column_width(self, width: float):
-        self._id_element.set_preferred_width(width)
-        self._validate_size()
+        self._height = (
+            self._h_first_line
+            + max(
+                [
+                    self._priority_icon_element.height,
+                    self._priority_details_element.height,
+                    self._current_research_element.height,
+                ]
+            )
+            + self._h_last_line
+        )
 
     def _draw(self, x: float, y: float):
         self._dwg.add(
@@ -195,94 +288,4 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
                 text_anchor="left",
                 dominant_baseline="text-before-edge",
             )
-        )
-
-    def _initialize_elements(self):
-        self._id_element = self.create(
-            IdElement,
-            id=self.research_question.id,
-            is_link_target=True,
-            page_number=self.page_number,
-        )
-        self._priority_icon_element = self.create(
-            PriorityIconElement,
-            priority=self.research_question.priority,
-        )
-
-        self._priority_details_element = self.create(
-            SluicesQuestionPriorityDetailsElement,
-            research_question=self.research_question,
-            color=self.color,
-        )
-        self._ssb_icons_element = self.create(
-            IconsElement,
-            icons=tuple([IconProvider.create_rws_sluice_icon()]),
-        )
-
-        self._time_frame_element = self.create(
-            TimeFrameElement,
-            time_frame=self.research_question.time_frame,
-        )
-        self._current_research_element = self.create(
-            CurrentResearchDetailsElement,
-            research_question=self.research_question,
-            color=self.color,
-        )
-        self._related_question_elements = [
-            self.create(
-                IdElement,
-                id=id,
-                is_link=True,
-                page_number=self.page_number,
-                is_bottom_margin=True,
-                is_tight_width=True,
-            )
-            for id in self.research_question.reference_ids
-        ]
-
-    def _validate_size(self) -> None:
-        self._width_first_column = max([self._priority_icon_element.width, self._id_element.width, self._time_frame_element.width])
-
-        self._width = self._width_first_column + self._priority_details_element.width + self._current_research_element.width
-
-        self._question_wrapped_text_element = self.create(
-            WrappedTextElement,
-            text=self.research_question.question,
-            max_width=self.width - self._id_element.width - self._ssb_icons_element.width - 2 * self.layout_configuration.small_margin,
-        )
-
-        self._h_first_line = max([self._ssb_icons_element.height, self._question_wrapped_text_element.height])
-
-        self._last_line_keywords = wrapped_lines(
-            self.translator.get_label(Label.QD_Keywords)
-            + ": "
-            + (self.research_question.keywords if self.research_question.keywords is not None else "-"),
-            self._width
-            - self._time_frame_element.width
-            - self.layout_configuration.paper_margin * 2.0
-            - self.layout_configuration.small_margin * 2,
-        )
-        self._h_last_line = max(
-            [
-                (
-                    self.layout_configuration.small_margin
-                    + self.layout_configuration.font_size * 1.2
-                    + self.layout_configuration.small_margin
-                    + len(self._last_line_keywords) * 1.2 * self.layout_configuration.font_size
-                    + self.layout_configuration.small_margin
-                ),
-                self._time_frame_element.height,
-            ]
-        )
-
-        self._height = (
-            self._h_first_line
-            + max(
-                [
-                    self._priority_icon_element.height,
-                    self._priority_details_element.height,
-                    self._current_research_element.height,
-                ]
-            )
-            + self._h_last_line
         )

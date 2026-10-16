@@ -32,11 +32,13 @@ class QuestionDetailsPage(Page):
     _question_elements: tuple[QuestionDetailsElement, ...] = PrivateAttr()
 
     def initialize(self) -> None:
+        _first_column_width = max([QuestionDetailsElement.predict_first_column_width(q, self.layout_configuration) for q in self.questions])
         self._question_elements = tuple(
             self.create(
                 QuestionDetailsElement,
                 research_question=q,
                 page_number=self.page_number,
+                first_column_width=_first_column_width,
                 color=(
                     colorhelper.get_color(
                         use_rijkswaterstaat_colors=self.layout_configuration.use_rijkswaterstaat_colors,

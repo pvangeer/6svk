@@ -30,6 +30,7 @@ from svk.visualization.elements._group import Group
 from svk.visualization.elements._wrapped_text_element import WrappedTextElement
 from svk.visualization.elements._cluster import Cluster, ClusterColumn
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
+from svk.visualization.elements._id_element import IdElement
 from svk.visualization.documents._document import ResearchQuestionsDocument
 from datetime import date
 
@@ -45,6 +46,18 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
     translator: Translator = Translator(lang="en")
 
     def create_pages(self) -> list[Page]:
+        self.layout_configuration.question_id_box_width = (
+            max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in self.questions])
+            + 2 * self.layout_configuration.small_margin
+        )
+        self._id_width = max(
+            [
+                IdElement.predict_width(
+                    text=q.id, font_size=self.layout_configuration.font_size, margin=self.layout_configuration.small_margin
+                )
+                for q in self.questions
+            ]
+        )
         return [self._create_overview_page(page_number=0), self._create_impact_overview_page(page_number=1)] + self.create_detailes_pages(
             current_page_number=2
         )
@@ -53,10 +66,6 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
         self,
         page_number: int,
     ) -> TimeLineOverviewPage:
-        self.layout_configuration.question_id_box_width = (
-            max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in self.questions])
-            + 2 * self.layout_configuration.small_margin
-        )
 
         fig = TimeLineOverviewPage(
             page_number=page_number,
@@ -131,6 +140,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                                 research_question=q,
                                 page_number=page_number,
                                 show_priority=True,
+                                id_element_width=self._id_width,
                                 color=colorhelper.get_color(
                                     self.layout_configuration.use_rijkswaterstaat_colors,
                                     time_frame=time_frame,
@@ -191,11 +201,6 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
         self,
         page_number: int,
     ) -> TimeLineOverviewPage:
-        self.layout_configuration.question_id_box_width = (
-            max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in self.questions])
-            + 2 * self.layout_configuration.small_margin
-        )
-
         fig = TimeLineOverviewPage(
             page_number=page_number,
             title="Research agenda SSB-∆",
@@ -258,6 +263,7 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                                 research_question=q,
                                 page_number=page_number,
                                 show_priority=True,
+                                id_element_width=self._id_width,
                                 color=colorhelper.get_color(
                                     self.layout_configuration.use_rijkswaterstaat_colors,
                                     time_frame=time_frame,

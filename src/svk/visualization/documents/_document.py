@@ -22,13 +22,12 @@ from pydantic import BaseModel
 from abc import ABC, abstractmethod
 from pathlib import Path
 from collections import defaultdict
-from svk.data import StormSurgeBarrierResearchQuestion, LinksRegister, ResearchLine, Translator, TimeFrame, Label, KnownColors
+from svk.data import StormSurgeBarrierResearchQuestion, LinksRegister, ResearchLine, Translator, TimeFrame, Label
 from svk.io import svg_to_pdf, merge_pdf_files, add_links
 from svk.visualization.helpers import _calendar_helper as helper
 from svk.visualization.helpers import _color_helper as colorhelper
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.pages._question_details_page import QuestionDetailsPage
-from svk.visualization.elements._question_details_element import QuestionDetailsElement
 from svk.visualization.pages._page import Page
 from svk.visualization.elements._column import Column
 
