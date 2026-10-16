@@ -19,10 +19,8 @@ class GridElement(VisualElementsContainer):
         self._categories = list(dict.fromkeys(header.category for header in self.grid.column_headers))
         self._cell_elements = tuple(
             [
-                GridCellElement(
-                    layout_configuration=self.layout_configuration,
-                    translator=self.translator,
-                    links_register=self.links_register,
+                self.create(
+                    GridCellElement,
                     fill=c.color,
                     i_row=c.i_row,
                     i_column=c.i_column,
@@ -33,10 +31,8 @@ class GridElement(VisualElementsContainer):
 
         self._row_header_elements = tuple(
             [
-                GridHeaderElement(
-                    layout_configuration=self.layout_configuration,
-                    translator=self.translator,
-                    links_register=self.links_register,
+                self.create(
+                    GridHeaderElement,
                     label=r.label,
                     orientation=HeaderOrientation.Horizontal,
                     i_position=r.i_position,
@@ -48,10 +44,8 @@ class GridElement(VisualElementsContainer):
 
         self._column_header_elements = tuple(
             [
-                GridHeaderElement(
-                    layout_configuration=self.layout_configuration,
-                    translator=self.translator,
-                    links_register=self.links_register,
+                self.create(
+                    GridHeaderElement,
                     label=c.label,
                     orientation=HeaderOrientation.Vertical,
                     i_position=c.i_position,

@@ -214,56 +214,42 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
         )
 
     def _initialize_elements(self):
-        self._id_element = IdElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._id_element = self.create(
+            IdElement,
             id=self.research_question.id,
             is_link_target=True,
             page_number=self.page_number,
         )
-        self._priority_icon_element = PriorityIconElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._priority_icon_element = self.create(
+            PriorityIconElement,
             priority=self.research_question.priority,
         )
 
-        self._priority_details_element = SluicesQuestionPriorityDetailsElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._priority_details_element = self.create(
+            SluicesQuestionPriorityDetailsElement,
             research_question=self.research_question,
             color=self.color,
         )
-        self._ssb_icons_element = IconsElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._ssb_icons_element = self.create(
+            IconsElement,
             icons=tuple([IconProvider.create_rws_sluice_icon()]),
         )
 
-        self._time_frame_element = TimeFrameElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._time_frame_element = self.create(
+            TimeFrameElement,
             time_frame=self.research_question.time_frame,
         )
-        self._current_research_element = CurrentResearchDetailsElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._current_research_element = self.create(
+            CurrentResearchDetailsElement,
             research_question=self.research_question,
             color=self.color,
         )
         self._related_question_elements = [
-            IdElement(
+            self.create(
+                IdElement,
                 id=id,
                 is_link=True,
-                layout_configuration=self.layout_configuration,
-                links_register=self.links_register,
                 page_number=self.page_number,
-                translator=self.translator,
                 is_bottom_margin=True,
                 is_tight_width=True,
             )
@@ -275,10 +261,8 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
 
         self._width = self._width_first_column + self._priority_details_element.width + self._current_research_element.width
 
-        self._question_wrapped_text_element = WrappedTextElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._question_wrapped_text_element = self.create(
+            WrappedTextElement,
             text=self.research_question.question,
             max_width=self.width - self._id_element.width - self._ssb_icons_element.width - 2 * self.layout_configuration.small_margin,
         )

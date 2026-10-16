@@ -49,11 +49,9 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self) -> QuestionPriorityDetailsElement:
-        self._title_element = TitleElement(
+        self._title_element = self.create(
+            TitleElement,
             title=Label.QD_Priority,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
         )
         prio_labels = [Label.QD_WaterSafety, Label.QD_OtherFunctions, Label.QD_Operation, Label.QD_Maitenance]
         self._w_priority_metrices_column = (

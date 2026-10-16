@@ -44,22 +44,20 @@ class PriorityLegendElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self) -> PriorityLegendElement:
-        self._high_priority_icon_element = PriorityIconElement(
-            translator=self.translator, layout_configuration=self.layout_configuration, links_register=self.links_register, priority=1
+        self._high_priority_icon_element = self.create(
+            PriorityIconElement,
+            priority=1
         )
-        self._low_priority_icon_element = PriorityIconElement(
-            translator=self.translator, layout_configuration=self.layout_configuration, links_register=self.links_register, priority=0
+        self._low_priority_icon_element = self.create(
+            PriorityIconElement,
+            priority=0
         )
-        self._high_priority_text_element = TextElement(
-            translator=self.translator,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
+        self._high_priority_text_element = self.create(
+            TextElement,
             text=self.translator.get_label(Label.LegendHighPriority),
         )
-        self._low_priority_text_element = TextElement(
-            translator=self.translator,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
+        self._low_priority_text_element = self.create(
+            TextElement,
             text=self.translator.get_label(Label.LegendLowPriority),
         )
 

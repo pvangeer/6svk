@@ -29,20 +29,7 @@ from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._color_helper import get_contrast_color
 
 
-class GroupBase(VisualElement):
-    @property
-    def height(self) -> float:
-        return 0.0
-
-    @property
-    def width(self) -> float:
-        return 0.0
-
-    def _draw(self, x: float, y: float):
-        pass
-
-
-class Group(GroupBase):
+class Group(VisualElement):
     """
     A group of items (as part of a column)
     """
@@ -159,38 +146,3 @@ class Group(GroupBase):
                 width=_wh[0],
                 height=_wh[1],
             )
-
-
-class PlainTextGroup(GroupBase):
-    model_config = ConfigDict(frozen=True)
-    text: str
-    _lines: list[str] = PrivateAttr()
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
-
-    @model_validator(mode="after")
-    def validate(self) -> PlainTextGroup:
-        self._width = self.layout_configuration.column_width
-        self._lines = wrapped_lines(self.text, self.layout_configuration.column_width, self.layout_configuration.font_size)
-        self._height = self.layout_configuration.font_size * len(self._lines) * 1.2 + self.layout_configuration.small_margin
-        return self
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    def _draw(self, x: float, y: float):
-        self._dwg.add(
-            wrapped_text(
-                dwg=self._dwg,
-                lines=self._lines,
-                insert=(x, y),
-                font_size=self.layout_configuration.font_size,
-                dominant_baseline="text-before-edge",
-                text_anchor="start",
-            )
-        )

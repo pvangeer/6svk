@@ -46,27 +46,21 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self) -> CurrentResearchDetailsElement:
-        self._title_element = TitleElement(
+        self._title_element = self.create(
+            TitleElement,
             title=Label.QD_CurrentResearch,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
         )
 
-        self._related_research_element = WrappedTextElement(
+        self._related_research_element = self.create(
+            WrappedTextElement,
             text=self.research_question.related_research if self.research_question.related_research is not None else "-",
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
             has_margins=False,
             max_width=self.layout_configuration.current_research_details_width - self.layout_configuration.small_margin * 5,
         )
 
-        self._research_program_element = WrappedTextElement(
+        self._research_program_element = self.create(
+            WrappedTextElement,
             text=self.research_question.research_program if self.research_question.research_program is not None else "-",
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
             has_margins=False,
             max_width=self.layout_configuration.current_research_details_width - self.layout_configuration.small_margin * 5,
         )

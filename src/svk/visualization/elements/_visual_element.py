@@ -19,10 +19,14 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from pydantic import BaseModel, PrivateAttr
+from typing import Any, TypeVar
 from svk.data import LinksRegister, Translator
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svgwrite import Drawing
 from abc import ABC, abstractmethod
+
+
+VisualElementType = TypeVar("VisualElementType", bound="VisualElement")
 
 
 class VisualElement(BaseModel, ABC):
@@ -50,3 +54,13 @@ class VisualElement(BaseModel, ABC):
     def draw(self, dwg: Drawing, x: float, y: float) -> None:
         self._dwg = dwg
         self._draw(x=x, y=y)
+
+    def create(self, element_type: type[VisualElementType], **kwargs: Any) -> VisualElementType:
+        return element_type(
+            **{
+                **kwargs,
+                "layout_configuration": self.layout_configuration,
+                "links_register": self.links_register,
+                "translator": self.translator,
+            }
+        )

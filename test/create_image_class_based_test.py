@@ -246,7 +246,7 @@ def test_create_image():
                     columns=tuple(
                         [
                             ClusterColumn(column_number=0, groups=tuple([adaptation_now_group])),
-                            ClusterColumn(column_number=1, groups=tuple([cyber_near_group, adaptation_near_group])),
+                            ClusterColumn(column_number=1, groups=(cyber_near_group, adaptation_near_group)),
                         ]
                     ),
                 )

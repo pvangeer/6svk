@@ -47,11 +47,9 @@ class SluicesQuestionPriorityDetailsElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self) -> SluicesQuestionPriorityDetailsElement:
-        self._title_element = TitleElement(
+        self._title_element = self.create(
+            TitleElement,
             title=Label.QD_Priority,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
         )
         prio_labels = [
             Label.QD_WaterSafety,

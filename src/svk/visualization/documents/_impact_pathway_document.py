@@ -26,7 +26,8 @@ from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers import _color_helper as colorhelper
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization.elements._column import Column
-from svk.visualization.elements._group import Group, PlainTextGroup
+from svk.visualization.elements._group import Group
+from svk.visualization.elements._wrapped_text_element import WrappedTextElement
 from svk.visualization.elements._cluster import Cluster, ClusterColumn
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.documents._document import ResearchQuestionsDocument
@@ -163,7 +164,8 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                     column_number=2,
                     groups=tuple(
                         [
-                            PlainTextGroup(
+                            WrappedTextElement(
+                                max_width=self.layout_configuration.column_width,
                                 layout_configuration=self.layout_configuration,
                                 links_register=self.links_register,
                                 translator=self.translator,

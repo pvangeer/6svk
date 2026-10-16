@@ -63,54 +63,40 @@ class QuestionDetailsElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self):
-        self._priority_icon_element = PriorityIconElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._priority_icon_element = self.create(
+            PriorityIconElement,
             priority=self.research_question.priority,
         )
-        self._question_explanation_element = WrappedTextElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._question_explanation_element = self.create(
+            WrappedTextElement,
             text=self.research_question.explanation if self.research_question.explanation is not None else "-",
             max_width=self.layout_configuration.question_explanation_width,
         )
-        self._priority_details_element = QuestionPriorityDetailsElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._priority_details_element = self.create(
+            QuestionPriorityDetailsElement,
             research_question=self.research_question,
             color=self.color,
         )
-        self._organisation_details_element = QuestionOrganisationDetailsElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._organisation_details_element = self.create(
+            QuestionOrganisationDetailsElement,
             research_question=self.research_question,
             color=self.color,
             page_number=self.page_number,
         )
-        self._analysis_element = QuestionAnalysisDetailsElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._analysis_element = self.create(
+            QuestionAnalysisDetailsElement,
             research_question=self.research_question,
             color=self.color,
             page_number=self.page_number,
         )
-        self._id_element = IdElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._id_element = self.create(
+            IdElement,
             id=self.research_question.id,
             is_link_target=True,
             page_number=self.page_number,
         )
-        self._ssb_icons_element = IconsElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._ssb_icons_element = self.create(
+            IconsElement,
             icons=tuple(icon for b in self.research_question.storm_surge_barriers if (icon := IconProvider.create_icon(b)) is not None),
         )
 
@@ -121,22 +107,18 @@ class QuestionDetailsElement(VisualElementsContainer):
             + self._analysis_element.width
         )
 
-        self._question_wrapped_text_element = WrappedTextElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._question_wrapped_text_element = self.create(
+            WrappedTextElement,
             text=self.research_question.question,
             max_width=self.width - self._id_element.width - self._ssb_icons_element.width - 2 * self.layout_configuration.small_margin,
         )
 
         self._related_question_elements = [
-            IdElement(
+            self.create(
+                IdElement,
                 id=id,
                 is_link=True,
-                layout_configuration=self.layout_configuration,
-                links_register=self.links_register,
                 page_number=self.page_number,
-                translator=self.translator,
                 is_bottom_margin=True,
                 is_tight_width=True,
             )

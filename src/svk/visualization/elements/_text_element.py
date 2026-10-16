@@ -4,7 +4,6 @@ from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._measuretext import measure_text
 
 
-
 class TextElement(VisualElement):
     text: str
     font_family: str = "Arial"

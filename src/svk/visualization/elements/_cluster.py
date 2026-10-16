@@ -21,7 +21,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, model_validator, PrivateAttr
 from svk.visualization.elements._visual_element import VisualElement
-from svk.visualization.elements._group import GroupBase
 from svk.visualization.helpers._color_helper import color_toward_grey
 
 from uuid import uuid4
@@ -31,7 +30,7 @@ from svk.data import Color
 class ClusterColumn(BaseModel):
     model_config = ConfigDict(frozen=True)
     column_number: int
-    groups: tuple[GroupBase, ...]
+    groups: tuple[VisualElement, ...]
 
 
 class Cluster(VisualElement):

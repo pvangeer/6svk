@@ -48,25 +48,19 @@ class QuestionSummaryElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self):
-        self._id_element = IdElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
+        self._id_element = self.create(
+            IdElement,
             id=self.research_question.id,
-            translator=self.translator,
             is_link=True,
             page_number=self.page_number,
         )
-        self._priority_icon_element = PriorityIconElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
+        self._priority_icon_element = self.create(
+            PriorityIconElement,
             priority=self.research_question.priority,
-            translator=self.translator,
             show=self.show_priority,
         )
-        self._question_element = WrappedTextElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._question_element = self.create(
+            WrappedTextElement,
             max_width=self.layout_configuration.summary_question_lines_width,
             text=self.research_question.question,
         )

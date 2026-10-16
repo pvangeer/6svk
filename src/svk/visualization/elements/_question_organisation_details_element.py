@@ -46,11 +46,9 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self) -> QuestionOrganisationDetailsElement:
-        self._title_element = TitleElement(
+        self._title_element = self.create(
+            TitleElement,
             title=Label.QD_Organizational,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
         )
 
         fixed_fields: list[tuple[Label, float]] = [

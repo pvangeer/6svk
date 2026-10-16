@@ -47,48 +47,36 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self) -> QuestionAnalysisDetailsElement:
-        self._driver_title_element = TitleElement(
+        self._driver_title_element = self.create(
+            TitleElement,
             title=Label.QD_Drivers,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
         )
-        self._function_title_element = TitleElement(
+        self._function_title_element = self.create(
+            TitleElement,
             title=Label.QD_Functions,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
         )
-        self._component_title_element = TitleElement(
+        self._component_title_element = self.create(
+            TitleElement,
             title=Label.QD_Components,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
         )
-        self._driver_element = WrappedBulletListElement(
+        self._driver_element = self.create(
+            WrappedBulletListElement,
             max_width=self.layout_configuration.analysis_details_width,
             bullet_list=self.research_question.related_drivers.split(";") if self.research_question.related_drivers is not None else ["-"],
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
         )
-        self._function_element = WrappedBulletListElement(
+        self._function_element = self.create(
+            WrappedBulletListElement,
             max_width=self.layout_configuration.analysis_details_width,
             bullet_list=(
                 self.research_question.related_functions.split(";") if self.research_question.related_functions is not None else ["-"]
             ),
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
         )
-        self._component_element = WrappedBulletListElement(
+        self._component_element = self.create(
+            WrappedBulletListElement,
             max_width=self.layout_configuration.analysis_details_width,
             bullet_list=(
                 self.research_question.related_components.split(";") if self.research_question.related_components is not None else ["-"]
             ),
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
         )
 
         self._width = max(

@@ -52,18 +52,16 @@ class SluicesLegendElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self) -> SluicesLegendElement:
-        self._color_table_legend_element = ColorTableLegendElement(
-            translator=self.translator,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
+        self._color_table_legend_element = self.create(
+            ColorTableLegendElement,
             color=self.color,
             use_rijkswaterstaat_colors=True,
         )
-        self._priority_legend_element = PriorityLegendElement(
-            translator=self.translator, layout_configuration=self.layout_configuration, links_register=self.links_register
+        self._priority_legend_element = self.create(
+            PriorityLegendElement,
         )
-        self._sluices_code_explanation_legend_element = SluicesCodeExplanationLegendElement(
-            translator=self.translator, layout_configuration=self.layout_configuration, links_register=self.links_register
+        self._sluices_code_explanation_legend_element = self.create(
+            SluicesCodeExplanationLegendElement,
         )
 
         self._width = (

@@ -54,40 +54,28 @@ class ColorTableLegendElement(VisualElementsContainer):
 
     @model_validator(mode="after")
     def validate(self) -> ColorTableLegendElement:
-        self._now_icon_element = TimeFrameElement(
-            translator=self.translator,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
+        self._now_icon_element = self.create(
+            TimeFrameElement,
             time_frame=TimeFrame.Now,
         )
-        self._near_future_icon_element = TimeFrameElement(
-            translator=self.translator,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
+        self._near_future_icon_element = self.create(
+            TimeFrameElement,
             time_frame=TimeFrame.NearFuture,
         )
-        self._future_icon_element = TimeFrameElement(
-            translator=self.translator,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
+        self._future_icon_element = self.create(
+            TimeFrameElement,
             time_frame=TimeFrame.Future,
         )
-        self._maintenance_text_element = TextElement(
-            translator=self.translator,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
+        self._maintenance_text_element = self.create(
+            TextElement,
             text=self.translator.get_label(Label.RLG_Maintenance),
         )
-        self._requirements_text_element = TextElement(
-            translator=self.translator,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
+        self._requirements_text_element = self.create(
+            TextElement,
             text=self.translator.get_label(Label.RLG_Requirements),
         )
-        self._operational_text_element = TextElement(
-            translator=self.translator,
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
+        self._operational_text_element = self.create(
+            TextElement,
             text=self.translator.get_label(Label.RLG_Operational),
         )
 
