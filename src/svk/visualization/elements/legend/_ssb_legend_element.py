@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import Label, Color, KnownColors
 from svk.visualization.elements._visual_elements_container import Alignment, VisualElementsContainer
 from svk.visualization.elements.legend._color_table_legend_element import ColorTableLegendElement
@@ -41,19 +41,8 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
     _ssb_explanation_legend_element: StormSurgeBarriersExeplanationLegendElement = PrivateAttr()
     _ssb_code_explanation_legend_element: SluicesCodeExplanationLegendElement = PrivateAttr()
     _content_height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
 
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @model_validator(mode="after")
-    def validate(self) -> StormSurgeBarrierLegendElement:
+    def measure(self) -> None:
         self._color_table_legend_element = self.create(
             ColorTableLegendElement,
             color=self.color,
@@ -94,19 +83,16 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
             + self._content_height
             + self.layout_configuration.intermediate_margin
         )
-        return self
 
     def _draw(self, x: float, y: float):
         self._draw_container(x=x, y=y)
         _x_left_content = x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin
         _y_top_content = y + self.layout_configuration.group_header_height + self.layout_configuration.intermediate_margin
         self._draw_table(
-
             x_left=_x_left_content,
             y_top=_y_top_content,
         )
         self.draw_vertical_separator(
-
             x=_x_left_content + self._color_table_legend_element.width + self.layout_configuration.intermediate_margin,
             y=_y_top_content,
             element_height=self._content_height,
@@ -117,7 +103,6 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
         )
         self._draw_code_explanation(x_left=_x_left_code_explanation, y_top=_y_top_content)
         self.draw_vertical_separator(
-
             x=_x_left_code_explanation + self._ssb_code_explanation_legend_element.width + self.layout_configuration.intermediate_margin,
             y=_y_top_content,
             element_height=self._content_height,
@@ -127,12 +112,10 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
             _x_left_code_explanation + self._ssb_code_explanation_legend_element.width + 2 * self.layout_configuration.intermediate_margin
         )
         self._draw_priority_explanation(
-
             x_left=_x_left_priority,
             y_top=_y_top_content,
         )
         self.draw_vertical_separator(
-
             x=_x_left_priority + self._priority_legend_element.width + self.layout_configuration.intermediate_margin,
             y=_y_top_content,
             element_height=self._content_height,
@@ -140,7 +123,6 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
         )
         _x_left_ssb = _x_left_priority + self._priority_legend_element.width + 2 * self.layout_configuration.intermediate_margin
         self._draw_ssb_explanation(
-
             x_left=_x_left_ssb,
             y_top=_y_top_content,
         )

@@ -1,5 +1,3 @@
-from pydantic import PrivateAttr, model_validator
-
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._measuretext import measure_text
 
@@ -12,22 +10,9 @@ class TextElement(VisualElement):
     text_anchor: str = "start"
     dominant_baseline: str = "text-before-edge"
 
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-
-    @model_validator(mode="after")
-    def validate(self):
+    def measure(self) -> None:
         self._width = measure_text(self.text, self.layout_configuration.font_size)[0]
         self._height = self.layout_configuration.font_size * 1.2
-        return self
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
 
     def _draw(self, x: float, y: float) -> None:
         self._dwg.add(

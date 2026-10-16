@@ -19,12 +19,11 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import ConfigDict, model_validator, PrivateAttr
+from pydantic import ConfigDict
 from svk.data import Color, KnownColors
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.helpers._draw_callout import draw_callout
 from svk.visualization.helpers._measuretext import measure_text
-from svk.visualization.helpers._wrappedtext import wrapped_lines, wrapped_text
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._color_helper import get_contrast_color
 
@@ -50,24 +49,14 @@ class Group(VisualElement):
     questions: tuple[QuestionSummaryElement, ...]
     """The questions in this group"""
 
-    @property
-    def height(self) -> float:
-        """
-        Calculates the height of the group in pixels
-
-        :return: The height of the group
-        :rtype: int
-        """
-        return (
+    def measure(self) -> None:
+        self._height = (
             self.layout_configuration.group_header_height
             + sum([question.height for question in self.questions])
             + self.layout_configuration.small_margin * (len(self.questions) - 1)
             + 2 * self.layout_configuration.intermediate_margin
         )
-
-    @property
-    def width(self) -> float:
-        return self.layout_configuration.column_width - self.layout_configuration.arrow_depth
+        self._width = self.layout_configuration.column_width - self.layout_configuration.arrow_depth
 
     def _draw(self, x: float, y: float):
         """

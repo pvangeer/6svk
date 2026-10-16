@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import SluicesResearchQuestion, Label, Color
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
@@ -32,20 +32,9 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
     """The research question"""
     color: Color
 
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
     _title_element: TitleElement = PrivateAttr()
 
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @model_validator(mode="after")
-    def validate(self) -> CurrentResearchDetailsElement:
+    def measure(self) -> None:
         self._title_element = self.create(
             TitleElement,
             title=Label.QD_CurrentResearch,
@@ -96,7 +85,6 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
             + self._related_research_element.height
             + self.layout_configuration.small_margin
         )
-        return self
 
     def _draw(self, x: float, y: float):
         self._title_element.draw(self._dwg, x, y)

@@ -40,13 +40,9 @@ class Column(VisualElement):
     """Color of the column (used as shading and as stroke color)"""
     number: int
 
-    @property
-    def width(self) -> float:
-        return self.layout_configuration.column_width
-
-    @property
-    def height(self) -> float:
-        return self.layout_configuration.column_header_height
+    def measure(self) -> None:
+        self._width = self.layout_configuration.column_width
+        self._height = self.layout_configuration.column_header_height
 
     def _draw(self, x: float, y: float):
         """

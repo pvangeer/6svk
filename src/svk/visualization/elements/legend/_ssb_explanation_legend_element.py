@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import StormSurgeBarrier, IconProvider
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
@@ -27,8 +27,6 @@ from svk.visualization.helpers._measuretext import measure_text
 
 
 class StormSurgeBarriersExeplanationLegendElement(VisualElementsContainer):
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
     _width_first_column: float = PrivateAttr()
     _width_second_column: float = PrivateAttr()
     _width_third_column: float = PrivateAttr()
@@ -43,16 +41,7 @@ class StormSurgeBarriersExeplanationLegendElement(VisualElementsContainer):
         (StormSurgeBarrier.Ramspol, "RP"),
     )
 
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @model_validator(mode="after")
-    def validate(self) -> StormSurgeBarriersExeplanationLegendElement:
+    def measure(self) -> None:
         self._width_first_column = max([measure_text(s[1])[0] for s in self._ssbs]) + 2 * self.layout_configuration.small_margin
         self._width_second_column = self.layout_configuration.icon_width_small + self.layout_configuration.small_margin
         self._width_third_column = (
@@ -61,8 +50,6 @@ class StormSurgeBarriersExeplanationLegendElement(VisualElementsContainer):
         self._width = self._width_first_column + self._width_second_column + self._width_third_column
         self._row_height = self.layout_configuration.icon_width_small
         self._height = len(self._ssbs) * self._row_height + (len(self._ssbs) - 1) * self.layout_configuration.small_margin
-
-        return self
 
     def _draw(self, x: float, y: float):
         y_top = y

@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import StormSurgeBarrierResearchQuestion, Label, IconProvider, Color
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
@@ -39,9 +39,6 @@ class QuestionDetailsElement(VisualElementsContainer):
     page_number: int
     color: Color
 
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-
     _priority_icon_element: PriorityIconElement = PrivateAttr()
     _question_explanation_element: WrappedTextElement = PrivateAttr()
     _priority_details_element: QuestionPriorityDetailsElement = PrivateAttr()
@@ -53,16 +50,7 @@ class QuestionDetailsElement(VisualElementsContainer):
     _last_line_keywords: list[str] = PrivateAttr()
     _h_last_line: float = PrivateAttr()
 
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @model_validator(mode="after")
-    def validate(self):
+    def measure(self) -> None:
         self._priority_icon_element = self.create(
             PriorityIconElement,
             priority=self.research_question.priority,
@@ -154,8 +142,6 @@ class QuestionDetailsElement(VisualElementsContainer):
             + self._h_last_line
         )
 
-        return self
-
     def _draw(self, x: float, y: float):
         self._dwg.add(
             self._dwg.rect(
@@ -195,9 +181,7 @@ class QuestionDetailsElement(VisualElementsContainer):
             height_container=self._h_first_line,
             alignment=Alignment.MiddleLeft,
         )
-        self.draw_vertical_separator(
-            x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self.color
-        )
+        self.draw_vertical_separator(x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self.color)
         self.draw_element(
             element=self._ssb_icons_element,
             x_container=x + self.width - self._ssb_icons_element.width,

@@ -33,5 +33,5 @@ def test_first_try_efl_page():
         translator=Translator(),
         grid=d.grid,
     )
-    dwg = page.draw()
+    dwg = page.render()
     svg_to_pdf(dwg, test_output_dir / "EOL.pdf")

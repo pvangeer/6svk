@@ -18,34 +18,15 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from pydantic import BaseModel, PrivateAttr
-from typing import Any, TypeVar
-from svk.data import LinksRegister, Translator
-from svk.visualization._layout_configuration import LayoutConfiguration
+from pydantic import PrivateAttr
 from svgwrite import Drawing
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+
+from svk.visualization._visual_component import VisualComponent
 
 
-VisualElementType = TypeVar("VisualElementType", bound="VisualElement")
-
-
-class VisualElement(BaseModel, ABC):
-    # TODO: combine these three into one object? They are always passed alongside each other.
-    layout_configuration: LayoutConfiguration
-    """The layout configuration shared across all elements of a document."""
-    links_register: LinksRegister
-    translator: Translator
+class VisualElement(VisualComponent):
     _dwg: Drawing = PrivateAttr()
-
-    @property
-    @abstractmethod
-    def width(self) -> float:
-        pass
-
-    @property
-    @abstractmethod
-    def height(self) -> float:
-        pass
 
     @abstractmethod
     def _draw(self, x: float, y: float) -> None:
@@ -54,13 +35,3 @@ class VisualElement(BaseModel, ABC):
     def draw(self, dwg: Drawing, x: float, y: float) -> None:
         self._dwg = dwg
         self._draw(x=x, y=y)
-
-    def create(self, element_type: type[VisualElementType], **kwargs: Any) -> VisualElementType:
-        return element_type(
-            **{
-                **kwargs,
-                "layout_configuration": self.layout_configuration,
-                "links_register": self.links_register,
-                "translator": self.translator,
-            }
-        )

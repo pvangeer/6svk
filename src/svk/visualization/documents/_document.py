@@ -83,7 +83,7 @@ class Document(BaseModel, ABC):
         for page in sorted(self.pages, key=lambda p: p.page_number):
             safe_title = safe_filename(page.title) + (("_" + safe_filename(page.subtitle)) if page.subtitle is not None else "")
             target_path = self.output_dir / (f"{self.output_file} - {safe_title}.pdf")
-            svg_to_pdf(svg_dwg=page.draw(), path=target_path)
+            svg_to_pdf(svg_dwg=page.render(), path=target_path)
             pages_file_paths.append(target_path)
 
         return pages_file_paths
@@ -165,25 +165,7 @@ class ResearchQuestionsDocument(Document):
             translator=self.translator,
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
-            questions=tuple(
-                QuestionDetailsElement(
-                    layout_configuration=self.layout_configuration,
-                    links_register=self.links_register,
-                    translator=self.translator,
-                    research_question=question,
-                    page_number=page_number,
-                    color=(
-                        colorhelper.get_color(
-                            use_rijkswaterstaat_colors=self.layout_configuration.use_rijkswaterstaat_colors,
-                            time_frame=question.time_frame,
-                            research_line_group=question.research_line.cluster,
-                        )
-                        if question.research_line is not None
-                        else KnownColors.RWSGrey1
-                    ),
-                )
-                for question in questions
-            ),
+            questions=tuple(questions),
         )
 
         return dwg_details_page

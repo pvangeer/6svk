@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import Label
 from svk.visualization.elements._priority_icon_element import PriorityIconElement
 from svk.visualization.elements._text_element import TextElement
@@ -29,29 +29,12 @@ from svk.visualization.elements.legend._color_table_legend_element import ColorT
 
 class PriorityLegendElement(VisualElementsContainer):
     _color_table_element: ColorTableLegendElement = PrivateAttr()
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
     _priority_width: float = PrivateAttr()
     _priority_height: float = PrivateAttr()
 
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @model_validator(mode="after")
-    def validate(self) -> PriorityLegendElement:
-        self._high_priority_icon_element = self.create(
-            PriorityIconElement,
-            priority=1
-        )
-        self._low_priority_icon_element = self.create(
-            PriorityIconElement,
-            priority=0
-        )
+    def measure(self) -> None:
+        self._high_priority_icon_element = self.create(PriorityIconElement, priority=1)
+        self._low_priority_icon_element = self.create(PriorityIconElement, priority=0)
         self._high_priority_text_element = self.create(
             TextElement,
             text=self.translator.get_label(Label.LegendHighPriority),
@@ -73,8 +56,6 @@ class PriorityLegendElement(VisualElementsContainer):
 
         self._width = self._priority_width
         self._height = self._priority_height
-
-        return self
 
     def _draw(self, x: float, y: float):
         y_current = y

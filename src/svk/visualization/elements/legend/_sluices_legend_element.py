@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import Label, Color, KnownColors
 from svk.visualization.elements._visual_elements_container import Alignment, VisualElementsContainer
 from svk.visualization.elements.legend._color_table_legend_element import ColorTableLegendElement
@@ -39,19 +39,8 @@ class SluicesLegendElement(VisualElementsContainer):
     _priority_legend_element: PriorityLegendElement = PrivateAttr()
     _sluices_code_explanation_legend_element: SluicesCodeExplanationLegendElement = PrivateAttr()
     _content_height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
 
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @model_validator(mode="after")
-    def validate(self) -> SluicesLegendElement:
+    def measure(self) -> None:
         self._color_table_legend_element = self.create(
             ColorTableLegendElement,
             color=self.color,
@@ -88,7 +77,6 @@ class SluicesLegendElement(VisualElementsContainer):
             + self._content_height
             + self.layout_configuration.intermediate_margin
         )
-        return self
 
     def _draw(self, x: float, y: float):
         self._draw_container(x=x, y=y)
@@ -108,7 +96,6 @@ class SluicesLegendElement(VisualElementsContainer):
                 alignment=Alignment.MiddleCenter,
             )
             self.draw_vertical_separator(
-
                 x=_x_left_content + _element.width + self.layout_configuration.intermediate_margin,
                 y=_y_top_content,
                 element_height=self._content_height,

@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import StormSurgeBarrierResearchQuestion, Priority, Label, Color
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
@@ -33,22 +33,11 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
     color: Color
     dotradius: float = 5
 
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
     _lines_prio_explanation: list[str] = PrivateAttr()
     _w_priority_metrices_column: float = PrivateAttr()
     _title_element: TitleElement = PrivateAttr()
 
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @model_validator(mode="after")
-    def validate(self) -> QuestionPriorityDetailsElement:
+    def measure(self) -> None:
         self._title_element = self.create(
             TitleElement,
             title=Label.QD_Priority,
@@ -89,13 +78,11 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
         )
 
         self._height = max([h_priority_column_fixed_items, h_priority_column_explained_lines])
-        return self
 
     def _draw(self, x: float, y: float):
         self._title_element.draw(self._dwg, x, y)
         y_prios_start = y + self._title_element.height
         self.draw_horizontal_separator(
-
             x,
             y_prios_start,
             self.width,
@@ -132,7 +119,6 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
             y_prio_current += self.layout_configuration.font_size * 1.2
 
         self.draw_vertical_separator(
-
             x + self._w_priority_metrices_column,
             y_prios_start,
             self.height - self.layout_configuration.small_margin * 2 - self.layout_configuration.font_size * 1.2,

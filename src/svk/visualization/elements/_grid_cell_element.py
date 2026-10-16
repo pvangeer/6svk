@@ -1,4 +1,3 @@
-from pydantic import PrivateAttr, model_validator
 from svk.data import Color, KnownColors
 from svk.visualization.elements._visual_element import VisualElement
 
@@ -7,22 +6,10 @@ class GridCellElement(VisualElement):
     fill: Color = KnownColors.White
     i_row: int
     i_column: int
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
 
-    @model_validator(mode="after")
-    def validate(self):
+    def measure(self) -> None:
         self._width = self.layout_configuration.grid_cell_minimal_width
         self._height = self.layout_configuration.grid_cell_minimal_height
-        return self
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
 
     def _draw(self, x: float, y: float):
         self._dwg.add(

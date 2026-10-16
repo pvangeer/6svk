@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import StormSurgeBarrierResearchQuestion, Label, Color
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.elements._wrapped_bullet_list import WrappedBulletListElement
@@ -42,11 +42,7 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
     _function_element: WrappedBulletListElement = PrivateAttr()
     _component_element: WrappedBulletListElement = PrivateAttr()
 
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-
-    @model_validator(mode="after")
-    def validate(self) -> QuestionAnalysisDetailsElement:
+    def measure(self) -> None:
         self._driver_title_element = self.create(
             TitleElement,
             title=Label.QD_Drivers,
@@ -94,19 +90,9 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
             + self._component_title_element.height
             + self._component_element.height
         )
-        return self
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
 
     def _draw(self, x: float, y: float):
         y_current = self.draw_bulleted_subsection(
-
             x=x,
             y=y + self.layout_configuration.small_margin,
             title_element=self._driver_title_element,
@@ -115,13 +101,9 @@ class QuestionAnalysisDetailsElement(VisualElementsContainer):
         y_current = self.draw_bulleted_subsection(
             x=x, y=y_current, title_element=self._function_title_element, element=self._function_element
         )
-        self.draw_bulleted_subsection(
-            x=x, y=y_current, title_element=self._component_title_element, element=self._component_element
-        )
+        self.draw_bulleted_subsection(x=x, y=y_current, title_element=self._component_title_element, element=self._component_element)
 
-    def draw_bulleted_subsection(
-        self, x: float, y: float, title_element: TitleElement, element: WrappedBulletListElement
-    ) -> float:
+    def draw_bulleted_subsection(self, x: float, y: float, title_element: TitleElement, element: WrappedBulletListElement) -> float:
         title_element.draw(dwg=self._dwg, x=x, y=y - self.layout_configuration.small_margin)
         y += self.layout_configuration.font_size * 1.2 + self.layout_configuration.small_margin
         self.draw_horizontal_separator(x=x, y=y, element_width=self.width, color=self.color)

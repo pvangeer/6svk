@@ -254,7 +254,7 @@ def test_create_image():
         ),
     )
 
-    dwg = fig.draw()
+    dwg = fig.render()
 
     pt = test_output_dir / "Onderzoeksagenda_auto.pdf"
     svg_to_pdf(dwg, pt)

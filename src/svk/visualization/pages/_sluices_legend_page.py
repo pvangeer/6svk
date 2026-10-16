@@ -11,10 +11,8 @@ class SluicesLegendPage(Page):
     title_link_target: str | None = "#legend_page"
 
     def initialize(self):
-        self._legend_element = SluicesLegendElement(
-            layout_configuration=self.layout_configuration,
-            links_register=self.links_register,
-            translator=self.translator,
+        self._legend_element = self.create(
+            SluicesLegendElement,
             color=KnownColors.GreyAccent,
             use_contrast_color=True,
         )

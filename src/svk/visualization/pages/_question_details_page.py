@@ -18,24 +18,48 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+from pydantic import PrivateAttr
+from svk.data import StormSurgeBarrierResearchQuestion, KnownColors
 from svk.visualization.elements._question_details_element import QuestionDetailsElement
 from svk.visualization.pages._page import Page
+from svk.visualization.helpers import _color_helper as colorhelper
 from svgwrite import Drawing
 
 
 class QuestionDetailsPage(Page):
-    questions: tuple[QuestionDetailsElement, ...]
+    questions: tuple[StormSurgeBarrierResearchQuestion, ...]
+
+    _question_elements: tuple[QuestionDetailsElement, ...] = PrivateAttr()
+
+    def initialize(self) -> None:
+        self._question_elements = tuple(
+            self.create(
+                QuestionDetailsElement,
+                research_question=q,
+                page_number=self.page_number,
+                color=(
+                    colorhelper.get_color(
+                        use_rijkswaterstaat_colors=self.layout_configuration.use_rijkswaterstaat_colors,
+                        time_frame=q.time_frame,
+                        research_line_group=q.research_line.cluster,
+                    )
+                    if q.research_line is not None
+                    else KnownColors.RWSGrey1
+                ),
+            )
+            for q in self.questions
+        )
 
     def get_content_size(self) -> tuple[float, float]:
         return (
-            max([q.width for q in self.questions]),
-            sum([q.height + self.layout_configuration.intermediate_margin for q in self.questions])
+            max([q.width for q in self._question_elements]),
+            sum([q.height + self.layout_configuration.intermediate_margin for q in self._question_elements])
             - self.layout_configuration.intermediate_margin,
         )
 
     def draw_content(self, dwg: Drawing, top: float, left: float):
         top_current = top
-        for question in self.questions:
+        for question in self._question_elements:
             question.draw(
                 dwg=dwg,
                 x=left,

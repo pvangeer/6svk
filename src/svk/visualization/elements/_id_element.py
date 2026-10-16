@@ -19,7 +19,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import PrivateAttr, model_validator
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._measuretext import measure_text
 
@@ -31,11 +30,8 @@ class IdElement(VisualElement):
     is_bottom_margin: bool = True
     is_tight_width: bool = False
     page_number: int | None = None
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
 
-    @model_validator(mode="after")
-    def validate(self) -> IdElement:
+    def measure(self) -> None:
         self._width = (
             measure_text(text=self.id, font_size=self.layout_configuration.font_size)[0]
             if self.is_tight_width
@@ -44,15 +40,6 @@ class IdElement(VisualElement):
         self._height = (
             2 if self.is_bottom_margin else 1
         ) * self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2
-        return self
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
 
     def set_preferred_width(self, width: float):
         self._width = max(self._width, width)

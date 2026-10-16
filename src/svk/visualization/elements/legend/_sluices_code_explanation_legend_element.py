@@ -20,15 +20,13 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from __future__ import annotations
 import math
-from pydantic import PrivateAttr, model_validator
+from pydantic import PrivateAttr
 from svk.data import Color, KnownColors
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._measuretext import measure_text
 
 
 class SluicesCodeExplanationLegendElement(VisualElement):
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
     _tw_code_text: float = PrivateAttr()
     _tw_sp_explanation: float = PrivateAttr()
     _tw_number_explanation: float = PrivateAttr()
@@ -48,16 +46,7 @@ class SluicesCodeExplanationLegendElement(VisualElement):
     _sp_explanation: str = "Vraag gesteld bij sessie met Sluizencomplex Panheel"
     _number_explanation: str = "Volgnummer"
 
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @model_validator(mode="after")
-    def validate(self) -> SluicesCodeExplanationLegendElement:
+    def measure(self) -> None:
         self._tw_code_text = self.text_width("SP_XX##")
         self._tw_sp_explanation = self.text_width(self._sp_explanation)
         self._tw_number_explanation = self.text_width(self._number_explanation)
@@ -65,7 +54,6 @@ class SluicesCodeExplanationLegendElement(VisualElement):
 
         self._width = max([self._code_explanation_indent + self._tw_codes_explained, self._tw_sp_explanation])
         self._height = 8 * self.layout_configuration.font_size * self._line_height_factor + self.layout_configuration.font_size
-        return self
 
     def _draw(self, x: float, y: float):
         lh = self.layout_configuration.font_size * self._line_height_factor

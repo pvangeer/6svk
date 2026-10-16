@@ -1,4 +1,4 @@
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from uuid import uuid4
 from svk.data import Grid, Color
 from svk.visualization.helpers._color_helper import color_toward_grey
@@ -14,8 +14,7 @@ class GridElement(VisualElementsContainer):
     _column_header_elements: tuple[GridHeaderElement, ...] = PrivateAttr()
     _cell_elements: tuple[GridCellElement, ...] = PrivateAttr()
 
-    @model_validator(mode="after")
-    def validate(self):
+    def measure(self) -> None:
         self._categories = list(dict.fromkeys(header.category for header in self.grid.column_headers))
         self._cell_elements = tuple(
             [
@@ -98,15 +97,6 @@ class GridElement(VisualElementsContainer):
             + self._cell_height * self.grid.n_rows
             + self.layout_configuration.small_margin
         )
-        return self
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
 
     def _draw(self, x: float, y: float) -> None:
         for category in self._category_info.keys():

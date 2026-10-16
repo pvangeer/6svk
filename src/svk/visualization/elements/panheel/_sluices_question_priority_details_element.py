@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import SluicesResearchQuestion, Priority, Label, Color
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
@@ -32,64 +32,15 @@ class SluicesQuestionPriorityDetailsElement(VisualElementsContainer):
     color: Color
     dotradius: float = 5
 
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
     _w_priority_metrices_column: float = PrivateAttr()
     _title_element: TitleElement = PrivateAttr()
 
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @model_validator(mode="after")
-    def validate(self) -> SluicesQuestionPriorityDetailsElement:
+    def initialize(self) -> None:
         self._title_element = self.create(
             TitleElement,
             title=Label.QD_Priority,
         )
-        prio_labels = [
-            Label.QD_WaterSafety,
-            Label.QD_WaterAvailability,
-            Label.QD_Shipping,
-            Label.QD_OtherFunctions,
-            Label.QD_Maitenance,
-            Label.QD_Operation,
-        ]
-
-        self._w_priority_metrices_column = (
-            self.layout_configuration.small_margin
-            + max([measure_text(self.translator.get_label(l) + ":", self.layout_configuration.font_size)[0] for l in prio_labels])
-            + self.layout_configuration.small_margin
-            + self.dotradius * 7
-            + self.layout_configuration.small_margin
-        )
-        self._width = max([self._title_element.width, self._w_priority_metrices_column])
-
-        self._height = (
-            self._title_element.height
-            + self.layout_configuration.small_margin
-            + len(prio_labels) * self.layout_configuration.font_size * 1.2
-            + self.layout_configuration.small_margin
-        )
-
-        return self
-
-    def _draw(self, x: float, y: float):
-        self._title_element.draw(self._dwg, x, y)
-        y_prios_start = y + self._title_element.height
-        self.draw_horizontal_separator(
-
-            x,
-            y_prios_start,
-            self.width,
-            self.color,
-        )
-
-        prios = [
+        self._prios = [
             (Label.QD_WaterSafety, self.research_question.prio_water_safety),
             (Label.QD_WaterAvailability, self.research_question.prio_water_availability),
             (Label.QD_Shipping, self.research_question.prio_shipping),
@@ -97,7 +48,36 @@ class SluicesQuestionPriorityDetailsElement(VisualElementsContainer):
             (Label.QD_Maitenance, self.research_question.prio_management_maintenance),
             (Label.QD_Operation, self.research_question.prio_operation),
         ]
-        prios_translated = [(self.translator.get_label(p[0]) + ":", p[1]) for p in prios]
+
+        self._w_priority_metrices_column = (
+            self.layout_configuration.small_margin
+            + max([measure_text(self.translator.get_label(p[0]) + ":", self.layout_configuration.font_size)[0] for p in self._prios])
+            + self.layout_configuration.small_margin
+            + self.dotradius * 7
+            + self.layout_configuration.small_margin
+        )
+
+    def measure(self) -> None:
+        self._width = max([self._title_element.width, self._w_priority_metrices_column])
+
+        self._height = (
+            self._title_element.height
+            + self.layout_configuration.small_margin
+            + len(self._prios) * self.layout_configuration.font_size * 1.2
+            + self.layout_configuration.small_margin
+        )
+
+    def _draw(self, x: float, y: float):
+        self._title_element.draw(self._dwg, x, y)
+        y_prios_start = y + self._title_element.height
+        self.draw_horizontal_separator(
+            x,
+            y_prios_start,
+            self.width,
+            self.color,
+        )
+
+        prios_translated = [(self.translator.get_label(p[0]) + ":", p[1]) for p in self._prios]
         max_label_width = max([measure_text(p[0], self.layout_configuration.font_size)[0] for p in prios_translated])
         y_prio_current = y_prios_start + self.layout_configuration.small_margin
         x_prio_label = x + self.layout_configuration.small_margin

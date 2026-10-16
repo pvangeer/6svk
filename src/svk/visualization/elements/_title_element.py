@@ -18,7 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from pydantic import PrivateAttr, model_validator
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.elements._visual_element import VisualElement
 from svk.data import Label
@@ -27,11 +26,7 @@ from svk.data import Label
 class TitleElement(VisualElement):
     title: Label
 
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-
-    @model_validator(mode="after")
-    def validate(self):
+    def measure(self) -> None:
         self._width = (
             self.layout_configuration.small_margin
             + measure_text(self.translator.get_label(self.title), self.layout_configuration.font_size)[0]
@@ -40,15 +35,6 @@ class TitleElement(VisualElement):
         self._height = (
             self.layout_configuration.small_margin + self.layout_configuration.font_size * 1.2 + self.layout_configuration.small_margin
         )
-        return self
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
 
     def _draw(self, x: float, y: float) -> None:
         self._dwg.add(

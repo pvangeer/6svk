@@ -19,7 +19,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
 from svk.data import TimeFrame, IconProvider
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
@@ -33,11 +32,7 @@ class TimeFrameElement(VisualElementsContainer):
     time_frame: TimeFrame
     """The storm surge barriers to display icons for."""
 
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-
-    @model_validator(mode="after")
-    def validate(self) -> TimeFrameElement:
+    def measure(self) -> None:
 
         _text_width = measure_text(get_time_frame_string(self.time_frame), self.layout_configuration.font_size)[0]
         self._width = (
@@ -51,15 +46,6 @@ class TimeFrameElement(VisualElementsContainer):
             + self.layout_configuration.font_size * 1.2
             + self.layout_configuration.small_margin
         )
-        return self
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
 
     def _draw(self, x: float, y: float):
         icon = IconProvider.create_time_frame_icon(self.time_frame)

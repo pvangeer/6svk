@@ -9,7 +9,6 @@ from svk.data import (
     SluicesResearchQuestion,
     Label,
     SluicesResearchLines,
-    KnownColors,
 )
 from svk.visualization._layout_configuration import LayoutConfiguration
 from svk.visualization.pages._page import Page
@@ -23,7 +22,6 @@ from svk.visualization.elements._column import Column
 from svk.visualization.elements._group import Group
 from svk.visualization.elements._cluster import Cluster, ClusterColumn
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
-from svk.visualization.elements.panheel._sluices_question_details_element import SluicesQuestionDetailsElement
 from svk.visualization.documents._document import Document
 from svk.visualization.pages._sluices_legend_page import SluicesLegendPage
 
@@ -141,7 +139,7 @@ class SluicesDocument(Document):
                 questions_by_cluster[question.research_line.cluster].append(question)
 
         clusters: list[Cluster] = []
-        # TODO: BEcause we already create pages per cluster, this loop doesn't do that much anymore
+        # TODO: Because we already create pages per cluster, this loop doesn't do that much anymore
         for i_cluster in sorted(questions_by_cluster):
             questions_per_time_frame_column: defaultdict[int, list[SluicesResearchQuestion]] = defaultdict(list[SluicesResearchQuestion])
             for question in questions_by_cluster[i_cluster]:
@@ -267,25 +265,7 @@ class SluicesDocument(Document):
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,
             include_legend_link=True,
-            questions=tuple(
-                SluicesQuestionDetailsElement(
-                    layout_configuration=self.layout_configuration,
-                    links_register=self.links_register,
-                    translator=self.translator,
-                    research_question=question,
-                    page_number=page_number,
-                    color=(
-                        colorhelper.get_color(
-                            self.layout_configuration.use_rijkswaterstaat_colors,
-                            time_frame=question.time_frame,
-                            research_line_group=question.research_line.cluster,
-                        )
-                        if question.research_line is not None
-                        else KnownColors.RWSGrey1
-                    ),
-                )
-                for question in questions
-            ),
+            questions=tuple(questions),
         )
         return dwg_details_page
 

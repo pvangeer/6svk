@@ -18,7 +18,6 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from pydantic import PrivateAttr, model_validator
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
 
@@ -27,11 +26,7 @@ class WrappedBulletListElement(VisualElement):
     max_width: float
     bullet_list: list[str]
 
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-
-    @model_validator(mode="after")
-    def validate(self):
+    def measure(self) -> None:
         self._width = self.max_width
         self._height = self.layout_configuration.small_margin
         for bullet in self.bullet_list:
@@ -42,15 +37,6 @@ class WrappedBulletListElement(VisualElement):
             )
             self._height += len(lines) * self.layout_configuration.font_size * 1.2
         self._height += self.layout_configuration.small_margin
-        return self
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
 
     def _draw(self, x: float, y: float) -> None:
         y_current = y + self.layout_configuration.small_margin

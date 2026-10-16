@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 
 from svk.data import ResearchQuestion, Color
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer, Alignment
@@ -37,17 +37,13 @@ class QuestionSummaryElement(VisualElementsContainer):
     color: Color
     show_priority: bool = True
 
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-
     _id_element: IdElement = PrivateAttr()
     _priority_icon_element: PriorityIconElement = PrivateAttr()
     _question_element: WrappedTextElement = PrivateAttr()
 
     _lines: list[str] = []
 
-    @model_validator(mode="after")
-    def validate(self):
+    def measure(self) -> None:
         self._id_element = self.create(
             IdElement,
             id=self.research_question.id,
@@ -66,16 +62,6 @@ class QuestionSummaryElement(VisualElementsContainer):
         )
         self._width = self._id_element.width + self._priority_icon_element.width + self._question_element.width
         self._height = max([self._id_element.height, self._priority_icon_element.height, self._question_element.height])
-
-        return self
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
 
     def _draw(self, x: float, y: float):
         self._dwg.add(

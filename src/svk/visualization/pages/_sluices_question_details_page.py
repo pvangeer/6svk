@@ -18,28 +18,52 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
+from svk.data import SluicesResearchQuestion, KnownColors
+from svk.visualization.helpers import _color_helper as colorhelper
 from svk.visualization.elements.panheel._sluices_question_details_element import SluicesQuestionDetailsElement
 from svk.visualization.pages._page import Page
+from pydantic import PrivateAttr
 from svgwrite import Drawing
 
 
 class SluicesQuestionDetailsPage(Page):
-    questions: tuple[SluicesQuestionDetailsElement, ...]
+    questions: tuple[SluicesResearchQuestion, ...]
+
+    _question_elements: tuple[SluicesQuestionDetailsElement, ...] = PrivateAttr()
+
+    def initialize(self) -> None:
+        self._question_elements = tuple(
+            self.create(
+                SluicesQuestionDetailsElement,
+                research_question=q,
+                page_number=self.page_number,
+                color=(
+                    colorhelper.get_color(
+                        self.layout_configuration.use_rijkswaterstaat_colors,
+                        time_frame=q.time_frame,
+                        research_line_group=q.research_line.cluster,
+                    )
+                    if q.research_line is not None
+                    else KnownColors.RWSGrey1
+                ),
+            )
+            for q in self.questions
+        )
 
     def get_content_size(self) -> tuple[float, float]:
-        _preferred_first_column_width = max([q.get_first_column_width() for q in self.questions])
-        for q in self.questions:
+        _preferred_first_column_width = max([q.get_first_column_width() for q in self._question_elements])
+        for q in self._question_elements:
             q.set_preferred_first_column_width(_preferred_first_column_width)
 
         return (
-            max([q.width for q in self.questions]),
-            sum([q.height + self.layout_configuration.intermediate_margin for q in self.questions])
+            max([q.width for q in self._question_elements]),
+            sum([q.height + self.layout_configuration.intermediate_margin for q in self._question_elements])
             - self.layout_configuration.intermediate_margin,
         )
 
     def draw_content(self, dwg: Drawing, top: float, left: float):
         top_current = top
-        for question in self.questions:
+        for question in self._question_elements:
             question.draw(
                 dwg=dwg,
                 x=left,

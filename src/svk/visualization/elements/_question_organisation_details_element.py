@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import StormSurgeBarrierResearchQuestion, Label, ResearchLine, StormSurgeBarrierResearchLines, Color
 from svk.visualization.elements._title_element import TitleElement
 from svk.visualization.helpers._measuretext import measure_text
@@ -32,20 +32,9 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
     color: Color
     page_number: int
 
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
     _title_element: TitleElement = PrivateAttr()
 
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @model_validator(mode="after")
-    def validate(self) -> QuestionOrganisationDetailsElement:
+    def measure(self) -> None:
         self._title_element = self.create(
             TitleElement,
             title=Label.QD_Organizational,
@@ -91,7 +80,6 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
             + self.layout_configuration.font_size * 1.2 * len(fixed_fields)
             + self.layout_configuration.small_margin
         )
-        return self
 
     def _draw(self, x: float, y: float):
         self._title_element.draw(self._dwg, x, y)
@@ -137,7 +125,6 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
 
         y_current += self.layout_configuration.font_size * 1.2
         self._draw_research_line_link(
-
             page_number=self.page_number,
             x_start=x + self.layout_configuration.small_margin,
             y_start=y_current,
@@ -147,7 +134,6 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
 
         y_current += self.layout_configuration.font_size * 1.2
         self._draw_research_line_link(
-
             page_number=self.page_number,
             x_start=x + self.layout_configuration.small_margin,
             y_start=y_current,
@@ -163,9 +149,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
             ]
         )
 
-    def _draw_research_line_link(
-        self, page_number: int, x_start: float, y_start: float, research_line: ResearchLine | None, label: Label
-    ):
+    def _draw_research_line_link(self, page_number: int, x_start: float, y_start: float, research_line: ResearchLine | None, label: Label):
         link_text = self.translator.get_label(research_line.title) if research_line is not None else ""
         self._dwg.add(
             self._dwg.text(

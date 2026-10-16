@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import Label, Color, TimeFrame
 from svk.visualization.elements._text_element import TextElement
 from svk.visualization.elements._time_frame_element import TimeFrameElement
@@ -33,8 +33,6 @@ class ColorTableLegendElement(VisualElementsContainer):
     use_rijkswaterstaat_colors: bool
     """Defines whether the rijkswaterstaat color scheme needs to be used."""
 
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
     _maintenance_text_element: TextElement = PrivateAttr()
     _requirements_text_element: TextElement = PrivateAttr()
     _operational_text_element: TextElement = PrivateAttr()
@@ -44,16 +42,7 @@ class ColorTableLegendElement(VisualElementsContainer):
     _near_future_icon_element: TimeFrameElement = PrivateAttr()
     _future_icon_element: TimeFrameElement = PrivateAttr()
 
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @model_validator(mode="after")
-    def validate(self) -> ColorTableLegendElement:
+    def measure(self) -> None:
         self._now_icon_element = self.create(
             TimeFrameElement,
             time_frame=TimeFrame.Now,
@@ -114,7 +103,6 @@ class ColorTableLegendElement(VisualElementsContainer):
             + 2 * self.layout_configuration.small_margin
         )
         self._height = self._table_first_row_height + 3 * self._row_height
-        return self
 
     def _draw(self, x: float, y: float):
         y_r1 = y + self._table_first_row_height

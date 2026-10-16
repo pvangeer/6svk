@@ -19,7 +19,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._draw_priority_arrow import draw_priority_arrow
 
@@ -29,22 +28,9 @@ class PriorityIconElement(VisualElement):
     """The research question"""
     show: bool = True
 
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @model_validator(mode="after")
-    def validate(self) -> PriorityIconElement:
+    def measure(self) -> None:
         self._height = self.layout_configuration.priority_arrow_width + self.layout_configuration.intermediate_margin * 2
         self._width = self.layout_configuration.priority_arrow_width + self.layout_configuration.small_margin * 2
-        return self
 
     def _draw(self, x: float, y: float):
         if not self.show:

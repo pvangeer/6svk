@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from pydantic import PrivateAttr, model_validator
+from pydantic import PrivateAttr
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_lines, wrapped_text
 from svk.visualization.elements._visual_element import VisualElement
@@ -36,12 +36,9 @@ class GridHeaderElement(VisualElement):
     i_position: int
     color: str | None = None  # TODO: Also include a background and include color in drawing/size?
 
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
     _lines: list[str] = PrivateAttr()
 
-    @model_validator(mode="after")
-    def validate(self):
+    def measure(self) -> None:
         self._lines = wrapped_lines(
             text=self.label, max_width=self.layout_configuration.grid_header_maximum_width, font_size=self.layout_configuration.font_size
         )
@@ -52,15 +49,6 @@ class GridHeaderElement(VisualElement):
         else:
             self._width = len(self._lines) * self.layout_configuration.font_size * 1.2
             self._height = max([measure_text(text=l, font_size=self.layout_configuration.font_size)[0] for l in self._lines])
-        return self
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
 
     def _draw(self, x: float, y: float):
         if self.orientation == HeaderOrientation.Vertical:

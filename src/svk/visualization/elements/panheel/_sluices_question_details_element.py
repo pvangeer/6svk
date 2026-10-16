@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
+from pydantic import PrivateAttr
 from svk.data import SluicesResearchQuestion, Label, Color, IconProvider
 from svk.visualization.helpers._measuretext import measure_text
 from svk.visualization.helpers._wrappedtext import wrapped_text, wrapped_lines
@@ -39,9 +39,6 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
     page_number: int
     color: Color
 
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-
     _priority_icon_element: PriorityIconElement = PrivateAttr()
     _time_frame_element: TimeFrameElement = PrivateAttr()
     _priority_details_element: SluicesQuestionPriorityDetailsElement = PrivateAttr()
@@ -52,23 +49,12 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
     _last_line_keywords: list[str] = PrivateAttr()
     _h_last_line: float = PrivateAttr()
 
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
-
     def get_first_column_width(self) -> float:
         return self._width_first_column
 
-    @model_validator(mode="after")
-    def validate(self):
+    def measure(self) -> None:
         self._initialize_elements()
         self._validate_size()
-
-        return self
 
     def set_preferred_first_column_width(self, width: float):
         self._id_element.set_preferred_width(width)
@@ -112,9 +98,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             height_container=self._h_first_line,
             alignment=Alignment.MiddleLeft,
         )
-        self.draw_vertical_separator(
-            x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self.color
-        )
+        self.draw_vertical_separator(x + self.width - self._ssb_icons_element.width, y, element_height=self._h_first_line, color=self.color)
         self.draw_element(
             element=self._ssb_icons_element,
             x_container=x + self.width - self._ssb_icons_element.width,

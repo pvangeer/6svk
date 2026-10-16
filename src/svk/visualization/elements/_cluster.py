@@ -19,7 +19,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import BaseModel, ConfigDict, model_validator, PrivateAttr
+from pydantic import BaseModel, ConfigDict
 from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._color_helper import color_toward_grey
 
@@ -40,22 +40,9 @@ class Cluster(VisualElement):
     columns: tuple[ClusterColumn, ...]
     """A list of ClusterColumns"""
 
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
-
-    @model_validator(mode="after")
-    def validate(self) -> Cluster:
+    def measure(self) -> None:
         self._width = self.layout_configuration.overview_page_width - 2 * self.layout_configuration.paper_margin
         self._height = max([self._get_height_for_column(c) for c in self.columns])
-        return self
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
 
     def _draw(self, x: float, y: float):
         width = self.width

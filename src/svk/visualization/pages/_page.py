@@ -19,27 +19,20 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from abc import ABC, abstractmethod
-from pydantic import BaseModel, model_validator, PrivateAttr, ConfigDict
-from svgwrite import Drawing
+from abc import abstractmethod
 
-from svk.data import LinksRegister, Translator, Icon, KnownColors, Label
-from svk.visualization._layout_configuration import LayoutConfiguration
+from pydantic import ConfigDict
+from svgwrite import Drawing
+from svk.data import Icon, KnownColors, Label
+from svk.visualization._visual_component import VisualComponent
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 from svk.visualization.helpers._draw_callout import draw_callout
 from svk.visualization.helpers._measuretext import measure_text
 
 
-class Page(BaseModel, ABC):
+class Page(VisualComponent):
     model_config = ConfigDict(frozen=True)
-
-    layout_configuration: LayoutConfiguration
-    """The layout configuration shared across all elements of a document."""
-    links_register: LinksRegister
-    """The links register shared across all elements of a document."""
-    translator: Translator
-    """The translator that should be used for this page."""
 
     title: str
     """The title of this page."""
@@ -61,44 +54,12 @@ class Page(BaseModel, ABC):
     _title_width: float = 0.0
     _title_height: float = 0.0
 
-    _width: float = PrivateAttr()
-    _height: float = PrivateAttr()
-
-    @property
-    def width(self) -> float:
-        return self._width
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @model_validator(mode="after")
-    def validate(self) -> Page:
-        self.initialize()
+    def measure(self) -> None:
         content_size = self.get_content_size()
-        self._title_height = (
-            self.layout_configuration.page_title_font_size
-            if self.subtitle is None
-            else self.layout_configuration.page_title_font_size
-            + self.layout_configuration.small_margin
-            + self.layout_configuration.page_subtitle_font_size
-        )
         disclaimer_height = (
             (self.layout_configuration.large_margin + 1.2 * self.layout_configuration.disclamer_font_size)
             if self.disclaimer is not None
             else 0.0
-        )
-        _title_text_width = (
-            self.layout_configuration.paper_margin
-            + measure_text(
-                self.title, font_size=self.layout_configuration.page_title_font_size, font_weight="bold", font_family="Arial"
-            )[0]
-            + self.layout_configuration.paper_margin
-        )
-        self._title_width = (
-            (self.layout_configuration.paper_margin + self.layout_configuration.arrow_depth + self._title_height + _title_text_width)
-            if self.icon is not None
-            else _title_text_width
         )
         self._width = max([content_size[0] + 2 * self.layout_configuration.paper_margin, self._title_width])
         self._height = (
@@ -109,11 +70,25 @@ class Page(BaseModel, ABC):
             + disclaimer_height
             + self.layout_configuration.paper_margin
         )
-        return self
 
     def initialize(self) -> None:
-        """Method that allows derived classes to initialize before calculating the dimensions."""
-        pass
+        self._title_height = (
+            self.layout_configuration.page_title_font_size
+            if self.subtitle is None
+            else self.layout_configuration.page_title_font_size
+            + self.layout_configuration.small_margin
+            + self.layout_configuration.page_subtitle_font_size
+        )
+        _title_text_width = (
+            self.layout_configuration.paper_margin
+            + measure_text(self.title, font_size=self.layout_configuration.page_title_font_size, font_weight="bold", font_family="Arial")[0]
+            + self.layout_configuration.paper_margin
+        )
+        self._title_width = (
+            (self.layout_configuration.paper_margin + self.layout_configuration.arrow_depth + self._title_height + _title_text_width)
+            if self.icon is not None
+            else _title_text_width
+        )
 
     @abstractmethod
     def get_content_size(self) -> tuple[float, float]:
@@ -124,8 +99,8 @@ class Page(BaseModel, ABC):
         """This method takes care of drawing the content of the page."""
         pass
 
-    def draw(self) -> Drawing:
-        """Draws the entire page."""
+    def render(self) -> Drawing:
+        """Renders the entire page."""
 
         dwg = Drawing(size=(f"{self._width}px", f"{self._height}px"), debug=False)
         self.links_register.register_page(self.page_number, self._width, self._height)

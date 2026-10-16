@@ -19,7 +19,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from __future__ import annotations
-from pydantic import model_validator, PrivateAttr
 from svk.data import Icon
 from svk.visualization.elements._visual_elements_container import VisualElementsContainer
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
@@ -31,11 +30,7 @@ class IconsElement(VisualElementsContainer):
     icons: tuple[Icon, ...]
     """The storm surge barriers to display icons for."""
 
-    _height: float = PrivateAttr()
-    _width: float = PrivateAttr()
-
-    @model_validator(mode="after")
-    def validate(self) -> IconsElement:
+    def measure(self) -> None:
 
         self._width = (self.layout_configuration.small_margin + self.layout_configuration.icon_width_small) * len(
             self.icons
@@ -43,15 +38,6 @@ class IconsElement(VisualElementsContainer):
         self._height = (
             self.layout_configuration.small_margin + self.layout_configuration.icon_width_small + self.layout_configuration.small_margin
         )
-        return self
-
-    @property
-    def height(self) -> float:
-        return self._height
-
-    @property
-    def width(self) -> float:
-        return self._width
 
     def _draw(self, x: float, y: float):
         x_icon_current = x + self.layout_configuration.small_margin

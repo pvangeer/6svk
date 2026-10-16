@@ -35,7 +35,7 @@ def test_draw_legend_page():
         page_number=1,
     )
 
-    svg_to_pdf(svg_dwg=page.draw(), path=test_output_dir / "test_legend_page.pdf")
+    svg_to_pdf(svg_dwg=page.render(), path=test_output_dir / "test_legend_page.pdf")
 
 
 def test_draw_ssb_legend_page():
@@ -48,4 +48,4 @@ def test_draw_ssb_legend_page():
         page_number=1,
     )
 
-    svg_to_pdf(svg_dwg=page.draw(), path=test_output_dir / "test_ssb_legend_page.pdf")
+    svg_to_pdf(svg_dwg=page.render(), path=test_output_dir / "test_ssb_legend_page.pdf")
