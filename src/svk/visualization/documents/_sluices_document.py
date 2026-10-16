@@ -25,7 +25,7 @@ from svk.visualization.elements._cluster import Cluster, ClusterColumn
 from svk.visualization.elements._question_summary_element import QuestionSummaryElement
 from svk.visualization.elements.panheel._sluices_question_details_element import SluicesQuestionDetailsElement
 from svk.visualization.documents._document import Document
-from svk.visualization.pages._legend_page import LegendPage
+from svk.visualization.pages._sluices_legend_page import SluicesLegendPage
 
 
 def _get_research_line_title(translator: Translator, research_line: ResearchLine | None) -> str:
@@ -121,7 +121,9 @@ class SluicesDocument(Document):
             translator=self.translator,
             header_title=self.translator.get_label(time_frame.description),
             header_subtitle=helper.get_subtitle(time_frame),
-            header_color=colorhelper.get_color(self.layout_configuration, time_frame, research_line_group=color_group),
+            header_color=colorhelper.get_color(
+                self.layout_configuration.use_rijkswaterstaat_colors, time_frame, research_line_group=color_group
+            ),
             number=number,
         )
 
@@ -168,7 +170,9 @@ class SluicesDocument(Document):
                                 page_number=page_number,
                                 show_priority=True,
                                 color=colorhelper.get_color(
-                                    self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                                    self.layout_configuration.use_rijkswaterstaat_colors,
+                                    time_frame=time_frame,
+                                    research_line_group=research_line.cluster,
                                 ),
                             )
                             for q in sorted(questions_per_group_in_column[research_line], key=SluicesResearchQuestion.priority_id_sort_key)
@@ -182,7 +186,11 @@ class SluicesDocument(Document):
                             page_number=page_number,
                             link_target_id=research_line.id,
                             title=_get_research_line_title(self.translator, research_line),
-                            color=colorhelper.get_color(self.layout_configuration, time_frame, research_line_group=research_line.cluster),
+                            color=colorhelper.get_color(
+                                self.layout_configuration.use_rijkswaterstaat_colors,
+                                time_frame,
+                                research_line_group=research_line.cluster,
+                            ),
                             use_contrast_color=True,
                             questions=question_elements,
                         )
@@ -195,7 +203,9 @@ class SluicesDocument(Document):
                     layout_configuration=self.layout_configuration,
                     links_register=self.links_register,
                     translator=self.translator,
-                    color=colorhelper.get_color(self.layout_configuration, TimeFrame.Now, research_line_group=i_cluster),
+                    color=colorhelper.get_color(
+                        self.layout_configuration.use_rijkswaterstaat_colors, TimeFrame.Now, research_line_group=i_cluster
+                    ),
                     columns=tuple(columns),
                 )
             )
@@ -266,7 +276,9 @@ class SluicesDocument(Document):
                     page_number=page_number,
                     color=(
                         colorhelper.get_color(
-                            self.layout_configuration, time_frame=question.time_frame, research_line_group=question.research_line.cluster
+                            self.layout_configuration.use_rijkswaterstaat_colors,
+                            time_frame=question.time_frame,
+                            research_line_group=question.research_line.cluster,
                         )
                         if question.research_line is not None
                         else KnownColors.RWSGrey1
@@ -278,7 +290,7 @@ class SluicesDocument(Document):
         return dwg_details_page
 
     def _create_legend_page(self, page_number: int) -> Page:
-        page = LegendPage(
+        page = SluicesLegendPage(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,

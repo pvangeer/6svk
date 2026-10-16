@@ -175,7 +175,9 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
             translator=self.translator,
             header_title=self.translator.get_label(time_frame.description),
             header_subtitle=helper.get_subtitle(time_frame),
-            header_color=colorhelper.get_color(layout_configuration=self.layout_configuration, time_frame=time_frame),
+            header_color=colorhelper.get_color(
+                use_rijkswaterstaat_colors=self.layout_configuration.use_rijkswaterstaat_colors, time_frame=time_frame
+            ),
             number=number,
         )
 
@@ -225,7 +227,9 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
                                 page_number=page_number,
                                 show_priority=True,
                                 color=colorhelper.get_color(
-                                    self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                                    self.layout_configuration.use_rijkswaterstaat_colors,
+                                    time_frame=time_frame,
+                                    research_line_group=research_line.cluster,
                                 ),
                             )
                             for q in sorted(
@@ -242,7 +246,9 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
                             link_target_id=research_line.id,
                             title=_get_research_line_title(self.translator, research_line),
                             color=colorhelper.get_color(
-                                self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                                self.layout_configuration.use_rijkswaterstaat_colors,
+                                time_frame=time_frame,
+                                research_line_group=research_line.cluster,
                             ),
                             use_contrast_color=True,
                             questions=question_elements,
@@ -251,7 +257,9 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
 
                 columns.append(ClusterColumn(column_number=i_column, groups=tuple(column_groups)))
 
-            cluster_color = colorhelper.get_color(self.layout_configuration, time_frame=TimeFrame.Now, research_line_group=i_cluster)
+            cluster_color = colorhelper.get_color(
+                self.layout_configuration.use_rijkswaterstaat_colors, time_frame=TimeFrame.Now, research_line_group=i_cluster
+            )
             clusters.append(
                 Cluster(
                     layout_configuration=self.layout_configuration,

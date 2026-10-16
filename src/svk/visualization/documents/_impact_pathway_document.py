@@ -131,7 +131,9 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                                 page_number=page_number,
                                 show_priority=True,
                                 color=colorhelper.get_color(
-                                    self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                                    self.layout_configuration.use_rijkswaterstaat_colors,
+                                    time_frame=time_frame,
+                                    research_line_group=research_line.cluster,
                                 ),
                             )
                             for q in questions_per_group_in_column[research_line]
@@ -146,7 +148,9 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                             link_target_id=research_line.id,
                             title=self.translator.get_label(research_line.title),
                             color=colorhelper.get_color(
-                                self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                                self.layout_configuration.use_rijkswaterstaat_colors,
+                                time_frame=time_frame,
+                                research_line_group=research_line.cluster,
                             ),
                             use_contrast_color=True,
                             questions=question_elements,
@@ -253,7 +257,9 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                                 page_number=page_number,
                                 show_priority=True,
                                 color=colorhelper.get_color(
-                                    self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                                    self.layout_configuration.use_rijkswaterstaat_colors,
+                                    time_frame=time_frame,
+                                    research_line_group=research_line.cluster,
                                 ),
                             )
                             for q in sorted(
@@ -270,7 +276,9 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
                             link_target_id=research_line.id,
                             title=self.translator.get_label(research_line.title),
                             color=colorhelper.get_color(
-                                self.layout_configuration, time_frame=time_frame, research_line_group=research_line.cluster
+                                self.layout_configuration.use_rijkswaterstaat_colors,
+                                time_frame=time_frame,
+                                research_line_group=research_line.cluster,
                             ),
                             use_contrast_color=True,
                             questions=question_elements,
@@ -279,7 +287,9 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
 
                 columns.append(ClusterColumn(column_number=i_column, groups=tuple(column_groups)))
 
-            cluster_color = colorhelper.get_color(self.layout_configuration, time_frame=TimeFrame.Now, research_line_group=i_cluster)
+            cluster_color = colorhelper.get_color(
+                self.layout_configuration.use_rijkswaterstaat_colors, time_frame=TimeFrame.Now, research_line_group=i_cluster
+            )
             clusters.append(
                 Cluster(
                     layout_configuration=self.layout_configuration,

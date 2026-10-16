@@ -30,7 +30,9 @@ from svk.visualization.helpers._color_helper import get_color
 
 class ColorTableLegendElement(VisualElementsContainer):
     color: Color
-    """The color of the group"""
+    """The color of the table grid lines"""
+    use_rijkswaterstaat_colors: bool
+    """Defines whether the rijkswaterstaat color scheme needs to be used."""
 
     _width: float = PrivateAttr()
     _height: float = PrivateAttr()
@@ -233,4 +235,4 @@ class ColorTableLegendElement(VisualElementsContainer):
             case _:
                 current_time_frame = TimeFrame.Unknown
 
-        return get_color(self.layout_configuration, current_time_frame, research_line_group=i_row + 1)
+        return get_color(self.use_rijkswaterstaat_colors, current_time_frame, research_line_group=i_row + 1)

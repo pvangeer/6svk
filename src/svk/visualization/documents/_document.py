@@ -174,7 +174,7 @@ class ResearchQuestionsDocument(Document):
                     page_number=page_number,
                     color=(
                         colorhelper.get_color(
-                            layout_configuration=self.layout_configuration,
+                            use_rijkswaterstaat_colors=self.layout_configuration.use_rijkswaterstaat_colors,
                             time_frame=question.time_frame,
                             research_line_group=question.research_line.cluster,
                         )

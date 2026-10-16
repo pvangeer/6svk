@@ -27,10 +27,7 @@ from svk.visualization.elements._visual_element import VisualElement
 from svk.visualization.helpers._measuretext import measure_text
 
 
-class CodeExplanationLegendElement(VisualElement):
-    color: Color
-    """The color of the group"""
-
+class SluicesCodeExplanationLegendElement(VisualElement):
     _width: float = PrivateAttr()
     _height: float = PrivateAttr()
     _tw_code_text: float = PrivateAttr()
@@ -61,7 +58,7 @@ class CodeExplanationLegendElement(VisualElement):
         return self._height
 
     @model_validator(mode="after")
-    def validate(self) -> CodeExplanationLegendElement:
+    def validate(self) -> SluicesCodeExplanationLegendElement:
         self._tw_code_text = self.text_width("SP_XX##")
         self._tw_sp_explanation = self.text_width(self._sp_explanation)
         self._tw_number_explanation = self.text_width(self._number_explanation)

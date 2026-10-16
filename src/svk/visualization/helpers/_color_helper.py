@@ -19,7 +19,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 """
 
 from svk.data import TimeFrame, Color, KnownColors
-from svk.visualization._layout_configuration import LayoutConfiguration
 
 
 def color_toward_grey(color: Color, grey_fraction: float = 0.5, grey: Color = Color(r=210, g=190, b=210)) -> Color:
@@ -59,9 +58,8 @@ def get_contrast_color(background_rgb: Color) -> Color:
     return KnownColors.White if contrast_white > contrast_black else KnownColors.Black
 
 
-def get_color(layout_configuration: LayoutConfiguration, time_frame: TimeFrame, research_line_group: int | None = None) -> Color:
-    # TODO: do not pass LayoutConfiguration, only use_rijkswaterstaat_color.
-    if layout_configuration.use_rijkswaterstaat_colors and research_line_group is not None:
+def get_color(use_rijkswaterstaat_colors: bool, time_frame: TimeFrame, research_line_group: int | None = None) -> Color:
+    if use_rijkswaterstaat_colors and research_line_group is not None:
         return get_rijkswaterstaat_style_color(time_frame, research_line_group)
     else:
         return get_default_style_color(time_frame, research_line_group)

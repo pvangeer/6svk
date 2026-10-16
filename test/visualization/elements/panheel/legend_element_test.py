@@ -18,7 +18,7 @@ All names, logos, and references to "Deltares" are registered trademarks of Stic
 Deltares and remain full property of Stichting Deltares at all times. All rights reserved.
 """
 
-from svk.visualization import LayoutConfiguration, LegendPage
+from svk.visualization import LayoutConfiguration, SluicesLegendPage, StormSurgeBarrierLegendPage
 from svk.data import LinksRegister, Translator
 from svk.io import svg_to_pdf
 from test.paths import test_output_dir
@@ -26,7 +26,7 @@ from test.paths import test_output_dir
 
 def test_draw_legend_page():
 
-    page = LegendPage(
+    page = SluicesLegendPage(
         layout_configuration=LayoutConfiguration(use_rijkswaterstaat_colors=True),
         links_register=LinksRegister(),
         translator=Translator(),
@@ -36,3 +36,16 @@ def test_draw_legend_page():
     )
 
     svg_to_pdf(svg_dwg=page.draw(), path=test_output_dir / "test_legend_page.pdf")
+
+
+def test_draw_ssb_legend_page():
+    page = StormSurgeBarrierLegendPage(
+        layout_configuration=LayoutConfiguration(use_rijkswaterstaat_colors=False),
+        links_register=LinksRegister(),
+        translator=Translator(),
+        title="Legenda",
+        subtitle="Verklaring van gebruikte symbolen en kleuren",
+        page_number=1,
+    )
+
+    svg_to_pdf(svg_dwg=page.draw(), path=test_output_dir / "test_ssb_legend_page.pdf")

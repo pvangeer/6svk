@@ -3,15 +3,15 @@ from pydantic import PrivateAttr
 
 from svk.data import KnownColors
 from svk.visualization.pages._page import Page
-from svk.visualization.elements.panheel.legend._legend_element import LegendElement
+from svk.visualization.elements.legend._ssb_legend_element import StormSurgeBarrierLegendElement
 
 
-class LegendPage(Page):
-    _legend_element: LegendElement = PrivateAttr()
+class StormSurgeBarrierLegendPage(Page):
+    _legend_element: StormSurgeBarrierLegendElement = PrivateAttr()
     title_link_target: str | None = "#legend_page"
 
     def initialize(self):
-        self._legend_element = LegendElement(
+        self._legend_element = StormSurgeBarrierLegendElement(
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,

@@ -50,7 +50,7 @@ def add_links(input_pdf_file: Path, output_file: Path, links_manager: LinksRegis
         links_list = links[target_id]
         target = link_targets[target_id]
         target_page_index = target[0]
-        target_pdf_page = doc[target_page_index]
+        target_pdf_page = doc.load_page(target_page_index)
         x_target, y_target = _scale_coordinates(
             target[1],
             target[2],
@@ -64,7 +64,7 @@ def add_links(input_pdf_file: Path, output_file: Path, links_manager: LinksRegis
         for link in links_list:
             source_page_index = link[0]
             svg_size = svg_sizes[source_page_index]
-            page = doc[source_page_index]
+            page = doc.load_page(source_page_index)
             pdf_width, pdf_height = page.rect.width, page.rect.height
             x_left_up, y_left_up = _scale_coordinates(link[1], link[2], svg_size[0], svg_size[1], pdf_width, pdf_height)
             x_right_down, y_right_down = _scale_coordinates(

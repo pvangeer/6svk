@@ -21,19 +21,14 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from pydantic import model_validator, PrivateAttr
 from svgwrite import Drawing
-from svk.data import Label, Color
+from svk.data import Label
 from svk.visualization.elements._priority_icon_element import PriorityIconElement
 from svk.visualization.elements._text_element import TextElement
 from svk.visualization.elements._visual_elements_container import Alignment, VisualElementsContainer
-from svk.visualization.elements.panheel.legend._color_table_legend_element import ColorTableLegendElement
+from svk.visualization.elements.legend._color_table_legend_element import ColorTableLegendElement
 
 
 class PriorityLegendElement(VisualElementsContainer):
-    color: Color
-    """The color of the group"""
-    use_contrast_color: bool = False
-    """Indicates whether the title should choose a color with mist contrast or just use black"""
-
     _color_table_element: ColorTableLegendElement = PrivateAttr()
     _width: float = PrivateAttr()
     _height: float = PrivateAttr()
