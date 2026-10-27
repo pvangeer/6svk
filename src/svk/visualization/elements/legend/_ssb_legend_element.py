@@ -25,7 +25,7 @@ from svk.visualization.elements._visual_elements_container import Alignment, Vis
 from svk.visualization.elements.legend._color_table_legend_element import ColorTableLegendElement
 from svk.visualization.elements.legend._priority_legend_element import PriorityLegendElement
 from svk.visualization.elements.legend._ssb_explanation_legend_element import StormSurgeBarriersExeplanationLegendElement
-from svk.visualization.elements.legend._sluices_code_explanation_legend_element import SluicesCodeExplanationLegendElement
+from svk.visualization.elements.legend._ssb_codes_explanation_legend_element import StormSurgeBarrierCodeExplanationLegendElement
 from svk.visualization.helpers._color_helper import get_contrast_color
 from svk.visualization.helpers._draw_callout import draw_callout
 
@@ -39,7 +39,7 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
     _color_table_legend_element: ColorTableLegendElement = PrivateAttr()
     _priority_legend_element: PriorityLegendElement = PrivateAttr()
     _ssb_explanation_legend_element: StormSurgeBarriersExeplanationLegendElement = PrivateAttr()
-    _ssb_code_explanation_legend_element: SluicesCodeExplanationLegendElement = PrivateAttr()
+    _ssb_code_explanation_legend_element: StormSurgeBarrierCodeExplanationLegendElement = PrivateAttr()
     _content_height: float = PrivateAttr()
 
     def measure(self) -> None:
@@ -52,7 +52,7 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
             PriorityLegendElement,
         )
         self._ssb_code_explanation_legend_element = self.create(
-            SluicesCodeExplanationLegendElement,
+            StormSurgeBarrierCodeExplanationLegendElement,
         )
         self._ssb_explanation_legend_element = self.create(
             StormSurgeBarriersExeplanationLegendElement,
