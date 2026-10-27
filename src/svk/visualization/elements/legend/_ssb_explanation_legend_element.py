@@ -33,12 +33,13 @@ class StormSurgeBarriersExeplanationLegendElement(VisualElementsContainer):
     _row_height: float = PrivateAttr()
 
     _ssbs: tuple[tuple[StormSurgeBarrier, str], ...] = (
-        (StormSurgeBarrier.MaeslantBarrier, "MLB"),
+        (StormSurgeBarrier.MaeslantBarrier, "MLK"),
         (StormSurgeBarrier.HartelBarrier, "HK"),
         (StormSurgeBarrier.HaringvlietBarrier, "HV"),
         (StormSurgeBarrier.HollandseIJsselBarrier, "HIJK"),
         (StormSurgeBarrier.EasternScheldtBarrier, "OSK"),
         (StormSurgeBarrier.Ramspol, "RP"),
+        (StormSurgeBarrier.All, "6SVK"),
     )
 
     def measure(self) -> None:

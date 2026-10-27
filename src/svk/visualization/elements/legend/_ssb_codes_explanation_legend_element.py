@@ -40,7 +40,7 @@ class StormSurgeBarrierCodeExplanationLegendElement(VisualElement):
         ("ET", "Vraag afkomstig uit einde technische levensduur analyse."),
         ("EF", "Vraag afkomstig uit einde functionele levensduur analyse."),
         ("A", "Algemeen geldende kennisvraag."),
-        ("O,R,HK,M,H", "Overige vragen specifiek per stormvloedkering."),
+        ("O,R,HK,M,H,HV", "Overige vragen specifiek per stormvloedkering."),
     )
     _line_height_factor: float = 1.6
     _sp_explanation: str = "Stormvloedkering"
