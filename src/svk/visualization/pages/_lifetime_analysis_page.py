@@ -10,6 +10,7 @@ class LifeTimeAnalysisPage(Page):
     _grid_element: GridElement = PrivateAttr()
 
     def initialize(self):
+        super().initialize()
         self._grid_element = self.create(
             GridElement,
             grid=self.grid,

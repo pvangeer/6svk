@@ -32,6 +32,7 @@ class QuestionDetailsPage(Page):
     _question_elements: tuple[QuestionDetailsElement, ...] = PrivateAttr()
 
     def initialize(self) -> None:
+        super().initialize()
         _first_column_width = max([QuestionDetailsElement.predict_first_column_width(q, self.layout_configuration) for q in self.questions])
         self._question_elements = tuple(
             self.create(

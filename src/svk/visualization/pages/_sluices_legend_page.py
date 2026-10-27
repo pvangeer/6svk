@@ -9,8 +9,11 @@ from svk.visualization.elements.legend._sluices_legend_element import SluicesLeg
 class SluicesLegendPage(Page):
     _legend_element: SluicesLegendElement = PrivateAttr()
     title_link_target: str | None = "#legend_page"
+    title: str = "Verklaring"
+    subtitle: str = "Gebruikte symbolen, kleuren en vraagcodes"
 
     def initialize(self):
+        super().initialize()
         self._legend_element = self.create(
             SluicesLegendElement,
             color=KnownColors.GreyAccent,

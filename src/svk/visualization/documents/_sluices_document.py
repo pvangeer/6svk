@@ -284,8 +284,6 @@ class SluicesDocument(Document):
             layout_configuration=self.layout_configuration,
             links_register=self.links_register,
             translator=self.translator,
-            title="Verklaring",
-            subtitle="Gebruikte symbolen en kleuren en vraagcodes",
             page_number=page_number,
             disclaimer=self.disclaimer,
             disclaimer_links=self.disclaimer_links,

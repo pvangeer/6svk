@@ -11,6 +11,7 @@ class StormSurgeBarrierLegendPage(Page):
     title_link_target: str | None = "#legend_page"
 
     def initialize(self):
+        super().initialize()
         self._legend_element = self.create(
             StormSurgeBarrierLegendElement,
             color=KnownColors.GreyAccent,

@@ -32,6 +32,7 @@ class SluicesQuestionDetailsPage(Page):
     _question_elements: tuple[SluicesQuestionDetailsElement, ...] = PrivateAttr()
 
     def initialize(self) -> None:
+        super().initialize()
         _first_column_width = max(
             [SluicesQuestionDetailsElement.predict_first_column_width(q, self.layout_configuration) for q in self.questions]
         )
