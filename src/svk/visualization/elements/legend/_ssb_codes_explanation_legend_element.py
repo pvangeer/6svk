@@ -36,13 +36,12 @@ class StormSurgeBarrierCodeExplanationLegendElement(VisualElement):
     _number_color: Color = KnownColors.DarkGreen
     _code_color: Color = KnownColors.LightGreen
     _code_explanations: tuple[tuple[str, str], ...] = (
-        ("O", "Vraag afkomstig van...?"),
         ("C", "Vraag afkomstig uit inventarisatie componenten."),
         ("ET", "Vraag afkomstig uit einde technische levensduur analyse."),
         ("EF", "Vraag afkomstig uit einde functionele levensduur analyse."),
         ("A", "Algemeen geldende kennisvraag."),
+        ("O,R,HK,M,H", "Overige vragen specifiek per stormvloedkering."),
     )
-    _code_explanation_indent: float = 20
     _line_height_factor: float = 1.6
     _sp_explanation: str = "Stormvloedkering"
     _number_explanation: str = "Volgnummer"
@@ -52,8 +51,22 @@ class StormSurgeBarrierCodeExplanationLegendElement(VisualElement):
         self._tw_sp_explanation = self.text_width(self._sp_explanation)
         self._tw_number_explanation = self.text_width(self._number_explanation)
         self._tw_codes_explained = max([measure_text(l, self.layout_configuration.font_size)[0] for _, l in self._code_explanations])
+        self._tw_code_explanation_indent = (
+            max(
+                [
+                    measure_text(
+                        c,
+                        font_size=self.layout_configuration.font_size,
+                        font_family=self.layout_configuration.font_family,
+                        font_weight="bold",
+                    )[0]
+                    for c, _ in self._code_explanations
+                ]
+            )
+            + self.layout_configuration.small_margin
+        )
 
-        self._width = max([self._code_explanation_indent + self._tw_codes_explained, self._tw_sp_explanation])
+        self._width = max([self._tw_code_explanation_indent + self._tw_codes_explained, self._tw_sp_explanation])
         self._height = (
             4 + len(self._code_explanations)
         ) * self.layout_configuration.font_size * self._line_height_factor + self.layout_configuration.font_size
@@ -150,7 +163,7 @@ class StormSurgeBarrierCodeExplanationLegendElement(VisualElement):
             self._dwg.add(
                 self._dwg.text(
                     text,
-                    insert=(x_explained_left + self._code_explanation_indent, y),
+                    insert=(x_explained_left + self._tw_code_explanation_indent, y),
                     font_size=font_size,
                     font_family=self.layout_configuration.font_family,
                     text_anchor="start",
