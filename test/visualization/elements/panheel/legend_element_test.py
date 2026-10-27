@@ -40,7 +40,7 @@ def test_draw_legend_page():
 
 def test_draw_ssb_legend_page():
     page = StormSurgeBarrierLegendPage(
-        layout_configuration=LayoutConfiguration(use_rijkswaterstaat_colors=False),
+        layout_configuration=LayoutConfiguration(use_rijkswaterstaat_colors=False, use_gradients=True),
         links_register=LinksRegister(),
         translator=Translator(),
         title="Legenda",

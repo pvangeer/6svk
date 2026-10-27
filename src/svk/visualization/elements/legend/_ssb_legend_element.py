@@ -160,7 +160,7 @@ class StormSurgeBarrierLegendElement(VisualElementsContainer):
             stroke_width=1.0,
             arrow_height=30.0,
             arrow_depth=20.0,
-            use_gradients=False,
+            use_gradients=self.layout_configuration.use_gradients,
         )
         text_fill = (
             str(get_contrast_color(self.color))
