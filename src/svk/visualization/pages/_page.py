@@ -25,7 +25,7 @@ from pydantic import ConfigDict
 from svgwrite import Drawing
 from svk.data import Icon, KnownColors, Label
 from svk.visualization._visual_component import VisualComponent
-from svk.visualization.helpers._draw_disclaimer import draw_disclaimer
+from svk.visualization.helpers._draw_disclaimer import draw_disclaimer, get_disclaimer_width
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 from svk.visualization.helpers._draw_callout import draw_callout
 from svk.visualization.helpers._measuretext import measure_text
@@ -61,7 +61,23 @@ class Page(VisualComponent):
             if self.disclaimer is not None
             else 0.0
         )
-        self._width = max([content_size[0] + 2 * self.layout_configuration.paper_margin, self._title_width])
+        _width_legend_label = 0.0
+        if self.include_legend_link:
+            legend_label = self.translator.get_label(label=Label.LegendTitle)
+            _width_legend_label = measure_text(text=legend_label, font_size=self.layout_configuration.disclamer_font_size)[0]
+        _disclaimer_width = 0.0
+        if self.disclaimer is not None:
+            _disclaimer_width = get_disclaimer_width(
+                disclaimer_text=self.disclaimer, font_size=self.layout_configuration.disclamer_font_size, links=self.disclaimer_links
+            )[0]
+
+        self._width = max(
+            [
+                content_size[0] + 2 * self.layout_configuration.paper_margin,
+                self._title_width,
+                _disclaimer_width + self.layout_configuration.paper_margin * 2 + _width_legend_label,
+            ]
+        )
         self._height = (
             self.layout_configuration.paper_margin
             + self._title_height
@@ -107,10 +123,7 @@ class Page(VisualComponent):
 
         self.draw_title(dwg=dwg)
 
-        x_left = self.layout_configuration.paper_margin
-        content_width = self.get_content_size()[0]
-        if self._title_width > content_width:
-            x_left = (self._title_width - content_width) / 2
+        x_left = (self.width - self.get_content_size()[0]) / 2
 
         self.draw_content(
             dwg=dwg,

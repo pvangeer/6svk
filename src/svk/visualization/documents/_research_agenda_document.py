@@ -44,6 +44,7 @@ from svk.visualization.documents._document import ResearchQuestionsDocument
 from svk.visualization.pages._page import Page
 from svk.visualization.pages._time_line_overview_page import TimeLineOverviewPage
 from svk.visualization.pages._lifetime_analysis_page import LifeTimeAnalysisPage
+from svk.visualization.pages._ssb_legend_page import StormSurgeBarrierLegendPage
 
 
 def _get_research_line_title(translator: Translator, research_line: ResearchLine | None) -> str:
@@ -121,6 +122,7 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
                 subtitle=self.translator.get_label(Label.RLG_Operational),
             ),
         ] + self.create_detailes_pages(current_page_number=4)
+        pages += [self._create_legend_page(page_number=len(pages))]
 
         if self.efl_grid is not None:
             pages.append(
@@ -160,6 +162,7 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
             translator=self.translator,
             icon=IconProvider.create_icon(self.storm_surge_barrier),
             disclaimer=self.disclaimer,
+            include_legend_link=True,
             disclaimer_links=self.disclaimer_links,
             columns=tuple(
                 [
@@ -292,6 +295,18 @@ class ResearchAgendaDocument(ResearchQuestionsDocument):
             translator=self.translator,
             icon=IconProvider.create_icon(self.storm_surge_barrier),
             disclaimer=self.disclaimer,
+            include_legend_link=True,
             disclaimer_links=self.disclaimer_links,
             grid=grid,
         )
+
+    def _create_legend_page(self, page_number: int) -> Page:
+        page = StormSurgeBarrierLegendPage(
+            layout_configuration=self.layout_configuration,
+            links_register=self.links_register,
+            translator=self.translator,
+            page_number=page_number,
+            disclaimer=self.disclaimer,
+            disclaimer_links=self.disclaimer_links,
+        )
+        return page

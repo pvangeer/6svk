@@ -163,6 +163,7 @@ class ResearchQuestionsDocument(Document):
             links_register=self.links_register,
             translator=self.translator,
             disclaimer=self.disclaimer,
+            include_legend_link=True,
             disclaimer_links=self.disclaimer_links,
             questions=tuple(questions),
         )

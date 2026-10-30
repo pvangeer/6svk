@@ -20,6 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 from playwright.sync_api import sync_playwright, Page, Browser, Playwright
 from svgwrite import Drawing
+from svgwrite.base import BaseElement
 from html import escape
 from pathlib import Path
 
@@ -51,6 +52,7 @@ class RendererServer:
                 <body>
                 <svg xmlns="http://www.w3.org/2000/svg">
                     <text id="measure"></text>
+                    <g id="measure-container"></g>
                 </svg>
                 </body>
                 </html>
@@ -118,7 +120,42 @@ class RendererServer:
                 return [bbox.width, bbox.height];
             }
             """,
-            [escape(text), font_family, font_size, font_weight, font_style],
+            [text, font_family, font_size, font_weight, font_style],
+        )
+
+        return width, height
+
+    @classmethod
+    def measure_svg_element(cls, element: BaseElement) -> tuple[float, float]:
+        """
+        Measure the bounding box of an svgwrite element using Chromium.
+
+        :param element: The svgwrite element to measure.
+        :return: Width and height of the rendered element.
+        """
+        cls.start()
+
+        if cls._measure_page is None:
+            raise RendererNotStartedError()
+
+        svg = element.tostring()
+
+        width, height = cls._measure_page.evaluate(
+            """
+            (svg) => {
+                const container = document.getElementById("measure-container");
+
+                container.innerHTML = svg;
+
+                const el = container.firstElementChild;
+                const bbox = el.getBBox();
+
+                container.replaceChildren();
+
+                return [bbox.width, bbox.height];
+            }
+            """,
+            svg,
         )
 
         return width, height

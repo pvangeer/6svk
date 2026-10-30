@@ -20,6 +20,7 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 
 import re
 from svgwrite import Drawing
+from svk.io import RendererServer
 
 
 def draw_disclaimer(
@@ -29,7 +30,7 @@ def draw_disclaimer(
     dominant_baseline: str = "hanging",
     text_anchor: str = "start",
     font_size: float = 12,
-    links: list[tuple[str, str]] = [],
+    links: list[tuple[str, str]] | None = None,
 ):
     """
     This function helps to draw a disclaimer. It replaces specific words in the specified text with links and draws it on a svgwrite.Drawing.
@@ -49,6 +50,9 @@ def draw_disclaimer(
     :param links: A description of the links that should replace text (first tuple value is a string that should be a hyperlink, second tuple value is the actual link it should refer to).
     :type links: list[tuple[str, str]]
     """
+    if links is None:
+        links = []
+
     pattern = f"({'|'.join(map(re.escape, [l[0] for l in links]))})"
     parts = re.split(pattern, disclaimer_text)
 
@@ -80,3 +84,48 @@ def draw_disclaimer(
             disclaimer_text_element.add(dwg.tspan(part, font_size=font_size))
 
     dwg.add(disclaimer_text_element)
+
+
+def get_disclaimer_width(
+    disclaimer_text: str,
+    dominant_baseline: str = "hanging",
+    text_anchor: str = "start",
+    font_size: float = 12,
+    links: list[tuple[str, str]] | None = None,
+) -> tuple[float, float]:
+
+    if links is None:
+        links = []
+
+    dwg = Drawing(debug=False)
+    pattern = f"({'|'.join(map(re.escape, [l[0] for l in links]))})"
+    parts = re.split(pattern, disclaimer_text)
+
+    disclaimer_text_element = dwg.text(
+        parts[0],
+        insert=(0, 0),
+        dominant_baseline=dominant_baseline,
+        text_anchor=text_anchor,
+        font_size=font_size,
+        **{"xml:space": "preserve"},
+    )
+
+    for part in parts[1:]:
+        link_tuple = next((t for t in links if t[0] == part), None)
+        if link_tuple is not None:
+            link = dwg.a(link_tuple[1])
+
+            link.add(
+                dwg.tspan(
+                    link_tuple[0],
+                    fill="blue",
+                    text_decoration="underline",
+                    cursor="pointer",
+                )
+            )
+
+            disclaimer_text_element.add(link)
+        else:
+            disclaimer_text_element.add(dwg.tspan(part, font_size=font_size))
+
+    return RendererServer.measure_svg_element(disclaimer_text_element)

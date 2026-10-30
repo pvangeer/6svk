@@ -8,7 +8,9 @@ from svk.visualization.elements.legend._ssb_legend_element import StormSurgeBarr
 
 class StormSurgeBarrierLegendPage(Page):
     _legend_element: StormSurgeBarrierLegendElement = PrivateAttr()
-    title_link_target: str | None = "#legend_page"
+    title_link_target: str | None = "#legend_page"  # TODO: Put this in a general setting instead of hard coding this in different places.
+    title: str = "Verklaring"
+    subtitle: str = "Gebruikte symbolen, kleuren en vraagcodes"
 
     def initialize(self):
         super().initialize()
