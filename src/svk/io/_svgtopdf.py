@@ -21,7 +21,6 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from playwright.sync_api import sync_playwright, Page, Browser, Playwright
 from svgwrite import Drawing
 from svgwrite.base import BaseElement
-from html import escape
 from pathlib import Path
 
 

@@ -71,6 +71,7 @@ class TimeFrameElement(VisualElementsContainer):
                 _time_frame_text,
                 insert=(x + self.width / 2.0, y + self.layout_configuration.small_margin + self.layout_configuration.icon_width_small),
                 font_size=self.layout_configuration.font_size,
+                font_family="Arial",
                 text_anchor="middle",
                 dominant_baseline="hanging",
                 fill="black",

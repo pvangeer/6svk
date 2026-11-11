@@ -32,6 +32,7 @@ from svk.visualization.elements._priority_icon_element import PriorityIconElemen
 from svk.visualization.elements._id_element import IdElement
 from svk.visualization.elements._icons_element import IconsElement
 from svk.visualization.elements.panheel._sluices_current_research_element import CurrentResearchDetailsElement
+from svk.visualization.elements._text_element import TextElement
 
 
 class SluicesQuestionDetailsElement(VisualElementsContainer):
@@ -46,6 +47,11 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
     _priority_details_element: SluicesQuestionPriorityDetailsElement = PrivateAttr()
     _current_research_element: CurrentResearchDetailsElement = PrivateAttr()
     _id_element: IdElement = PrivateAttr()
+    _time_frame_code_element: TextElement = PrivateAttr()
+    _ssb_icons_element: IconsElement = PrivateAttr()
+    _question_wrapped_text_element: WrappedTextElement = PrivateAttr()
+    _related_question_elements: list[IdElement] = PrivateAttr()
+    _width_first_column: float = PrivateAttr()
 
     _h_first_line: float = PrivateAttr()
     _last_line_keywords: list[str] = PrivateAttr()
@@ -87,6 +93,11 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
         self._time_frame_element = self.create(
             TimeFrameElement,
             time_frame=self.research_question.time_frame,
+        )
+        self._time_frame_code_element = self.create(
+            TextElement,
+            text=self.research_question.time_frame_asset_management,
+            font_size=self.layout_configuration.font_size,
         )
         self._current_research_element = self.create(
             CurrentResearchDetailsElement,
@@ -136,7 +147,7 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
                     + len(self._last_line_keywords) * 1.2 * self.layout_configuration.font_size
                     + self.layout_configuration.small_margin
                 ),
-                self._time_frame_element.height,
+                self._time_frame_element.height + self._time_frame_code_element.height + self.layout_configuration.small_margin,
             ]
         )
 
@@ -240,7 +251,15 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
             x_container=x,
             y_container=y,
             width_container=self._width_first_column,
-            height_container=self._h_last_line,
+            height_container=self._h_last_line - self._time_frame_code_element.height - self.layout_configuration.small_margin,
+            alignment=Alignment.MiddleCenter,
+        )
+        self.draw_element(
+            element=self._time_frame_code_element,
+            x_container=x,
+            y_container=y + self._time_frame_element.height,
+            width_container=self._width_first_column,
+            height_container=self._time_frame_code_element.height,
             alignment=Alignment.MiddleCenter,
         )
 

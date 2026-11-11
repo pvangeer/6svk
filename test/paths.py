@@ -26,4 +26,4 @@ rp_database_path = rp_dir / "Concept Eerste toepassing methodiek kennisvragen SV
 hijk_database_path = hijk_dir / "Concept Eerste toepassing methodiek kennisvragen SVK HIJK.xlsx"
 esb_database_path = esb_dir / "Concept Eerste toepassing methodiek kennisvragen SVK OSK.xlsx"
 ssb_database_path = ssb_dir / "SSB-delta_impact-pathway-database.xlsx"
-ph_database_path = ph_base_dir / "Conceptversie 1.0 Eerste toepassing methodiek kennisvragen Sluizencomplex Panheel 08092026.xlsx"
+ph_database_path = ph_base_dir / "Conceptversie 1.1 Eerste toepassing methodiek kennisvragen Sluizencomplex Panheel 29102026.xlsx"

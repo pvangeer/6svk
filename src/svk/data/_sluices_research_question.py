@@ -36,6 +36,8 @@ class SluicesResearchQuestion(ResearchQuestion):
     """Priority of this question related to maintenance of the barrier."""
     prio_operation: Priority
     """Priority of this question related to operation of the barrier."""
+    time_frame_asset_management: str
+    """Time frame of this question related to the qualification of the asset management team."""
     sluice: str
     """The sluice this question is related to."""
     research_program: str | None = None

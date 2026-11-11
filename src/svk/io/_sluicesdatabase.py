@@ -54,16 +54,18 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
     """L - Hard coded column number for the prioties (operation)"""
     i_time_frame = "N"
     """N - Hard coded column number for the time frame"""
-    i_research_line = "O"
-    """O - Hard coded column number for the research line"""
-    i_related_research_program = "P"
-    """P - Hard coded column for the related research program"""
-    i_research_program = "Q"
-    """Q - Hard coded column for the research program this question is adressed"""
-    i_status = "R"
-    """R - Hard coded column number for the status"""
-    i_contributes_to_standardisation = "Y"
-    """Y - Hard coded column indicating whether the anwer contributes to standardisation"""
+    i_time_frame_asset_management = "O"
+    """O - Hard coded column number for the time frame quailification of the asset management team"""
+    i_research_line = "P"
+    """P - Hard coded column number for the research line"""
+    i_related_research_program = "Q"
+    """Q - Hard coded column for the related research program"""
+    i_research_program = "T"
+    """T - Hard coded column for the research program this question is adressed"""
+    i_status = "X"
+    """X - Hard coded column number for the status"""
+    i_contributes_to_standardisation = "Z"
+    """Z - Hard coded column indicating whether the anwer contributes to standardisation"""
 
     def __init__(self, file_path: Path):
         super().__init__(file_path, first_data_row=4)
@@ -79,6 +81,9 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
                     row, ExcelDatabase._string_to_column_index(self.i_research_line)
                 ),
                 time_frame=ExcelDatabase._get_time_frame(row, ExcelDatabase._string_to_column_index(self.i_time_frame)),
+                time_frame_asset_management=ExcelDatabase._get_as_str(
+                    row, ExcelDatabase._string_to_column_index(self.i_time_frame_asset_management)
+                ),
                 prio_management_maintenance=ExcelDatabase._get_priority(
                     row, ExcelDatabase._string_to_column_index(self.i_prio_maintenance)
                 ),
@@ -89,16 +94,8 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
                 prio_water_availability=ExcelDatabase._get_priority(
                     row, ExcelDatabase._string_to_column_index(self.i_prio_water_availability)
                 ),
-                reference_ids=(
-                    [
-                        entry.strip()
-                        for entry in ExcelDatabase._get_as_str(row, ExcelDatabase._string_to_column_index(self.i_reference_ids))
-                        .replace(";", ",")
-                        .split(",")
-                        if entry.strip()
-                    ]
-                    if not ExcelDatabase._empty(row, ExcelDatabase._string_to_column_index(self.i_reference_ids))
-                    else []
+                reference_ids=SluicesKnowledgeAgendaDatabase._get_reference_ids(
+                    row, ExcelDatabase._string_to_column_index(self.i_reference_ids)
                 ),
                 research_program=ExcelDatabase._get_str_optional(row, ExcelDatabase._string_to_column_index(self.i_research_program)),
                 related_research=ExcelDatabase._get_str_optional(
@@ -123,3 +120,11 @@ class SluicesKnowledgeAgendaDatabase(ExcelDatabase, list[SluicesResearchQuestion
             return None
 
         return SluicesResearchLineFactory.get_research_line_from_str(str(value).split(".")[0])
+
+    @staticmethod
+    def _get_reference_ids(row: tuple, i_column: int) -> list[str]:
+        if ExcelDatabase._empty(row, i_column):
+            return []
+
+        ids = [entry.strip() for entry in ExcelDatabase._get_as_str(row, i_column).replace(";", ",").split(",") if entry.strip()]
+        return ids if not (len(ids) == 1 and ids[0] == "0") else []

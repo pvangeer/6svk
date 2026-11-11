@@ -33,6 +33,9 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
     color: Color
 
     _title_element: TitleElement = PrivateAttr()
+    _research_line_element: WrappedTextElement = PrivateAttr()
+    _research_program_element: WrappedTextElement = PrivateAttr()
+    _related_research_element: WrappedTextElement = PrivateAttr()
 
     def measure(self) -> None:
         self._title_element = self.create(
@@ -50,6 +53,17 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
         self._research_program_element = self.create(
             WrappedTextElement,
             text=self.research_question.research_program if self.research_question.research_program is not None else "-",
+            has_margins=False,
+            max_width=self.layout_configuration.current_research_details_width - self.layout_configuration.small_margin * 5,
+        )
+
+        self._research_line_element = self.create(
+            WrappedTextElement,
+            text=(
+                self.translator.get_label(self.research_question.research_line.title)
+                if self.research_question.research_line is not None
+                else "-"
+            ),
             has_margins=False,
             max_width=self.layout_configuration.current_research_details_width - self.layout_configuration.small_margin * 5,
         )
@@ -80,6 +94,8 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
             self._title_element.height
             + self.layout_configuration.small_margin
             + self.layout_configuration.font_size * 1.2
+            + self._research_line_element.height
+            + self.layout_configuration.font_size * 1.2
             + self._research_program_element.height
             + self.layout_configuration.font_size * 1.2
             + self._related_research_element.height
@@ -93,6 +109,32 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
         self.draw_horizontal_separator(x, y, self.width, self.color)
 
         y_current = y + self.layout_configuration.small_margin
+        self._dwg.add(
+            self._dwg.text(
+                self.translator.get_label(Label.QD_ResearchLine) + ":",
+                insert=(
+                    x + self.layout_configuration.small_margin,
+                    y_current,
+                ),
+                font_size=self.layout_configuration.font_size,
+                font_family="Arial",
+                font_weight="normal",
+                text_anchor="start",
+                dominant_baseline="text-before-edge",
+            )
+        )
+
+        y_current += self.layout_configuration.font_size * 1.2
+        self.draw_element(
+            element=self._research_line_element,
+            x_container=x + self.layout_configuration.small_margin * 4,
+            y_container=y_current,
+            width_container=self._research_line_element.width,
+            height_container=self._research_line_element.height,
+            alignment=Alignment.TopLeft,
+        )
+
+        y_current += self._research_line_element.height
         self._dwg.add(
             self._dwg.text(
                 self.translator.get_label(Label.QD_AdressedInResearchProject) + ":",
@@ -117,8 +159,8 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
             height_container=self._research_program_element.height,
             alignment=Alignment.TopLeft,
         )
-        y_current += self._research_program_element.height
 
+        y_current += self._research_program_element.height
         self._dwg.add(
             self._dwg.text(
                 self.translator.get_label(Label.QD_RelatedResearch) + ":",
@@ -133,6 +175,7 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
                 dominant_baseline="text-before-edge",
             )
         )
+
         y_current += self.layout_configuration.font_size * 1.2
         self.draw_element(
             element=self._related_research_element,
