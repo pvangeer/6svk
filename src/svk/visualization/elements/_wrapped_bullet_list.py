@@ -34,6 +34,7 @@ class WrappedBulletListElement(VisualElement):
                 bullet,
                 max_width=self.max_width - self.layout_configuration.bullet_list_indent - 2 * self.layout_configuration.small_margin,
                 font_size=self.layout_configuration.font_size,
+                font_family=self.layout_configuration.font_family,
             )
             self._height += len(lines) * self.layout_configuration.font_size * 1.2
         self._height += self.layout_configuration.small_margin
@@ -46,6 +47,7 @@ class WrappedBulletListElement(VisualElement):
                     "-",
                     insert=(x + self.layout_configuration.small_margin, y_current),
                     font_size=self.layout_configuration.font_size,
+                    font_family=self.layout_configuration.font_family,
                     text_anchor="start",
                     dominant_baseline="text-before-edge",
                 )
@@ -58,6 +60,7 @@ class WrappedBulletListElement(VisualElement):
                     self.layout_configuration.bullet_character,
                     insert=(x + self.layout_configuration.small_margin, y_current),
                     font_size=self.layout_configuration.font_size,
+                    font_family=self.layout_configuration.font_family,
                     text_anchor="start",
                     dominant_baseline="text-before-edge",
                 )
@@ -67,6 +70,7 @@ class WrappedBulletListElement(VisualElement):
                 bullet,
                 max_width=self.max_width - self.layout_configuration.bullet_list_indent - 2 * self.layout_configuration.small_margin,
                 font_size=self.layout_configuration.font_size,
+                font_family=self.layout_configuration.font_family,
             )
             self._dwg.add(
                 wrapped_text(
@@ -78,6 +82,8 @@ class WrappedBulletListElement(VisualElement):
                     ),
                     text_anchor="start",
                     dominant_baseline="text-before-edge",
+                    font_family=self.layout_configuration.font_family,
+                    font_size=self.layout_configuration.font_size,
                 )
             )
             y_current += len(lines) * self.layout_configuration.font_size * 1.2

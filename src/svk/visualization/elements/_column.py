@@ -75,7 +75,7 @@ class Column(VisualElement):
                 self.header_title,
                 insert=(x + self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin, y_column_header_text),
                 font_size=self.layout_configuration.column_header_font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="bold",
                 fill=text_fill,
                 text_anchor="start",
@@ -87,7 +87,7 @@ class Column(VisualElement):
                 self._dwg.text(
                     self.header_subtitle,
                     insert=(x + self.layout_configuration.column_width - self.layout_configuration.arrow_depth, y_column_header_text),
-                    font_family="Arial",
+                    font_family=self.layout_configuration.font_family,
                     font_size=self.layout_configuration.column_header_font_size,
                     font_weight="normal",
                     fill=text_fill,

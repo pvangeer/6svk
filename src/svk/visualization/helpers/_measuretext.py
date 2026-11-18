@@ -21,8 +21,8 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from svk.io import RendererServer
 
 
-def wrap_text(words: list[str], max_width: float, font_size: int) -> list[str]:
-    return RendererServer.wrap_text(words=words, max_width=max_width, font_size=font_size)
+def wrap_text(words: list[str], max_width: float, font_size: int, font_family: str) -> list[str]:
+    return RendererServer.wrap_text(words=words, max_width=max_width, font_size=font_size, font_family=font_family)
 
 
 def measure_text(
@@ -33,11 +33,12 @@ def measure_text(
     font_style: str = "normal",
 ) -> tuple[float, float]:
     """
-    Returns the predicted width and height of a given text in pixels, based on an arial font.
+    Returns the predicted width and height of a given text in pixels.
 
     Parameters:
         text (str): The text to measure.
         font_size (int): Font size in pixels.
+        font_family (str): The font family to measure.
 
     Returns:
         (width, height): Tuple of predicted text dimensions in pixels.

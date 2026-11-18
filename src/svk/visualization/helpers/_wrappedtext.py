@@ -28,9 +28,10 @@ def wrapped_lines(
     text: str,
     max_width: float,
     font_size: int = 12,
+    font_family: str = "Arial",
 ) -> list[str]:
     """
-    Method that splits a string into lines that will not exceed a specified width. This method assumes the use of arial font.
+    Splits a string into lines that will not exceed a specified width using the specified font family.
 
     :param text: The text that should be split into lines
     :type text: str
@@ -42,7 +43,7 @@ def wrapped_lines(
     :rtype: list[str]
     """
     words = text.split()
-    return wrap_text(words=words, max_width=max_width, font_size=font_size)
+    return wrap_text(words=words, max_width=max_width, font_size=font_size, font_family=font_family)
 
 
 def wrapped_text(
@@ -70,7 +71,7 @@ def wrapped_text(
     :type line_height: float
     :param font_size: The desired font size
     :type font_size: int
-    :param font_family: The font family (if different from Arial, possibly the lines won't fit the maximum width)
+    :param font_family: The font family used to measure the lines
     :type font_family: str
     :param font_style: The font style
     :type font_style: str

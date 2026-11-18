@@ -29,7 +29,11 @@ class TitleElement(VisualElement):
     def measure(self) -> None:
         self._width = (
             self.layout_configuration.small_margin
-            + measure_text(self.translator.get_label(self.title), self.layout_configuration.font_size)[0]
+            + measure_text(
+                self.translator.get_label(self.title),
+                self.layout_configuration.font_size,
+                font_family=self.layout_configuration.font_family,
+            )[0]
             + self.layout_configuration.small_margin
         )
         self._height = (
@@ -42,7 +46,7 @@ class TitleElement(VisualElement):
                 self.translator.get_label(self.title),
                 insert=(x + self.layout_configuration.small_margin, y + self.layout_configuration.small_margin),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="normal",
                 font_style="italic",
                 text_anchor="start",

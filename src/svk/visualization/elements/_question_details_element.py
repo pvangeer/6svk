@@ -58,7 +58,11 @@ class QuestionDetailsElement(VisualElementsContainer):
         return max(
             [
                 PriorityIconElement.predict_width(layout_configuration),
-                IdElement.predict_width(question.id, layout_configuration.font_size),
+                IdElement.predict_width(
+                    question.id,
+                    layout_configuration.font_size,
+                    font_family=layout_configuration.font_family,
+                ),
                 TimeFrameElement.predict_width(question.time_frame, layout_configuration=layout_configuration),
             ]
         )
@@ -133,6 +137,8 @@ class QuestionDetailsElement(VisualElementsContainer):
             + ": "
             + (self.research_question.keywords if self.research_question.keywords is not None else "-"),
             self._width - self.layout_configuration.paper_margin * 2.0 - self.layout_configuration.small_margin * 2,
+            font_size=self.layout_configuration.font_size,
+            font_family=self.layout_configuration.font_family,
         )
         self._h_last_line = (
             self.layout_configuration.small_margin
@@ -268,13 +274,15 @@ class QuestionDetailsElement(VisualElementsContainer):
                 label,
                 insert=(x + self.layout_configuration.small_margin, y + self.layout_configuration.small_margin),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="normal",
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
             )
         )
-        x_current = x + self.layout_configuration.small_margin + measure_text(label, self.layout_configuration.font_size)[0]
+        x_current = x + self.layout_configuration.small_margin + measure_text(
+            label, self.layout_configuration.font_size, font_family=self.layout_configuration.font_family
+        )[0]
         for related in self._related_question_elements:
             self.draw_element(
                 element=related,
@@ -295,7 +303,7 @@ class QuestionDetailsElement(VisualElementsContainer):
                     y_keywords,
                 ),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="normal",
                 text_anchor="left",
                 dominant_baseline="text-before-edge",

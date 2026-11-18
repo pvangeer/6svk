@@ -133,7 +133,7 @@ class SluicesLegendElement(VisualElementsContainer):
                     y + self.layout_configuration.group_header_height / 2,
                 ),
                 font_size=self.layout_configuration.group_title_font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="bold",
                 text_anchor="start",
                 dominant_baseline="middle",

@@ -43,10 +43,19 @@ class StormSurgeBarriersExeplanationLegendElement(VisualElementsContainer):
     )
 
     def measure(self) -> None:
-        self._width_first_column = max([measure_text(s[1])[0] for s in self._ssbs]) + 2 * self.layout_configuration.small_margin
+        self._width_first_column = (
+            max([measure_text(s[1], font_family=self.layout_configuration.font_family)[0] for s in self._ssbs])
+            + 2 * self.layout_configuration.small_margin
+        )
         self._width_second_column = self.layout_configuration.icon_width_small + self.layout_configuration.small_margin
         self._width_third_column = (
-            max([measure_text(self.translator.get_label(s[0].title))[0] for s in self._ssbs]) + +self.layout_configuration.small_margin
+            max(
+                [
+                    measure_text(self.translator.get_label(s[0].title), font_family=self.layout_configuration.font_family)[0]
+                    for s in self._ssbs
+                ]
+            )
+            + self.layout_configuration.small_margin
         )
         self._width = self._width_first_column + self._width_second_column + self._width_third_column
         self._row_height = self.layout_configuration.icon_width_small
@@ -67,7 +76,7 @@ class StormSurgeBarriersExeplanationLegendElement(VisualElementsContainer):
                     ssb[1],
                     insert=(x_1 + 0.5 * self._width_first_column, y_top + 0.5 * self._row_height),
                     font_size=self.layout_configuration.font_size,
-                    font_family="Arial",
+                    font_family=self.layout_configuration.font_family,
                     font_weight="normal",
                     font_style="normal",
                     text_anchor="middle",
@@ -90,7 +99,7 @@ class StormSurgeBarriersExeplanationLegendElement(VisualElementsContainer):
                     self.translator.get_label(ssb[0].title),
                     insert=(x_3, y_top + 0.5 * self._row_height),
                     font_size=self.layout_configuration.font_size,
-                    font_family="Arial",
+                    font_family=self.layout_configuration.font_family,
                     font_weight="normal",
                     font_style="normal",
                     text_anchor="start",

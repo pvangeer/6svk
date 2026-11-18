@@ -79,10 +79,12 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
                             measure_text(
                                 (self.translator.get_label(Label.QD_RelatedResearch) + ": "),
                                 self.layout_configuration.font_size,
+                                font_family=self.layout_configuration.font_family,
                             )[0],
                             measure_text(
                                 (self.translator.get_label(Label.QD_AdressedInResearchProject) + ": "),
                                 self.layout_configuration.font_size,
+                                font_family=self.layout_configuration.font_family,
                             )[0],
                         ]
                     )
@@ -117,7 +119,7 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
                     y_current,
                 ),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="normal",
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
@@ -143,7 +145,7 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
                     y_current,
                 ),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="normal",
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
@@ -169,7 +171,7 @@ class CurrentResearchDetailsElement(VisualElementsContainer):
                     y_current,
                 ),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="normal",
                 text_anchor="start",
                 dominant_baseline="text-before-edge",

@@ -31,6 +31,7 @@ def draw_disclaimer(
     text_anchor: str = "start",
     font_size: float = 12,
     links: list[tuple[str, str]] | None = None,
+    font_family: str = "Arial",
 ):
     """
     This function helps to draw a disclaimer. It replaces specific words in the specified text with links and draws it on a svgwrite.Drawing.
@@ -61,7 +62,7 @@ def draw_disclaimer(
         insert=insert,
         dominant_baseline=dominant_baseline,
         text_anchor=text_anchor,
-        font_family="Arial",
+        font_family=font_family,
         font_size=font_size,
         **{"xml:space": "preserve"},
     )
@@ -77,12 +78,14 @@ def draw_disclaimer(
                     fill="blue",
                     text_decoration="underline",
                     cursor="pointer",
+                    font_family=font_family,
+                    font_size=font_size,
                 )
             )
 
             disclaimer_text_element.add(link)
         else:
-            disclaimer_text_element.add(dwg.tspan(part, font_size=font_size))
+            disclaimer_text_element.add(dwg.tspan(part, font_family=font_family, font_size=font_size))
 
     dwg.add(disclaimer_text_element)
 
@@ -91,6 +94,7 @@ def get_disclaimer_width(
     disclaimer_text: str,
     dominant_baseline: str = "hanging",
     text_anchor: str = "start",
+    font_family: str = "Arial",
     font_size: float = 12,
     links: list[tuple[str, str]] | None = None,
 ) -> tuple[float, float]:
@@ -107,6 +111,7 @@ def get_disclaimer_width(
         insert=(0, 0),
         dominant_baseline=dominant_baseline,
         text_anchor=text_anchor,
+        font_family=font_family,
         font_size=font_size,
         **{"xml:space": "preserve"},
     )
@@ -122,11 +127,13 @@ def get_disclaimer_width(
                     fill="blue",
                     text_decoration="underline",
                     cursor="pointer",
+                    font_family=font_family,
+                    font_size=font_size,
                 )
             )
 
             disclaimer_text_element.add(link)
         else:
-            disclaimer_text_element.add(dwg.tspan(part, font_size=font_size))
+            disclaimer_text_element.add(dwg.tspan(part, font_family=font_family, font_size=font_size))
 
     return RendererServer.measure_svg_element(disclaimer_text_element)

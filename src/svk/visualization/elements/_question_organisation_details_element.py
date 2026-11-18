@@ -48,7 +48,11 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
                 (
                     Label.QD_ActionHolder,
                     (
-                        measure_text(self.research_question.action_holder, self.layout_configuration.font_size)[0]
+                        measure_text(
+                            self.research_question.action_holder,
+                            self.layout_configuration.font_size,
+                            font_family=self.layout_configuration.font_family,
+                        )[0]
                         if self.research_question.action_holder is not None
                         else 0.0
                     ),
@@ -65,6 +69,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
                             measure_text(
                                 (self.translator.get_label(l[0]) + ": "),
                                 self.layout_configuration.font_size,
+                                font_family=self.layout_configuration.font_family,
                             )[0]
                             + l[1]
                             for l in fixed_fields
@@ -99,7 +104,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
                     y_current,
                 ),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="normal",
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
@@ -116,7 +121,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
                     y_current,
                 ),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="normal",
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
@@ -144,7 +149,11 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
     def _get_max_research_line_title_length(self) -> float:
         return max(
             [
-                measure_text(self.translator.get_label(line.title), self.layout_configuration.font_size)[0]
+                measure_text(
+                    self.translator.get_label(line.title),
+                    self.layout_configuration.font_size,
+                    font_family=self.layout_configuration.font_family,
+                )[0]
                 for line in list(StormSurgeBarrierResearchLines)
             ]
         )
@@ -159,7 +168,7 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
                     y_start,
                 ),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="normal",
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
@@ -170,8 +179,17 @@ class QuestionOrganisationDetailsElement(VisualElementsContainer):
             self.links_register.register_link(
                 link_target=research_line.id,
                 page_number=page_number,
-                x=x_start + measure_text(self.translator.get_label(label) + ": ", self.layout_configuration.font_size)[0],
+                x=x_start
+                + measure_text(
+                    self.translator.get_label(label) + ": ",
+                    self.layout_configuration.font_size,
+                    font_family=self.layout_configuration.font_family,
+                )[0],
                 y=y_start,
-                width=measure_text(link_text, self.layout_configuration.font_size)[0],
+                width=measure_text(
+                    link_text,
+                    self.layout_configuration.font_size,
+                    font_family=self.layout_configuration.font_family,
+                )[0],
                 height=self.layout_configuration.font_size * 1.2,
             )

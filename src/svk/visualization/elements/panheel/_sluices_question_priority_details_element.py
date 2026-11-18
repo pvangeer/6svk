@@ -51,7 +51,16 @@ class SluicesQuestionPriorityDetailsElement(VisualElementsContainer):
 
         self._w_priority_metrices_column = (
             self.layout_configuration.small_margin
-            + max([measure_text(self.translator.get_label(p[0]) + ":", self.layout_configuration.font_size)[0] for p in self._prios])
+            + max(
+                [
+                    measure_text(
+                        self.translator.get_label(p[0]) + ":",
+                        self.layout_configuration.font_size,
+                        font_family=self.layout_configuration.font_family,
+                    )[0]
+                    for p in self._prios
+                ]
+            )
             + self.layout_configuration.small_margin
             + self.dotradius * 7
             + self.layout_configuration.small_margin
@@ -78,7 +87,16 @@ class SluicesQuestionPriorityDetailsElement(VisualElementsContainer):
         )
 
         prios_translated = [(self.translator.get_label(p[0]) + ":", p[1]) for p in self._prios]
-        max_label_width = max([measure_text(p[0], self.layout_configuration.font_size)[0] for p in prios_translated])
+        max_label_width = max(
+            [
+                measure_text(
+                    p[0],
+                    self.layout_configuration.font_size,
+                    font_family=self.layout_configuration.font_family,
+                )[0]
+                for p in prios_translated
+            ]
+        )
         y_prio_current = y_prios_start + self.layout_configuration.small_margin
         x_prio_label = x + self.layout_configuration.small_margin
         x_prio_first = x_prio_label + max_label_width + self.layout_configuration.small_margin
@@ -91,7 +109,7 @@ class SluicesQuestionPriorityDetailsElement(VisualElementsContainer):
                         y_prio_current,
                     ),
                     font_size=self.layout_configuration.font_size,
-                    font_family="Arial",
+                    font_family=self.layout_configuration.font_family,
                     font_weight="normal",
                     text_anchor="start",
                     dominant_baseline="text-before-edge",
@@ -122,7 +140,7 @@ class SluicesQuestionPriorityDetailsElement(VisualElementsContainer):
                         "-",
                         insert=(x, y_current),
                         font_size=self.layout_configuration.font_size,
-                        font_family="Arial",
+                        font_family=self.layout_configuration.font_family,
                         font_weight="normal",
                         text_anchor="start",
                         dominant_baseline="text-before-edge",
@@ -134,7 +152,7 @@ class SluicesQuestionPriorityDetailsElement(VisualElementsContainer):
                         "?",
                         insert=(x, y_current),
                         font_size=self.layout_configuration.font_size,
-                        font_family="Arial",
+                        font_family=self.layout_configuration.font_family,
                         font_weight="normal",
                         text_anchor="start",
                         dominant_baseline="text-before-edge",

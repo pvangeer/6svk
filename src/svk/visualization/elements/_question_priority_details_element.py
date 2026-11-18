@@ -45,7 +45,16 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
         prio_labels = [Label.QD_WaterSafety, Label.QD_OtherFunctions, Label.QD_Operation, Label.QD_Maitenance]
         self._w_priority_metrices_column = (
             self.layout_configuration.small_margin
-            + max([measure_text(self.translator.get_label(l) + ":", self.layout_configuration.font_size)[0] for l in prio_labels])
+            + max(
+                [
+                    measure_text(
+                        self.translator.get_label(l) + ":",
+                        self.layout_configuration.font_size,
+                        font_family=self.layout_configuration.font_family,
+                    )[0]
+                    for l in prio_labels
+                ]
+            )
             + self.layout_configuration.small_margin
             + self.dotradius * 7
             + self.layout_configuration.small_margin
@@ -65,6 +74,8 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
             wrapped_lines(
                 self.research_question.prio_explanation if self.research_question.prio_explanation is not None else "-",
                 self.layout_configuration.details_priority_explanation_width - self.layout_configuration.small_margin * 2,
+                font_size=self.layout_configuration.font_size,
+                font_family=self.layout_configuration.font_family,
             )
             if self.research_question.prio_explanation is not None
             else []
@@ -96,7 +107,16 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
             (Label.QD_Maitenance, self.research_question.prio_management_maintenance),
         ]
         prios_translated = [(self.translator.get_label(p[0]) + ":", p[1]) for p in prios]
-        max_label_width = max([measure_text(p[0], self.layout_configuration.font_size)[0] for p in prios_translated])
+        max_label_width = max(
+            [
+                measure_text(
+                    p[0],
+                    self.layout_configuration.font_size,
+                    font_family=self.layout_configuration.font_family,
+                )[0]
+                for p in prios_translated
+            ]
+        )
         y_prio_current = y_prios_start + self.layout_configuration.small_margin
         x_prio_label = x + self.layout_configuration.small_margin
         x_prio_first = x_prio_label + max_label_width + self.layout_configuration.small_margin
@@ -109,7 +129,7 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
                         y_prio_current,
                     ),
                     font_size=self.layout_configuration.font_size,
-                    font_family="Arial",
+                    font_family=self.layout_configuration.font_family,
                     font_weight="normal",
                     text_anchor="start",
                     dominant_baseline="text-before-edge",
@@ -135,6 +155,7 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
                         y_prios_start + self.layout_configuration.small_margin,
                     ),
                     font_size=self.layout_configuration.font_size,
+                    font_family=self.layout_configuration.font_family,
                     dominant_baseline="text-before-edge",
                 )
             )
@@ -161,7 +182,7 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
                         "-",
                         insert=(x, y_current),
                         font_size=self.layout_configuration.font_size,
-                        font_family="Arial",
+                        font_family=self.layout_configuration.font_family,
                         font_weight="normal",
                         text_anchor="start",
                         dominant_baseline="text-before-edge",
@@ -173,7 +194,7 @@ class QuestionPriorityDetailsElement(VisualElementsContainer):
                         "?",
                         insert=(x, y_current),
                         font_size=self.layout_configuration.font_size,
-                        font_family="Arial",
+                        font_family=self.layout_configuration.font_family,
                         font_weight="normal",
                         text_anchor="start",
                         dominant_baseline="text-before-edge",

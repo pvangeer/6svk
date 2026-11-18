@@ -35,7 +35,11 @@ class TimeFrameElement(VisualElementsContainer):
 
     @staticmethod
     def predict_width(time_frame: TimeFrame, layout_configuration: LayoutConfiguration) -> float:
-        return measure_text(get_time_frame_string(time_frame), layout_configuration.font_size)[0]
+        return measure_text(
+            get_time_frame_string(time_frame),
+            layout_configuration.font_size,
+            font_family=layout_configuration.font_family,
+        )[0]
 
     def measure(self) -> None:
         _text_width = TimeFrameElement.predict_width(self.time_frame, self.layout_configuration)
@@ -71,7 +75,7 @@ class TimeFrameElement(VisualElementsContainer):
                 _time_frame_text,
                 insert=(x + self.width / 2.0, y + self.layout_configuration.small_margin + self.layout_configuration.icon_width_small),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 text_anchor="middle",
                 dominant_baseline="hanging",
                 fill="black",

@@ -119,14 +119,17 @@ class Group(VisualElement):
                 ),
                 fill=text_fill,
                 font_size=self.layout_configuration.group_title_font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="bold",
                 text_anchor="start",
                 dominant_baseline="middle",
             )
         )
         _wh = measure_text(
-            text=self.title, font_size=self.layout_configuration.group_title_font_size, font_family="Arial", font_weight="bold"
+            text=self.title,
+            font_size=self.layout_configuration.group_title_font_size,
+            font_family=self.layout_configuration.font_family,
+            font_weight="bold",
         )
         if self.page_number is not None and self.link_target_id is not None:
             self.links_register.register_link(

@@ -165,6 +165,7 @@ class RendererServer:
         words: list[str],
         max_width: float,
         font_size: int,
+        font_family: str,
     ) -> list[str]:
         cls.start()
         if cls._measure_page is None:
@@ -172,9 +173,9 @@ class RendererServer:
 
         return cls._measure_page.evaluate(
             """
-            ([words, maxWidth, fontSize]) => {
+            ([words, maxWidth, fontSize, fontFamily]) => {
                 const el = document.getElementById("measure");
-                el.setAttribute("font-family", "Arial");
+                el.setAttribute("font-family", fontFamily);
                 el.setAttribute("font-size", fontSize + "px");
                 el.setAttribute("font-weight", "normal");
                 el.setAttribute("font-style", "normal");
@@ -197,7 +198,7 @@ class RendererServer:
                 return lines;
             }
             """,
-            [words, max_width, font_size],
+            [words, max_width, font_size, font_family],
         )
 
     @classmethod

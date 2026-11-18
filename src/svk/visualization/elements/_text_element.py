@@ -4,14 +4,19 @@ from svk.visualization.helpers._measuretext import measure_text
 
 class TextElement(VisualElement):
     text: str
-    font_family: str = "Arial"
     font_weight: str = "normal"
     font_style: str = "normal"
     text_anchor: str = "start"
     dominant_baseline: str = "text-before-edge"
 
     def measure(self) -> None:
-        self._width = measure_text(self.text, self.layout_configuration.font_size)[0]
+        self._width = measure_text(
+            self.text,
+            self.layout_configuration.font_size,
+            font_family=self.layout_configuration.font_family,
+            font_weight=self.font_weight,
+            font_style=self.font_style,
+        )[0]
         self._height = self.layout_configuration.font_size * 1.2
 
     def _draw(self, x: float, y: float) -> None:
@@ -20,7 +25,7 @@ class TextElement(VisualElement):
                 self.text,
                 insert=(x, y),
                 font_size=self.layout_configuration.font_size,
-                font_family=self.font_family,
+                font_family=self.layout_configuration.font_family,
                 font_weight=self.font_weight,
                 font_style=self.font_style,
                 text_anchor=self.text_anchor,

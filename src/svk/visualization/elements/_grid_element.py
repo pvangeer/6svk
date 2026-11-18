@@ -151,7 +151,7 @@ class GridElement(VisualElementsContainer):
                     y=[y + self.layout_configuration.font_size * 0.6 + self.layout_configuration.small_margin],
                     font_size=self.layout_configuration.font_size,
                     fill="white",
-                    font_family="Arial",
+                    font_family=self.layout_configuration.font_family,
                     font_weight="normal",
                     font_style="italic",
                     text_anchor="middle",

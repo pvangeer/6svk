@@ -47,13 +47,25 @@ class ImpactPathwayDocument(ResearchQuestionsDocument):
 
     def create_pages(self) -> list[Page]:
         self.layout_configuration.question_id_box_width = (
-            max([measure_text(q.id, self.layout_configuration.font_size)[0] for q in self.questions])
+            max(
+                [
+                    measure_text(
+                        q.id,
+                        self.layout_configuration.font_size,
+                        font_family=self.layout_configuration.font_family,
+                    )[0]
+                    for q in self.questions
+                ]
+            )
             + 2 * self.layout_configuration.small_margin
         )
         self._id_width = max(
             [
                 IdElement.predict_width(
-                    text=q.id, font_size=self.layout_configuration.font_size, margin=self.layout_configuration.small_margin
+                    text=q.id,
+                    font_size=self.layout_configuration.font_size,
+                    margin=self.layout_configuration.small_margin,
+                    font_family=self.layout_configuration.font_family,
                 )
                 for q in self.questions
             ]

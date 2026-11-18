@@ -40,15 +40,36 @@ class GridHeaderElement(VisualElement):
 
     def measure(self) -> None:
         self._lines = wrapped_lines(
-            text=self.label, max_width=self.layout_configuration.grid_header_maximum_width, font_size=self.layout_configuration.font_size
+            text=self.label,
+            max_width=self.layout_configuration.grid_header_maximum_width,
+            font_size=self.layout_configuration.font_size,
+            font_family=self.layout_configuration.font_family,
         )
 
         if self.orientation.value:
-            self._width = max([measure_text(text=l, font_size=self.layout_configuration.font_size)[0] for l in self._lines])
+            self._width = max(
+                [
+                    measure_text(
+                        text=l,
+                        font_size=self.layout_configuration.font_size,
+                        font_family=self.layout_configuration.font_family,
+                    )[0]
+                    for l in self._lines
+                ]
+            )
             self._height = len(self._lines) * self.layout_configuration.font_size * 1.2
         else:
             self._width = len(self._lines) * self.layout_configuration.font_size * 1.2
-            self._height = max([measure_text(text=l, font_size=self.layout_configuration.font_size)[0] for l in self._lines])
+            self._height = max(
+                [
+                    measure_text(
+                        text=l,
+                        font_size=self.layout_configuration.font_size,
+                        font_family=self.layout_configuration.font_family,
+                    )[0]
+                    for l in self._lines
+                ]
+            )
 
     def _draw(self, x: float, y: float):
         if self.orientation == HeaderOrientation.Vertical:
@@ -57,7 +78,7 @@ class GridHeaderElement(VisualElement):
                 lines=self._lines,
                 insert=(x, y),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="normal",
                 text_anchor="start",
                 dominant_baseline="middle",
@@ -71,7 +92,7 @@ class GridHeaderElement(VisualElement):
                     lines=self._lines,
                     insert=(x, y),
                     font_size=self.layout_configuration.font_size,
-                    font_family="Arial",
+                    font_family=self.layout_configuration.font_family,
                     font_weight="normal",
                     text_anchor="end",
                     dominant_baseline="middle",

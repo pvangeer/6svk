@@ -33,7 +33,12 @@ class WrappedTextElement(VisualElement):
     def measure(self) -> None:
         self._width = self.max_width
         max_text_width = self.max_width - self.layout_configuration.small_margin * 2 if self.has_margins else self.max_width
-        self._lines = wrapped_lines(self.text, max_width=max_text_width, font_size=self.layout_configuration.font_size)
+        self._lines = wrapped_lines(
+            self.text,
+            max_width=max_text_width,
+            font_size=self.layout_configuration.font_size,
+            font_family=self.layout_configuration.font_family,
+        )
         self._height = (
             len(self._lines) * self.layout_configuration.font_size * 1.2 + 2 * self.layout_configuration.small_margin
             if self.has_margins
@@ -51,6 +56,8 @@ class WrappedTextElement(VisualElement):
                     x,
                     y,
                 ),
+                font_family=self.layout_configuration.font_family,
+                font_size=self.layout_configuration.font_size,
                 text_anchor="start",
                 dominant_baseline="text-before-edge",
             )

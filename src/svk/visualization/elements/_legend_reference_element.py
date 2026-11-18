@@ -39,7 +39,10 @@ class LegendReferenceElement(VisualElement):
     def measure(self) -> None:
         legend_label = self.translator.get_label(label=Label.LegendTitle)
         self._label_size = measure_text(
-            text=legend_label, font_size=self.layout_configuration.font_size, font_family="Arial", font_weight="bold"
+            text=legend_label,
+            font_size=self.layout_configuration.font_size,
+            font_family=self.layout_configuration.font_family,
+            font_weight="bold",
         )
         self._width = self.layout_configuration.arrow_depth + self.layout_configuration.intermediate_margin * 2 + self._label_size[0]
         self._height = max(
@@ -79,7 +82,7 @@ class LegendReferenceElement(VisualElement):
                 dominant_baseline="hanging",
                 text_anchor="start",
                 fill="black",
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="bold",
                 text_decoration="normal",
                 font_size=self.layout_configuration.font_size,

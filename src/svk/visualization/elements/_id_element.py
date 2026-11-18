@@ -32,7 +32,11 @@ class IdElement(VisualElement):
     page_number: int | None = None
 
     def measure(self) -> None:
-        _text_width = IdElement.predict_width(text=self.id, font_size=self.layout_configuration.font_size)
+        _text_width = IdElement.predict_width(
+            text=self.id,
+            font_size=self.layout_configuration.font_size,
+            font_family=self.layout_configuration.font_family,
+        )
         self._width = _text_width if self.preferred_width is None else max([self.preferred_width, _text_width])
         self._height = (
             2 if self.is_bottom_margin else 1
@@ -48,7 +52,7 @@ class IdElement(VisualElement):
                 self.id,
                 insert=(x + self.width / 2.0, y_top),
                 font_size=self.layout_configuration.font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="normal",
                 text_anchor="middle",
                 dominant_baseline="text-before-edge",
@@ -59,7 +63,11 @@ class IdElement(VisualElement):
             return
 
         if self.is_link:
-            text_w, _ = measure_text(text=self.id, font_size=self.layout_configuration.font_size)
+            text_w, _ = measure_text(
+                text=self.id,
+                font_size=self.layout_configuration.font_size,
+                font_family=self.layout_configuration.font_family,
+            )
             x_text_start = x + self.width / 2.0 - text_w / 2.0
             self.links_register.register_link(
                 link_target=self.id,
@@ -74,5 +82,8 @@ class IdElement(VisualElement):
             self.links_register.register_link_target(link_target=self.id, page_number=self.page_number, x=x, y=y)
 
     @staticmethod
-    def predict_width(text: str, font_size: int, margin: float | None = None):
-        return measure_text(text=text, font_size=font_size)[0] + (2 * margin if margin is not None else 0)
+    def predict_width(text: str, font_size: int, margin: float | None = None, font_family: str = "Arial"):
+        return (
+            measure_text(text=text, font_size=font_size, font_family=font_family)[0]
+            + (2 * margin if margin is not None else 0)
+        )

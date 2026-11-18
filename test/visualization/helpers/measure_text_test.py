@@ -1,3 +1,4 @@
+from svk.io import RendererServer
 from svk.visualization.helpers import measure_text
 from svk.visualization.helpers import wrapped_lines
 
@@ -17,3 +18,17 @@ def test_wrapped_lines_uses_batch_text_measurement():
     lines = wrapped_lines("one two three", max_width=max_width, font_size=12)
 
     assert lines == ["one two ", "three "]
+
+
+def test_wrapped_lines_forwards_font_family(monkeypatch):
+    received = {}
+
+    def fake_wrap_text(cls, **kwargs):
+        received.update(kwargs)
+        return []
+
+    monkeypatch.setattr(RendererServer, "wrap_text", classmethod(fake_wrap_text))
+
+    wrapped_lines("text", max_width=100, font_family="monospace")
+
+    assert received["font_family"] == "monospace"

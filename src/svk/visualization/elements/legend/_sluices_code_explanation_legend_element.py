@@ -50,7 +50,14 @@ class SluicesCodeExplanationLegendElement(VisualElement):
         self._tw_code_text = self.text_width("SP_XX##")
         self._tw_sp_explanation = self.text_width(self._sp_explanation)
         self._tw_number_explanation = self.text_width(self._number_explanation)
-        self._tw_codes_explained = max([measure_text(l, self.layout_configuration.font_size)[0] for _, l in self._code_explanations])
+        self._tw_codes_explained = max(
+            [
+                measure_text(
+                    l, self.layout_configuration.font_size, font_family=self.layout_configuration.font_family
+                )[0]
+                for _, l in self._code_explanations
+            ]
+        )
 
         self._width = max([self._code_explanation_indent + self._tw_codes_explained, self._tw_sp_explanation])
         self._height = 8 * self.layout_configuration.font_size * self._line_height_factor + self.layout_configuration.font_size
@@ -164,7 +171,7 @@ class SluicesCodeExplanationLegendElement(VisualElement):
             y += lh
 
     def text_width(self, text: str) -> float:
-        return measure_text(text, self.layout_configuration.font_size)[0]
+        return measure_text(text, self.layout_configuration.font_size, font_family=self.layout_configuration.font_family)[0]
 
 
 def draw_arrow(

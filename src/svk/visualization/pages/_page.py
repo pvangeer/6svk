@@ -62,7 +62,10 @@ class Page(VisualComponent):
         _disclaimer_width = 0.0
         if self.disclaimer is not None:
             _disclaimer_width = get_disclaimer_width(
-                disclaimer_text=self.disclaimer, font_size=self.layout_configuration.disclamer_font_size, links=self.disclaimer_links
+                disclaimer_text=self.disclaimer,
+                font_family=self.layout_configuration.font_family,
+                font_size=self.layout_configuration.disclamer_font_size,
+                links=self.disclaimer_links,
             )[0]
 
         self._width = max(
@@ -92,7 +95,12 @@ class Page(VisualComponent):
         )
         _title_text_width = (
             self.layout_configuration.paper_margin
-            + measure_text(self.title, font_size=self.layout_configuration.page_title_font_size, font_weight="bold", font_family="Arial")[0]
+            + measure_text(
+                self.title,
+                font_size=self.layout_configuration.page_title_font_size,
+                font_weight="bold",
+                font_family=self.layout_configuration.font_family,
+            )[0]
             + self.layout_configuration.paper_margin
         )
         self._title_width = (
@@ -178,7 +186,7 @@ class Page(VisualComponent):
                     bottom_title,
                 ),
                 font_size=self.layout_configuration.page_title_font_size,
-                font_family="Arial",
+                font_family=self.layout_configuration.font_family,
                 font_weight="bold",
                 text_anchor="start",
                 dominant_baseline="text-bottom",
@@ -191,7 +199,7 @@ class Page(VisualComponent):
                     self.subtitle,
                     insert=(left_title, self.layout_configuration.paper_margin + self._title_height),
                     font_size=self.layout_configuration.page_subtitle_font_size,
-                    font_family="Arial",
+                    font_family=self.layout_configuration.font_family,
                     font_weight="normal",
                     text_anchor="start",
                     dominant_baseline="text-bottom",
@@ -217,6 +225,7 @@ class Page(VisualComponent):
                 ),
                 dominant_baseline="hanging",
                 text_anchor="start",
+                font_family=self.layout_configuration.font_family,
                 font_size=self.layout_configuration.disclamer_font_size,
                 links=self.disclaimer_links if self.disclaimer_links is not None else [],
             )
