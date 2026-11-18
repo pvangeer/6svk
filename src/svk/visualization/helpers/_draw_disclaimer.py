@@ -61,6 +61,7 @@ def draw_disclaimer(
         insert=insert,
         dominant_baseline=dominant_baseline,
         text_anchor=text_anchor,
+        font_family="Arial",
         font_size=font_size,
         **{"xml:space": "preserve"},
     )

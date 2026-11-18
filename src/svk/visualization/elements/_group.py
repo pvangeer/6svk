@@ -100,6 +100,8 @@ class Group(VisualElement):
             stroke=self.color,
             fill=KnownColors.White,
             header_fill=self.color,
+            arrow_height=self.layout_configuration.arrow_height,
+            arrow_depth=self.layout_configuration.arrow_depth,
             use_gradients=self.layout_configuration.use_gradients,
         )
 

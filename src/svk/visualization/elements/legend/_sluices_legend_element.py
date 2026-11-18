@@ -114,8 +114,8 @@ class SluicesLegendElement(VisualElementsContainer):
             fill=KnownColors.White,
             header_fill=KnownColors.GreyAccent,
             stroke_width=1.0,
-            arrow_height=30.0,
-            arrow_depth=20.0,
+            arrow_height=self.layout_configuration.arrow_height,
+            arrow_depth=self.layout_configuration.arrow_depth,
             use_gradients=False,
         )
         text_fill = (

@@ -60,6 +60,7 @@ class LayoutConfiguration(BaseModel):
     question_explanation_width: float = 600
     analysis_details_width: float = 300
     arrow_depth: float = 20
+    arrow_height: float = 30
     icon_width_small: float = 24
     current_research_details_width: float = 500
 

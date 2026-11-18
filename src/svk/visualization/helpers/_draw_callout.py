@@ -34,7 +34,7 @@ def draw_callout(
     header_fill: Color,
     stroke_width: float = 0.5,
     arrow_height: float = 30.0,
-    arrow_depth: float = 20,
+    arrow_depth: float = 20.0,
     use_gradients: bool = True,
     gradient_center: float = 0.3,
     use_header_fill: bool = True,

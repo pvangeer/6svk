@@ -25,6 +25,7 @@ from pydantic import ConfigDict
 from svgwrite import Drawing
 from svk.data import Icon, KnownColors, Label
 from svk.visualization._visual_component import VisualComponent
+from svk.visualization.elements._legend_reference_element import LegendReferenceElement
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer, get_disclaimer_width
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
 from svk.visualization.helpers._draw_callout import draw_callout
@@ -56,15 +57,8 @@ class Page(VisualComponent):
 
     def measure(self) -> None:
         content_size = self.get_content_size()
-        disclaimer_height = (
-            (self.layout_configuration.large_margin + 1.2 * self.layout_configuration.disclamer_font_size)
-            if self.disclaimer is not None
-            else 0.0
-        )
-        _width_legend_label = 0.0
-        if self.include_legend_link:
-            legend_label = self.translator.get_label(label=Label.LegendTitle)
-            _width_legend_label = measure_text(text=legend_label, font_size=self.layout_configuration.disclamer_font_size)[0]
+        disclaimer_height = (1.2 * self.layout_configuration.disclamer_font_size) if self.disclaimer is not None else 0.0
+        _width_legend_label = self._legend_link_element.width if self._legend_link_element is not None else 0.0
         _disclaimer_width = 0.0
         if self.disclaimer is not None:
             _disclaimer_width = get_disclaimer_width(
@@ -83,7 +77,8 @@ class Page(VisualComponent):
             + self._title_height
             + self.layout_configuration.large_margin
             + content_size[1]
-            + disclaimer_height
+            + self.layout_configuration.large_margin
+            + max(disclaimer_height, self._legend_link_element.height if self.include_legend_link else 0.0)
             + self.layout_configuration.paper_margin
         )
 
@@ -105,6 +100,7 @@ class Page(VisualComponent):
             if self.icon is not None
             else _title_text_width
         )
+        self._legend_link_element = self.create(LegendReferenceElement, page_number=self.page_number, color=KnownColors.GreyAccent)
 
     @abstractmethod
     def get_content_size(self) -> tuple[float, float]:
@@ -150,6 +146,8 @@ class Page(VisualComponent):
                 use_gradients=self.layout_configuration.use_gradients,
                 stroke=KnownColors.Black,
                 fill=KnownColors.White,
+                arrow_height=self.layout_configuration.arrow_height,
+                arrow_depth=self.layout_configuration.arrow_depth,
                 header_fill=KnownColors.Black,
                 use_header_fill=self.layout_configuration.use_gradients,
             )
@@ -225,26 +223,7 @@ class Page(VisualComponent):
 
     def draw_legend_link(self, dwg: Drawing):
         if self.include_legend_link:
-            legend_label = self.translator.get_label(label=Label.LegendTitle)
-            label_size = measure_text(text=legend_label, font_size=self.layout_configuration.disclamer_font_size)
-            x_end = self._width - self.layout_configuration.paper_margin
-            y_top = self._height - self.layout_configuration.paper_margin - self.layout_configuration.disclamer_font_size * 1.2
-            dwg.add(
-                dwg.text(
-                    legend_label,
-                    insert=(x_end, y_top),
-                    dominant_baseline="hanging",
-                    text_anchor="end",
-                    fill="blue",
-                    text_decoration="underline",
-                    font_size=self.layout_configuration.disclamer_font_size,
-                )
-            )
-            self.links_register.register_link(
-                link_target="#legend_page",
-                x=x_end - label_size[0],
-                y=y_top,
-                width=label_size[0],
-                height=label_size[1],
-                page_number=self.page_number,
-            )
+            x_left = self._width - self.layout_configuration.paper_margin - self._legend_link_element.width
+            y_top = self._height - self.layout_configuration.paper_margin - self._legend_link_element.height
+
+            self._legend_link_element.draw(dwg=dwg, x=x_left, y=y_top)
