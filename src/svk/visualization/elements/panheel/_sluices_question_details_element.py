@@ -59,16 +59,19 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
 
     @staticmethod
     def predict_first_column_width(question: SluicesResearchQuestion, layout_configuration: LayoutConfiguration) -> float:
-        return max(
-            [
-                PriorityIconElement.predict_width(layout_configuration),
-                IdElement.predict_width(
-                    question.id,
-                    layout_configuration.font_size,
-                    font_family=layout_configuration.font_family,
-                ),
-                TimeFrameElement.predict_width(question.time_frame, layout_configuration=layout_configuration),
-            ]
+        return (
+            max(
+                [
+                    PriorityIconElement.predict_width(layout_configuration),
+                    IdElement.predict_width(
+                        question.id,
+                        layout_configuration.font_size,
+                        font_family=layout_configuration.font_family,
+                    ),
+                    TimeFrameElement.predict_width(question.time_frame, layout_configuration=layout_configuration),
+                ]
+            )
+            + layout_configuration.small_margin * 2.0
         )
 
     def initialize(self) -> None:
@@ -287,9 +290,11 @@ class SluicesQuestionDetailsElement(VisualElementsContainer):
                 dominant_baseline="text-before-edge",
             )
         )
-        x_current = x_base + self.layout_configuration.small_margin + measure_text(
-            label, self.layout_configuration.font_size, font_family=self.layout_configuration.font_family
-        )[0]
+        x_current = (
+            x_base
+            + self.layout_configuration.small_margin
+            + measure_text(label, self.layout_configuration.font_size, font_family=self.layout_configuration.font_family)[0]
+        )
         for related in self._related_question_elements:
             self.draw_element(
                 element=related,
