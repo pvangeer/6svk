@@ -38,10 +38,10 @@ class SluicesDocument(Document):
     questions: list[SluicesResearchQuestion]
     layout_configuration: LayoutConfiguration = LayoutConfiguration(use_rijkswaterstaat_colors=True, use_gradients=False)
     disclaimer: str | None = (
-        f"Deze agenda is opgesteld op {datetime.now().strftime("%Y-%m-%d")} in samenwerking met het asset management team van sluis Panheel. Voor vragen, neem contact op met Meinard Tiessen."
+        f"Deze agenda is opgesteld op {datetime.now().strftime("%d-%m-%Y")} door Rijkswaterstaat, Deltares en TNO in samenwerking met het assetmanagementteam van sluis Panheel. Voor vragen, neem contact op met Martine Brinkhuis (email adres: martine.brinkhuis@rws.nl)."
     )
     disclaimer_links: list[tuple[str, str]] | None = [
-        ("Meinard Tiessen", "mailto:meinard.tiessen@deltares.nl"),
+        ("martine.brinkhuis@rws.nl", f"mailto:martine.brinkhuis@rws.nl?subject=Vraag%20over%20Kennisagenda%20Sluis%20Panheel"),
     ]
 
     def create_pages(self) -> list[Page]:
