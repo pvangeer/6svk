@@ -21,10 +21,11 @@ Deltares and remain full property of Stichting Deltares at all times. All rights
 from __future__ import annotations
 from abc import abstractmethod
 
-from pydantic import ConfigDict
+from pydantic import ConfigDict, PrivateAttr
 from svgwrite import Drawing
 from svk.data import Icon, KnownColors, Label
 from svk.visualization._visual_component import VisualComponent
+from svk.visualization.elements._disclaimer_element import DisclaimerElement
 from svk.visualization.elements._legend_reference_element import LegendReferenceElement
 from svk.visualization.helpers._draw_disclaimer import draw_disclaimer, get_disclaimer_width
 from svk.visualization.helpers._draw_scaled_icon import draw_scaled_icon
@@ -54,25 +55,21 @@ class Page(VisualComponent):
 
     _title_width: float = 0.0
     _title_height: float = 0.0
+    _legend_link_element: LegendReferenceElement | None = PrivateAttr(default=None)
+    _disclaimer_element: DisclaimerElement | None = PrivateAttr(default=None)
 
     def measure(self) -> None:
         content_size = self.get_content_size()
-        disclaimer_height = (1.2 * self.layout_configuration.disclamer_font_size) if self.disclaimer is not None else 0.0
         _width_legend_label = self._legend_link_element.width if self._legend_link_element is not None else 0.0
-        _disclaimer_width = 0.0
-        if self.disclaimer is not None:
-            _disclaimer_width = get_disclaimer_width(
-                disclaimer_text=self.disclaimer,
-                font_family=self.layout_configuration.font_family,
-                font_size=self.layout_configuration.disclamer_font_size,
-                links=self.disclaimer_links,
-            )[0]
+        _disclaimer_width = self._disclaimer_element.width if self._disclaimer_element is not None else 0.0
 
         self._width = max(
             [
                 content_size[0] + 2 * self.layout_configuration.paper_margin,
                 self._title_width,
-                _disclaimer_width + self.layout_configuration.paper_margin * 2 + _width_legend_label,
+                self.layout_configuration.paper_margin * 2
+                + _disclaimer_width
+                + ((self.layout_configuration.intermediate_margin + _width_legend_label) if self.include_legend_link else 0.0),
             ]
         )
         self._height = (
@@ -81,7 +78,10 @@ class Page(VisualComponent):
             + self.layout_configuration.large_margin
             + content_size[1]
             + self.layout_configuration.large_margin
-            + max(disclaimer_height, self._legend_link_element.height if self.include_legend_link else 0.0)
+            + max(
+                self._disclaimer_element.height if self._disclaimer_element is not None else 0.0,
+                self._legend_link_element.height if self._legend_link_element is not None else 0.0,
+            )
             + self.layout_configuration.paper_margin
         )
 
@@ -108,7 +108,16 @@ class Page(VisualComponent):
             if self.icon is not None
             else _title_text_width
         )
-        self._legend_link_element = self.create(LegendReferenceElement, page_number=self.page_number, color=KnownColors.GreyAccent)
+        self._legend_link_element = (
+            self.create(LegendReferenceElement, page_number=self.page_number, color=KnownColors.GreyAccent)
+            if self.include_legend_link
+            else None
+        )
+        self._disclaimer_element = (
+            self.create(DisclaimerElement, color=KnownColors.GreyAccent, disclaimer=self.disclaimer, disclaimer_links=self.disclaimer_links)
+            if self.disclaimer is not None
+            else None
+        )
 
     @abstractmethod
     def get_content_size(self) -> tuple[float, float]:
@@ -215,23 +224,15 @@ class Page(VisualComponent):
             )
 
     def draw_disclaimer(self, dwg: Drawing):
-        if self.disclaimer is not None:
-            draw_disclaimer(
+        if self.disclaimer is not None and self._disclaimer_element is not None:
+            self._disclaimer_element.draw(
                 dwg=dwg,
-                disclaimer_text=self.disclaimer,
-                insert=(
-                    self.layout_configuration.paper_margin,
-                    self._height - self.layout_configuration.paper_margin - self.layout_configuration.disclamer_font_size * 1.2,
-                ),
-                dominant_baseline="hanging",
-                text_anchor="start",
-                font_family=self.layout_configuration.font_family,
-                font_size=self.layout_configuration.disclamer_font_size,
-                links=self.disclaimer_links if self.disclaimer_links is not None else [],
+                x=self.layout_configuration.paper_margin,
+                y=self._height - self.layout_configuration.paper_margin - self._disclaimer_element.height,
             )
 
     def draw_legend_link(self, dwg: Drawing):
-        if self.include_legend_link:
+        if self.include_legend_link and self._legend_link_element is not None:
             x_left = self._width - self.layout_configuration.paper_margin - self._legend_link_element.width
             y_top = self._height - self.layout_configuration.paper_margin - self._legend_link_element.height
 
